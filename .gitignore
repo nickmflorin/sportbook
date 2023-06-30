@@ -1,0 +1,34 @@
+# Dependencies
+/node_modules
+
+# Prisma
+/prisma/db.sqlite
+/prisma/db.sqlite-journal
+
+# NextJS
+/.next/
+/out/
+next-env.d.ts
+
+# Production
+/build
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Local Environment Files
+.env*.local
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+*.generated.ts
