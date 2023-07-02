@@ -28,6 +28,13 @@ const config = {
   sassOptions: {
     includePaths: [path.join(__dirname, "src/styles")],
   },
+  redirects: async () => [
+    {
+      source: "/",
+      destination: "/dashboard",
+      permanent: false,
+    },
+  ],
 };
 
 export default config;

@@ -12,11 +12,11 @@ export interface AppLayoutProps {
 export const AppLayout = async ({ children, authenticated }: AppLayoutProps): Promise<JSX.Element> => (
   <div className="app-layout">
     <Header />
-    <main>
+    <main className="app-main">
       <ShowHide show={authenticated}>
         <Sidebar />
       </ShowHide>
-      {children}
+      <div className="app-viewport">{children}</div>
     </main>
   </div>
 );

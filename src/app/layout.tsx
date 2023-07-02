@@ -1,9 +1,6 @@
 import "~/styles/globals/index.scss";
-import { ClerkProvider } from "@clerk/nextjs";
 import { Inter } from "next/font/google";
-import Script from "next/script";
 
-import { AppLayout } from "~/components/layout";
 import { AppConfig } from "~/components/config/AppConfig";
 
 const inter = Inter({ subsets: ["latin"] });

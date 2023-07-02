@@ -1,1 +1,21 @@
+@use "partials";
 @use "./header";
+
+.app-layout {
+  overflow: hidden;
+
+  > .app-main {
+    min-height: calc(100vh - partials.$app-header-height);
+    height: calc(100vh - partials.$app-header-height);
+    overflow: hidden;
+    position: relative;
+
+    > .app-viewport {
+      overflow-y: scroll;
+      max-height: 100%;
+      height: 100%;
+      width: 100%;
+      padding: partials.get-spacing("md");
+    }
+  }
+}

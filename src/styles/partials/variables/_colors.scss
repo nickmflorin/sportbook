@@ -1,0 +1,45 @@
+@use "sass:map";
+@use "sass:list";
+
+@use "throw";
+@use "../functions" as fn;
+
+$default-shade: 5;
+
+$blue-shades: (#eff6ff, #e9f2ff, #cce1fe, #b0d2ff, #76b0ff, #5198f9, #1f71e1, #074599, #012e6c, #001d44);
+$green-shades: (#f0fdf4, #dcfce7, #bbf7d0, #86f7d0, #4ade80, #22c55e, #16a34a, #15803d, #166534, #14132d);
+$gray-shades: (#f9f9fa, #f1f3f5, #eaecef, #dee2e6, #cfd4d9, #aeb5bc, #878e95, #494056, #353a3f, #222529);
+$red-shades: (#fef2f2, #fee2e2, #fecaca, #fca5a5, #f87171, #ef4444, #dc2626, #b91c1c, #991b1b, #7f1d1d);
+$yellow-shades: (#fff5eb, #fef3c7, #fde68a, #fbd34d, #fbbf24, #f59e0b, #d79706, #b45309, #92400e, #78350f);
+$orange-shades: (#fff4e6, #ffe8cc, #ffd8a8, #ffc078, #ffa94d, #ff922b, #fd7e14, #f76707, #e8590c, #d9480f);
+$heading-shades: (#121929, #121928, #111828, #111827, #111827, #111827, #111826, #101726, #101725, #101725);
+$body-shades: (#121929, #121928, #111828, #111827, #111827, #111827, #111826, #101726, #101725, #101725);
+
+$colors: (
+  "blue": $blue-shades,
+  "green": $green-shades,
+  "red": $red-shades,
+  "yellow": $yellow-shades,
+  "success": $green-shades,
+  "error": $red-shades,
+  "warning": $yellow-shades,
+  "body": $body-shades,
+  "heading": $heading-shades,
+  "orange": $orange-shades,
+  "gray": $gray-shades,
+);
+
+$app-background-color: #f9f9f9;
+$disabled-color: #a1a9b4;
+$white: #ffffff;
+
+@function get-color($name, $shade: $default-shade) {
+  @if not map.has-key($colors, $name) {
+    @return throw.error("The provided name #{$name} is invalid.", $name: $name, $source: "get-color()");
+  }
+  $cs: fn.map-get($colors, $name);
+  @if not list.nth($cs, $shade) {
+    @return throw.error("The provided shade #{$shade} is invalid.", $shade: $shade, $source: "get-color()");
+  }
+  @return list.nth($cs, $shade);
+}
