@@ -48,8 +48,12 @@ export const env = createEnv({
         : ["error"]
     ),
     NODE_ENV: z.enum(["development", "test", "production"]),
+    PRETTY_LOGGING: z.coerce.boolean().optional(),
   },
-  client: {},
+  client: {
+    NEXT_PUBLIC_LOG_LEVEL: z.string().optional(),
+    NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA: z.string().optional(),
+  },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     DATABASE_HOST: process.env.DATABASE_HOST,
