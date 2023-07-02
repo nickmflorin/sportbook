@@ -3,6 +3,9 @@
 .app-header {
   width: 100vw;
   height: partials.$app-header-height;
+  display: flex;
+  padding: partials.$spacing-md;
+  border-bottom: 1px solid #efefef;
 
   &__left,
   &__right {

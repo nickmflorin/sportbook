@@ -19,21 +19,19 @@ import { z } from "zod";
 /**
  * @type {CreateCommaSeparatedArraySchema}
  */
-export const createCommaSeparatedArraySchema = (params) =>
+export const createCommaSeparatedArraySchema = params =>
   z
     .string()
     .transform((value, ctx) => {
       const parsed = value
         .split(",")
-        .map((v) => v.trim())
-        .map((v) => (params?.partTransformer ? params.partTransformer(v) : v));
-      const invalid = parsed.filter((vi) => !params.options.includes(vi));
+        .map(v => v.trim())
+        .map(v => (params?.partTransformer ? params.partTransformer(v) : v));
+      const invalid = parsed.filter(vi => !params.options.includes(vi));
       if (invalid.length !== 0) {
-        invalid.map((inv) => {
+        invalid.map(inv => {
           ctx.addIssue({
-            message: `The value '${inv}' is invalid. Must be one of ${params.options.join(
-              ","
-            )}`,
+            message: `The value '${inv}' is invalid. Must be one of ${params.options.join(",")}`,
             code: z.ZodIssueCode.invalid_enum_value,
             received: inv,
             options: [...params.options],
@@ -50,7 +48,7 @@ export const createCommaSeparatedArraySchema = (params) =>
  */
 const PrismaLogLevelSchema = createCommaSeparatedArraySchema({
   options: ["info", "query", "warn", "error"],
-  partTransformer: (v) => v.toLowerCase(),
+  partTransformer: v => v.toLowerCase(),
 });
 
 /**
@@ -60,12 +58,8 @@ const PrismaLogLevelSchema = createCommaSeparatedArraySchema({
  * >}
  */
 const StringBooleanFlagSchema = z.union([
-  z
-    .custom((val) => typeof val === "string" && val.toLowerCase() === "true")
-    .transform(() => true),
-  z
-    .custom((val) => typeof val === "string" && val.toLowerCase() === "false")
-    .transform(() => false),
+  z.custom(val => typeof val === "string" && val.toLowerCase() === "true").transform(() => true),
+  z.custom(val => typeof val === "string" && val.toLowerCase() === "false").transform(() => false),
 ]);
 
 /**
@@ -90,22 +84,14 @@ export const env = createEnv({
     DATABASE_PORT: z.number().int().positive().optional(),
     DATABASE_LOG_LEVEL: PrismaLogLevelSchema.optional(),
     NODE_ENV: z.enum(["development", "test", "production"]),
-    PRETTY_LOGGING: StringBooleanFlagSchema.default(
-      process.env.NODE_ENV === "development" ? true : false
-    ),
-    CLERK_SECRET_KEY: z
-      .string()
-      .startsWith(
-        process.env.NODE_ENV === "development" ? "sk_test" : "sk_live"
-      ),
+    PRETTY_LOGGING: StringBooleanFlagSchema.default(process.env.NODE_ENV === "development" ? true : false),
+    CLERK_SECRET_KEY: z.string().startsWith(process.env.NODE_ENV === "development" ? "sk_test" : "sk_live"),
   },
   /* ----------------------------------- Client Environment Variables ------------------------------------ */
   client: {
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z
       .string()
-      .startsWith(
-        process.env.NODE_ENV === "development" ? "pk_test" : "pk_live"
-      ),
+      .startsWith(process.env.NODE_ENV === "development" ? "pk_test" : "pk_live"),
     NEXT_PUBLIC_LOG_LEVEL: z
       .union([
         z.literal("fatal"),
@@ -133,11 +119,9 @@ export const env = createEnv({
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
     APP_NAME_FORMAL: process.env.APP_NAME_FORMAL,
     /* ----------------------------------- Client Environment Variables ------------------------------------ */
-    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
-      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     NEXT_PUBLIC_LOG_LEVEL: process.env.NEXT_PUBLIC_LOG_LEVEL,
-    NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA:
-      process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
+    NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
