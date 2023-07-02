@@ -1,34 +1,53 @@
+import { Prisma } from "@prisma/client";
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
-export const createCommaSeparatedArraySchema = () =>
-  z.custom((value) => {
-    if (typeof value === "string") {
+/**
+ * @typedef CommaSeparatedArraySchemaOptions<V>
+ * @type {object}
+ * @property {(v: string) => string} partTransformer - an ID.
+ * @property {readonly V[]} options - your name.
+ * @template {string} V
+ */
+
+/**
+ * @typedef CreateCommaSeparatedArraySchema<V>
+ * @type {<V extends string>(params: CommaSeparatedArraySchemaOptions<V>): z.ZodEffects<z.ZodString, V[], V>;}
+ * @template {string} V
+ */
+
+/**
+ * @type {CreateCommaSeparatedArraySchema}
+ */
+export const createCommaSeparatedArraySchema = (params) =>
+  z
+    .string()
+    .transform((value, ctx) => {
       const parsed = value
         .split(",")
         .map((v) => v.trim())
         .map((v) => (params?.partTransformer ? params.partTransformer(v) : v));
-
-      const invalid = parsed.map((vi) => !params.options.includes(vi));
-      if (invalid.length === 1) {
-        return {
-          message: `The value '${
-            invalid[0]
-          }' is invalid, must be one of '${params.options.join(",")}'.`,
-        };
-      } else if (invalid.length !== 0) {
-        return {
-          message: `The values '${invalid.join(
-            ","
-          )}' are invalid, must be one of '${params.options.join(",")}'.`,
-        };
+      const invalid = parsed.filter((vi) => !params.options.includes(vi));
+      if (invalid.length !== 0) {
+        invalid.map((inv) => {
+          ctx.addIssue({
+            message: `The value '${inv}' is invalid. Must be one of ${params.options.join(
+              ","
+            )}`,
+            code: z.ZodIssueCode.invalid_enum_value,
+            received: inv,
+            options: [...params.options],
+          });
+        });
+        return z.NEVER;
       }
-      return true;
-    }
-    // TODO: How do we allow this to be true depending on optionality?
-    return true;
-  });
+      return /** @type {V[]} */ (parsed);
+    })
+    .optional();
 
+/**
+ * @type {z.ZodEffects<z.ZodString, Prisma.LogLevel[], Prisma.LogLevel>>}
+ */
 const PrismaLogLevelSchema = createCommaSeparatedArraySchema({
   options: ["info", "query", "warn", "error"],
   partTransformer: (v) => v.toLowerCase(),
@@ -40,7 +59,7 @@ const PrismaLogLevelSchema = createCommaSeparatedArraySchema({
  *   z.ZodEffects<z.ZodType<false, z.ZodTypeDef, false>, boolean, false>]
  * >}
  */
-const stringBooleanFlagSchema = z.union([
+const StringBooleanFlagSchema = z.union([
   z
     .custom((val) => typeof val === "string" && val.toLowerCase() === "true")
     .transform(() => true),
@@ -60,20 +79,18 @@ const DEFAULT_LOG_LEVELS = {
 };
 
 export const env = createEnv({
+  /* ----------------------------------- Server Environment Variables ------------------------------------ */
   server: {
+    APP_NAME_FORMAL: z.string(),
     DATABASE_URL: z.string().url().optional(),
     DATABASE_NAME: z.string().optional(),
     DATABASE_PASSWORD: z.string().optional(),
     DATABASE_USER: z.string().optional(),
     DATABASE_HOST: z.string().optional(),
     DATABASE_PORT: z.number().int().positive().optional(),
-    DATABASE_LOG_LEVEL: PrismaLogLevelSchema.default(
-      process.env.NODE_ENV === "development"
-        ? ["query", "error", "warn"]
-        : ["error"]
-    ),
+    DATABASE_LOG_LEVEL: PrismaLogLevelSchema.optional(),
     NODE_ENV: z.enum(["development", "test", "production"]),
-    PRETTY_LOGGING: stringBooleanFlagSchema.default(
+    PRETTY_LOGGING: StringBooleanFlagSchema.default(
       process.env.NODE_ENV === "development" ? true : false
     ),
     CLERK_SECRET_KEY: z
@@ -82,6 +99,7 @@ export const env = createEnv({
         process.env.NODE_ENV === "development" ? "sk_test" : "sk_live"
       ),
   },
+  /* ----------------------------------- Client Environment Variables ------------------------------------ */
   client: {
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z
       .string()
@@ -102,6 +120,7 @@ export const env = createEnv({
     NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA: z.string().optional(),
   },
   runtimeEnv: {
+    /* ----------------------------------- Server Environment Variables ------------------------------------ */
     DATABASE_URL: process.env.DATABASE_URL,
     DATABASE_HOST: process.env.DATABASE_HOST,
     DATABASE_USER: process.env.DATABASE_USER,
@@ -112,6 +131,8 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     PRETTY_LOGGING: process.env.PRETTY_LOGGING,
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+    APP_NAME_FORMAL: process.env.APP_NAME_FORMAL,
+    /* ----------------------------------- Client Environment Variables ------------------------------------ */
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     NEXT_PUBLIC_LOG_LEVEL: process.env.NEXT_PUBLIC_LOG_LEVEL,

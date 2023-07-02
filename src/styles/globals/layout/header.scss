@@ -1,0 +1,19 @@
+@use "partials";
+
+.app-header {
+  width: 100vw;
+  height: partials.$app-header-height;
+
+  &__left,
+  &__right {
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  &__right {
+    flex-grow: 100;
+    justify-content: right;
+    gap: partials.$spacing-md;
+  }
+}

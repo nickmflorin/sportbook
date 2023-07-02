@@ -86,7 +86,7 @@ export const initializePrismaClient = () => {
     });
   }
   return new PrismaClient({
-    log: env.DATABASE_LOG_LEVEL as Prisma.LogLevel[],
+    log: env.DATABASE_LOG_LEVEL,
     datasources: { db: { url } },
   }).$extends(ModelTypeExtension);
 };
