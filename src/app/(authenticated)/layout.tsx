@@ -1,4 +1,3 @@
-import "~/styles/globals/index.scss";
 import { AppLayout } from "~/components/layout";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

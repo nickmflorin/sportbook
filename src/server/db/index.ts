@@ -18,41 +18,27 @@ are not reloaded:
 See: https://www.prisma.io/docs/guides/performance-and-optimization/connection-management
      #prevent-hot-reloading-from-creating-new-instances-of-prismaclient
 */
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+
 import { env } from "~/env.mjs";
-import { postgresConnectionString } from "./util";
 
 import { ModelTypeExtension } from "./extensions";
+import { postgresConnectionString } from "./util";
 
 type DBNumericParam = "DATABASE_PORT";
 
-type DBParam =
-  | DBNumericParam
-  | "DATABASE_NAME"
-  | "DATABASE_HOST"
-  | "DATABASE_PASSWORD"
-  | "DATABASE_USER";
+type DBParam = DBNumericParam | "DATABASE_NAME" | "DATABASE_HOST" | "DATABASE_PASSWORD" | "DATABASE_USER";
 
 type DatabaseParams<V extends string | undefined = string | undefined> = {
   [key in DBParam]: key extends DBNumericParam ? V | number : V;
 };
 
-type IsDatabaseParamsAssertion = (
-  params: DatabaseParams
-) => asserts params is DatabaseParams<string>;
+type IsDatabaseParamsAssertion = (params: DatabaseParams) => asserts params is DatabaseParams<string>;
 
-const assertIsDatabaseParams: IsDatabaseParamsAssertion = (
-  params: DatabaseParams
-) => {
-  const invalid = Object.keys(params).filter(
-    (k: string) => params[k as DBParam] === undefined
-  );
+const assertIsDatabaseParams: IsDatabaseParamsAssertion = (params: DatabaseParams) => {
+  const invalid = Object.keys(params).filter((k: string) => params[k as DBParam] === undefined);
   if (invalid.length !== 0) {
-    throw new Error(
-      `Configuration Error: Database parameters ${invalid.join(
-        ", "
-      )} not defined!`
-    );
+    throw new Error(`Configuration Error: Database parameters ${invalid.join(", ")} not defined!`);
   }
 };
 

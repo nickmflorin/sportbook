@@ -8,8 +8,8 @@ import { withNextConfig } from "./jest.config.base";
  */
 export default withNextConfig(__dirname, {
   projects: [
-    // "<rootDir>/src/__tests__/components/jest.config.ts",
-    // "<rootDir>/src/__tests__/unit/jest.config.ts",
+    "<rootDir>/src/tests/components/jest.config.ts",
+    "<rootDir>/src/tests/unit/jest.config.ts",
     "<rootDir>/jest.config.eslint.ts",
     "<rootDir>/jest.config.prettier.ts",
     "<rootDir>/jest.config.stylelint.ts",

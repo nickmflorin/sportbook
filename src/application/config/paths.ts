@@ -1,10 +1,5 @@
 // Paths that do not require an authenticated user.
-export const PUBLIC_PATHS: RegExp[] = [
-  /^\/$/,
-  /^\/sign-in($|\/)/,
-  /^\/sign-up($|\/)/,
-  /^\/switch-org($|\/)/,
-];
+export const PUBLIC_PATHS: RegExp[] = [/^\/$/, /^\/sign-in($|\/)/, /^\/sign-up($|\/)/, /^\/switch-org($|\/)/];
 
 /**
  * Returns whether or not the provided path, {@link string}, is considered "public" (i.e. the path does not require an
@@ -13,8 +8,7 @@ export const PUBLIC_PATHS: RegExp[] = [
  * @param {string} path The applicable path.
  * @returns {boolean} Whether or not the path is "public".
  */
-export const pathIsPublic = (path: string): boolean =>
-  PUBLIC_PATHS.find((x) => path.match(x)) !== undefined;
+export const pathIsPublic = (path: string): boolean => PUBLIC_PATHS.find(x => path.match(x)) !== undefined;
 
 export const UUID_PATH_PARAM_REGEX_STRING = "([0-9a-zA-z-]+)";
 export const PATH_END_REGEX_STRING = "(?:\\/)?(\\?([^\\/]+)?(\\/)?)?$";
@@ -34,10 +28,5 @@ export const PATH_END_REGEX_STRING = "(?:\\/)?(\\?([^\\/]+)?(\\/)?)?$";
 export const createLeadingPathRegex = (path: string): RegExp => {
   path = path.startsWith("/") ? path.substring(1) : path;
   path = path.endsWith("/") ? path.substring(0, path.length - 1) : path;
-  return new RegExp(
-    `^/${path.replaceAll(
-      ":id",
-      UUID_PATH_PARAM_REGEX_STRING
-    )}${PATH_END_REGEX_STRING}`
-  );
+  return new RegExp(`^/${path.replaceAll(":id", UUID_PATH_PARAM_REGEX_STRING)}${PATH_END_REGEX_STRING}`);
 };

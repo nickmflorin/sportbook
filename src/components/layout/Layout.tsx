@@ -1,8 +1,9 @@
 import { type ReactNode } from "react";
 
+import { ShowHide } from "../util";
+
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
-import { ShowHide } from "../util";
 
 export interface AppLayoutProps {
   readonly children: ReactNode;

@@ -1,15 +1,157 @@
 generator client {
-    provider        = "prisma-client-js"
-    previewFeatures = ["jsonProtocol"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["jsonProtocol"]
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = ""
+  provider = "postgresql"
+  url      = env("MIGRATE_DATABASE_URL")
 }
 
 model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id              String          @id @default(uuid()) @db.Uuid
+  clerkId         String          @unique
+  firstName       String?
+  lastName        String?
+  profileImageUrl String?
+  emailAddress    String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  org             Org?            @relation("orgUsers", fields: [orgId], references: [id])
+  orgId           String?         @db.Uuid
+  leagues         LeagueOnUsers[]
+  TeamOnUsers     TeamOnUsers[]
+}
+
+model Org {
+  id        String   @id @default(uuid()) @db.Uuid
+  clerkId   String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  timezone  String?
+  name      String?
+  street1   String?
+  street2   String?
+  city      String?
+  state     String?
+  zip       String?
+  users     User[]   @relation("orgUsers")
+}
+
+model Sport {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @unique
+  createdById String   @db.Uuid
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  updatedById String   @db.Uuid
+  leagues     League[]
+}
+
+// Registration leagues have finite registration windows and finite start/end times.
+model LeagueRegistration {
+  start    DateTime
+  end      DateTime
+  league   League   @relation(fields: [leagueId], references: [id])
+  leagueId String   @unique @db.Uuid
+}
+
+enum LeagueType {
+  PICKUP
+  ORGANIZED
+}
+
+enum LeagueParticipantType {
+  REFEREE
+  ADMIN
+  PLAYER
+}
+
+model LeagueRequirements {
+  minimumAge Int?
+  league     League @relation(fields: [leagueId], references: [id])
+  leagueId   String @unique @db.Uuid
+}
+
+model LeagueOnUsers {
+  league             League                  @relation(fields: [leagueId], references: [id])
+  leagueId           String                  @db.Uuid
+  user               User                    @relation(fields: [userId], references: [id])
+  userId             String                  @db.Uuid
+  assignedAt         DateTime                @default(now())
+  assignedById       String
+  participationTypes LeagueParticipantType[] @default(value: [PLAYER])
+
+  @@id([leagueId, userId])
+}
+
+enum LeagueCompetitionLevel {
+  SOCIAL
+  COMPETITIVE
+  SOCIAL_COMPETATIVE
+}
+
+model League {
+  id           String              @id @default(uuid()) @db.Uuid
+  name         String
+  createdById  String              @db.Uuid
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  updatedById  String              @db.Uuid
+  registration LeagueRegistration?
+  leagueStart  DateTime?
+  leagueEnd    DateTime?
+  leagueType   LeagueType          @default(value: PICKUP)
+  isPublic     Boolean             @default(true)
+  participants LeagueOnUsers[]
+  sport        Sport               @relation(fields: [sportId], references: [id])
+  sportId      String              @db.Uuid
+  requirements LeagueRequirements?
+  leagueGames  Game[]              @relation("leagueGames")
+}
+
+model TeamOnUsers {
+  team         Team     @relation(fields: [teamId], references: [id])
+  teamId       String   @db.Uuid
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String   @db.Uuid
+  assignedAt   DateTime @default(now())
+  assignedById String
+
+  @@id([teamId, userId])
+}
+
+model Team {
+  id          String        @id @default(uuid()) @db.Uuid
+  createdById String        @db.Uuid
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  updatedById String        @db.Uuid
+  players     TeamOnUsers[]
+  homeGames   Game[]        @relation("homeGames")
+  awayGames   Game[]        @relation("awayGames")
+}
+
+// TODO: Scores
+model Game {
+  id          String   @id @default(uuid()) @db.Uuid
+  createdById String   @db.Uuid
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  updatedById String   @db.Uuid
+  league      League   @relation("leagueGames", fields: [leagueId], references: [id])
+  leagueId    String   @db.Uuid
+  // What to do about PickUp games where there is no home or away team?
+  homeTeam    Team     @relation("homeGames", fields: [homeTeamId], references: [id])
+  homeTeamId  String   @db.Uuid
+  awayTeam    Team     @relation("awayGames", fields: [awayTeamId], references: [id])
+  awayTeamId  String   @db.Uuid
+  dateTime    DateTime
+  location    String
 }

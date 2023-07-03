@@ -30,5 +30,6 @@
     "**/*.mjs",
     "./src/mantine-env.d.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "files": ["node_modules/jest-expect-message/types/index.d.ts"]
 }

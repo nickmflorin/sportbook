@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { env } from "~/env.mjs";
 
-import { UserButton } from "~/components/buttons/UserButton";
 import { SignInButton } from "~/components/buttons/SignInButton";
+import { UserButton } from "~/components/buttons/UserButton";
+import { env } from "~/env.mjs";
 
 const HeaderLogo = () => {
   return (
@@ -12,9 +12,7 @@ const HeaderLogo = () => {
   );
 };
 
-export interface HeaderProps {}
-
-export const Header = (props: HeaderProps): JSX.Element => (
+export const Header = (): JSX.Element => (
   <header className="app-header">
     <div className="app-header__left">
       <HeaderLogo />

@@ -12,5 +12,4 @@ export const postgresConnectionString = ({
   password,
   name,
   port,
-}: PostgresConnectionStringParams): string =>
-  `postgresql://${user}:${password}` + `@${host}:${port}/${name}`;
+}: PostgresConnectionStringParams): string => `postgresql://${user}:${password}` + `@${host}:${port}/${name}`;

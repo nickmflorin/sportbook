@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 
-import { MantineTheme, DEFAULT_THEME } from "@mantine/core";
+import { type MantineTheme, DEFAULT_THEME } from "@mantine/core";
 
 import { components } from "./components";
 import * as palettes from "./palettes";

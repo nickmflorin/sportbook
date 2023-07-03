@@ -1,3 +1,4 @@
+/* eslint-disable-next-line import/order */
 import "~/styles/globals/index.scss";
 import { Inter } from "next/font/google";
 

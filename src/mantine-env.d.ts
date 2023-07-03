@@ -1,4 +1,4 @@
-import { Tuple, DefaultMantineColor, MantineSize } from "@mantine/core";
+import { type Tuple, type DefaultMantineColor, type MantineSize } from "@mantine/core";
 
 type ExtendedCustomColors =
   | "heading"

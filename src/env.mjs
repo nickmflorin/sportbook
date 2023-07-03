@@ -67,16 +67,26 @@ const StringBooleanFlagSchema = z.union([
  * @type {Record<"test" | "development" | "production", LogLevel>}
  */
 const DEFAULT_LOG_LEVELS = {
-  development: "info",
-  production: "warn",
-  test: "silent",
+  development: "debug",
+  production: "info",
+  test: "debug",
+};
+
+/**
+ * @type {Record<"test" | "development" | "production", boolean>}
+ */
+const DEFAULT_PRETTY_LOGGING = {
+  development: true,
+  production: false,
+  test: true,
 };
 
 export const env = createEnv({
   /* ----------------------------------- Server Environment Variables ------------------------------------ */
   server: {
     APP_NAME_FORMAL: z.string(),
-    DATABASE_URL: z.string().url().optional(),
+    DATABASE_URL: process.env.NODE_ENV === "test" ? z.literal("") : z.string().url().optional(),
+    MIGRATE_DATABASE_URL: process.env.NODE_ENV === "test" ? z.literal("") : z.string().url(),
     DATABASE_NAME: z.string().optional(),
     DATABASE_PASSWORD: z.string().optional(),
     DATABASE_USER: z.string().optional(),
@@ -84,14 +94,18 @@ export const env = createEnv({
     DATABASE_PORT: z.number().int().positive().optional(),
     DATABASE_LOG_LEVEL: PrismaLogLevelSchema.optional(),
     NODE_ENV: z.enum(["development", "test", "production"]),
-    PRETTY_LOGGING: StringBooleanFlagSchema.default(process.env.NODE_ENV === "development" ? true : false),
-    CLERK_SECRET_KEY: z.string().startsWith(process.env.NODE_ENV === "development" ? "sk_test" : "sk_live"),
+    PRETTY_LOGGING: StringBooleanFlagSchema.default(DEFAULT_PRETTY_LOGGING[process.env.NODE_ENV === "development"]),
+    CLERK_SECRET_KEY:
+      process.env.NODE_ENV === "test"
+        ? z.literal("")
+        : z.string().startsWith(process.env.NODE_ENV === "development" ? "sk_test" : "sk_live"),
   },
   /* ----------------------------------- Client Environment Variables ------------------------------------ */
   client: {
-    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z
-      .string()
-      .startsWith(process.env.NODE_ENV === "development" ? "pk_test" : "pk_live"),
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
+      process.env.NODE_ENV === "test"
+        ? z.literal("")
+        : z.string().startsWith(process.env.NODE_ENV === "development" ? "pk_test" : "pk_live"),
     NEXT_PUBLIC_LOG_LEVEL: z
       .union([
         z.literal("fatal"),
@@ -108,6 +122,7 @@ export const env = createEnv({
   runtimeEnv: {
     /* ----------------------------------- Server Environment Variables ------------------------------------ */
     DATABASE_URL: process.env.DATABASE_URL,
+    MIGRATE_DATABASE_URL: process.env.MIGRATE_DATABASE_URL,
     DATABASE_HOST: process.env.DATABASE_HOST,
     DATABASE_USER: process.env.DATABASE_USER,
     DATABASE_PORT: process.env.DATABASE_PORT,
@@ -125,3 +140,5 @@ export const env = createEnv({
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
+
+const d = env.MIGRATE_DATABASE_URL;

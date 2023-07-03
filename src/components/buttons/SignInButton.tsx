@@ -1,6 +1,5 @@
 "use client";
-import { SignInButton as RootSignInButton } from "@clerk/nextjs";
-import { SignedOut } from "@clerk/nextjs";
+import { SignInButton as RootSignInButton, SignedOut } from "@clerk/nextjs";
 
 export const SignInButton = () => (
   <SignedOut>

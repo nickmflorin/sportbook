@@ -14,9 +14,5 @@ export const withLintConfig = (__dirname: string, config: Config) =>
 
        https://jestjs.io/docs/configuration#testmatch-arraystring
      */
-    testMatch: [
-      "<rootDir>/**/*",
-      "!**/__snapshots__/**",
-      ...(config.testMatch || []),
-    ],
+    testMatch: ["<rootDir>/**/*", "!**/__snapshots__/**", ...(config.testMatch || [])],
   });
