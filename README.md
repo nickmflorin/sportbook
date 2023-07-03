@@ -260,7 +260,7 @@ Then, create the [postgres] user associated with the configuration variables def
 grant all privileges to that user:
 
 ```bash
-$ CREATE USER <DATABASE_USER> WITH PASSWORD <DATABASE_PASSWORD>;
+$ CREATE USER <DATABASE_USER> WITH PASSWORD '<DATABASE_PASSWORD>';
 $ GRANT ALL PRIVILEGES ON DATABASE <DATABASE_NAME> TO <DATABASE_USER>;
 ```
 
@@ -451,24 +451,22 @@ different sets of configuration parameters that would not otherwise be possible 
 The [Jest](https://jestjs.io/docs/getting-started) testing suite is broken down into 6
 [projects](https://jestjs.io/docs/configuration#projects-arraystring--projectconfig):
 
-1. **SASS Unit Tests**: Unit tests that are run against [SASS](https://sass-lang.com/) mixins and functions.
-2. **Functional Unit Tests**: Unit tests that are run against functional utilities or logic in `src/lib`.
-3. **Component Tests**: Both unit tests & snapshot tests that are run against components in `src/components`.
-4. **Prettier**: Prettier checks that are performed against relevant files in the project.
-5. **ESLint**: ESLint checks that are performed against non `.scss` files in the project.
-6. **Stylelint**: Stylelint checks that are performed against `scss` files in the project.
+1. **Functional Unit Tests**: Unit tests that are run against functional utilities or logic in `src/lib`.
+2. **Component Tests**: Both unit tests & snapshot tests that are run against components in `src/components`.
+3. **Prettier**: Prettier checks that are performed against relevant files in the project.
+4. **ESLint**: ESLint checks that are performed against non `.scss` files in the project.
+5. **Stylelint**: Stylelint checks that are performed against `scss` files in the project.
 
 The following table describes the various aspects of each individual [Jest](https://jestjs.io/docs/getting-started)
 project in the application:
 
-|        Project        |                Config File                |       Files Tested        |       Test Files Located        | Included in Coverage |
-| :-------------------: | :---------------------------------------: | :-----------------------: | :-----------------------------: | :------------------: |
-|    SASS Unit Tests    |   `src/styles/__tests__/jest.config.ts`   |          `.scss`          |          `src/styles`           |          No          |
-| Functional Unit Tests |    `src/__tests__/unit/jest.config.ts`    |           `.ts`           |            `src/lib`            |         Yes          |
-|    Component Tests    | `src/__tests__/components/jest.config.ts` |          `.tsx`           |        `src/components`         |         Yes          |
-|       Prettier        |         `jest-prettier-config.ts`         |       All Relevant        |               N/A               |          No          |
-|        ESLint         |          `jest-eslint-config.ts`          | All Relevant, non `.scss` |               N/A               |          No          |
-|       Stylelint       |        `jest-stylelint-config.ts`         |          `.scss`          | `src/styles` & `src/components` |          No          |
+|        Project        |              Config File              |       Files Tested        |       Test Files Located        |
+| :-------------------: | :-----------------------------------: | :-----------------------: | :-----------------------------: |
+| Functional Unit Tests |    `src/tests/unit/jest.config.ts`    |           `.ts`           |        `!src/components`        |
+|    Component Tests    | `src/tests/components/jest.config.ts` |          `.tsx`           |        `src/components`         |
+|       Prettier        |       `jest.config.prettier.ts`       |       All Relevant        |               N/A               |
+|        ESLint         |        `jest.config.eslint.ts`        | All Relevant, non `.scss` |               N/A               |
+|       Stylelint       |      `jest.config.stylelint.ts`       |          `.scss`          | `src/styles` & `src/components` |
 
 #### Linting
 

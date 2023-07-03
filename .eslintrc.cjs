@@ -80,14 +80,7 @@ module.exports = {
   extends: ["next/core-web-vitals", "prettier"],
   plugins: ["prettier"],
   rules: BASE_RULES,
-  ignorePatterns: [
-    "next-env.d.ts",
-    "!.*",
-    "package.json",
-    "package-lock.json",
-    "prisma/migrations/*",
-    "*.generated.ts",
-  ],
+  ignorePatterns: ["next-env.d.ts", "!.*", "package.json", "package-lock.json", "src/prisma/migrations/*"],
   overrides: [
     {
       files: ["**/*.ts", "**/*.tsx"],
