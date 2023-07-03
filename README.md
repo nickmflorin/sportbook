@@ -9,11 +9,15 @@
 - [homebrew]: A MacOSX package manager.
 - [postgresql] ([homebrew] package)
 
-Note that this documentation describes how to setup/configure the application for local development on MacOSX. The steps
-outlined here can be done on a Windows/Ubuntu machine as well, but the steps will not be exactly as they are here (for
-obvious reasons).
-
 ## Getting Started
+
+This section of the documentation outlines - at a high level - how to setup your machine for local development for the
+first time. For more detailed explanations related to local development or production deployments, see the next section;
+"Development".
+
+**Note**: This documentation describes how to setup and configure the application for local development on _MacOSX_.
+Many of the steps outlined in this section may also be applicable for a Windows/Ubuntu machine as well, but the steps
+will not be exactly as they are described here.
 
 ### Step 1: Repository
 
@@ -25,65 +29,125 @@ $ git clone git@github.com:nickmflorin/sportbook.git
 
 ### Step 2: Environment
 
-#### Node
+This section walks through how to install and configure the prerequisites (System Requirements) for this project.
 
-[Node][node] is the engine that supports the application. This project uses [node] v18.
+#### 2.a Node
+
+[Node][node] is the engine that supports the application. This project uses [node] v18.0.0. Your machine will most
+likely already have a system installation of [node], but even if it does not - that is okay. We will not be using a
+system installation of [node] but will rather isolate the version of [node] to this repository, using [nvm].
 
 **Important**: Do not use a system installation of [node]. It will complicate your development environment. Instead, see
 the next section for details about usage of [nvm].
 
-##### NVM
+##### 2.a.i Installing [nvm]
 
-It is recommended that you use [nvm] to manage the [node] versions. It allows us to isolate the version of
-[Node](https://nodejs.org/en/) being used to the project directory, avoiding conflicts with global or system
-installations of [Node](https://nodejs.org/en/).
+It is recommended that you use [nvm] to manage [node] versions as it relates to this project. It will allow you to
+isolate the version of [node] being used for this project to the project directory, avoiding conflicts with global or
+system installations of [node].
 
-To install [nvm](https://github.com/nvm-sh/nvm), follow the instructions that can be found
-[here](https://github.com/nvm-sh/nvm#installing-and-updating).
+Instructions for installing [nvm] can be found [here](https://github.com/nvm-sh/nvm#installing-and-updating), but are
+also mentioned below for purposes of completeness:
 
-Part of the [nvm](https://github.com/nvm-sh/nvm) installation steps involve making changes to your shell profile script
-(which will most likely be `~/.zshrc` for Mac's created since the introduction of the M1 processor). In order for the
-changes to the `~/.zshrc` (or whatever shell script your system uses) to take effect, it needs to be sourced:
+First, simply run the install script:
+
+```bash
+$ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+```
+
+The above command will download a script and then run it. The script first clones the [nvm] repository at `~/.nvm` and
+then attempts to add the following source lines to your machine's shell profile script (`~/.bash_profile`, `~/.zshrc`,
+`~/.profile`, or `~/.bashrc`):
+
+```bash
+$ export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+```
+
+**Note**: _This installation will automatically make changes to your shell profile script. The exact file will depend on
+the type of machine you are running as well as the period of time in which the machine was created. Most likely, your
+shell profile script will be `~/.zshrc` - which is the shell profile used for Mac's created since the introduction of
+the M1 processor._
+
+Since the [nvm] installation involved making changes to your shell profile script behind the scenes, in order for those
+changes to take effect you need to source your `~/.zshrc` (or whatever shell script your system uses):
 
 ```bash
 $ . ~/.zshrc`
 ```
 
-Verify that your system recognizes the `nvm` command by running the following:
+Finally, verify that your system recognizes the `nvm` command by running the following:
 
 ```bash
 $ nvm
 ```
 
-##### Node Version
+##### 2.a.ii Node Version
 
-We now need to establish the version of [Node](https://nodejs.org/en/), 18, that will be used for this project. To do
-this, simply install the version of [Node](https://nodejs.org/en/) locally to this project using
-[nvm](https://github.com/nvm-sh/nvm):
+You now need to establish the correct version of [node], 18, that will be used for this project. This project comes
+equipped with a `.nvmrc` file that automatically tells [nvm] what version of [node] to use - but that version may still
+need to be installed.
 
-```bash
-$ nvm install 18
-```
-
-Then, make sure you are in the project directory and tell [nvm](https://github.com/nvm-sh/nvm) this is the version we
-want to use:
+First, instruct [nvm] to use the [node] version specified by the `.nvmrc` file with the following command:
 
 ```bash
-$ nvm use 18
+$ nvm use
 ```
 
-Confirm that [nvm](https://github.com/nvm-sh/nvm) is pointing at the correct [Node](https://nodejs.org/en/) version
-before proceeding:
+If you see an output similar to the following:
+
+```bash
+Found '/<path-to-repository>/sportbook/.nvmrc' with version <v18.0.0>
+Now using node v18.0.0 (npm v8.6.0)
+```
+
+It means that the correct version of [node] that is required for this project is already installed with [nvm] and that
+version of [node] is active for this project's directory. The rest of this step can be skipped and you can proceed to
+the next step, "Dependencies".
+
+On the other hand, if you see an error similar to the following:
+
+```bash
+Found '/<path-to-repository>/sportbook/.nvmrc' with version <v18.0.0>
+N/A: version "v18.0.0 -> N/A" is not yet installed.
+
+You need to run "nvm install v18.0.0" to install it before using it.
+```
+
+It means that the correct version of [node] that is required for this project is not already installed with [nvm], and
+must be installed before using it. To do this, simply run the following command:
+
+```bash
+$ nvm install
+```
+
+This command will use [nvm] to install the correct version of [node] that is required for this project, based on the
+specification in the project's `.nvmrc` file.
+
+Finally, all that is left to do is to instruct [nvm] to use this version of [node] by executing the following command:
+
+```bash
+$ nvm use
+```
+
+For a sanity check, confirm that [nvm] is pointing to the correct version of [node] in the project directory by
+executing the following command:
 
 ```bash
 $ nvm current
+```
+
+The output of this command should be similar to the following:
+
+```bash
 $ v18.x.x
 ```
 
-If [nvm](https://github.com/nvm-sh/nvm) is not pointing at the correct version or is pointing at a system installation
-of [Node](https://nodejs.org/en/), something went awry - consult a team member before proceeding.
+At this point, if [nvm] is not pointing at the correct version of [node] or is pointing at a system installation of
+[node], something went awry - consult a team member before proceeding.
 
-#### Dependencies
+#### 2.a.iii: Dependencies
 
 When setting up the environment for the first time, you must do a fresh install of the dependencies:
 
@@ -93,7 +157,7 @@ $ npm install
 
 This will install the project dependencies in the `package.json` file.
 
-#### ENV File
+#### 2.a.iv ENV File
 
 When running the application locally, there are two files that are used to define environment variables that the
 application relies on:
@@ -114,250 +178,240 @@ For environment variables that need to be specified in the `.env.local` file - i
 team member when you reach this step. For more information, please refer to the below section in this documentation,
 "Environment".
 
-### Step 2: Database
+### Step 3: Homebrew
 
-For both production and local development
+If on MacOSX, you will need to install [homebrew], which is a MacOSX package manager.
 
-When developing locally (or being used in production) a [] database is used. First, check to see if you already have it
-installed on your machine:
+### Step 4: Database
+
+This project uses a [postgres] database for both production and local development. First, check to see if your machine
+already has [postgres] installed:
 
 ```bash
 $ which postgres
 ```
 
 If the result of the command is a directory (usually `/usr/local/bin/postgres`), then it is already installed and you
-can proceed to the next step. If not, simply install `postgres`:
+can proceed to the next step. If not, simply install [postgres]:
 
 ```bash
 $ brew install postgres
 ```
 
-### Step 3: Python
-
-After `postgres` is installed, you need to install [`pyenv`](https://github.com/pyenv/pyenv-virtualenv), a Python
-version manager for development. This will allow you to manage your Python version on a project basis.
-
-```bash
-$ brew install pyenv
-```
-
-We then need to initialize `pyenv`, so add this to your `~/.bash_profile` (or `~/.zshrc`, or whatever default shell
-script your machine uses):
-
-```bash
-$ eval "$(pyenv init -)"
-```
-
-Then source your shell profile as:
-
-```bash
-$ . . ~/.bash_profile
-```
-
-Get `pyenv` setup with the Python version you will need for this application.
-
-```bash
-$ pyenv install 3.9.0
-$ pyenv local 3.9.0
-```
-
-> Note: If using MacOS 11, certain Python versions do not build (at the time of this documentation) and the only
-> versions that have patches for the fix are 3.7.8+, 3.8.4+, 3.9.0+. Any earlier versions will not build.
-
-Confirm that `pyenv` is pointing at the correct Python version:
-
-```bash
-$ pyenv local
-$ 3.9.0
-```
-
-If your `pyenv` local Python version is still pointing at your system Python version, update your `~/.bash_profile` (or
-`~/.zshrc`, or whatever default shell script your machine uses) to initialize `pyenv` as follows:
-
-```bash
-$ eval "$(pyenv init --path)"
-```
-
-Then, resource the shell profile and make sure that `pyenv` is pointing at the local Python version:
-
-```bash
-$ . . ~/.bash_profile
-$ pyenv local
-$ 3.9.0
-```
-
-If this still doesn't work, contact a team member before proceeding further.
-
-#### Dependencies
-
-Now we need to setup the dependencies. We use [`poetry`](https://python-poetry.org/docs/) as a dependency management
-system, so you will have to install that locally:
-
-```bash
-$ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-```
-
-Note that you may need to upgrade `pip` before installing [`poetry`](https://python-poetry.org/docs/), you can do this
-as follows:
-
-```bash
-$ python -m pip install --upgrade pip
-```
-
-Once [`poetry`](https://python-poetry.org/docs/) is intalled, you need to add it to you `PATH`:
-
-```bash
-$ export PATH=$HOME/.poetry/bin:$PATH
-```
-
-Now that [`poetry`](https://python-poetry.org/docs/) is installed and on the system path, you need to create a virtual
-environment and install the dependencies to that virtual environment.
-
-```bash
-$ python -m venv ./<env_name>
-$ . ./<env_name>/bin/activate
-$ poetry install
-```
-
-Note that [`poetry`](https://python-poetry.org/docs/) has the ability to manage virtual environments for you, so there
-is also that option if you do not feel like managing it yourself.
-
-##### Troubleshooting Dependencies
-
-If you see an error when running `poetry install` that occurs when the installation of `psycopg2` fails, this means that
-`postgres` was not properly installed. In this case, you will see an error with output that contains similar content as
-what is shown below:
-
-```bash
-python setup.py egg_info did not run successfully.
-
-Error: pg_config executable not found.
-
-pg_config is required to build psycopg2 from source.  Please add the directory
-containing pg_config to the $PATH or specify the full executable path with the
-option:
-
-  python setup.py build_ext --pg-config /path/to/pg_config build ...
-
-or with the pg_config option in 'setup.cfg'.
-
-If you prefer to avoid building psycopg2 from source, please install the PyPI
-'psycopg2-binary' package instead.
-```
-
-In this case, return to **Step 2** and make sure that `postgres` was properly installed.
-
-Once the dependencies are successfully installed, you should now be able to run the test suite (see **Testing** section
-below). However, there is still additional setup required to be able to run the application locally. These additional
-steps are outlined in **Step 4** and **Step 5**.
-
-### Step 4: Environment
-
-There are 4 distinct environments that the application runs in, with the current environment being dictated by the
-settings configuration file that is read from the OS environment variable `DJANGO_SETTINGS_MODULE`.
-
-The 4 distinct environments that the application runs in are as follows:
-
-| Environment |          Settings Module          |             URL             |      File Storage      |          Database          |
-| :---------: | :-------------------------------: | :-------------------------: | :--------------------: | :------------------------: |
-|   `local`   | `happybudget.conf.settings.local` | `local.happybudget.io:8000` |   Local File Storage   |  Local PostgreSQL Server   |
-|   `test`    | `happybudget.conf.settings.test`  |             N/A             | Temporary File Storage | Transactional SQLite3 File |
-|  `develop`  |  `happybudget.conf.settings.dev`  |   `devapi.happybudget.io`   |         AWS S3         |   PostgreSQL on AWS RDS    |
-|   `prod`    | `happybudget.conf.settings.prod`  |    `api.happybudget.io`     |         AWS S3         |   PostgreSQL on AWS RDS    |
-
-#### ENV File
-
-For all environments, we use a `.env` file in the project root that configuration values and sensitive information is
-read from. For remote environments, this `.env` file is required, but for `test` and `local` environments, the settings
-configuration associated with the OS environment variable `DJANGO_SETTINGS_MODULE` will default relevant values such
-that an `.env` file is not necessary when developing locally or running tests.
-
-However, if you wish to override certain configurations (i.e. the database configurations) you can place a `.env` file
-in the project root and implement those configuration values.
-
-#### Local Domain
-
-Our authentication protocols rely on the ability to set cookies in the response that dictate user sessions and user
-information. Recent Google Chrome security improvements have introduced the caveat that the browser no longer considers
-`localhost` a valid domain, so setting cookies in the backend for the frontend application no longer works when running
-the application on `localhost`. For this reason, the application is configured locally to **only** work on
-`127.0.0.1:8000`, not `localhost:8000`. However, the frontend expects that the API will be running on
-`local.happybudget.io:8000`, so we need to setup our `/etc/hosts` file such that we can use `local.happybudget.io` as a
-valid domain for the local development server. Note that this step is also included in the frontend setup, so this may
-have already been done as a part of that setup but is repeated here for completeness.
-
-Edit your `/etc/hosts` file as follows:
-
-```bash
-$ sudo nano /etc/hosts
-```
-
-Add the following configuration to the file:
-
-```bash
-127.0.0.1       local.happybudget.io
-```
-
-Now, when we start the development server, we will be able to access the backend application at
-`local.happybudget.io:8000`, and the frontend application at `local.happybudget.io:3000`.
-
-#### Local Database
-
-We use `postgresql` for our local (and production) databases, with the exception being our tests which run on a
-lightweight `sqlite` database so they can do transactional tests that do not take forever to run. The first step is to
-install `postgres`:
-
-```bash
-$ brew install postgres
-```
-
-Then, we need to start `postgres` as a service:
+The [postgres] installation will come equipped with [psql], which is [postgres]'s command line tool. Once [postgres] is
+installed, or you have verified that your machine already has a [postgres] installation, we need to start the [postgres]
+server:
 
 ```bash
 $ brew services start postgresql
 ```
 
+#### 4.a Setting Up Application Database
+
 The database configuration parameters can be overridden in a `.env` file, but locally they default to the following if
 not present in the `.env` file:
 
 ```bash
-DATABASE_NAME=postgres_happybudget
-DATABASE_USER=happybudget
+DATABASE_NAME=postgres_sportbook
+DATABASE_USER=sportbook
 DATABASE_PASSWORD=''
 DATABASE_HOST=localhost
 DATABASE_PORT=5432
 ```
 
-`postgresql` will, by default, setup a database named `postgres` with `postgres` as the user. Additionally, `django`
-will try to (by default) use "django" as the `DATABASE_USER`. To avoid complications around this, as well as
-complications that might arise from a developer already having the default `postgres` database name reserved for other
-purposes, we try to isolate these parameters to our use case.
+## Development
 
-This is not to say that you cannot use the application on the default `postgresql` parameters - you can, you just have
-to set them in the `.env` file.
+### IDE
 
-When starting Django, we may see some of the following database errors:
+This project is optimized for development using the [VSCode][vscode] IDE. While other IDEs may also work in this
+repository, you must take steps to ensure that our editor configurations (like trimmed whitespace, indentation, and
+`prettyprint` with [Prettier][prettier]) that are applied to this repository while using [VSCode][vscode] are also
+consistently applied in your IDE. This ensures that your commits will conform to the established repository style.
 
-```bash
-$ django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:
-$ database "postgres_happybudget" does not exist
-```
+### Running Locally
 
-This happens if the database has not yet been created. We may also see the following:
+After pulling down the latest state of the repository, the development server can be started by running the following
+command:
 
 ```bash
-$ django.db.utils.OperationalError: FATAL:  role "happybudget" does not exist
+$ npm run dev
 ```
 
-This happens if the database user has not yet been created or does not have the correct privileges to access the
-configured database.
+**Note**: If changes were made to the `package.json` file, you may need to install the dependencies via `npm install`.
 
-Both of these errors mean is that we have to setup the database manually, since it is not already setup by `postgresql`
-by default (which it would be, if we were using the `postgres` database name and user).
+Once the development server is running, you should start your work.
 
-To setup the database, we have to follow the steps outlined below. Note that not all of these steps are required each
-time, as some of the entities may already have been created or appropriately assigned when using a previous database or
-previously completing some of these steps.
+### Building
+
+Before committing any changes you have made, you must ensure that you validate your work by ensuring that you can
+successfully build the project:
+
+```bash
+$ npm run build
+```
+
+This is required because [NextJS][nextjs] does not perform type checks while the development server is running. Only the
+`build` command will compile the code and run all type checks.
+
+Sometimes, you may get misleading results from the local build. For instance, you might notice that the build is failing
+due to errors that you had just fixed, but were not picked up in the subsequent build. This can happen because
+[NextJS][nextjs] will cache part of the build. To fix this, or as as a general sanity-check, clear the cache before
+running the build:
+
+```bash
+$ rm -rf ./.next
+$ npm run build
+```
+
+**Note**: [NextJS][nextjs] will also automatically perform linting checks during the `build` process - any linting
+errors will result in the build failing automatically but linting warnings will not. This includes linting performed by
+[ESLint][eslint], [Stylelint][stylelint] and [Prettier][prettier].
+
+### Linting
+
+This project uses [ESLint][eslint] to lint files that are not CSS or SCSS based, [Stylelint][stylelint] to lint files
+that are CSS or SCSS based, and [Prettier][prettier] inside of the [ESLint][eslint] configuration which will format and
+lint files of all types.
+
+[NextJS][nextjs] will automatically perform linting checks during the `build` process, but it is desired that they be
+performed independently without performing the entire `build` process, use the following command:
+
+```bash
+$ npm run lint
+```
+
+This will run [ESLint][eslint], [Stylelint][stylelint] and [Prettier][prettier] on the project.
+
+With that being said, the project's [Jest][jest] testing suite is configured to perform linting and formatting checks
+via [ESLint][eslint], [Stylelint][stylelint] and [Prettier][prettier] as well. This is the recommended way to perform
+the checks, because the output is much, much more suitable for debugging and the hot reloading feature of [Jest][jest]
+will save you a lot of time.
+
+This can be done simply as:
+
+```bash
+$ npm run test
+```
+
+**Note**: The `npm run lint` command is actually not run during the build and is excluded from the `JenkinsFile`.
+Instead, the linting checks are performed indirectly via the [Jest][jest] testing suite, which will also perform unit
+tests and other checks not related to linting. For more information, please refer to the
+[Testing Documentation](src/docs/TESTING.md).
+
+#### Formatting & Code Style
+
+The philosophy that the project has in regard to formatting and/or code styles can be summarized as follows:
+
+> There is usually not a right or wrong answer, but it is better to choose than to not.
+
+In other words, many formatting rules were not chosen for a specific reason other than having a decision. It is better
+to rely on the available formatting tools to remove as much ambiguity as possible, rather than spending time debating or
+arguing the rules themselves.
+
+### Environment
+
+There are 3 distinct environments that the application runs in, with the current environment being dictated by the
+`NODE_ENV` environment variable:
+
+| Environment (`NODE_ENV`) | Default Environment File | Override Environment File | Overridden by `.env.local` |
+| :----------------------: | :----------------------: | :-----------------------: | :------------------------: |
+|      `development`       |    `.env.development`    | `.env.development.local`  |            Yes             |
+|       `production`       |    `.env.production`     |  `.env.production.local`  |            Yes             |
+|          `test`          |       `.env.test`        |            N/A            |             No             |
+
+Additionally, there is a third environment file, `.env`, that contains environment variables that define environment
+variables for _all_ environments.
+
+For each environment the default environment file specifies defaults that the environment variable will have for the
+file's associated environment. These files should _always_ be committed to source control.
+
+When the environment is `development`, the default environment variables will be loaded from `.env.development`.
+Similarly, when the environment is `production`, the default environment variables will be loaded from
+`.env.production`. Finally, when the environment is `test`, the default environment variables will be loaded from
+`.env.test`. In each case, any environment variables defined in the environment specific file, `.env.${NODE_ENV}`, will
+override those defined in the global environment variable file, `.env`.
+
+#### Local Overrides
+
+It is often necessary that the environment variables for any given environment be overridden, either locally in
+development or on a server. When overriding the default environment variables for a given environment is required, a
+`.env.local` file is used. The environment variables defined in this file will override the default environment
+variables _only when in a `production` or `development` environment_. If the environment is `test`, the environment
+variables in `.env.local` will not be loaded.
+
+Note that if you would like to override the environment variables for just a single environment, a corresponding
+`.env.development.local` or `.env.production.local` file can be used. Each of these files will be given precedence over
+the `.env.local` file.
+
+For further documentation regarding the environment configuration, please see the
+[NextJS Documentation](https://nextjs.org/docs/basic-features/environment-variables).
+
+### Testing
+
+This documentation is intended to outline configurations, patterns and methodologies that are used to test the Console
+application.
+
+## [Jest](https://jestjs.io/docs/getting-started) Testing Suite
+
+We use [Jest](https://jestjs.io/docs/getting-started) to handle integration and unit testing in the Console. The entire
+test suite can be run with the following command:
+
+```bash
+$ npm run test
+```
+
+#### Projects
+
+Originally, there was only one configuration file for the testing suite, `jest.config.ts`. However, due to the
+complexities of some of the tests that have to be run, the configuration had to be split up into
+[projects](https://jestjs.io/docs/configuration#projects-arraystring--projectconfig), such that certain tests can use
+different sets of configuration parameters that would not otherwise be possible with a single configuration.
+
+The [Jest](https://jestjs.io/docs/getting-started) testing suite is broken down into 6
+[projects](https://jestjs.io/docs/configuration#projects-arraystring--projectconfig):
+
+1. **SASS Unit Tests**: Unit tests that are run against [SASS](https://sass-lang.com/) mixins and functions.
+2. **Functional Unit Tests**: Unit tests that are run against functional utilities or logic in `src/lib`.
+3. **Component Tests**: Both unit tests & snapshot tests that are run against components in `src/components`.
+4. **Prettier**: Prettier checks that are performed against relevant files in the project.
+5. **ESLint**: ESLint checks that are performed against non `.scss` files in the project.
+6. **Stylelint**: Stylelint checks that are performed against `scss` files in the project.
+
+The following table describes the various aspects of each individual [Jest](https://jestjs.io/docs/getting-started)
+project in the application:
+
+|        Project        |                Config File                |       Files Tested        |       Test Files Located        | Included in Coverage |
+| :-------------------: | :---------------------------------------: | :-----------------------: | :-----------------------------: | :------------------: |
+|    SASS Unit Tests    |   `src/styles/__tests__/jest.config.ts`   |          `.scss`          |          `src/styles`           |          No          |
+| Functional Unit Tests |    `src/__tests__/unit/jest.config.ts`    |           `.ts`           |            `src/lib`            |         Yes          |
+|    Component Tests    | `src/__tests__/components/jest.config.ts` |          `.tsx`           |        `src/components`         |         Yes          |
+|       Prettier        |         `jest-prettier-config.ts`         |       All Relevant        |               N/A               |          No          |
+|        ESLint         |          `jest-eslint-config.ts`          | All Relevant, non `.scss` |               N/A               |          No          |
+|       Stylelint       |        `jest-stylelint-config.ts`         |          `.scss`          | `src/styles` & `src/components` |          No          |
+
+#### Linting
+
+Linting checks from [ESLint](https://eslint.org/), [Stylelint](https://stylelint.io/), and
+[Prettier](https://prettier.io/) can be performed both via the `npm run lint` command or simply the command that runs
+the test suite:
+
+```bash
+$ npm run test
+```
+
+However, it is highly recommended that the [Jest](https://jestjs.io/docs/getting-started) test suite is used when
+performing linting checks locally, because [Jest](https://jestjs.io/docs/getting-started) does a phenomenal job
+providing clearer, more detailed and more readable debugging information when the checks fail. Additionally,
+[Jest](https://jestjs.io/docs/getting-started) provides the benefit of "watch mode" - which allows you to dynamically
+make the changes and immediately see the checks pass as a result of the changes that were made.
+
+### Database
+
+#### Prisma
+
+The Auth Server DB uses the [Prisma](https://www.prisma.io/) ORM that maps records in the database to typescript objects
+while exposing a database client that can be used to interact with those records. To properly use this client, a
+developer must understand how this ORM works.
 
 ##### Connect to Default Postgres Database
 
@@ -409,510 +463,18 @@ $ ALTER DATABASE <DATABASE_NAME> OWNER TO <DATABASE_USER>;
 $ \q
 ```
 
-##### Populating the Database
-
-Now that the application environment is setup, there is some data we need to populate in the database before we can run
-the application. This can either be done via the automated setup command or as outlined here in the explicit steps.
-
-Again, make sure that our virtual environment is activated and that `postgres` is running.
-
-```bash
-$ . ./env/bin/activate
-$ brew services start postgresql
-```
-
-###### Automated Setup Command
-
-Simply run the following:
-
-```bash
-$ python src/manage.py setup
-```
-
-This will automatically wipe the local database defined in the `.env` file, run migrations, install fixtures and prompt
-you for information to create a `superuser`. You should always have a `superuser` account locally, and should use that
-as your primary account for logging into the application.
-
-###### Explicit Setup Commands
-
-If opting not to use the automated setup command (either due to errors with it's usage or personal preference),
-
-The first step is only applicable if we are setting up the application after it was previously setup and a database was
-created. If we want to start from scratch, we can wipe the database defined in the `.env` file as follows:
-
-```bash
-$ python src/manage.py reset_db
-```
-
-If setting up for the first time, or setting up with an existing database, this step can be ignored.
-
-Next, we need to run migrations such that the database tables and schemas are populated in the database. To do this,
-simply run the following command:
-
-```bash
-$ python src/manage.py migrate
-```
-
-Next, we need to load the fixtures into the database:
-
-```bash
-$ python src/manage.py loadfixtures
-```
-
-Then, we need to collect the server side static files for the admin:
-
-```bash
-$ python src/manage.py collectstatic
-```
-
-Finally, we need to create a superuser that we will use to login to the application with:
-
-```bash
-$ python src/manage.py createsuperuser
-```
-
-You should always have a `superuser` account locally, and should use that as your primary account for logging into the
-application.
-
-#### Celery
-
-We use [celery](https://docs.celeryq.dev/en/stable/index.html) to manage periodic background tasks in the application.
-These tasks are mostly concerned with performing cleanup or making sure that corrupted data or relationships aren't
-sneaking into the database.
-
-Running [celery](https://docs.celeryq.dev/en/stable/index.html) locally isn't required to run the application, but there
-are times where it will be needed when debugging or developing tasks that run in the application background.
-
-To run [celery](https://docs.celeryq.dev/en/stable/index.html) in the background, inside of the virtual environment
-simply run the following command:
-
-```bash
-$ celery -A happybudget worker -B -l info
-```
-
-Congratulations! You are now ready to run the application.
-
-## Development
-
-### Workflow
-
-Developers should be free to use whatever workflow works best for them, and the IDE they use is an important aspect of
-that workflow.
-
-#### IDE
-
-While it is not required that a developer use [VSCode](https://code.visualstudio.com/), it is strongly, strongly
-recommended that they do. Usage of [VSCode](https://code.visualstudio.com/) will mean that the setup for the team's code
-environment will more seamlessly integrate into your workflow.
-
-If [VSCode](https://code.visualstudio.com/) is not the ideal IDE for you, that is fine - but it is your responsibility
-to make sure that the IDE of your choosing is properly setup for the team's code environment, which primary relates to
-(but is not limited to) linting.
-
-##### Extensions
-
-If using [VSCode](https://code.visualstudio.com/), please make sure to install the `"ms-python.vscode-pylance"` and
-`"ms-python.python"` extensions from the [VSCode](https://code.visualstudio.com/) marketplace.
-
-##### `settings.json`
-
-For [VSCode](https://code.visualstudio.com/) to function properly with the code environment configuration remote to this
-repository, you should add the following configurations to your `settings.json` file:
-
-```json
-{
-  "editor.formatOnSave": true,
-  "[python]": {
-    "editor.tabSize": 4,
-    "editor.insertSpaces": true,
-    "editor.formatOnSave": true
-  },
-  "python.linting.flake8Enabled": true,
-  "python.linting.pylintEnabled": true,
-  "python.linting.flake8CategorySeverity.W": "Error",
-  "python.linting.pycodestyleEnabled": true,
-  "editor.rulers": [80, 100],
-  "python.languageServer": "Pylance"
-}
-```
-
-### Running Locally
-
-To run the application locally, simply activate the virtual environment and start the Django web server:
-
-```bash
-$ . ./env/bin/activate
-$ python src/manage.py runserver
-```
-
-#### Django Settings
-
-By default, the Django settings module used when running locally (toggled via the `DJANGO_SETTINGS_MODULE` environment
-variable) is `happybudget.conf.settings.local`. If you need to override certain settings for your own personal local
-development, `happybudget.conf.settings.local` should not be edited but instead a
-`happybudget.conf.settings.local_override` Python file should be created.
-
-### Testing
-
-See the `ReadMe.md` file in the `testing` directory
-[here](https://github.com/nickmflorin/happybudget-api/blob/develop/tests/ReadMe.md).
-
-#### tox
-
-We use `tox` to automate our testing, linting and code coverage processes. `tox` was a project that began as a way to
-run tests across Python versions, Django versions and other package versions - but has extended itself to much more.
-
-Our `tox` setup can be very useful for local development. One benefit of `tox` is that it completely isolates it's own
-cached virtual environments for purposes of running tests and producing coverage reports. The following commands can all
-be run outside of a virtual environment:
-
-Run the complete `pytest` suite and generate coverage reports in `/reports`:
-
-```bash
-$ tox
-```
-
-or
-
-```bash
-tox -e test
-```
-
-Clean all build and test directories as well as extraneous artifacts:
-
-```bash
-tox -e clean
-```
-
-Run `flake8` linting checks and generate linting reports in `/reports`:
-
-```bash
-tox -e lint
-```
-
-Running these commands will usually be slow the first time, just because `tox` has to setup the cached environment - but
-after that, they all run very quickly and can be very useful.
-
-### Managing Dependencies
-
-We use [`poetry`](https://python-poetry.org/docs/) as a package management system.
-[`poetry`](https://python-poetry.org/docs/)'s analogue to a `requirements.txt` file is the `pyproject.toml` file.
-Whenever you need to add or remove dependencies from the project, the `pyproject.toml` file will be updated to reflect
-the new dependency state.
-
-See the discussion in **Getting Started** for instructions on how to install and setup
-[`poetry`](https://python-poetry.org/docs/).
-
-#### Installing All Packages
-
-The [`poetry`](https://python-poetry.org/docs/) analogue to `pip install -r requirements.txt` is as follows:
-
-```bash
-$ poetry install
-```
-
-This will install/update all of the packages in the `pyproject.toml` file.
-
-#### Installing a Specific Package
-
-To install a specific package with [`poetry`](https://python-poetry.org/docs/), all you have to do is:
-
-```bash
-$ poetry add <package-name>
-```
-
-This will install the package in your virtual environment and update the `pyproject.toml` file.
-
-#### Remove a Specific Package
-
-To remove a specific package with [`poetry`](https://python-poetry.org/docs/), all you have to do is:
-
-```bash
-$ poetry remove <package-name>
-```
-
-This will remove the package from your virtual environment and update the `pyproject.toml` file.
-
-#### Development vs. Production Dependencies
-
-[`poetry`](https://python-poetry.org/docs/) uses a concept of development dependencies to allow additional dependencies
-to be included for local development that we do not want to add in a production environment. By default, when running
-`poetry install` it will include the development dependencies. In production, we use `poetry install --no-dev` so that
-development dependencies are not included.
-
-## Setting Up on EC2 Instance
-
-The setup instructions in this section describe the steps required to setup and run the API on a Linux EC2 AWS instance.
-If a machine other than Linux is chosen, these steps will differ.
-
-These instructions do not detail how to setup the EC2 instance in AWS, but rather detail how to setup the API on an EC2
-instance assuming it has already been created.
-
-Currently, we run EC2 instances for two separate environments:
-
-| Environment |         Settings Module          |           URL           |
-| :---------: | :------------------------------: | :---------------------: |
-|  `develop`  | `happybudget.conf.settings.dev`  | `devapi.happybudget.io` |
-|   `prod`    | `happybudget.conf.settings.prod` |  `api.happybudget.io`   |
-
-#### Step 1: Installing Git
-
-After SSH'ing into the EC2 instance, we first need to install `git` on the machine. To install `git` on the EC2
-instance, simply run:
-
-```bash
-$ sudo yum update
-$ sudo yum install git -y
-```
-
-We then need to create the SSH keys for `git` that will authenticate the machine for SSH requests to `git`.
-
-```bash
-$ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
-```
-
-A passphrase is not required for the SSH key, and the key should be saved in it's default location which is usually
-`~/.ssh/id_rsa`.
-
-We then need to modify the SSH configuration to automatically include this SSH key. To do this, edit the `~/.ssh/config`
-file as follows:
-
-```bash
-$ sudo nano ~/.ssh/config
-```
-
-```
-Host *
-  AddKeysToAgent yes
-  IdentityFile ~/.ssh/id_rsa
-```
-
-This assumes that your SSH key was created in `~/.ssh/id_rsa`.
-
-Finally, we just need to start the `ssh-agent` in the background and add the newly created identity:
-
-```bash
-$ eval "$(ssh-agent -s)"
-$ ssh-add ~/.ssh/id_rsa
-```
-
-In order for `git` to allow SSH access to the machine, we now need to add that SSH key to `git`. To do this, login to
-your GitHub account (or an organization GitHub account that has access to the repository) and go to the Settings page.
-Under "SSH and GPG Keys", click "Add SSH Key". Read the public key content on the machine and copy and paste it into the
-GitHub field:
-
-```bash
-tail ~/.ssh/id_rsa.pub
-```
-
-#### Step 2: Installing Docker
-
-We now need to install `docker` and `docker-compose` on the machine. To install `docker`, run the following command:
-
-```bash
-$ sudo amazon-linux-extras install docker
-```
-
-Once `docker` is installed, we need to start the `docker` service and add the `ec2-user` to the `docker` group so we can
-execute `docker` commands without using `sudo`:
-
-```bash
-$ sudo service docker start
-$ sudo usermod -a -G docker ec2-user
-```
-
-Logout from the EC2 instance and then SSH back in. Verify that you can run `docker` commands without `sudo`:
-
-```bash
-$ docker info
-```
-
-Finally, we simply need to install `docker-compose`:
-
-```bash
-$ sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-```
-
-#### Step 3: Clone Repository
-
-After SSH'ing into the instance, we need to clone the `git` repository. Make a top level directory `www` with the
-correct permissions and clone the repository into that directory:
-
-```bash
-$ sudo mkdir www
-$ sudo chmod 777 www
-$ chmod go-w ~/.ssh/config
-$ cd ./www
-$ git clone git@github.com:nickmflorin/happybudget-api.git
-$ cd ./happybudget-api
-```
-
-##### ENV File
-
-We need to create a `.env` file to hold the sensitive keys required to run the API. You should talk to a team member to
-get these key values before proceeding. The `.env` file should look as follows:
-
-```
-DJANGO_SECRET_KEY=<DJANGO_SECRET_KEY>
-DJANGO_SETTINGS_MODULE=<DJANGO_SETTINGS_MODULE>
-
-DATABASE_NAME=<RDS_DATABASE_NAME>
-DATABASE_USER=<RDS_DATABASE_USER>
-DATABASE_PASSWORD=<RDS_DATABASE_PASSWORD>
-DATABASE_HOST=<RDS_DATABASE_HOST>
-DATABASE_PORT=5432
-
-AWS_STORAGE_BUCKET_NAME=<AWS_STORAGE_BUCKET_NAME>
-AWS_STORAGE_BUCKET_URL=<AWS_STORAGE_BUCKET_URL>
-AWS_S3_REGION_NAME=<AWS_S3_REGION_NAME>
-AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY >
-AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
-
-JWT_RSA_FINGERPRINT=<JWT_RSA_FINGERPRINT>
-```
-
-Note that `DJANGO_SETTINGS_MODULE` will be set based on the environment of the EC2 instance.
-
-###### JWT RSA Signing Fingerprint
-
-This step is very important. To dramatically improve the security of the application, we do not use the
-`DJANGO_SECRET_KEY` to sign JWT tokens used throughout the application. Instead, we use an RSA fingerprint, because it
-is significantly more secure and is easier to swap out if it ever becomes compromised.
-
-In local and test environments, the RSA fingerprint defaults to a value that does not need to be stored sensitively.
-However, in production and development environments, we need to generate the RSA public/private key pairs on the server
-so they can be securely stored and referenced by the application.
-
-To start, generate a private/public RSA key pair as follows:
-
-```bash
-$ ssh-keygen -m PEM -t rsa -b 4096 -C "your_email@example.com"
-```
-
-You will then be prompted to enter the file for which the key should be saved. Since we will be reading the file
-contents in the application itself, the private/public key pairs need to be stored inside of the `docker` environment.
-Our `docker` setup expects the file to be named `jwt_signing_key`, and in order for it to be copied to the `docker`
-environment, and found by Django, it needs to be stored in the `BASE_DIR`:
-
-```bash
-$ Enter file in which to save the key (/home/ec2-user/.ssh/id_rsa): /www/happybudget-api/src/happybudget/jwt_signing_key
-```
-
-Do not enter a passphrase.
-
-**Important**: Do not ever, under any circumstances, remove this file from the EC2 instance, commit to source control or
-share with another person, inside or outside of the company.
-
-Now that we have the private/public RSA key pairs generated, we simply need to reference it's filename in the `.env`
-file, since Django will by default try to find it in `src/happybudget/<filename>`. The RSA private/public key pairs are
-in the root of the `docker` environment, so this is simply:
-
-```bash
-$ nano .env
-$ JWT_RSA_FINGERPRINT_FILENAME=jwt_signing_key
-```
-
-The application will now automatically read both the file and it's `.pub` counterpart and use the file contents to sign
-the JWT tokens in the application.
-
-#### Step 4: Configuring Apache
-
-On the EC2 instance, we need to use Apache as a proxy to route requests on port `80` to requests on port `8000` where
-the application is running. Requests are mapped to port `80` via the load balancer in AWS, which will route requests on
-port `443` (for HTTPS) to port `80`.
-
-First, we need to install `httpd`:
-
-```bash
-$ sudo yum install httpd
-```
-
-Next, we just need to edit the Apache configuration to route requests as described above:
-
-```bash
-$ cd /etc/httpd
-$ touch vhosts.conf
-$ sudo nano vhosts.conf
-```
-
-Add the following content to `vhosts.conf`:
-
-```
-<VirtualHost *:80>
-  ProxyPreserveHost On
-  ProxyRequests Off
-  ServerName viska.localhost
-  ProxyPass / http://localhost:8000/
-  ProxyPassReverse / http://localhost:8000/
-
-  Timeout 3600
-  ProxyTimeout 3600
-  ProxyBadHeader Ignore
-
-  ErrorLog "/var/log/httpd/gb-error_log"
-  CustomLog "/var/log/httpd/gb-access_log" common
-
-</VirtualHost>
-```
-
-Finally, run the `httpd` service in the background:
-
-```
-$ sudo service httpd start
-```
-
-#### Step 5: Running the Application
-
-When running the application, the `docker-compose` configuration file we use depends on the environment. In the `prod`
-environment, the configuration file is simply `docker-compose.yml` - which is the default. However, in the `dev`
-environment, we need to specify the configuration file as `docker-compose.dev.yml`. For this reason, the directions to
-start the application in each environment differ slightly.
-
-##### Prod Environment
-
-Check your `.env` file and make sure that `DJANGO_SETTINGS_MODULE=happybudget.conf.settings.prod`. Then, check out the
-`master` branch:
-
-```bash
-$ git fetch origin master
-$ git checkout master
-$ git pull
-```
-
-Then, we simply need to build the container and bring it up and then run `Django` management commands _when applicable_.
-
-```bash
-$ docker-compose up -d --build
-$ docker-compose exec web python manage.py migrate
-$ docker-compose exec web python manage.py collectstatic
-$ docker-compose exec web python manage.py loadfixtures
-$ docker-compose exec web python manage.py createsuperuser
-```
-
-##### Dev Environment
-
-Check your `.env` file and make sure that `DJANGO_SETTINGS_MODULE=happybudget.conf.settings.dev`. Then, check out the
-`develop` branch:
-
-```bash
-$ git fetch origin develop
-$ git checkout develop
-$ git pull
-```
-
-Then, we simply need to build the container and bring it up and then run `Django` management commands _when applicable_.
-
-```bash
-$ docker-compose -f docker-compose.dev.yml up -d --build
-$ docker-compose -f docker-compose.dev.yml exec web python manage.py migrate
-$ docker-compose -f docker-compose.dev.yml exec web python manage.py collectstatic
-$ docker-compose -f docker-compose.dev.yml exec web python manage.py loadfixtures
-$ docker-compose -f docker-compose.dev.yml exec web python manage.py createsuperuser
-```
-
+[psql]: https://www.postgresql.org/docs/current/app-psql.html
 [homebrew]: https://brew.sh/
 [postgresql]: https://www.postgresql.org/docs/current/app-psql.html
 [nvm]: https://github.com/nvm-sh/nvm
 [node]: https://nodejs.org/en/
 [postgres]: https://www.postgresql.org/
+[homepage]: ./ReadMe.md
+[react]: https://reactjs.org/
+[nextjs]: https://nextjs.org/
+[prettier]: https://prettier.io/
+[vscode]: https://code.visualstudio.com/
+[stylelint]: https://stylelint.io/
+[eslint]: https://eslint.org/
+[jest]: https://jestjs.io/docs/getting-started
+[sass]: https://sass-lang.com/
