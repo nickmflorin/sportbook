@@ -206,18 +206,77 @@ server:
 $ brew services start postgresql
 ```
 
-#### 4.a Setting Up Application Database
+#### 4.a Database Environment Variables
 
-The database configuration parameters can be overridden in a `.env` file, but locally they default to the following if
-not present in the `.env` file:
+The database connection parameters for the application are defined in the relevant `.env.X` files. These include the
+following:
+
+1. `DATABASE_URL`: The explicit URL connection string of the [postgres] database. This connection string can be omitted
+   from the environment if the desired behavior is for the connection string to be formed directly from the
+   `DATABASE_NAME`, `DATABASE_PASSWORD`, `DATABSE_HOST`, `DATABASE_USER` and `DATABASE_PORT` parameters.
+2. `DATABASE_NAME`: The name of the [postgres] database. Only required when `DATABASE_URL` is not set.
+3. `DATABASE_PASSWORD`: The password of the [postgres] database. Only required when `DATABASE_URL` is not set.
+4. `DATABSE_HOST`: The host that the [postgres] database is running on. Only required when `DATABASE_URL` is not set.
+5. `DATABASE_PORT`: The port that the [postgres] database is running on. Only required when `DATABASE_URL` is not set.
+6. `DATABASE_USER` The user of the [postgres] database. Only required when `DATABASE_URL` is not set.
+
+These parameters are defaulted in the `.env.development` file, but can be overridden in your `.env.local` or
+`.env.development.local` file if you ever need to connect to a different database.
+
+#### 4.b Setting Up Application Database
+
+The above database connection parameters defined in the `.env.development` file (or overridden in your `.env.local` or
+`.env.development.local` file) will be needed to create and setup the application database from the [psql] shell. Since
+the database in [postgres] may not exist yet, we need to create it via the [psql] command line. To do this, connect to
+the default database name `"postgres"`, that comes with the [homebrew] installation of [postgres]:
 
 ```bash
-DATABASE_NAME=postgres_sportbook
-DATABASE_USER=sportbook
-DATABASE_PASSWORD=''
-DATABASE_HOST=localhost
-DATABASE_PORT=5432
+$ psql -d postgres
 ```
+
+It is possible (though very unlikely) that either your [postgres] installation did not come with the default
+`"postgres"` database or it was somehow removed. If this is the case, you will see an error similar to the following:
+
+```bash
+$ psql: error: connection to server on socket "/tmp/.s.PGSQL.5432" failed: FATAL:  database "postgres" does not exist
+```
+
+If you see this error, you cannot connect to the [psql] shell because there are no databases to connect to. To fix this,
+simply run the following from the command line, and then reconnect to the [psql] shell:
+
+```bash
+$ createdb postgres
+$ psql -d postgres
+```
+
+Once inside of the [psql] shell, create the appropriate [postgres] database associated with this application, based on
+the configuration parameters defined in the environment:
+
+```bash
+$ CREATE DATABASE <DATABASE_NAME>;
+```
+
+Then, create the [postgres] user associated with the configuration variables defined in the environment and subsequently
+grant all privileges to that user:
+
+```bash
+$ CREATE USER <DATABASE_USER> WITH PASSWORD <DATABASE_PASSWORD>;
+$ GRANT ALL PRIVILEGES ON DATABASE <DATABASE_NAME> TO <DATABASE_USER>;
+```
+
+Finally, assign the created or existing user as the owner of the created or existing database.
+
+```bash
+$ ALTER DATABASE <DATABASE_NAME> OWNER TO <DATABASE_USER>;
+```
+
+You can now quit the [psql] shell:
+
+```bash
+$ \q
+```
+
+The application should now be ready to connect to the database for local development.
 
 ## Development
 
@@ -434,56 +493,6 @@ make the changes and immediately see the checks pass as a result of the changes 
 The Auth Server DB uses the [Prisma](https://www.prisma.io/) ORM that maps records in the database to typescript objects
 while exposing a database client that can be used to interact with those records. To properly use this client, a
 developer must understand how this ORM works.
-
-##### Connect to Default Postgres Database
-
-Since we do not know whether or not the database we are concerned with has been created yet, we connect to the default
-database `postgres` since we can still run commands for other databases from that entry point.
-
-```bash
-$ psql -d postgres
-```
-
-###### Create the Database
-
-If the database was not already created, we need to create it.
-
-```bash
-$ CREATE DATABASE <DATABASE_NAME>;
-```
-
-###### Create the Database User
-
-If the user does not already exist, we need to create one in Postgres. Note that if different databases are using the
-same user, the user may already have been created.
-
-```bash
-$ CREATE USER <DATABASE_USER> WITH PASSWORD '';
-```
-
-###### Grant Privileges to Database User
-
-If the database was just created, or the user was just created, we need to grant access to the created or existing
-database to the created or existing user.
-
-```bash
-$ GRANT ALL PRIVILEGES ON DATABASE <DATABASE_NAME> TO <DATABASE_USER>;
-```
-
-###### Assign User as Owner of Database
-
-If the database was just created, or the user was just created, we need to assign the created or existing user as the
-owner of the created or existing database.
-
-```bash
-$ ALTER DATABASE <DATABASE_NAME> OWNER TO <DATABASE_USER>;
-```
-
-###### Quit the Postgres Shell
-
-```bash
-$ \q
-```
 
 [psql]: https://www.postgresql.org/docs/current/app-psql.html
 [homebrew]: https://brew.sh/
