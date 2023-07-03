@@ -221,6 +221,10 @@ DATABASE_PORT=5432
 
 ## Development
 
+This section of the documentation describes various interactions that you will need to understand in order to properly
+work with this application locally. This section assumes that you have already completed the steps outlined in the prior
+section, "Getting Started".
+
 ### IDE
 
 This project is optimized for development using the [VSCode][vscode] IDE. While other IDEs may also work in this
@@ -238,8 +242,6 @@ $ npm run dev
 ```
 
 **Note**: If changes were made to the `package.json` file, you may need to install the dependencies via `npm install`.
-
-Once the development server is running, you should start your work.
 
 ### Building
 
@@ -263,6 +265,12 @@ $ rm -rf ./.next
 $ npm run build
 ```
 
+You can also accomplish this via the `build-local` command, which is defined in the `package.json` file:
+
+```bash
+$ npm run build-local
+```
+
 **Note**: [NextJS][nextjs] will also automatically perform linting checks during the `build` process - any linting
 errors will result in the build failing automatically but linting warnings will not. This includes linting performed by
 [ESLint][eslint], [Stylelint][stylelint] and [Prettier][prettier].
@@ -270,8 +278,22 @@ errors will result in the build failing automatically but linting warnings will 
 ### Linting
 
 This project uses [ESLint][eslint] to lint files that are not CSS or SCSS based, [Stylelint][stylelint] to lint files
-that are CSS or SCSS based, and [Prettier][prettier] inside of the [ESLint][eslint] configuration which will format and
-lint files of all types.
+that are CSS or SCSS based, and [Prettier][prettier] inside of the [ESLint][eslint] configuration which is responsible
+for formatting files of all types. Both [ESLint][eslint] and [Stylelint][stylelint] are configured to automatically
+format the file when the file is saved (a configuration that is defined in `./vscode/settings.json`). If that is not
+desirable, you can easily turn that setting off in yoru local [VSCode][vscode] settings.
+
+#### Formatting & Code Style
+
+The philosophy that the project has in regard to formatting and/or code styles can be summarized as follows:
+
+> There is usually not a right or wrong answer, but it is better to choose than to not.
+
+In other words, many formatting rules were not chosen for a specific reason other than having a decision. It is better
+to rely on the available formatting tools to remove as much ambiguity as possible, rather than spending time debating or
+arguing the rules themselves.
+
+#### Performing Linting Checks
 
 [NextJS][nextjs] will automatically perform linting checks during the `build` process, but it is desired that they be
 performed independently without performing the entire `build` process, use the following command:
@@ -280,7 +302,7 @@ performed independently without performing the entire `build` process, use the f
 $ npm run lint
 ```
 
-This will run [ESLint][eslint], [Stylelint][stylelint] and [Prettier][prettier] on the project.
+This will run [ESLint][eslint], [Stylelint][stylelint] and [Prettier][prettier] (via [ESLint][eslint]) on the project.
 
 With that being said, the project's [Jest][jest] testing suite is configured to perform linting and formatting checks
 via [ESLint][eslint], [Stylelint][stylelint] and [Prettier][prettier] as well. This is the recommended way to perform
@@ -293,20 +315,20 @@ This can be done simply as:
 $ npm run test
 ```
 
-**Note**: The `npm run lint` command is actually not run during the build and is excluded from the `JenkinsFile`.
-Instead, the linting checks are performed indirectly via the [Jest][jest] testing suite, which will also perform unit
-tests and other checks not related to linting. For more information, please refer to the
-[Testing Documentation](src/docs/TESTING.md).
+For more information related to [Jest][jest] and the linting checks it performs, please see the section further down in
+this documentation, "Testing".
 
-#### Formatting & Code Style
+#### Automatically Fixing [ESLint][eslint] Violations
 
-The philosophy that the project has in regard to formatting and/or code styles can be summarized as follows:
+Some [ESLint][eslint] violations can be automatically fixed by [ESLint][eslint] itself. This can be performed via the
+`eslint-fix` command, which is defined in the `package.json` file:
 
-> There is usually not a right or wrong answer, but it is better to choose than to not.
+```bash
+$ npm run eslint-fix
+```
 
-In other words, many formatting rules were not chosen for a specific reason other than having a decision. It is better
-to rely on the available formatting tools to remove as much ambiguity as possible, rather than spending time debating or
-arguing the rules themselves.
+This command will automatically fix and format all [ESLint][eslint] and [Prettier][prettier] violations in the
+repository that are capable of being auto-fixed.
 
 ### Environment
 
