@@ -1,5 +1,7 @@
 import { type ReactNode } from "react";
 
+import classNames from "classnames";
+
 import { ShowHide } from "../util";
 
 import { Header } from "./Header";
@@ -13,7 +15,7 @@ export interface AppLayoutProps {
 export const AppLayout = async ({ children, authenticated }: AppLayoutProps): Promise<JSX.Element> => (
   <div className="app-layout">
     <Header />
-    <main className="app-main">
+    <main className={classNames("app-main", { "app-main--authenticated": authenticated })}>
       <ShowHide show={authenticated}>
         <Sidebar />
       </ShowHide>

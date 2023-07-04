@@ -7,7 +7,7 @@
   },
   "engineStrict": true,
   "scripts": {
-    "requirements-check": "ts-node --compilerOptions='{\"module\":\"commonjs\"}' src/application/support/enforce-node-version.ts",
+    "requirements-check": "ts-node --project=./tsconfig.json  src/application/support/enforce-node-version.ts",
     "setup-env": "npm run requirements-check && npm run prisma-generate",
     "preinstall": "npm run requirements-check",
     "predev": "npm run setup-env",
@@ -28,10 +28,7 @@
     "test": "jest --watchAll  --silent=false",
     "test:ci": "jest --ci",
     "tsc": "tsc --project ./tsconfig.json",
-    "tsc:watch": "tsc -w",
-    "prisma-generate": "prisma generate --schema=./src/prisma/schema.prisma",
-    "prisma-migrate-dev": "prisma migrate dev --schema=./src/prisma/schema.prisma",
-    "prisma-migrate": "dotenv -e .env -e .env.development -e .env.local -e .env.development.local npm run prisma-migrate-dev"
+    "tsc:watch": "tsc -w"
   },
   "dependencies": {
     "@clerk/clerk-sdk-node": "^4.10.14",
@@ -51,10 +48,13 @@
     "@trpc/next": "^10.26.0",
     "@trpc/react-query": "^10.26.0",
     "@trpc/server": "^10.26.0",
+    "classnames": "^2.3.2",
     "dotenv-cli": "^7.2.1",
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.5.0",
+    "luxon": "^3.3.0",
     "next": "13.4.7",
+    "npm": "^9.7.2",
     "pino": "^8.14.1",
     "pino-pretty": "^10.0.0",
     "react": "18.2.0",
@@ -68,9 +68,12 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
+    "@types/classnames": "^2.3.1",
     "@types/eslint": "^8.37.0",
     "@types/jest": "^29.5.2",
+    "@types/luxon": "^3.3.0",
     "@types/node": "^18.16.0",
+    "@types/npm": "^7.19.0",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
     "@typescript-eslint/eslint-plugin": "^5.59.6",
@@ -97,5 +100,9 @@
   },
   "ct3aMetadata": {
     "initVersion": "7.15.0"
+  },
+  "prisma": {
+    "schema": "src/prisma/schema.prisma",
+    "seed": "dotenv -e .env -e .env.development -e .env.local -e .env.development.local ts-node --project tsconfig.json src/prisma/seed.ts"
   }
 }

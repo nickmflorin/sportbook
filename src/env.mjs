@@ -91,7 +91,7 @@ export const env = createEnv({
     DATABASE_PASSWORD: z.string().optional(),
     DATABASE_USER: z.string().optional(),
     DATABASE_HOST: z.string().optional(),
-    DATABASE_PORT: z.number().int().positive().optional(),
+    DATABASE_PORT: z.coerce.number().int().positive().optional(),
     DATABASE_LOG_LEVEL: PrismaLogLevelSchema.optional(),
     NODE_ENV: z.enum(["development", "test", "production"]),
     PRETTY_LOGGING: StringBooleanFlagSchema.default(DEFAULT_PRETTY_LOGGING[process.env.NODE_ENV === "development"]),

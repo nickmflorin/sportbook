@@ -22,7 +22,7 @@ import { PrismaClient } from "@prisma/client";
 
 import { env } from "~/env.mjs";
 
-import { ModelTypeExtension } from "./extensions";
+import { ModelTypeExtension, userModelExtension } from "./extensions";
 import { postgresConnectionString } from "./util";
 
 type DBNumericParam = "DATABASE_PORT";
@@ -71,10 +71,16 @@ export const initializePrismaClient = () => {
       name: PARAMS.DATABASE_NAME,
     });
   }
-  return new PrismaClient({
+  const prisma = new PrismaClient({
     log: env.DATABASE_LOG_LEVEL,
     datasources: { db: { url } },
-  }).$extends(ModelTypeExtension);
+  });
+
+  return prisma.$extends({
+    model: {
+      user: userModelExtension(prisma),
+    },
+  });
 };
 
 export type ClientType = ReturnType<typeof initializePrismaClient>;

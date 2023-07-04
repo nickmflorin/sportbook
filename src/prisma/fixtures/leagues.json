@@ -1,0 +1,184 @@
+{
+  "leagues": [
+    {
+      "name": "League 1",
+      "createdAt": "2023-06-28T10:15:00Z",
+      "updatedAt": "2023-06-28T15:30:00Z",
+      "leagueType": "ORGANIZED",
+      "isPublic": false,
+      "leagueStart": "2023-07-05T18:00:00Z",
+      "competitionLevel": "COMPETITIVE"
+    },
+    {
+      "name": "League 2",
+      "createdAt": "2023-06-25T08:45:00Z",
+      "updatedAt": "2023-06-27T16:20:00Z",
+      "leagueType": "PICKUP",
+      "isPublic": true,
+      "leagueStart": "2023-07-10T19:30:00Z",
+      "leagueEnd": "2023-09-01T22:00:00Z",
+      "competitionLevel": "SOCIAL_COMPETITIVE"
+    },
+    {
+      "name": "League 3",
+      "createdAt": "2023-06-30T14:10:00Z",
+      "updatedAt": "2023-07-01T09:45:00Z",
+      "leagueType": "PICKUP",
+      "isPublic": false,
+      "leagueEnd": "2023-09-10T18:30:00Z",
+      "competitionLevel": "COMPETITIVE"
+    },
+    {
+      "name": "League 4",
+      "createdAt": "2023-06-27T12:20:00Z",
+      "updatedAt": "2023-06-29T17:55:00Z",
+      "leagueType": "PICKUP",
+      "isPublic": true,
+      "leagueStart": "2023-07-20T20:15:00Z",
+      "leagueEnd": "2023-09-15T21:45:00Z",
+      "competitionLevel": "COMPETITIVE"
+    },
+    {
+      "name": "League 5",
+      "createdAt": "2023-06-29T09:30:00Z",
+      "updatedAt": "2023-07-02T14:40:00Z",
+      "leagueType": "PICKUP",
+      "isPublic": true,
+      "leagueStart": "2023-07-25T17:30:00Z",
+      "leagueEnd": "2023-09-20T19:00:00Z",
+      "competitionLevel": "SOCIAL"
+    },
+    {
+      "name": "League 6",
+      "createdAt": "2023-07-01T08:00:00Z",
+      "updatedAt": "2023-07-03T13:10:00Z",
+      "leagueType": "ORGANIZED",
+      "isPublic": false,
+      "leagueStart": "2023-07-30T15:45:00Z",
+      "competitionLevel": "SOCIAL_COMPETITIVE"
+    },
+    {
+      "name": "League 7",
+      "createdAt": "2023-06-28T16:55:00Z",
+      "updatedAt": "2023-06-30T20:30:00Z",
+      "leagueType": "ORGANIZED",
+      "isPublic": true,
+      "leagueStart": "2023-08-05T18:30:00Z",
+      "leagueEnd": "2023-09-30T20:00:00Z",
+      "competitionLevel": "COMPETITIVE"
+    },
+    {
+      "name": "League 8",
+      "createdAt": "2023-06-26T10:05:00Z",
+      "updatedAt": "2023-06-29T16:40:00Z",
+      "leagueType": "ORGANIZED",
+      "isPublic": false,
+      "leagueStart": "2023-08-10T19:00:00Z",
+      "leagueEnd": "2023-10-05T21:30:00Z",
+      "competitionLevel": "COMPETITIVE"
+    },
+    {
+      "name": "League 9",
+      "createdAt": "2023-06-30T15:20:00Z",
+      "updatedAt": "2023-07-01T12:45:00Z",
+      "leagueType": "PICKUP",
+      "isPublic": true,
+      "leagueStart": "2023-08-15T16:30:00Z",
+      "leagueEnd": "2023-10-10T18:00:00Z",
+      "competitionLevel": "SOCIAL_COMPETITIVE"
+    },
+    {
+      "name": "League 10",
+      "createdAt": "2023-06-29T13:50:00Z",
+      "updatedAt": "2023-07-02T18:25:00Z",
+      "leagueType": "PICKUP",
+      "isPublic": true,
+      "competitionLevel": "COMPETITIVE"
+    },
+    {
+      "name": "League 11",
+      "createdAt": "2023-06-30T09:40:00Z",
+      "updatedAt": "2023-07-01T07:05:00Z",
+      "leagueType": "PICKUP",
+      "isPublic": false,
+      "leagueStart": "2023-08-25T17:00:00Z",
+      "leagueEnd": "2023-10-20T18:30:00Z",
+      "competitionLevel": "SOCIAL"
+    },
+    {
+      "name": "League 12",
+      "createdAt": "2023-06-27T15:35:00Z",
+      "updatedAt": "2023-06-29T19:10:00Z",
+      "leagueType": "ORGANIZED",
+      "isPublic": true,
+      "leagueStart": "2023-08-30T15:15:00Z",
+      "leagueEnd": "2023-10-25T16:45:00Z",
+      "competitionLevel": "COMPETITIVE"
+    },
+    {
+      "name": "League 13",
+      "createdAt": "2023-06-25T17:25:00Z",
+      "updatedAt": "2023-06-28T21:00:00Z",
+      "leagueType": "ORGANIZED",
+      "isPublic": false,
+      "competitionLevel": "SOCIAL_COMPETITIVE"
+    },
+    {
+      "name": "League 14",
+      "createdAt": "2023-07-01T13:15:00Z",
+      "updatedAt": "2023-07-03T18:40:00Z",
+      "leagueType": "PICKUP",
+      "isPublic": true,
+      "leagueStart": "2023-09-10T19:30:00Z",
+      "leagueEnd": "2023-11-05T22:00:00Z",
+      "competitionLevel": "COMPETITIVE"
+    },
+    {
+      "name": "League 15",
+      "createdAt": "2023-06-28T10:30:00Z",
+      "updatedAt": "2023-06-30T16:55:00Z",
+      "leagueType": "PICKUP",
+      "isPublic": false,
+      "leagueStart": "2023-09-15T16:45:00Z",
+      "leagueEnd": "2023-11-10T18:15:00Z",
+      "competitionLevel": "COMPETITIVE"
+    },
+    {
+      "name": "League 16",
+      "createdAt": "2023-06-26T08:50:00Z",
+      "updatedAt": "2023-06-29T14:15:00Z",
+      "leagueType": "PICKUP",
+      "isPublic": true,
+      "competitionLevel": "SOCIAL"
+    },
+    {
+      "name": "League 17",
+      "createdAt": "2023-06-29T15:40:00Z",
+      "updatedAt": "2023-07-02T20:05:00Z",
+      "leagueType": "ORGANIZED",
+      "isPublic": false,
+      "leagueStart": "2023-09-25T17:45:00Z",
+      "leagueEnd": "2023-11-20T19:15:00Z",
+      "competitionLevel": "COMPETITIVE"
+    },
+    {
+      "name": "League 18",
+      "createdAt": "2023-06-30T13:25:00Z",
+      "updatedAt": "2023-07-01T10:50:00Z",
+      "leagueType": "ORGANIZED",
+      "isPublic": true,
+      "leagueEnd": "2023-11-25T20:30:00Z",
+      "competitionLevel": "SOCIAL_COMPETITIVE"
+    },
+    {
+      "name": "League 19",
+      "createdAt": "2023-06-27T11:15:00Z",
+      "updatedAt": "2023-06-30T15:40:00Z",
+      "leagueType": "PICKUP",
+      "isPublic": true,
+      "leagueStart": "2023-10-05T18:45:00Z",
+      "leagueEnd": "2023-11-30T20:15:00Z",
+      "competitionLevel": "COMPETITIVE"
+    }
+  ]
+}

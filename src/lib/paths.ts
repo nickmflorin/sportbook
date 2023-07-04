@@ -1,15 +1,3 @@
-// Paths that do not require an authenticated user.
-export const PUBLIC_PATHS: RegExp[] = [/^\/$/, /^\/sign-in($|\/)/, /^\/sign-up($|\/)/, /^\/switch-org($|\/)/];
-
-/**
- * Returns whether or not the provided path, {@link string}, is considered "public" (i.e. the path does not require an
- * authenticated user).
- *
- * @param {string} path The applicable path.
- * @returns {boolean} Whether or not the path is "public".
- */
-export const pathIsPublic = (path: string): boolean => PUBLIC_PATHS.find(x => path.match(x)) !== undefined;
-
 export const UUID_PATH_PARAM_REGEX_STRING = "([0-9a-zA-z-]+)";
 export const PATH_END_REGEX_STRING = "(?:\\/)?(\\?([^\\/]+)?(\\/)?)?$";
 
@@ -29,4 +17,17 @@ export const createLeadingPathRegex = (path: string): RegExp => {
   path = path.startsWith("/") ? path.substring(1) : path;
   path = path.endsWith("/") ? path.substring(0, path.length - 1) : path;
   return new RegExp(`^/${path.replaceAll(":id", UUID_PATH_PARAM_REGEX_STRING)}${PATH_END_REGEX_STRING}`);
+};
+
+export type PathActive =
+  | (boolean | RegExp | ((pathname: string) => boolean))[]
+  | boolean
+  | RegExp
+  | ((pathname: string) => boolean);
+
+export const pathIsActive = (path: PathActive, pathname: string): boolean => {
+  if (!Array.isArray(path)) {
+    return typeof path === "function" ? path(pathname) : path instanceof RegExp ? path.test(pathname) : path;
+  }
+  return path.map(p => pathIsActive(p, pathname)).includes(true);
 };

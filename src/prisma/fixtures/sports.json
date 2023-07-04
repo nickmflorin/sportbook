@@ -1,0 +1,74 @@
+{
+  "sports": [
+    {
+      "name": "Football",
+      "createdAt": "2023-06-28T10:15:00Z",
+      "updatedAt": "2023-06-28T15:30:00Z"
+    },
+    {
+      "name": "Basketball",
+      "createdAt": "2023-06-25T08:45:00Z",
+      "updatedAt": "2023-06-27T16:20:00Z"
+    },
+    {
+      "name": "Tennis",
+      "createdAt": "2023-06-30T14:10:00Z",
+      "updatedAt": "2023-07-01T09:45:00Z"
+    },
+    {
+      "name": "Soccer",
+      "createdAt": "2023-06-27T12:20:00Z",
+      "updatedAt": "2023-06-29T17:55:00Z"
+    },
+    {
+      "name": "Cricket",
+      "createdAt": "2023-06-29T09:30:00Z",
+      "updatedAt": "2023-07-02T14:40:00Z"
+    },
+    {
+      "name": "Volleyball",
+      "createdAt": "2023-07-01T08:00:00Z",
+      "updatedAt": "2023-07-03T13:10:00Z"
+    },
+    {
+      "name": "Baseball",
+      "createdAt": "2023-06-28T16:55:00Z",
+      "updatedAt": "2023-06-30T20:30:00Z"
+    },
+    {
+      "name": "Hockey",
+      "createdAt": "2023-06-26T10:05:00Z",
+      "updatedAt": "2023-06-29T16:40:00Z"
+    },
+    {
+      "name": "Golf",
+      "createdAt": "2023-06-30T15:20:00Z",
+      "updatedAt": "2023-07-01T12:45:00Z"
+    },
+    {
+      "name": "Rugby",
+      "createdAt": "2023-06-29T13:50:00Z",
+      "updatedAt": "2023-07-02T18:25:00Z"
+    },
+    {
+      "name": "Swimming",
+      "createdAt": "2023-06-30T09:40:00Z",
+      "updatedAt": "2023-07-01T07:05:00Z"
+    },
+    {
+      "name": "Badminton",
+      "createdAt": "2023-06-27T15:35:00Z",
+      "updatedAt": "2023-06-29T19:10:00Z"
+    },
+    {
+      "name": "Table Tennis",
+      "createdAt": "2023-06-25T17:25:00Z",
+      "updatedAt": "2023-06-28T21:00:00Z"
+    },
+    {
+      "name": "Athletics",
+      "createdAt": "2023-07-01T13:15:00Z",
+      "updatedAt": "2023-07-03T18:40:00Z"
+    }
+  ]
+}

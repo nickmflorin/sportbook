@@ -1,21 +1,34 @@
 @use "partials";
 @use "./header";
+@use "./sidebar";
 
 .app-layout {
   overflow: hidden;
 
   > .app-main {
     min-height: calc(100vh - partials.$app-header-height);
+    max-width: 100vw;
+    width: 100vw;
     height: calc(100vh - partials.$app-header-height);
     overflow: hidden;
     position: relative;
+    display: flex;
+    flex-direction: row;
 
     > .app-viewport {
       overflow-y: scroll;
       max-height: 100%;
       height: 100%;
       width: 100%;
+      max-width: 100%;
       padding: partials.get-spacing("md");
+    }
+
+    &--authenticated {
+      > .app-viewport {
+        width: calc(100% - partials.$app-sidebar-width);
+        max-width: calc(100% - partials.$app-sidebar-width);
+      }
     }
   }
 }
