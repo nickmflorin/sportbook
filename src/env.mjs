@@ -81,24 +81,54 @@ const DEFAULT_PRETTY_LOGGING = {
   test: true,
 };
 
+const OMIT = z.literal("").optional();
+
+const restrictInTest = schema => {
+  if (process.env.NODE_ENV === "test") {
+    return OMIT;
+  }
+  return schema;
+};
+
 export const env = createEnv({
   /* ----------------------------------- Server Environment Variables ------------------------------------ */
   server: {
     APP_NAME_FORMAL: z.string(),
-    DATABASE_URL: process.env.NODE_ENV === "test" ? z.literal("") : z.string().url().optional(),
-    MIGRATE_DATABASE_URL: process.env.NODE_ENV === "test" ? z.literal("") : z.string().url(),
-    DATABASE_NAME: z.string().optional(),
-    DATABASE_PASSWORD: z.string().optional(),
-    DATABASE_USER: z.string().optional(),
-    DATABASE_HOST: z.string().optional(),
-    DATABASE_PORT: z.coerce.number().int().positive().optional(),
-    DATABASE_LOG_LEVEL: PrismaLogLevelSchema.optional(),
     NODE_ENV: z.enum(["development", "test", "production"]),
     PRETTY_LOGGING: StringBooleanFlagSchema.default(DEFAULT_PRETTY_LOGGING[process.env.NODE_ENV === "development"]),
-    CLERK_SECRET_KEY:
-      process.env.NODE_ENV === "test"
-        ? z.literal("")
-        : z.string().startsWith(process.env.NODE_ENV === "development" ? "sk_test" : "sk_live"),
+    CLERK_SECRET_KEY: {
+      test: OMIT,
+      development: z.string().startsWith("sk_test"),
+      production: z.string().startsWith("sk_live"),
+    }[process.env.NODE_ENV],
+    /* ~~~~~~~~~~ Database Configuration ~~~~~~~ */
+    DATABASE_URL: restrictInTest(z.string().url().optional()),
+    MIGRATE_DATABASE_URL: restrictInTest(z.string().url()),
+    DATABASE_NAME: restrictInTest(z.string().optional()),
+    DATABASE_PASSWORD: restrictInTest(z.string().optional()),
+    DATABASE_USER: restrictInTest(z.string().optional()),
+    DATABASE_HOST: restrictInTest(z.string().optional()),
+    DATABASE_PORT: restrictInTest(z.coerce.number().int().positive().optional()),
+    DATABASE_LOG_LEVEL: PrismaLogLevelSchema.optional(),
+    /* ~~~~~~~~~~ API Configuration ~~~~~~~ */
+    /* The VERCEL_URL is only used in production - in development cases, the URL will be constructed from the host,
+       port and scheme. */
+    VERCEL_URL: {
+      production: z.string(),
+      development: z.string().optional(),
+      test: OMIT,
+    }[process.env.NODE_ENV],
+    API_SCHEME: z.union([z.literal("http"), z.literal("https")]),
+    API_HOST: {
+      production: OMIT,
+      development: z.string(),
+      test: OMIT,
+    }[process.env.NODE_ENV],
+    API_PORT: {
+      production: OMIT,
+      development: z.coerce.number().int().positive(),
+      test: OMIT,
+    }[process.env.NODE_ENV],
   },
   /* ----------------------------------- Client Environment Variables ------------------------------------ */
   client: {
@@ -106,6 +136,10 @@ export const env = createEnv({
       process.env.NODE_ENV === "test"
         ? z.literal("")
         : z.string().startsWith(process.env.NODE_ENV === "development" ? "pk_test" : "pk_live"),
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string(),
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string(),
+    NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string(),
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string(),
     NEXT_PUBLIC_LOG_LEVEL: z
       .union([
         z.literal("fatal"),
@@ -133,12 +167,18 @@ export const env = createEnv({
     PRETTY_LOGGING: process.env.PRETTY_LOGGING,
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
     APP_NAME_FORMAL: process.env.APP_NAME_FORMAL,
+    VERCEL_URL: process.env.VERCEL_URL,
+    API_PORT: process.env.API_PORT,
+    API_HOST: process.env.API_HOST,
+    API_SCHEME: process.env.API_SCHEME,
     /* ----------------------------------- Client Environment Variables ------------------------------------ */
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     NEXT_PUBLIC_LOG_LEVEL: process.env.NEXT_PUBLIC_LOG_LEVEL,
     NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL,
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
+    NEXT_PUBLIC_CLERK_SIGN_UP_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
-
-const d = env.MIGRATE_DATABASE_URL;

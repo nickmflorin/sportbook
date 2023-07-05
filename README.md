@@ -5,7 +5,7 @@
 ### System Requirements
 
 - [nvm]: A [node] version manager.
-- [Node][node] v18
+- [Node][node] v19
 - [homebrew]: A MacOSX package manager.
 - [postgresql] ([homebrew] package)
 
@@ -33,7 +33,7 @@ This section walks through how to install and configure the prerequisites (Syste
 
 #### 2.a Node
 
-[Node][node] is the engine that supports the application. This project uses [node] v18.0.0. Your machine will most
+[Node][node] is the engine that supports the application. This project uses [node] v19.0.0. Your machine will most
 likely already have a system installation of [node], but even if it does not - that is okay. We will not be using a
 system installation of [node] but will rather isolate the version of [node] to this repository, using [nvm].
 
@@ -85,7 +85,7 @@ $ nvm
 
 ##### 2.a.ii Node Version
 
-You now need to establish the correct version of [node], 18, that will be used for this project. This project comes
+You now need to establish the correct version of [node], 19, that will be used for this project. This project comes
 equipped with a `.nvmrc` file that automatically tells [nvm] what version of [node] to use - but that version may still
 need to be installed.
 
@@ -98,8 +98,8 @@ $ nvm use
 If you see an output similar to the following:
 
 ```bash
-Found '/<path-to-repository>/sportbook/.nvmrc' with version <v18.0.0>
-Now using node v18.0.0 (npm v8.6.0)
+Found '/<path-to-repository>/sportbook/.nvmrc' with version <v19.0.0>
+Now using node v19.0.0 (npm v8.6.0)
 ```
 
 It means that the correct version of [node] that is required for this project is already installed with [nvm] and that
@@ -109,10 +109,10 @@ the next step, "Dependencies".
 On the other hand, if you see an error similar to the following:
 
 ```bash
-Found '/<path-to-repository>/sportbook/.nvmrc' with version <v18.0.0>
-N/A: version "v18.0.0 -> N/A" is not yet installed.
+Found '/<path-to-repository>/sportbook/.nvmrc' with version <v19.0.0>
+N/A: version "v19.0.0 -> N/A" is not yet installed.
 
-You need to run "nvm install v18.0.0" to install it before using it.
+You need to run "nvm install v19.0.0" to install it before using it.
 ```
 
 It means that the correct version of [node] that is required for this project is not already installed with [nvm], and
@@ -141,7 +141,7 @@ $ nvm current
 The output of this command should be similar to the following:
 
 ```bash
-$ v18.x.x
+$ v19.x.x
 ```
 
 At this point, if [nvm] is not pointing at the correct version of [node] or is pointing at a system installation of

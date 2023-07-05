@@ -1,13 +1,13 @@
 /* eslint-disable no-console -- This script runs outside of the logger context. */
 import clerk from "@clerk/clerk-sdk-node";
-import { PrismaClient, type User, LeagueCompetitionLevel, LeagueType } from "@prisma/client";
+import { type User, LeagueCompetitionLevel, LeagueType } from "@prisma/client";
 import { DateTime } from "luxon";
 
 import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
 
-import { data } from "./fixtures";
+import { prisma } from "~/server/db";
 
-const prisma = new PrismaClient();
+import { data } from "./fixtures";
 
 /* -------------------------------------------------- Constants ---------------------------------------------- */
 
@@ -231,19 +231,7 @@ async function main() {
   const clerkUsers = await collectPages(p => clerk.users.getUserList(p));
   console.info(`Found ${clerkUsers.length} users in Clerk.`);
 
-  const users = await Promise.all(
-    clerkUsers.map(u =>
-      prisma.user.create({
-        data: {
-          clerkId: u.id,
-          firstName: u.firstName,
-          lastName: u.lastName,
-          profileImageUrl: u.profileImageUrl,
-          emailAddress: u.emailAddresses.find(e => u.primaryEmailAddressId === e.id)?.emailAddress,
-        },
-      }),
-    ),
-  );
+  const users = await Promise.all(clerkUsers.map(u => prisma.user.createFromClerk(u)));
   console.info(`Generated ${users.length} users in the database.`);
 
   const organizations = await collectPages(p => clerk.organizations.getOrganizationList(p));

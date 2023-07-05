@@ -15,18 +15,22 @@ model Example {
 }
 
 model User {
-  id              String          @id @default(uuid()) @db.Uuid
-  clerkId         String          @unique
-  firstName       String?
-  lastName        String?
-  profileImageUrl String?
-  emailAddress    String?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  org             Org?            @relation("orgUsers", fields: [orgId], references: [id])
-  orgId           String?         @db.Uuid
-  leagues         LeagueOnUsers[]
-  TeamOnUsers     TeamOnUsers[]
+  id                   String          @id @default(uuid()) @db.Uuid
+  clerkId              String          @unique
+  firstName            String?
+  lastName             String?
+  profileImageUrl      String?
+  // TODO: We may need to make this a required field - the only reason it is optional is because it is optional in
+  // Clerk.
+  emailAddress         String?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  org                  Org?            @relation("orgUsers", fields: [orgId], references: [id])
+  orgId                String?         @db.Uuid
+  // Users are only created when Clerk data for the user exists - so a default value of "now" makes sense here.
+  lastUpdatedFromClerk DateTime        @default(now())
+  leagues              LeagueOnUsers[]
+  TeamOnUsers          TeamOnUsers[]
 }
 
 model Org {

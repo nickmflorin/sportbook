@@ -22,8 +22,10 @@ import { PrismaClient } from "@prisma/client";
 
 import { env } from "~/env.mjs";
 
-import { ModelTypeExtension, userModelExtension } from "./extensions";
+import { userModelExtension } from "./extensions";
 import { postgresConnectionString } from "./util";
+
+export * from "./errors";
 
 type DBNumericParam = "DATABASE_PORT";
 
@@ -71,24 +73,31 @@ export const initializePrismaClient = () => {
       name: PARAMS.DATABASE_NAME,
     });
   }
-  const prisma = new PrismaClient({
+  console.log("INITIALIZING: " + String(typeof window));
+  const _prisma = new PrismaClient({
     log: env.DATABASE_LOG_LEVEL,
     datasources: { db: { url } },
   });
-
-  return prisma.$extends({
+  return _prisma.$extends({
     model: {
-      user: userModelExtension(prisma),
+      user: userModelExtension(_prisma),
     },
   });
 };
 
 export type ClientType = ReturnType<typeof initializePrismaClient>;
 
+export let prisma: ClientType;
+
 const globalPrisma = global as unknown as { prisma: ClientType };
 
-export const prisma = globalPrisma.prisma || initializePrismaClient();
-
-if (process.env.NODE_ENV === "development") {
-  globalPrisma.prisma = prisma;
+if (typeof window === "undefined") {
+  if (process.env.NODE_ENV === "production") {
+    prisma = initializePrismaClient();
+  } else {
+    if (!globalPrisma.prisma) {
+      globalPrisma.prisma = initializePrismaClient();
+    }
+    prisma = globalPrisma.prisma;
+  }
 }

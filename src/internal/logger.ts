@@ -11,11 +11,11 @@ const initializeLogger = () => {
       revision: env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
     },
   };
-  if (typeof window === "undefined" && env.PRETTY_LOGGING === true) {
-    /* eslint-disable-next-line @typescript-eslint/no-var-requires */
-    const pretty = require("pino-pretty");
-    return pino(loggerOptions, pretty({ colorize: true }));
-  }
+  // if (typeof window === "undefined" && env.PRETTY_LOGGING === true) {
+  //   /* eslint-disable-next-line @typescript-eslint/no-var-requires */
+  //   const pretty = require("pino-pretty");
+  //   return pino(loggerOptions, pretty({ colorize: true }));
+  // }
   return pino(loggerOptions);
 };
 

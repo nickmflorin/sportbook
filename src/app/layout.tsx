@@ -1,7 +1,9 @@
+import { Inter } from "next/font/google";
+import { type ReactNode } from "react";
+
 /* eslint-disable-next-line import/order */
 import "~/styles/globals/index.scss";
-import { Inter } from "next/font/google";
-
+/* eslint-disable-next-line import/order */
 import { AppConfig } from "~/components/config/AppConfig";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -11,13 +13,12 @@ export const metadata = {
   description: "Social & pickup sports league management.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
+const RootLayout = ({ children }: { children: ReactNode }) => (
+  <html lang="en">
     <AppConfig>
-      <html lang="en">
-        <head></head>
-        <body className={inter.className}>{children}</body>
-      </html>
+      <body className={inter.className}>{children}</body>
     </AppConfig>
-  );
-}
+  </html>
+);
+
+export default RootLayout;
