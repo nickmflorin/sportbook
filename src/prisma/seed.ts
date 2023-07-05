@@ -1,11 +1,13 @@
 /* eslint-disable no-console -- This script runs outside of the logger context. */
+import { createRequire as _createRequire } from "module";
+
 import clerk from "@clerk/clerk-sdk-node";
 import { type User, LeagueCompetitionLevel, LeagueType } from "@prisma/client";
 import { DateTime } from "luxon";
 
 import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
 
-import { prisma } from "~/server/db";
+import { type ClientType, prisma } from "~/server/db";
 
 import { data } from "./fixtures";
 
@@ -231,6 +233,8 @@ async function main() {
   const clerkUsers = await collectPages(p => clerk.users.getUserList(p));
   console.info(`Found ${clerkUsers.length} users in Clerk.`);
 
+  /* TODO: We need to figure out how to sync user data with clerk data at certain times.  We cannot do this from the
+     middleware script because we cannot run Prisma in the browser. */
   const users = await Promise.all(clerkUsers.map(u => prisma.user.createFromClerk(u)));
   console.info(`Generated ${users.length} users in the database.`);
 

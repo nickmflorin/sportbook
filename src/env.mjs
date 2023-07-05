@@ -118,17 +118,6 @@ export const env = createEnv({
       development: z.string().optional(),
       test: OMIT,
     }[process.env.NODE_ENV],
-    API_SCHEME: z.union([z.literal("http"), z.literal("https")]),
-    API_HOST: {
-      production: OMIT,
-      development: z.string(),
-      test: OMIT,
-    }[process.env.NODE_ENV],
-    API_PORT: {
-      production: OMIT,
-      development: z.coerce.number().int().positive(),
-      test: OMIT,
-    }[process.env.NODE_ENV],
   },
   /* ----------------------------------- Client Environment Variables ------------------------------------ */
   client: {
@@ -168,9 +157,6 @@ export const env = createEnv({
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
     APP_NAME_FORMAL: process.env.APP_NAME_FORMAL,
     VERCEL_URL: process.env.VERCEL_URL,
-    API_PORT: process.env.API_PORT,
-    API_HOST: process.env.API_HOST,
-    API_SCHEME: process.env.API_SCHEME,
     /* ----------------------------------- Client Environment Variables ------------------------------------ */
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     NEXT_PUBLIC_LOG_LEVEL: process.env.NEXT_PUBLIC_LOG_LEVEL,
