@@ -14,10 +14,11 @@ const InitialDataTableActionItem: DataTableActionItem = {
 
 export type DataTableAction = {
   /**
-   * Whether or not the {@link DataTableActionMenuItem} is in a loading state and should indicate as such with a loading indicator.
+   * Whether or not the {@link DataTableActionMenuItem} is in a loading state and should indicate as such with a loading
+   * indicator.
    *
-   * Note: The loading state on the {@link DataTableActionMenuItem} can also be set via {@link React.MutableRefObject<DataTableActionItem>}
-   * that is included in the 'onClick' callback.
+   * Note: The loading state on the {@link DataTableActionMenuItem} can also be set via
+   * {@link React.MutableRefObject<DataTableActionItem>} that is included in the 'onClick' callback.
    *
    * Default: false
    */
@@ -41,14 +42,16 @@ export type DataTableAction = {
    */
   readonly hidden?: boolean;
   /**
-   * The color of the 'icon' ({@link React.ComponentType<TablerIconsProps>}) that is used in the {@link DataTableActionMenuItem}.  Can be
-   * provided as a string or a callback, taking the {@link MantineTheme} as its first and only argument.
+   * The color of the 'icon' ({@link React.ComponentType<TablerIconsProps>}) that is used in the
+   * {@link DataTableActionMenuItem}.  Can be provided as a string or a callback, taking the {@link MantineTheme} as its
+   * first and only argument.
    *
    * Default: "gray.5"
    */
   readonly iconColor?: string | ((t: MantineTheme) => string);
   /**
-   * The optional icon, {@link React.ComponentType<TablerIconsProps>}, that should be rendered in the {@link DataTableActionMenuItem}.
+   * The optional icon, {@link React.ComponentType<TablerIconsProps>}, that should be rendered in the
+   * {@link DataTableActionMenuItem}.
    */
   readonly icon?: React.ComponentType<TablerIconsProps>;
   /**
@@ -56,9 +59,9 @@ export type DataTableAction = {
    */
   readonly label: string;
   /**
-   * An optional callback that is invoked when the {@link DataTableActionMenuItem} is clicked.  The callback includes the original, native
-   * event, {@link React.MouseEvent<HTMLButtonElement>}, along with the {@link DataTableActionItem} ref that can be used to control the
-   * item's behavior during the handling context:
+   * An optional callback that is invoked when the {@link DataTableActionMenuItem} is clicked.  The callback includes
+   * the original, native event, {@link React.MouseEvent<HTMLButtonElement>}, along with the
+   * {@link DataTableActionItem} ref that can be used to control the item's behavior during the handling context:
    *
    * @example
    * actions={[
@@ -137,8 +140,8 @@ export interface DataTableActionMenuProps extends MenuProps {
 }
 
 /**
- * A Menu implementation (with an ellipsis dropdown button) that can be used in the {@link DataTable} component to show a series of actions
- * that are associated with a given row in a dropdown menu.
+ * A Menu implementation (with an ellipsis dropdown button) that can be used in the {@link DataTable} component to show
+ * a series of actions that are associated with a given row in a dropdown menu.
  */
 export const DataTableActionMenu = ({ actions, ...props }: DataTableActionMenuProps) => {
   const theme = useMantineTheme();
@@ -159,9 +162,9 @@ export const DataTableActionMenu = ({ actions, ...props }: DataTableActionMenuPr
             size="xs"
             color="gray.5"
             sx={t => ({
-              /* We use the SVG selector to set the color such that the hover color takes affect when the ActionIcon is hovered.  If we do
-                 not use the > svg selector, and set the color on the Icon directly, the Icon will not change color when the ActionIcon is
-                 hovered. */
+              /* We use the SVG selector to set the color such that the hover color takes affect when the ActionIcon is
+                 hovered.  If we do not use the > svg selector, and set the color on the Icon directly, the Icon will
+                 not change color when the ActionIcon is hovered. */
               "> svg": {
                 color: t.colors.gray[5],
               },

@@ -62,7 +62,7 @@ const DataTableStyleAttributes: {
   }),
 };
 
-export type Column<T = unknown> = MantineDataTableProps<T>["columns"][number];
+export type Column<T = unknown> = Exclude<MantineDataTableProps<T>["columns"], undefined>[number];
 
 export const EditRowColumn = <T extends Record<string, unknown>>({
   onRowEdit,
@@ -135,14 +135,17 @@ export const DataTable = <T extends Record<string, unknown>>({
   const theme = useMantineTheme();
 
   const _columns = useMemo(() => {
-    let cs = [...columns];
-    if (onRowEdit) {
-      return [...cs, EditRowColumn({ onRowEdit, theme })];
+    if (columns) {
+      let cs = [...columns];
+      if (onRowEdit) {
+        return [...cs, EditRowColumn({ onRowEdit, theme })];
+      }
+      if (actionMenu) {
+        cs = [...cs, ActionMenuColumn({ actionMenu })];
+      }
+      return cs;
     }
-    if (actionMenu) {
-      cs = [...cs, ActionMenuColumn({ actionMenu })];
-    }
-    return cs;
+    return undefined;
   }, [columns, theme, onRowEdit, actionMenu]);
 
   /* Mantine's <DataTable /> component defines the props as a set of base props intersected with a bunch of
