@@ -22,6 +22,7 @@
       width: 100%;
       max-width: 100%;
       padding: partials.get-spacing("md");
+      background-color: partials.$white;
     }
 
     &--authenticated {

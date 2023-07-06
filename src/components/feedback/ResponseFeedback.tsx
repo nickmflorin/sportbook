@@ -1,6 +1,6 @@
 import { IconDatabase, IconSearch } from "@tabler/icons-react";
 
-import { LocalFeedback, FeedbackLevel } from "~/components/display/feedback";
+import { LocalFeedback, FeedbackLevel } from "./LocalFeedback";
 
 export interface ResponseFeedbackProps {
   /**
@@ -8,8 +8,8 @@ export interface ResponseFeedbackProps {
    */
   readonly overlay?: boolean;
   /**
-   * Either a {@link boolean} value indicating that an error occurred or an error message, {@link string}.  If provided as {@link true}
-   * or a {@link string}, the error message will be shown.
+   * Either a {@link boolean} value indicating that an error occurred or an error message, {@link string}.  If provided
+   * as {@link true} or a {@link string}, the error message will be shown.
    */
   readonly error?: boolean | string;
   /**
@@ -17,8 +17,9 @@ export interface ResponseFeedbackProps {
    */
   readonly errorMessage?: string | JSX.Element;
   /**
-   * A {@link string} message that should appear in the case that there is no data in the response.  If 'noResultsMessage' is provided, and
-   * 'isFiltered' is provided as 'true', the 'noResultsMessage' will take precedence when the component is in an empty state.
+   * A {@link string} message that should appear in the case that there is no data in the response.  If
+   * 'noResultsMessage' is provided, and 'isFiltered' is provided as 'true', the 'noResultsMessage' will take precedence
+   * when the component is in an empty state.
    */
   readonly emptyMessage?: string | JSX.Element;
   /**
@@ -26,14 +27,16 @@ export interface ResponseFeedbackProps {
    */
   readonly isEmpty?: boolean;
   /**
-   * A message that should be applied in the case that the API returns an empty set of data after search or filter criteria are applied.
+   * A message that should be applied in the case that the API returns an empty set of data after search or filter
+   * criteria are applied.
    *
    * @see {ResponseFeedback.isFiltered}
    */
   readonly noResultsMessage?: string | JSX.Element;
   /**
-   * Whether or not the results are filtered.  Can be provided in the case that the 'noResultsMessage' should be shown instead of the
-   * 'emptyMessage' when the API returns an empty set of data after search or filter criteria are applied.
+   * Whether or not the results are filtered.  Can be provided in the case that the 'noResultsMessage' should be shown
+   * instead of the 'emptyMessage' when the API returns an empty set of data after search or filter criteria are
+   * applied.
    *
    * @see {ResponseFeedback.noResultsMessage}
    */
@@ -41,8 +44,8 @@ export interface ResponseFeedbackProps {
 }
 
 /**
- * A component that is used to render feedback local to a component when the component relies on data that is received from an API
- * request, more frequently than not - 'useQuery'.
+ * A component that is used to render feedback local to a component when the component relies on data that is received
+ * from an API request, more frequently than not - 'useQuery'.
  */
 export const ResponseFeedback = ({
   noResultsMessage = "There are no results.",

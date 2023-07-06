@@ -1,7 +1,13 @@
 import React from "react";
 
-import { Text, Flex, FlexProps, useMantineTheme, MantineTheme, packSx } from "@mantine/core";
-import { IconExclamationCircle, IconAlertTriangle, TablerIconsProps, IconCircleCheck, IconNote } from "@tabler/icons-react";
+import { Text, Flex, type FlexProps, useMantineTheme, type MantineTheme, packSx } from "@mantine/core";
+import {
+  IconExclamationCircle,
+  IconAlertTriangle,
+  type TablerIconsProps,
+  IconCircleCheck,
+  IconNote,
+} from "@tabler/icons-react";
 
 export enum FeedbackLevel {
   WARNING = "WARNING",
@@ -162,16 +168,18 @@ const isMultipleFeedbackProps = (props: LocalFeedbackProps): props is MultipleFe
   (props as ExplicitFeedbackProps).children === undefined;
 
 /**
- * A component that should be used for rendering feedback alerts local to another component.  The component can render one or many various
- * feedback elements, where each feedback element is rendered based on the attributes defined in the {@link LocalFeedbackData} interface.
+ * A component that should be used for rendering feedback alerts local to another component.  The component can render
+ * one or many various feedback elements, where each feedback element is rendered based on the attributes defined in the
+ * {@link LocalFeedbackData} interface.
  *
- * The component will appropriately ignore nullish values for feedback elements, or feedback elements that are explicitly set to not be
- * visible, while maintaining proper spacing between the elements themselves and as a whole inside of the parent component.  When no
- * valid, visible feedback elements are present, the component will not affect the DOM (returning an empty fragment).
+ * The component will appropriately ignore nullish values for feedback elements, or feedback elements that are
+ * explicitly set to not be visible, while maintaining proper spacing between the elements themselves and as a whole
+ * inside of the parent component.  When no valid, visible feedback elements are present, the component will not affect
+ * the DOM (returning an empty fragment).
  *
  * @param {LocalFeedbackProps} props
- *   Props for the component that can either be provided as a single feedback element, {@link LocalFeedbackData}, or several feedback
- *   elements, provided as an array of {@link LocalFeedbackData} elements.
+ *   Props for the component that can either be provided as a single feedback element, {@link LocalFeedbackData}, or
+ *   several feedback elements, provided as an array of {@link LocalFeedbackData} elements.
  *
  * @returns {JSX.Element}
  *
@@ -235,7 +243,14 @@ export const LocalFeedback = (props: LocalFeedbackProps): JSX.Element => {
       <ToOverlay overlay={overlay}>
         <Flex {...flexProps} w="100%" direction="column" gap="md">
           {visibleFeedback.map(({ level, message, icon }, i) => (
-            <_LocalFeedback key={i} level={level} message={message} icon={icon} subtle={subtle} orientation={orientation} />
+            <_LocalFeedback
+              key={i}
+              level={level}
+              message={message}
+              icon={icon}
+              subtle={subtle}
+              orientation={orientation}
+            />
           ))}
         </Flex>
       </ToOverlay>
