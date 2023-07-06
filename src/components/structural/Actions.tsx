@@ -1,15 +1,33 @@
+"use client";
 import React, { useMemo } from "react";
 
 import { Flex, type FlexProps, type MantineTheme, useMantineTheme, packSx } from "@mantine/core";
 
+import { ActionIcon, type ActionIconProps } from "~/components/buttons/ActionIcon";
+
 export type RenderAction = {
-  render: () => JSX.Element;
-  visible?: boolean;
+  readonly render: () => JSX.Element;
+  readonly visible?: boolean;
 };
 
-export type Action = JSX.Element | RenderAction;
+export type IconAction = Pick<ActionIconProps, "color" | "icon" | "stroke" | "onClick"> & {
+  readonly visible?: boolean;
+  readonly disabled?: boolean;
+};
 
-const isRenderAction = (action: Action): action is RenderAction => (action as RenderAction).render !== undefined;
+export type Action = JSX.Element | IconAction | RenderAction | undefined | null;
+
+const isRenderAction = (action: Exclude<Action, undefined | null>): action is RenderAction =>
+  (action as RenderAction).render !== undefined;
+
+const isIconAction = (action: Exclude<Action, undefined | null>): action is IconAction =>
+  (action as IconAction).icon !== undefined;
+
+export const actionIsVisible = (a: Action) =>
+  a !== null && a !== undefined && ((!isRenderAction(a) && !isIconAction(a)) || a.visible !== false);
+
+export const filterVisibleActions = (actions: Action[]) =>
+  actions.filter((a): a is Exclude<Action, null | undefined> => actionIsVisible(a));
 
 export interface ActionsProps extends Omit<FlexProps, "align" | "direction" | "h"> {
   /**
@@ -51,9 +69,9 @@ export const Actions = ({ children = [], actions, spacing, h = "24px", ...props 
 
   const visibleActions = useMemo<JSX.Element[]>(
     () =>
-      (actions || (Array.isArray(children) ? children : [children]))
-        .filter((a: Action) => !isRenderAction(a) || a.visible !== false)
-        .map((a: Action) => (isRenderAction(a) ? a.render() : a)),
+      filterVisibleActions(actions || (Array.isArray(children) ? children : [children])).map(a =>
+        isRenderAction(a) ? a.render() : isIconAction(a) ? <ActionIcon {...a} /> : a,
+      ),
     [actions, children],
   );
 

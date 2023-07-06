@@ -1,23 +1,17 @@
 import { type Sport } from "@prisma/client";
 
-import { LeaguesTable } from "~/components/tables/LeaguesTable";
 import { prisma } from "~/server/db";
 
-import { SportLeaguesHeader } from "./SportLeaguesHeader";
+import { SportLeaguesView } from "./SportLeaguesView";
 
-export interface SportLeaguesProps {
+export interface LeagueSportsProps {
   readonly sport: Sport;
   readonly userId: string;
 }
 
-export const SportLeagues = async ({ userId, sport }: SportLeaguesProps) => {
+export const SportLeagues = async ({ userId, sport }: LeagueSportsProps) => {
   const leagues = await prisma.league.findMany({
     where: { sportId: sport.id, participants: { some: { user: { clerkId: userId } } } },
   });
-  return (
-    <div className="sport-leagues">
-      <SportLeaguesHeader sport={sport} />
-      <LeaguesTable records={leagues} />
-    </div>
-  );
+  return <SportLeaguesView leagues={leagues} sport={sport} />;
 };
