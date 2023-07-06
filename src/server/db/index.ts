@@ -23,6 +23,7 @@ import { PrismaClient } from "@prisma/client";
 import { env } from "~/env.mjs";
 
 import { userModelExtension } from "./extensions";
+import { userModelMetaDataMiddleware } from "./middleware";
 import { getDatabaseUrl, type DatabaseParams } from "./util";
 
 export * from "./errors";
@@ -38,6 +39,7 @@ export const initializePrismaClient = (params?: DatabaseParams) => {
     log: env.DATABASE_LOG_LEVEL,
     datasources: { db: { url } },
   });
+  _prisma.$use(userModelMetaDataMiddleware);
   return _prisma.$extends({
     model: {
       user: userModelExtension(_prisma),

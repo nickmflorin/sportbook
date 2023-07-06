@@ -15,22 +15,22 @@ model Example {
 }
 
 model User {
-  id                   String          @id @default(uuid()) @db.Uuid
-  clerkId              String          @unique
+  id                   String                 @id @default(uuid()) @db.Uuid
+  clerkId              String                 @unique
   firstName            String?
   lastName             String?
   profileImageUrl      String?
   // TODO: We may need to make this a required field - the only reason it is optional is because it is optional in
   // Clerk.
   emailAddress         String?
-  createdAt            DateTime        @default(now())
-  updatedAt            DateTime        @updatedAt
-  org                  Org?            @relation("orgUsers", fields: [orgId], references: [id])
-  orgId                String?         @db.Uuid
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  org                  Org?                   @relation("orgUsers", fields: [orgId], references: [id])
+  orgId                String?                @db.Uuid
   // Users are only created when Clerk data for the user exists - so a default value of "now" makes sense here.
-  lastUpdatedFromClerk DateTime        @default(now())
-  leagues              LeagueOnUsers[]
-  TeamOnUsers          TeamOnUsers[]
+  lastUpdatedFromClerk DateTime               @default(now())
+  teams                TeamOnPlayers[]        @relation("teams")
+  participatingLeagues LeagueOnParticipants[] @relation("participatingLeagues")
 }
 
 model Org {
@@ -58,6 +58,22 @@ model Sport {
   leagues     League[] @relation("leagues")
 }
 
+// It may (in the future) not make sense to have this be an M2M.
+model Location {
+  id                     String              @id @default(uuid()) @db.Uuid
+  name                   String              @unique
+  createdById            String              @db.Uuid
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+  updatedById            String              @db.Uuid
+  primaryStreetAddress   String
+  secondaryStreetAddress String?
+  zipCode                String
+  city                   String
+  state                  String
+  leagues                LeagueOnLocations[] @relation("leagues")
+}
+
 // Registration leagues have finite registration windows and finite start/end times.
 model LeagueRegistration {
   start    DateTime
@@ -83,16 +99,27 @@ model LeagueRequirements {
   leagueId   String @unique @db.Uuid
 }
 
-model LeagueOnUsers {
-  league             League                  @relation(fields: [leagueId], references: [id])
+model LeagueOnLocations {
+  league       League   @relation("locations", fields: [leagueId], references: [id])
+  leagueId     String   @db.Uuid
+  location     Location @relation("leagues", fields: [locationId], references: [id])
+  locationId   String   @db.Uuid
+  assignedAt   DateTime @default(now())
+  assignedById String
+
+  @@id([leagueId, locationId])
+}
+
+model LeagueOnParticipants {
+  league             League                  @relation("participants", fields: [leagueId], references: [id])
   leagueId           String                  @db.Uuid
-  user               User                    @relation(fields: [userId], references: [id])
-  userId             String                  @db.Uuid
+  participant        User                    @relation("participatingLeagues", fields: [participantId], references: [id])
+  participantId      String                  @db.Uuid
   assignedAt         DateTime                @default(now())
   assignedById       String
   participationTypes LeagueParticipantType[] @default(value: [PLAYER])
 
-  @@id([leagueId, userId])
+  @@id([leagueId, participantId])
 }
 
 enum LeagueCompetitionLevel {
@@ -115,17 +142,18 @@ model League {
   leagueType       LeagueType             @default(value: PICKUP)
   competitionLevel LeagueCompetitionLevel @default(value: SOCIAL)
   isPublic         Boolean                @default(true)
-  participants     LeagueOnUsers[]
+  participants     LeagueOnParticipants[] @relation("participants")
   sport            Sport                  @relation("leagues", fields: [sportId], references: [id])
   sportId          String                 @db.Uuid
   requirements     LeagueRequirements?
   leagueGames      Game[]                 @relation("leagueGames")
+  locations        LeagueOnLocations[]    @relation("locations")
 }
 
-model TeamOnUsers {
-  team         Team     @relation(fields: [teamId], references: [id])
+model TeamOnPlayers {
+  team         Team     @relation("players", fields: [teamId], references: [id])
   teamId       String   @db.Uuid
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation("teams", fields: [userId], references: [id])
   userId       String   @db.Uuid
   assignedAt   DateTime @default(now())
   assignedById String
@@ -134,14 +162,14 @@ model TeamOnUsers {
 }
 
 model Team {
-  id          String        @id @default(uuid()) @db.Uuid
-  createdById String        @db.Uuid
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  updatedById String        @db.Uuid
-  players     TeamOnUsers[]
-  homeGames   Game[]        @relation("homeGames")
-  awayGames   Game[]        @relation("awayGames")
+  id          String          @id @default(uuid()) @db.Uuid
+  createdById String          @db.Uuid
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  updatedById String          @db.Uuid
+  players     TeamOnPlayers[] @relation("players")
+  homeGames   Game[]          @relation("homeGames")
+  awayGames   Game[]          @relation("awayGames")
 }
 
 // TODO: Scores

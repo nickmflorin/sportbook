@@ -1,0 +1,181 @@
+{
+  "locations": [
+    {
+      "name": "Park Plaza",
+      "primaryStreetAddress": "123 Park Street",
+      "secondaryStreetAddress": "Unit 1",
+      "city": "New York",
+      "state": "NY",
+      "zipCode": "10001",
+      "createdAt": "2023-07-01T00:00:00Z",
+      "updatedAt": "2023-07-06T00:00:00Z"
+    },
+    {
+      "name": "Beach Villa",
+      "primaryStreetAddress": "456 Ocean Drive",
+      "city": "Miami",
+      "state": "FL",
+      "zipCode": "33139",
+      "createdAt": "2023-06-01T00:00:00Z",
+      "updatedAt": "2023-07-04T00:00:00Z"
+    },
+    {
+      "name": "Mountain Resort",
+      "primaryStreetAddress": "789 Hilltop Road",
+      "secondaryStreetAddress": "Suite 202",
+      "city": "Denver",
+      "state": "CO",
+      "zipCode": "80202",
+      "createdAt": "2023-05-15T00:00:00Z",
+      "updatedAt": "2023-07-05T00:00:00Z"
+    },
+    {
+      "name": "City Mall",
+      "primaryStreetAddress": "321 Main Street",
+      "city": "Los Angeles",
+      "state": "CA",
+      "zipCode": "90001",
+      "createdAt": "2023-06-20T00:00:00Z",
+      "updatedAt": "2023-07-06T00:00:00Z"
+    },
+    {
+      "name": "Lake Cabin",
+      "primaryStreetAddress": "654 Pine Tree Lane",
+      "secondaryStreetAddress": "Cabin 7",
+      "city": "Seattle",
+      "state": "WA",
+      "zipCode": "98101",
+      "createdAt": "2023-06-10T00:00:00Z",
+      "updatedAt": "2023-07-05T00:00:00Z"
+    },
+    {
+      "name": "Downtown Market",
+      "primaryStreetAddress": "987 Broad Street",
+      "city": "San Francisco",
+      "state": "CA",
+      "zipCode": "94102",
+      "createdAt": "2023-06-30T00:00:00Z",
+      "updatedAt": "2023-07-06T00:00:00Z"
+    },
+    {
+      "name": "River Park",
+      "primaryStreetAddress": "333 Riverside Drive",
+      "city": "Portland",
+      "state": "OR",
+      "zipCode": "97201",
+      "createdAt": "2023-06-12T00:00:00Z",
+      "updatedAt": "2023-07-06T00:00:00Z"
+    },
+    {
+      "name": "Skyline Plaza",
+      "primaryStreetAddress": "222 High Rise Avenue",
+      "secondaryStreetAddress": "Floor 25",
+      "city": "Chicago",
+      "state": "IL",
+      "zipCode": "60007",
+      "createdAt": "2023-06-28T00:00:00Z",
+      "updatedAt": "2023-07-04T00:00:00Z"
+    },
+    {
+      "name": "Desert Resort",
+      "primaryStreetAddress": "111 Sand Dune Boulevard",
+      "city": "Phoenix",
+      "state": "AZ",
+      "zipCode": "85001",
+      "createdAt": "2023-06-15T00:00:00Z",
+      "updatedAt": "2023-07-06T00:00:00Z"
+    },
+    {
+      "name": "Island Villa",
+      "primaryStreetAddress": "999 Oceanview Lane",
+      "city": "Honolulu",
+      "state": "HI",
+      "zipCode": "96815",
+      "createdAt": "2023-06-20T00:00:00Z",
+      "updatedAt": "2023-07-03T00:00:00Z"
+    },
+    {
+      "name": "Forest Cabin",
+      "primaryStreetAddress": "888 Green Tree Road",
+      "city": "Boise",
+      "state": "ID",
+      "zipCode": "83702",
+      "createdAt": "2023-06-25T00:00:00Z",
+      "updatedAt": "2023-07-05T00:00:00Z"
+    },
+    {
+      "name": "Town Center",
+      "primaryStreetAddress": "777 Central Square",
+      "city": "Austin",
+      "state": "TX",
+      "zipCode": "73301",
+      "createdAt": "2023-06-30T00:00:00Z",
+      "updatedAt": "2023-07-06T00:00:00Z"
+    },
+    {
+      "name": "Lakeside Resort",
+      "primaryStreetAddress": "666 Lake Road",
+      "city": "Minneapolis",
+      "state": "MN",
+      "zipCode": "55111",
+      "createdAt": "2023-06-20T00:00:00Z",
+      "updatedAt": "2023-07-05T00:00:00Z"
+    },
+    {
+      "name": "Harbor Market",
+      "primaryStreetAddress": "555 Harbor Drive",
+      "city": "Baltimore",
+      "state": "MD",
+      "zipCode": "21201",
+      "createdAt": "2023-06-15T00:00:00Z",
+      "updatedAt": "2023-07-04T00:00:00Z"
+    },
+    {
+      "name": "Beach Condos",
+      "primaryStreetAddress": "444 Seaside Lane",
+      "secondaryStreetAddress": "Unit 10",
+      "city": "San Diego",
+      "state": "CA",
+      "zipCode": "92101",
+      "createdAt": "2023-06-12T00:00:00Z",
+      "updatedAt": "2023-07-06T00:00:00Z"
+    },
+    {
+      "name": "Mountain Lodge",
+      "primaryStreetAddress": "333 Summit Drive",
+      "city": "Salt Lake City",
+      "state": "UT",
+      "zipCode": "84101",
+      "createdAt": "2023-06-18T00:00:00Z",
+      "updatedAt": "2023-07-06T00:00:00Z"
+    },
+    {
+      "name": "Downtown Lofts",
+      "primaryStreetAddress": "222 City Center",
+      "secondaryStreetAddress": "Loft 30",
+      "city": "Atlanta",
+      "state": "GA",
+      "zipCode": "30301",
+      "createdAt": "2023-06-22T00:00:00Z",
+      "updatedAt": "2023-07-06T00:00:00Z"
+    },
+    {
+      "name": "Plains Retreat",
+      "primaryStreetAddress": "111 Country Lane",
+      "city": "Kansas City",
+      "state": "MO",
+      "zipCode": "64101",
+      "createdAt": "2023-06-10T00:00:00Z",
+      "updatedAt": "2023-07-06T00:00:00Z"
+    },
+    {
+      "name": "Bay Villa",
+      "primaryStreetAddress": "999 Bay Drive",
+      "city": "Tampa",
+      "state": "FL",
+      "zipCode": "33601",
+      "createdAt": "2023-06-12T00:00:00Z",
+      "updatedAt": "2023-07-05T00:00:00Z"
+    }
+  ]
+}

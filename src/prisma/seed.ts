@@ -1,6 +1,6 @@
 /* eslint-disable no-console -- This script runs outside of the logger context. */
 import clerk from "@clerk/clerk-sdk-node";
-import { type User, LeagueCompetitionLevel, LeagueType, type League, type Sport } from "@prisma/client";
+import { type User, LeagueCompetitionLevel, LeagueType, type League, type Sport, type Location } from "@prisma/client";
 
 import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
 
@@ -9,10 +9,18 @@ import { prisma } from "~/server/db";
 
 import { data } from "./fixtures";
 
+const MIN_PARTICIPANTS_PER_LEAGUE = 3;
+const MAX_PARTICIPANTS_PER_LEAGUE = 5;
+const MIN_LOCATIONS_PER_LEAGUE = 0;
+const MAX_LOCATIONS_PER_LEAGUE = 3;
+
 type GetUser = () => User;
+
+type GetLocation = () => Location;
 
 type SeedContext = {
   readonly getUser: GetUser;
+  readonly getLocation: GetLocation;
 };
 
 async function collectClerkPages<T>(fetch: (params: { limit: number; offset: number }) => Promise<T[]>): Promise<T[]> {
@@ -40,13 +48,41 @@ const safeEnumValue = <E extends Record<string, string>>(value: string, prismaEn
 };
 
 /* -------------------------------------------------- Seeding ------------------------------------------------ */
-async function generateLeagueUsers(league: League, ctx: SeedContext) {
+async function generateLocations(ctx: Omit<SeedContext, "getLocation">) {
+  return await Promise.all(
+    data.locations.map(locData => {
+      const user = ctx.getUser();
+      return prisma.location.create({
+        data: {
+          ...locData,
+          createdById: user.id,
+          updatedById: user.id,
+        },
+      });
+    }),
+  );
+}
+
+async function generateLeagueParticipants(league: League, ctx: SeedContext) {
   const users = infiniteLoopSelection<User, string>(ctx.getUser, {
     duplicationKey: (u: User) => u.id,
-    length: { min: 3, max: 10 },
+    length: { min: MIN_PARTICIPANTS_PER_LEAGUE, max: MAX_PARTICIPANTS_PER_LEAGUE },
   });
-  return await prisma.leagueOnUsers.createMany({
-    data: users.map(u => ({ leagueId: league.id, userId: u.id, assignedById: u.id })),
+  return await prisma.leagueOnParticipants.createMany({
+    data: users.map(u => ({ leagueId: league.id, participantId: u.id, assignedById: u.id })),
+  });
+}
+
+async function generateLeagueLocations(league: League, ctx: SeedContext) {
+  const locations = infiniteLoopSelection<Location, string>(ctx.getLocation, {
+    duplicationKey: (loc: Location) => loc.id,
+    length: { min: MIN_LOCATIONS_PER_LEAGUE, max: MAX_LOCATIONS_PER_LEAGUE },
+  });
+  return await prisma.leagueOnLocations.createMany({
+    data: locations.map(loc => {
+      const u = ctx.getUser();
+      return { leagueId: league.id, locationId: loc.id, assignedById: u.id };
+    }),
   });
 }
 
@@ -66,7 +102,8 @@ async function generateSportLeague(sport: Sport, leagueData: (typeof data.league
       sportId: sport.id,
     },
   });
-  await generateLeagueUsers(league, ctx);
+  await generateLeagueParticipants(league, ctx);
+  await generateLeagueLocations(league, ctx);
 }
 
 async function generateSportLeagues(sport: Sport, ctx: SeedContext) {
@@ -136,7 +173,11 @@ async function main() {
   console.info(`\nSuccessfully generated ${organizations.length} organizations with associated data in database.`);
 
   const getUser = infiniteLoop<User>(users);
-  await generateSports({ getUser });
+  const locations = await generateLocations({ getUser });
+  console.info(`\nSuccessfully generated ${locations.length} locations with associated data in database.`);
+
+  const getLocation = infiniteLoop<Location>(locations);
+  await generateSports({ getUser, getLocation });
 }
 
 main()

@@ -191,8 +191,8 @@ already has [postgres] installed:
 $ which postgres
 ```
 
-If the result of the command is a directory (usually `/usr/local/bin/postgres`), then it is already installed and you
-can proceed to the next step. If not, simply install [postgres]:
+If the result of the command is a directory (usually `/usr/local/bin/postgres`, if installed via [homebrew]), then it is
+already installed and you can proceed to the next step. If not, simply install [postgres] via [homebrew]:
 
 ```bash
 $ brew install postgres
@@ -221,21 +221,42 @@ following:
 6. `DATABASE_USER` The user of the [postgres] database. Only required when `DATABASE_URL` is not set.
 
 These parameters are defaulted in the `.env.development` file, but can be overridden in your `.env.local` or
-`.env.development.local` file if you ever need to connect to a different database.
+`.env.development.local` file:
+
+```bash
+DATABASE_USER=sportbook
+DATABASE_PASSWORD=sportbook
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_NAME=sportbook
+```
+
+If the `DATABASE_URL` parameter is defined in the environment, the application will connect to the database at that URL.
+If it is not defined, the application will attempt to connect to a database at a URL constructed with the other
+parameters:
+
+```bash
+DATABASE_URL = postgresql://<DATABASE_USER>:<DATABASE_PASSWORD>@<DATABASE_HOST>:<DATABASE_PORT>/<DATABASE_NAME>
+```
 
 #### 4.b Setting Up Application Database
 
 The above database connection parameters defined in the `.env.development` file (or overridden in your `.env.local` or
 `.env.development.local` file) will be needed to create and setup the application database from the [psql] shell. Since
-the database in [postgres] may not exist yet, we need to create it via the [psql] command line. To do this, connect to
-the default database name `"postgres"`, that comes with the [homebrew] installation of [postgres]:
+the database defined by `DATABASE_NAME` or the `DATABASE_URL` may not exit yet, we will likely need to create it via the
+[psql] command line. To do this, connect to the default database name `"postgres"`, that comes with the [homebrew]
+installation of [postgres]:
 
 ```bash
 $ psql -d postgres
 ```
 
-It is possible (though very unlikely) that either your [postgres] installation did not come with the default
-`"postgres"` database or it was somehow removed. If this is the case, you will see an error similar to the following:
+---
+
+##### Aside
+
+It is possible (although very unlikely) that either your [postgres] installation did not come with the default
+`"postgres"` database, or it was somehow removed. If this is the case, you may see an error similar to the following:
 
 ```bash
 $ psql: error: connection to server on socket "/tmp/.s.PGSQL.5432" failed: FATAL:  database "postgres" does not exist
@@ -248,6 +269,8 @@ simply run the following from the command line, and then reconnect to the [psql]
 $ createdb postgres
 $ psql -d postgres
 ```
+
+---
 
 Once inside of the [psql] shell, create the appropriate [postgres] database associated with this application, based on
 the configuration parameters defined in the environment:
@@ -486,11 +509,98 @@ make the changes and immediately see the checks pass as a result of the changes 
 
 ### Database
 
+This section of the documentation outlines how to manage the application database as it relates to this application.
+
+#### [postgres]
+
+When developing locally, it is important that the [postgres] server is running. This service can be started via
+[homebrew] as follows:
+
+```bash
+$ brew services start postgresql
+```
+
+Restarting the [postgres] service can be done as follows:
+
+```bash
+$ brew services restart postgresql
+```
+
+Stopping the [postgres] service can be done as follows:
+
+```bash
+$ brew services stop postgresql
+```
+
 #### Prisma
 
-The Auth Server DB uses the [Prisma](https://www.prisma.io/) ORM that maps records in the database to typescript objects
-while exposing a database client that can be used to interact with those records. To properly use this client, a
-developer must understand how this ORM works.
+This application uses [Prisma][prisma], an ORM that that maps records in the database to typescript objects while
+exposing a database client that can be used to interact with those records. To properly use this client, a developer
+must understand how this ORM works.
+
+##### Schema
+
+The database structure for the application is defined in a [prisma] `*.schema` file. This application's `*.schema` file
+is located at [`src/prisma/schema.prisma`](./src/prisma/schema.prisma). The [prisma] ORM uses the definitions in that
+file to properly construct, update and manage the [postgres] database.
+
+When updates are made to the [prisma] schema file, migrations must be run such that [prisma] can digest those changes
+and make the appropriate updates to the database structure. This can be done as follows:
+
+```bash
+$ npx prisma migrate dev
+```
+
+This command will prompt [prisma] to update the database structure if changes were detected. If [prisma] detects
+changes, it will prompt you for a name that should be assigned to the accompanied migration file (stored
+[here](./src/prisma/migrations/)). The name of the migration file should be a snake-cake name that is indicative of the
+changes that were made (i.e. "add_updated_at_field_to_user").
+
+If it is desired that just the migration file is created (without actually updating the database), the `--create-only`
+flag can be used:
+
+```bash
+$ npx prisma migrate dev --create-only
+```
+
+This will create the migration file, but will not apply it.
+
+##### `PrismaClient`
+
+The [`PrismaClient`](./src/server/db/index.ts) is what the application uses to communicate with the database. This
+client ([`prisma`](./src/server/db/index.ts)) relies on type bindings that are dynamically generated by [prisma] based
+on the existing schema file. This means that whenever the schema file changes, the types for the
+[`PrismaClient`](./src/server/db/index.ts) will be incorrect until the [`PrismaClient`](./src/server/db/index.ts) is
+regenerated.
+
+This can be done as follows:
+
+```bash
+$ npx prisma db push
+```
+
+Note that when running the `reset` command (discussed below), the [`PrismaClient`](./src/server/db/index.ts) is
+automatically updated.
+
+##### Seeding
+
+The application comes equipped with a databae seed file [`./src/prisma/seed.ts](./src/prisma/seed.ts). This file is used
+to populate the database with dummy data/fixtures for development. This script can be run as:
+
+```bash
+$ npx prisma db seed
+```
+
+That being said, this seed process _only_ works when the database state is empty - if the database state is not empty,
+unique constraint violations will be triggered when adding data to the database. Therefore, in order to run the
+[`./src/prisma/seed.ts](./src/prisma/seed.ts) script, it must be done as a part of [prisma]'s `reset` flow:
+
+```bash
+$ npx prisma migrate reset
+```
+
+This command will wipe the current database, run all migrations and _then_ run the
+[`./src/prisma/seed.ts](./src/prisma/seed.ts) script.
 
 [psql]: https://www.postgresql.org/docs/current/app-psql.html
 [homebrew]: https://brew.sh/
@@ -507,3 +617,4 @@ developer must understand how this ORM works.
 [eslint]: https://eslint.org/
 [jest]: https://jestjs.io/docs/getting-started
 [sass]: https://sass-lang.com/
+[prisma]: https://www.prisma.io/
