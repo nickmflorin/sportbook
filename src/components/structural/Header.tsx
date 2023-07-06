@@ -9,11 +9,11 @@ export type ExposedHeaderProps = {
   readonly actions?: Action[];
 };
 
-export type HeaderProps = Omit<FlexProps, "direction" | "align" | "title"> & ExposedHeaderProps;
+export type HeaderProps = Omit<FlexProps, "direction" | "align" | "title" | "justify"> & ExposedHeaderProps;
 
-export const Header = ({ title, subTitle, actions = [] }: HeaderProps): JSX.Element =>
+export const Header = ({ title, subTitle, actions = [], ...props }: HeaderProps): JSX.Element =>
   subTitle || title || filterVisibleActions(actions).length !== 0 ? (
-    <Flex direction="row" justify="space-between" mb="sm">
+    <Flex {...props} direction="row" justify="space-between" align="center">
       {(subTitle || title) && (
         <Flex direction="column">
           {typeof title === "string" ? (

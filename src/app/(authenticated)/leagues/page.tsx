@@ -1,10 +1,11 @@
+import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 
 import { auth } from "@clerk/nextjs";
 
 import { prisma } from "~/server/db";
 
-import { SportLeagues } from "./SportLeagues";
+const SportLeagues = dynamic(() => import("./SportLeagues"));
 
 export default async function Leagues() {
   const { userId } = auth();
@@ -13,7 +14,7 @@ export default async function Leagues() {
   }
   const sports = await prisma.sport.findMany();
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
       {sports.map((sport, i) => (
         <SportLeagues key={i} sport={sport} userId={userId} />
       ))}

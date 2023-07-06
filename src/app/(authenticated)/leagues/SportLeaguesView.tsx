@@ -10,8 +10,10 @@ export interface SportLeaguesViewProps {
   readonly leagues: League[];
 }
 
-export const SportLeaguesView = async ({ sport, leagues }: SportLeaguesViewProps) => (
-  <Paper title={sport.name} collapsable={true} p="sm">
+const SportLeaguesView = async ({ sport, leagues }: SportLeaguesViewProps) => (
+  <Paper title={sport.name} collapsable={true}>
     <LeaguesTable records={leagues} tableStyle={DataTableStyle.SMALL} />
   </Paper>
 );
+
+export default SportLeaguesView;

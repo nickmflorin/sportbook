@@ -24,9 +24,18 @@ export const Paper = ({
 }: PaperProps): JSX.Element => {
   const [contentOpened, { toggle: _toggleContent }] = useDisclosure(defaultVisible);
   return (
-    <RootPaper {...props}>
+    <RootPaper
+      p="md"
+      {...props}
+      sx={[
+        t => ({
+          borderRadius: t.radius.xs,
+          border: `1px solid ${t.colors.gray[4]}`,
+        }),
+      ]}
+    >
       <Header
-        mb="md"
+        mb={contentOpened || collapsable === false ? "md" : 0}
         title={title}
         subTitle={subTitle}
         actions={[
