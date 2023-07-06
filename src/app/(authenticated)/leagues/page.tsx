@@ -1,18 +1,22 @@
-import { auth } from "@clerk/nextjs";
-import { type League } from "@prisma/client";
+import { redirect } from "next/navigation";
 
-import { LeaguesTable } from "~/components/tables/LeaguesTable";
+import { auth } from "@clerk/nextjs";
+
 import { prisma } from "~/server/db";
+
+import { SportLeagues } from "./SportLeagues";
 
 export default async function Leagues() {
   const { userId } = auth();
-  let leagues: League[] = [];
-  if (userId) {
-    leagues = await prisma.league.findMany({ where: { participants: { some: { user: { clerkId: userId } } } } });
+  if (!userId) {
+    return redirect("/login");
   }
+  const sports = await prisma.sport.findMany();
   return (
     <div>
-      <LeaguesTable records={leagues} />
+      {sports.map((sport, i) => (
+        <SportLeagues key={i} sport={sport} userId={userId} />
+      ))}
     </div>
   );
 }

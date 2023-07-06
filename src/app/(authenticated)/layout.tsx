@@ -1,6 +1,3 @@
-/* eslint-disable-next-line import/order */
-import "~/styles/globals/index.scss";
-/* eslint-disable-next-line import/order */
 import { AppLayout } from "~/components/layout";
 
 export const metadata = {

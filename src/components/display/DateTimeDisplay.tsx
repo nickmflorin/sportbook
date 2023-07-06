@@ -1,3 +1,4 @@
+"use client";
 import { Flex, Text, type TextProps, type FlexProps, packSx } from "@mantine/core";
 
 export interface DateTimeDisplayProps extends Omit<FlexProps, "h" | "mah" | "mih"> {

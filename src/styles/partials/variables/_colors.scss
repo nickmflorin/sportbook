@@ -4,8 +4,6 @@
 @use "throw";
 @use "../functions" as fn;
 
-$default-shade: 5;
-
 $blue-shades: (#eff6ff, #e9f2ff, #cce1fe, #b0d2ff, #76b0ff, #5198f9, #1f71e1, #074599, #012e6c, #001d44);
 $green-shades: (#f0fdf4, #dcfce7, #bbf7d0, #86f7d0, #4ade80, #22c55e, #16a34a, #15803d, #166534, #14132d);
 $gray-shades: (#f9f9fa, #f1f3f5, #eaecef, #dee2e6, #cfd4d9, #aeb5bc, #878e95, #494056, #353a3f, #222529);
@@ -27,19 +25,61 @@ $colors: (
   "heading": $heading-shades,
   "orange": $orange-shades,
   "gray": $gray-shades,
+  "neutral": $gray-shades,
+);
+
+$color-names: map.keys($colors);
+$shades: (1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+$default-shades: (
+  "blue": 6,
+  "green": 6,
+  "red": 6,
+  "yellow": 6,
+  "success": 6,
+  "error": 6,
+  "warning": 6,
+  "body": 6,
+  "heading": 6,
+  "orange": 6,
+  "gray": 6,
+  "neutral": 6,
 );
 
 $app-background-color: #f9f9f9;
 $disabled-color: #a1a9b4;
 $white: #ffffff;
 
-@function get-color($name, $shade: $default-shade) {
+@function get-default-shade($name) {
+  @if not map.has-key($default-shades, $name) {
+    @return throw.error("The provided name #{$name} is invalid.", $name: $name, $source: "get-default-shade()");
+  }
+  @return fn.map-get($default-shades, $name);
+}
+
+@function get-color($name, $shade: null) {
   @if not map.has-key($colors, $name) {
     @return throw.error("The provided name #{$name} is invalid.", $name: $name, $source: "get-color()");
   }
   $cs: fn.map-get($colors, $name);
-  @if not list.nth($cs, $shade) {
+  @if $shade and not list.nth($cs, $shade) {
     @return throw.error("The provided shade #{$shade} is invalid.", $shade: $shade, $source: "get-color()");
   }
-  @return list.nth($cs, $shade);
+  $sh: if($shade, $shade, get-default-shade($name));
+  @return list.nth($cs, $sh);
+}
+
+@mixin background-color($color, $shade: null) {
+  background-color: get-color($color, $shade);
+}
+
+@mixin border-color($color, $shade: null) {
+  border-color: get-color($color, $shade);
+}
+
+@mixin background($color, $shade: null) {
+  background: get-color($color, $shade);
+}
+
+@mixin color($color, $shade: null) {
+  color: get-color($color, $shade);
 }

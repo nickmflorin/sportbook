@@ -1,7 +1,7 @@
 "use client";
 import { IconJumpRope, IconBrandAsana, IconChessQueen } from "@tabler/icons-react";
 
-import { createLeadingPathRegex } from "~/lib/paths";
+import { createLeadingPathRegex } from "~/lib/utils/paths";
 
 import { SidebarItem, type SidebarItemConfig } from "./SidebarItem";
 

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { type TablerIconsProps } from "@tabler/icons-react";
 import classNames from "classnames";
 
-import { type PathActive, pathIsActive } from "~/lib/paths";
+import { type PathActive, pathIsActive } from "~/lib/utils/paths";
 
 export type SidebarItemConfig = {
   readonly icon: React.ComponentType<TablerIconsProps>;
