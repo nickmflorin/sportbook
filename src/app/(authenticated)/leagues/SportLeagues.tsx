@@ -13,7 +13,7 @@ export interface LeagueSportsProps {
 
 const SportLeagues = async ({ userId, sport }: LeagueSportsProps) => {
   const leagues = await prisma.league.findMany({
-    where: { sportId: sport.id, participants: { some: { user: { clerkId: userId } } } },
+    where: { sportId: sport.id, participants: { some: { participant: { clerkId: userId } } } },
   });
   return <SportLeaguesView leagues={leagues} sport={sport} />;
 };
