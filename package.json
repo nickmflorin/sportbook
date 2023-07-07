@@ -69,7 +69,6 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
-    "@types/classnames": "^2.3.1",
     "@types/eslint": "^8.37.0",
     "@types/jest": "^29.5.2",
     "@types/lodash.uniq": "^4.5.7",
