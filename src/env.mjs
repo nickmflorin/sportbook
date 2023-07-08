@@ -110,7 +110,6 @@ export const env = createEnv({
     DATABASE_HOST: testRestricted(z.string().optional()),
     DATABASE_PORT: testRestricted(z.coerce.number().int().positive().optional()),
     DATABASE_LOG_LEVEL: PrismaLogLevelSchema.optional(),
-    HTTP_LOGGING: StringBooleanFlagSchema.optional(),
     /* The VERCEL_URL is only used in production - in development cases, the URL will be constructed from the host,
        port and scheme. */
     VERCEL_URL: {
@@ -118,6 +117,7 @@ export const env = createEnv({
       development: z.string().optional(),
       test: STRICT_OMISSION,
     }[process.env.NODE_ENV],
+    /* --------- Tentative ----------- */
     API_SCHEME: z.union([z.literal("http"), z.literal("https")]),
     API_HOST: {
       production: STRICT_OMISSION,
@@ -129,6 +129,7 @@ export const env = createEnv({
       development: z.coerce.number().int().positive(),
       test: STRICT_OMISSION,
     }[process.env.NODE_ENV],
+    /* --------- Tentative ----------- */
   },
   /* ----------------------------------- Client Environment Variables ------------------------------------ */
   client: {
@@ -164,10 +165,12 @@ export const env = createEnv({
     DATABASE_NAME: process.env.DATABASE_NAME,
     DATABASE_LOG_LEVEL: process.env.DATABASE_LOG_LEVEL,
     HTTP_LOGGING: process.env.HTTP_LOGGING,
+    /* --------- Tentative ----------- */
     VERCEL_URL: process.env.VERCEL_URL,
     API_PORT: process.env.API_PORT,
     API_HOST: process.env.API_HOST,
     API_SCHEME: process.env.API_SCHEME,
+    /* --------- Tentative ----------- */
     NODE_ENV: process.env.NODE_ENV,
     PRETTY_LOGGING: process.env.PRETTY_LOGGING,
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
