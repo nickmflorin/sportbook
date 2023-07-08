@@ -16,19 +16,30 @@
     flex-direction: row;
 
     > .app-viewport {
-      overflow-y: scroll;
+      overflow: hidden;
+      display: flex;
+      flex-direction: row;
       max-height: 100%;
       height: 100%;
       width: 100%;
       max-width: 100%;
-      padding: partials.get-spacing("md");
+      min-width: 100%;
       background-color: partials.$white;
+
+      > .app-viewport__content {
+        flex-grow: 100;
+        overflow-y: scroll;
+        max-height: 100%;
+        max-width: 100%;
+        padding: partials.get-spacing("md");
+      }
     }
 
     &--authenticated {
       > .app-viewport {
         width: calc(100% - partials.$app-sidebar-width);
         max-width: calc(100% - partials.$app-sidebar-width);
+        min-width: calc(100% - partials.$app-sidebar-width);
       }
     }
   }

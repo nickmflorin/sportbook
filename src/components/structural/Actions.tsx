@@ -1,7 +1,7 @@
 "use client";
 import React, { useMemo } from "react";
 
-import { Flex, type FlexProps, type MantineTheme, useMantineTheme, packSx } from "@mantine/core";
+import { Flex, type FlexProps } from "@mantine/core";
 
 import { ActionIcon, type ActionIconProps } from "~/components/buttons/ActionIcon";
 
@@ -36,14 +36,6 @@ export interface ActionsProps extends Omit<FlexProps, "align" | "direction" | "h
    */
   readonly actions?: Action[];
   readonly children?: JSX.Element | JSX.Element[];
-  /**
-   * Defines the spacing between actions in the component.
-   */
-  readonly spacing?: string | number | ((t: MantineTheme) => string | number);
-  /**
-   * Defines the height of the set of action components as a whole and individually.
-   */
-  readonly h?: string | number | ((t: MantineTheme) => string | number);
 }
 
 /**
@@ -64,9 +56,7 @@ export interface ActionsProps extends Omit<FlexProps, "align" | "direction" | "h
  *   ]} />
  * </Flex>
  */
-export const Actions = ({ children = [], actions, spacing, h = "24px", ...props }: ActionsProps): JSX.Element => {
-  const theme = useMantineTheme();
-
+export const Actions = ({ children = [], actions, ...props }: ActionsProps): JSX.Element => {
   const visibleActions = useMemo<JSX.Element[]>(
     () =>
       filterVisibleActions(actions || (Array.isArray(children) ? children : [children])).map(a =>
@@ -77,24 +67,7 @@ export const Actions = ({ children = [], actions, spacing, h = "24px", ...props 
 
   if (visibleActions.length !== 0) {
     return (
-      <Flex
-        justify="right"
-        {...props}
-        direction="row"
-        align="center"
-        gap={spacing ? (typeof spacing === "function" ? spacing(theme) : spacing) : theme.spacing.md}
-        sx={[
-          t => ({
-            height: typeof h === "function" ? h(t) : h,
-            "> *": {
-              maxHeight: "100%",
-              minHeight: "auto",
-              minWidth: "0",
-            },
-          }),
-          ...packSx(props.sx),
-        ]}
-      >
+      <Flex className="actions" {...props}>
         {visibleActions.map((a: JSX.Element, i: number) => (
           <React.Fragment key={i}>{a}</React.Fragment>
         ))}

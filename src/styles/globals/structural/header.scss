@@ -1,0 +1,24 @@
+@use "partials";
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  &__titles {
+    display: flex;
+    flex-direction: column;
+
+    > .title {
+      @include partials.font($size: "lg", $weight: "medium");
+    }
+
+    > .subtitle {
+      @include partials.font($size: "sm", $weight: "regular", $color: "gray", $shade: 4);
+    }
+  }
+
+  > .actions {
+    flex-grow: 100;
+  }
+}

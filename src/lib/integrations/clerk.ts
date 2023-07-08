@@ -1,5 +1,6 @@
 import { type User as ClerkUser, type EmailAddress } from "@clerk/clerk-sdk-node";
 
+
 export const getClerkEmailAddress = (u: ClerkUser): EmailAddress | null => {
   /* The only reason our User model has a nullable email field is due to the fact that the ClerkUser's primary email
      address ID is nullable.  Eventually, we will need to find a way to enforce that the User model always has a valid

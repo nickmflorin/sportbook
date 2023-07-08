@@ -1,0 +1,15 @@
+@use "partials";
+
+.drawer {
+  padding: partials.get-spacing("md");
+  height: 100%;
+  overflow: hidden;
+
+  > .header {
+    margin-bottom: partials.get-spacing("md");
+  }
+
+  > .drawer__content {
+    overflow-y: scroll;
+  }
+}

@@ -53,9 +53,11 @@ $catch-errors: false !default;
 ///   The value that should be string formatted for an error message.
 @function string-fmt($v) {
   $primitive: (bool, string, null, number, color, map, list);
+
   @if list.index($primitive, meta.type-of($v)) {
     @return $v;
   }
+
   @return meta.inspect($v);
 }
 
@@ -88,10 +90,13 @@ $catch-errors: false !default;
 ///   An optionally provided function or mixin name in which the error is being thrown inside of.
 @function message($message, $context: null, $source: null) {
   $formatted: $message;
+
   @if $context and list.length(map.keys($context)) != 0 {
     $string-message: "[";
+
     @for $i from 1 through list.length(map.keys($context)) {
       $k: list.nth(map.keys($context), $i);
+
       @if meta.type-of($k) != string {
         @error "The keys of the error context must be of type string, but received key " +
                "'#{string-fmt($k)}' with type '#{string-fmt(meta.type-of($k))}'.";
@@ -100,7 +105,9 @@ $catch-errors: false !default;
       // data type of the parameter is included for debugging purposes.
       $v: map.get($context, $k);
       $string-message: $string-message +
-        "#{string-fmt($k)} = '#{string-fmt($v)}' "+"(type is '#{string-fmt(meta.type-of($v))})'";
+        "#{string-fmt($k)} = '#{string-fmt($v)}' " +
+        "(type is '#{string-fmt(meta.type-of($v))})'";
+
       @if $i != list.length(map.keys($context)) {
         $string-message: $string-message + ", ";
       }
@@ -108,6 +115,7 @@ $catch-errors: false !default;
     $formatted: $message + " - " + $string-message + "]";
   }
   $prefix: if($source, "ERROR [#{$source}]:", "ERROR:");
+
   @return $prefix + " " + $formatted;
 }
 
@@ -121,16 +129,19 @@ $catch-errors: false !default;
       @error "The error context must be a map, but a value of type " +
              "#{string-fmt(meta.type-of(map.get($kwargs, "context")))} was provided.";
     }
+
     @return map.get($kwargs, "context");
   } @else if list.length($args) != 0 and meta.type-of(list.nth($args, 1)) == map {
     @return list.nth($args, 1);
   }
   $context: ();
+
   @each $k in map.keys($kwargs) {
     @if $k != "source" and $k != "catch" {
       $context: map.set($context, $k, map.get($kwargs, $k));
     }
   }
+
   @return $context;
 }
 
@@ -174,6 +185,7 @@ $catch-errors: false !default;
 
   @if list.length($args) != 0 and list.length($args) != 1 {
     $num-args: list.length($args) + 1; // Account for the first arg, the message.
+
     @error "Only two positional arguments are allowed, but #{$num-args} were provided.";
   }
 
@@ -184,16 +196,19 @@ $catch-errors: false !default;
       @error "The 'catch' argument must be a bool value or 'error', but a string value '#{$catch}' " +
              "was provided.";
     }
+
     @error "The 'catch' argument must be a bool value or 'error', but a value of type " +
              "'#{string-fmt(meta.type-of($catch))}' was provided.";
   }
   $message: message($message, $context, $source: $source);
+
   @if $catch {
     // When catching errors in a test environment, and returning them, we return a map with a key
     // "ERROR" so that it is easier to test whether or not a general error was raised without
     // having to match the error message for equality.
     @return ("ERROR": $message);
   }
+
   @error $message;
 }
 

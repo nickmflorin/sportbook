@@ -4,7 +4,7 @@ import { SignInButton } from "~/components/buttons/SignInButton";
 import { UserButton } from "~/components/buttons/UserButton";
 import { env } from "~/env.mjs";
 
-const HeaderLogo = () => {
+const AppHeaderLogo = () => {
   return (
     <Link href="/" className="app-header__logo">
       {env.APP_NAME_FORMAL}
@@ -12,10 +12,10 @@ const HeaderLogo = () => {
   );
 };
 
-export const Header = (): JSX.Element => (
+export const AppHeader = (): JSX.Element => (
   <header className="app-header">
     <div className="app-header__left">
-      <HeaderLogo />
+      <AppHeaderLogo />
     </div>
     <div className="app-header__right">
       <UserButton />

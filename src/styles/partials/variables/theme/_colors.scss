@@ -1,8 +1,7 @@
 @use "sass:map";
 @use "sass:list";
-
 @use "throw";
-@use "../functions" as fn;
+@use "../../functions" as fn;
 
 $blue-shades: (#eff6ff, #e9f2ff, #cce1fe, #b0d2ff, #76b0ff, #5198f9, #1f71e1, #074599, #012e6c, #001d44);
 $green-shades: (#f0fdf4, #dcfce7, #bbf7d0, #86f7d0, #4ade80, #22c55e, #16a34a, #15803d, #166534, #14132d);
@@ -53,6 +52,7 @@ $white: #ffffff;
   @if not map.has-key($default-shades, $name) {
     @return throw.error("The provided name #{$name} is invalid.", $name: $name, $source: "get-default-shade()");
   }
+
   @return fn.map-get($default-shades, $name);
 }
 
@@ -61,10 +61,12 @@ $white: #ffffff;
     @return throw.error("The provided name #{$name} is invalid.", $name: $name, $source: "get-color()");
   }
   $cs: fn.map-get($colors, $name);
+
   @if $shade and not list.nth($cs, $shade) {
     @return throw.error("The provided shade #{$shade} is invalid.", $shade: $shade, $source: "get-color()");
   }
   $sh: if($shade, $shade, get-default-shade($name));
+
   @return list.nth($cs, $sh);
 }
 

@@ -1,0 +1,74 @@
+@use "sass:map";
+@use "../../functions/" as fn;
+@use "./colors" as colors;
+
+$font-family: inter;
+
+$font-weights: (
+  "bold": 700,
+  "semibold": 600,
+  "medium": 500,
+  "regular": 400,
+);
+
+$font-properties: (
+  "xxs": (
+    font-size: 11px,
+    line-height: 14px,
+  ),
+  "xs": (
+    font-size: 12px,
+    line-height: 16px,
+  ),
+  "sm": (
+    font-size: 13px,
+    line-height: 18px,
+  ),
+  "md": (
+    font-size: 14px,
+    line-height: 20px,
+  ),
+  "lg": (
+    font-size: 16px,
+    line-height: 24px,
+  ),
+  "xl": (
+    font-size: 18px,
+    line-height: 28px,
+  ),
+);
+
+$font-sizes: map.keys($font-properties);
+$default-font-size: "md";
+$default-font-weight: "regular";
+
+@function get-font-size($size: $default-font-size) {
+  @return fn.map-get(fn.map-get($font-properties, $size), font-size);
+}
+
+@mixin font-size($size: $default-font-size) {
+  font-size: get-font-size($size);
+}
+
+@function get-line-height($size) {
+  @return fn.map-get(fn.map-get($font-properties, $size), line-height);
+}
+
+@mixin line-height($size: $default-font-size) {
+  line-height: get-line-height($size);
+}
+
+@function get-font-weight($weight: $default-font-weight) {
+  @return fn.map-get($font-weights, $weight);
+}
+
+@mixin font-weight($weight: $default-font-weight) {
+  font-weight: get-font-weight($weight);
+}
+
+@mixin font($size: $default-font-size, $color: "body", $shade: null, $weight: $default-font-weight) {
+  @include font-weight($weight);
+  @include font-size($size);
+  @include line-height($size);
+  @include colors.color($color, $shade);
+}
