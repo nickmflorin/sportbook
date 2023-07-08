@@ -1,49 +1,47 @@
-import { Button, Flex, LoadingOverlay } from "@mantine/core";
+import { LoadingOverlay } from "@mantine/core";
 import { type UseFormReturnType } from "@mantine/form";
 
 import { LocalFeedback, type Feedback } from "~/components/feedback";
+import { ButtonFooter, ButtonFooterProps } from "~/components/structural/ButtonFooter";
 
-export type FormFooterProps = {
-  readonly submitText?: string;
-  readonly cancelText?: string;
-  readonly submitting?: boolean;
-  readonly loading?: boolean;
-  readonly disabled?: boolean;
-  readonly onCancel?: () => void;
-};
-
-export const FormFooter = ({ submitText = "Save", ...props }: FormFooterProps) => (
-  <Flex direction="row" align="center" w="100%" justify="right" mt="md" gap="md">
-    {(props.onCancel || props.cancelText) && (
-      <Button variant="default" onClick={props.onCancel}>
-        {props.cancelText || "Cancel"}
-      </Button>
-    )}
-    <Button loading={props.submitting} type="submit" disabled={props.loading || props.submitting || props.disabled}>
-      {submitText}
-    </Button>
-  </Flex>
-);
-
-export type FormProps<T extends Record<string, unknown>> = FormFooterProps & {
+export type FormProps<T extends Record<string, unknown>> = Omit<ButtonFooterProps, "onSubmit" | "submitButtonType"> & {
   readonly form: UseFormReturnType<T>;
   readonly children: JSX.Element | JSX.Element[];
   readonly feedback?: Feedback;
   readonly fieldGap?: string | number;
-  readonly onSubmit: (data: T) => void;
+  readonly loading?: boolean;
+  readonly action?: (data: T) => void;
 };
 
 export const Form = <T extends Record<string, unknown>>({
   feedback,
   fieldGap,
+  action,
+  form,
+  children,
   ...props
 }: FormProps<T>): JSX.Element => (
-  <form onSubmit={props.form.onSubmit(data => props.onSubmit(data))} onReset={e => props.form.onReset(e)}>
-    <LoadingOverlay visible={props.loading === true} />
-    <Flex direction="column" gap={fieldGap}>
-      {props.children}
-    </Flex>
+  <form
+    className="form"
+    action={(formData: FormData) => {
+      const result = form.validate();
+      if (result.hasErrors) {
+        form.setErrors(result.errors);
+      } else {
+        /* TODO: We want to use the formData to reconstruct the values that are provided to the action.  However,
+           Mantine's inputs are controlled (not uncontrolled) and their 'useForm' hook passes the values in.  This
+           means that we would have to use our own 'useForm' hook, and potentially input elements, to get that to work.
+           It is something that we will want to do eventually, but not yet. */
+        action?.(form.values);
+      }
+    }}
+  >
+    <div className="form__content">
+      {/* TODO: Replace me with internal loading indicators. */}
+      <LoadingOverlay visible={props.loading === true} />
+      {children}
+    </div>
     <LocalFeedback feedback={feedback} />
-    <FormFooter {...props} />
+    <ButtonFooter {...props} submitDisabled={props.submitDisabled || props.loading} />
   </form>
 );

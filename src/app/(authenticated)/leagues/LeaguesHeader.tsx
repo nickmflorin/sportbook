@@ -1,9 +1,11 @@
 "use client";
 import { Flex, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { CreateLeagueDrawer } from "~/components/drawers/CreateLeagueDrawer";
+import { CreateLeagueDrawer, CreateLeagueDrawerProps } from "~/components/drawers/CreateLeagueDrawer";
 
-export const LeaguesHeader = (): JSX.Element => {
+export interface LeaguesHeaderProps extends Pick<CreateLeagueDrawerProps, "action"> {}
+
+export const LeaguesHeader = ({ action }: LeaguesHeaderProps): JSX.Element => {
   const [createLeagueDrawerOpen, { open: openLeagueDrawer }] = useDisclosure(false);
 
   return (
@@ -11,7 +13,7 @@ export const LeaguesHeader = (): JSX.Element => {
       <Flex direction="row" justify="right">
         <Button onClick={() => openLeagueDrawer()}>New League</Button>
       </Flex>
-      <CreateLeagueDrawer open={createLeagueDrawerOpen} />
+      <CreateLeagueDrawer open={createLeagueDrawerOpen} action={action} />
     </>
   );
 };

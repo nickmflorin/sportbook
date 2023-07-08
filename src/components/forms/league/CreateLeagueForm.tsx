@@ -18,9 +18,9 @@ export const CreateLeagueForm = ({ onSuccess, ...props }: CreateLeagueFormProps)
     <LeagueForm
       {...props}
       form={form}
-      onSubmit={data => mutate(data)}
-      submitting={isLoading}
-      feedback={[{ message: "There was an error creating the league.", visible: isError }]}
+      // onSubmit={data => mutate(data)}
+      // submitting={isLoading}
+      // feedback={[{ message: "There was an error creating the league.", visible: isError }]}
     />
   );
 };

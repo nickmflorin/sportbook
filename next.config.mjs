@@ -18,6 +18,9 @@ const config = {
   reactStrictMode: true,
   swcMinify: true,
   output: "standalone",
+  experimental: {
+    serverActions: true,
+  },
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
