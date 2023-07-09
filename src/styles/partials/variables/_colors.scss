@@ -52,13 +52,14 @@ $white: #ffffff;
   @if not map.has-key($default-shades, $name) {
     @return throw.error("The provided name #{$name} is invalid.", $name: $name, $source: "get-default-shade()");
   }
-  @return fn.map-get($default-shades, $name);
+  @return fn.mapget($default-shades, $name);
 }
+
 @function get-color($name, $shade: null) {
   @if not map.has-key($colors, $name) {
     @return throw.error("The provided name #{$name} is invalid.", $name: $name, $source: "get-color()");
   }
-  $cs: fn.map-get($colors, $name);
+  $cs: fn.mapget($colors, $name);
   @if $shade and not list.nth($cs, $shade) {
     @return throw.error("The provided shade #{$shade} is invalid.", $shade: $shade, $source: "get-color()");
   }
@@ -69,12 +70,15 @@ $white: #ffffff;
 @mixin background-color($color, $shade: null) {
   background-color: get-color($color, $shade);
 }
+
 @mixin border-color($color, $shade: null) {
   border-color: get-color($color, $shade);
 }
+
 @mixin background($color, $shade: null) {
   background: get-color($color, $shade);
 }
+
 @mixin color($color, $shade: null) {
   color: get-color($color, $shade);
 }

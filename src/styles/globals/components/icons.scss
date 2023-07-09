@@ -21,11 +21,11 @@
   $size: partials.validate-value($size, partials.$icon-sizes);
 
   @if $axis == "vertical" {
-    height: partials.map-get(partials.$icon-sizes, $size);
+    height: partials.mapget(partials.$icon-sizes, $size);
     width: auto;
   } @else {
     height: auto;
-    width: partials.map-get(partials.$icon-sizes, $size);
+    width: partials.mapget(partials.$icon-sizes, $size);
   }
 }
 

@@ -25,5 +25,5 @@ $spacing: (
     @return throw.error("The provided size #{$size} is invalid.", $size: $size, $source: "get-spacing()");
   }
 
-  @return fn.map-get($spacing, $size);
+  @return fn.mapget($spacing, $size);
 }

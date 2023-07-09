@@ -48,3 +48,61 @@ export const pluckObjAttributes = <
         : ([prev[0], { ...prev[1], [curr]: obj[curr as N] }] as [K, Subtract<T, K>]),
     [{}, {}] as [K, Subtract<T, K>],
   );
+
+/**
+ * Returns whether or not the provided attributes, {@link Partial<{ [key in keyof P]: P[key] }>}, defined as key-value
+ * pairs, have equal associated values in the provided object, {@link P}.
+ *
+ * @example
+ * // Returns true
+ * const obj = { foo: 6, bar: 3, apple: 9 };
+ * selectedObjAttributesEqual(obj, { apple: 9, foo: 6 })
+ *
+ * @param {P} obj The object for which the lookup attributes should be checked against.
+ *
+ * @param {Partial<{ [key in keyof P]: P[key] }>} attrs
+ *   Attributes and values that should be checked against the provided object, {@link P}.
+ *
+ * @param options
+ *   Options for the method.
+ *   - ignoreUndefined:  When explicitly true, undefined values in the provided {@link attrs} object will not be checked
+ *                       for equality but will instead be ignored.
+ * @returns {boolean}
+ */
+export const selectedObjAttributesEqual = <P extends Record<string, unknown>>(
+  obj: P,
+  attrs: Partial<{ [key in keyof P]: P[key] }>,
+  options?: { ignoreUndefined?: boolean },
+): boolean => {
+  let ignoredAttributes: (keyof P)[] = [];
+
+  /* First, we need to determine the attributes that should be checked against the provided object accounting for
+     undefined attribute values that are being explicitly filtered out. */
+  let checkAttrs: Partial<{ [key in keyof P]: P[key] }> = {};
+  let k: keyof P;
+  for (k in attrs) {
+    if (!(attrs[k] === undefined && options?.ignoreUndefined === true)) {
+      checkAttrs = { ...checkAttrs, [k]: attrs[k] };
+    } else {
+      ignoredAttributes = [...ignoredAttributes, k];
+    }
+  }
+  /* If there are no attributes that we are checking against, an Error should be thrown because this is almost always
+     unintended and should be discouraged as it will always return true. */
+  if (Object.keys(checkAttrs).length === 0) {
+    let message = "Dangerous Function Usage: At least one attribute name-value pair must be provided.";
+    if (ignoredAttributes.length !== 0) {
+      message = `Dangerous Function Usage: No attribute name-value pairs exist after attribute(s) ${ignoredAttributes.join(
+        ", ",
+      )} were ignored.`;
+    }
+    throw new Error(message);
+  }
+  let attr: keyof P;
+  for (attr in checkAttrs) {
+    if (obj[attr] !== attrs[attr]) {
+      return false;
+    }
+  }
+  return true;
+};

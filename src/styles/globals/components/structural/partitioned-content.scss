@@ -1,0 +1,23 @@
+@use "partials";
+
+.partitioned-content {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: partials.get-spacing("md");
+
+  > .partitioned-content__header {
+    max-height: 36px;
+  }
+
+  > .partitioned-content__content {
+    overflow-y: scroll;
+    flex-grow: 100;
+  }
+
+  > .partitioned-content__footer {
+    margin-top: partials.get-spacing("md");
+    max-height: 36px;
+  }
+}

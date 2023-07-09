@@ -1,3 +1,5 @@
+@use "sass:map";
+@use "sass:meta";
 @use "../../functions" as fn;
 @use "../colors" as colors;
 
@@ -20,8 +22,7 @@ $typography-font-families: (
 
 @function get-font-family($type) {
   $type: fn.validate-value($type, $typography-types);
-
-  @return fn.map-get($typography-font-families, $type);
+  @return fn.mapget($typography-font-families, $type);
 }
 
 @mixin font-family($type) {
@@ -135,23 +136,20 @@ $typography-default-sizes: (
 
 @function parse-size($type, $args...) {
   $type: fn.validate-value($type, $typography-types);
-  $default-size: fn.map-get($typography-default-sizes, $type);
+  $default-size: fn.mapget($typography-default-sizes, $type);
   $size: fn.get-optional-kwarg("size", $default: $default-size, $args...);
   $size: fn.validate-value($size, $typography-sizes);
-
   @return $size;
 }
 
 @function get-font-size($type, $args...) {
   $type: fn.validate-value($type, $typography-types);
-
-  @return fn.map-get($typography-size-properties, $type, parse-size($type, $args...), font-size);
+  @return fn.mapget($typography-size-properties, $type, parse-size($type, $args...), font-size);
 }
 
 @function get-line-height($type, $args...) {
   $type: fn.validate-value($type, $typography-types);
-
-  @return fn.map-get($typography-size-properties, $type, parse-size($type, $args...), line-height);
+  @return fn.mapget($typography-size-properties, $type, parse-size($type, $args...), line-height);
 }
 
 @mixin font-size($type, $size: null) {
@@ -219,9 +217,8 @@ $typography-default-colors: (
 
 @function get-font-color($type, $color: null, $shade: null) {
   $type: fn.validate-value($type, $typography-types);
-  $color: if($color, $color, fn.map-get($typography-default-color-names, $type));
-  $shade: if($shade, $shade, fn.map-get($typography-default-color-shades, $type));
-
+  $color: if($color, $color, fn.mapget($typography-default-color-names, $type));
+  $shade: if($shade, $shade, fn.mapget($typography-default-color-shades, $type));
   @return colors.get-color($color, $shade);
 }
 
@@ -279,18 +276,16 @@ $typography-default-weights: (
 @function get-font-family-weight($family, $weight) {
   $family: fn.validate-value($family, $font-families);
   $weight-name: fn.validate-value($weight, $font-weight-names);
-
-  @return fn.map-get($font-family-weights, $family, $weight);
+  @return fn.mapget($font-family-weights, $family, $weight);
 }
 
 @function get-font-weight($type, $args...) {
   $type: fn.validate-value($type, $typography-types);
-  $default-weight: fn.map-get($typography-default-weights, $type);
+  $default-weight: fn.mapget($typography-default-weights, $type);
   $weight: fn.get-optional-kwarg("weight", $default: $default-weight, $args...);
   $weight: fn.validate-value($weight, $font-weight-names);
   $family: get-font-family($type);
-
-  @return fn.map-get($font-family-weights, $family, $weight);
+  @return fn.mapget($font-family-weights, $family, $weight);
 }
 
 @mixin font-weight($type, $args...) {
@@ -318,7 +313,6 @@ $typography-default-weights: (
     font-size: fn.get-optional-kwarg(font-size, get-font-size($type, $args...), $args...),
   );
   $overrides: map.get(meta.keywords($args), "override");
-
   @if $overrides {
     $properties: map.merge($properties, $overrides);
   }
@@ -330,7 +324,7 @@ $typography-default-weights: (
   // All of the relevant properties might not be present if some were ignored.
   @each $k in map.keys($properties) {
     @if map.get($properties, $k) {
-      #{$k}: fn.map-get($properties, $k);
+      #{$k}: fn.mapget($properties, $k);
     }
   }
 }

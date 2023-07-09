@@ -3,6 +3,7 @@ import { type CSSProperties } from "react";
 import classNames, { type ArgumentArray, type Argument } from "classnames";
 
 import { removeObjAttributes } from "~/lib/util";
+import { enumeratedLiterals, type EnumeratedLiteralType } from "~/lib/util/literals";
 
 import { type Color, getColorClassName } from "./colors";
 
@@ -11,29 +12,64 @@ type ComponentNativeProps = {
   readonly className?: string;
 };
 
+export const ComponentFontSizes = enumeratedLiterals(["xxs", "xs", "sm", "md", "lg", "xl"] as const);
+export type ComponentFontSize = EnumeratedLiteralType<typeof ComponentFontSizes>;
+
+export const ComponentFontWeights = enumeratedLiterals(["light", "regular", "medium", "semibold", "bold"] as const);
+export type ComponentFontWeight = EnumeratedLiteralType<typeof ComponentFontWeights>;
+
 const ComponentColorPropNames = ["backgroundColor", "color", "borderColor"] as const;
 type ComponentColorPropName = (typeof ComponentColorPropNames)[number];
 
-const ComponentPropNames = ["style", "className", ...ComponentColorPropNames] as const;
+const ComponentPropNames = ["className", "style", "fontSize", "fontWeight", ...ComponentColorPropNames] as const;
 export type ComponentPropName = (typeof ComponentPropNames)[number];
 
 export type ClassName = ArgumentArray | Argument;
 export type Style = Omit<CSSProperties, ComponentColorPropName>;
 
 type ComponentPropType<N extends ComponentPropName> = (Record<ComponentColorPropName, Color> & {
+  fontSize: ComponentFontSize;
+  fontWeight: ComponentFontWeight;
   style: Style;
   className: ClassName;
 })[N];
 
 type ComponentPropConfig<N extends ComponentPropName> = {
   readonly name: N;
-  readonly merge: (prev: ComponentProps, value: ComponentPropType<N> | undefined) => ComponentProps;
+  readonly merge: (
+    prev: ComponentProps<N | "className" | "style">,
+    value: ComponentPropType<N> | undefined,
+  ) => ComponentProps<N | "className" | "style">;
   readonly flatten: (prev: ComponentNativeProps, value: ComponentPropType<N> | undefined) => ComponentNativeProps;
 };
 
-export type ComponentProps = Partial<{ [key in ComponentPropName]: ComponentPropType<key> }>;
+export type ComponentProps<K extends ComponentPropName = ComponentPropName> = Partial<{
+  [key in K]: ComponentPropType<key>;
+}>;
 
-const ComponentPropConfigs: { [key in ComponentPropName]: Omit<ComponentPropConfig<key>, "name"> } = {
+const ComponentPropConfigs: {
+  [key in ComponentPropName]: Omit<ComponentPropConfig<key>, "name">;
+} = {
+  fontSize: {
+    merge: (prev, fontSize) => ({
+      ...prev,
+      fontSize: fontSize || prev.fontSize,
+    }),
+    flatten: (prev, fontSize) => ({
+      ...prev,
+      className: classNames(prev.className, fontSize && `font-size-${fontSize}`),
+    }),
+  },
+  fontWeight: {
+    merge: (prev, fontWeight) => ({
+      ...prev,
+      fontSize: fontWeight || prev.fontWeight,
+    }),
+    flatten: (prev, fontWeight) => ({
+      ...prev,
+      className: classNames(prev.className, fontWeight && `font-weight-${fontWeight}`),
+    }),
+  },
   backgroundColor: {
     merge: (prev, color) => ({
       ...prev,

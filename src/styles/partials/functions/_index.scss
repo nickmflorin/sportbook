@@ -16,7 +16,6 @@ $sass-primitives: (number, string, color, calculation, bool, null);
       $list: $list
     );
   }
-
   @return (null != list.index($list, $value));
 }
 
@@ -35,24 +34,20 @@ $sass-primitives: (number, string, color, calculation, bool, null);
   $strict: if(map.has-key(meta.keywords($keys), "strict"), map.get(meta.keywords($keys), "strict"), false);
 
   $previous: ();
-
   @for $i from 1 through list.length($keys) {
     $k: list.nth($keys, $i);
     $level: $i;
-
     @if meta.type-of($running) != map or not map.has-key($running, $k) {
       @if $strict {
         // Here - the additional debugging information is widely helpful.
         $message: "The provided map, '#{meta.inspect($map)}', does not have key #{$k} " +
           "(type = #{meta.inspect(meta.type-of($k))}) at level #{$level}";
-
         @if list.length($previous) != 0 {
           // Including the running map is only applicable if there were previous keys, because if there are no previous
           // keys the running map is the same as the original map.
           $message: $message +
             ", (previous keys were #{meta.inspect($previous)}) (map at level is #{meta.inspect($running)})";
         }
-
         @return throw.error($message, $source: "missing-map-key()");
       }
       // We are only concerned with identifying the first key that is missing because further keys will always be
@@ -60,13 +55,11 @@ $sass-primitives: (number, string, color, calculation, bool, null);
       @if list.length($previous) != 0 {
         @return ("level": $level, "key": $k, "previous": $previous);
       }
-
       @return ("level": $level, "key": $k);
     }
     $previous: list.append($previous, $k, comma);
     $running: map.get($running, $k);
   }
-
   @return null;
 }
 
@@ -76,10 +69,9 @@ $sass-primitives: (number, string, color, calculation, bool, null);
 /// (map.get($map, "key1", "key2")), but it is not strict.  In other words, it will return null values in the case that
 /// a given key does not exist.  Usually, in the context of this application, this is bug prone - and we should use this
 /// method when we need to be sure that the key exists.
-@function map-get($map, $keys...) {
+@function mapget($map, $keys...) {
   $map: validate-type($map, map);
   $_: missing-map-key($map, $keys..., $strict: true);
-
   @return map.get($map, $keys...);
 }
 
@@ -90,12 +82,10 @@ $sass-primitives: (number, string, color, calculation, bool, null);
   } @else if list.length($types) != 1 {
     @each $tp in $types {
       $result: validate-type($value, $tp, $throw: false);
-
       @if $result {
         @return $value;
       }
     }
-
     @return throw.error(
       "The provided value '#{meta.inspect($value)}' is not a type of any of '#{meta.inspect($types)}'.",
       $source: "validate-type()",
@@ -103,7 +93,6 @@ $sass-primitives: (number, string, color, calculation, bool, null);
     );
   }
   $type: ensure-sass-primitive(list.nth($types, 1));
-
   @if type-of($value) == $value {
     @return throw.error(
       "The provided value '#{meta.inspect($value)}' cannot be a type.",
@@ -115,7 +104,6 @@ $sass-primitives: (number, string, color, calculation, bool, null);
   } @else if not $throw {
     @return false;
   }
-
   @return throw.error(
     "The provided value '#{meta.inspect($value)}' is not of type #{meta.inspect($type)}.",
     $source: "validate-type()",
@@ -128,7 +116,6 @@ $sass-primitives: (number, string, color, calculation, bool, null);
 /// additional context in the thrown error.
 @function validate-value($value, $values, $reference: "value") {
   $valid: false;
-
   @if type-of($values) == map {
     $valid: in-list($value, map.keys($values));
   } @else if type-of($values) == list {
@@ -140,17 +127,14 @@ $sass-primitives: (number, string, color, calculation, bool, null);
       $values: $values
     );
   }
-
   @if $valid {
     @return $value;
   }
 
   $invalids: meta.inspect($values);
-
   @if meta.type-of($values) == map {
     $invalids: meta.inspect(map.keys($values));
   }
-
   @return throw.error(
     "The provided #{$reference} '#{$value}' is invalid, must be one of #{$invalids}.",
     $source: "validate-value()",
@@ -166,31 +150,78 @@ $sass-primitives: (number, string, color, calculation, bool, null);
 @function ensure-sass-primitive($v) {
   @if not is-sass-primitive($v) {
     $invalid: meta.type-of($v);
-
     @return throw.error(
       "The value #{meta.inspect($v)} is not a SASS primitive, but has type #{$invalid}.",
       $source: "ensure-sass-primitive()",
       $value: $v
     );
   }
-
   @return $v;
 }
 
 /// Parses an optionally provided keyword argument from an arbitrary set of arguments,
 ///
 /// @param {string} $name
-///   The name of the optionally provided keyword argument that may or may not be in the arbitrary
-///   set of arguments.
+///   The name of the optionally provided keyword argument that may or may not be in the arbitrary set of arguments.
 /// @param {arglist} $args...
-///   The arbitrary set of arguments provided to a function or mixin that may or may not include
-///   the optional argument defined by `name`.
+///   The arbitrary set of arguments provided to a function or mixin that may or may not include the optional argument
+///   defined by `name`.
 /// @param {} $default
-///   A default value that should be used in the case that the argument is not present in the
-///   set of provided arbitrary arguments.
+///   A default value that should be used in the case that the argument is not present in the set of provided arbitrary
+///   arguments.
 @function get-optional-kwarg($name, $args...) {
   $default: if(map.has-key(meta.keywords($args), "default"), map.get(meta.keywords($args), "default"), null);
   $value: if(map.has-key(meta.keywords($args), $name), map.get(meta.keywords($args), $name), $default);
-
   @return $value;
+}
+
+/// Optionally picks or ignores properties from a map based on optionally provided named parameters "pick" or "ignore".
+@function pick-or-ignore($data, $args...) {
+  $ignore: map.get(meta.keywords($args), "ignore");
+  $pick: map.get(meta.keywords($args), "pick");
+  $strict: if(map.has-key(meta.keywords($args), "strict"), map.get(meta.keywords($args), "strict"), true);
+  @if $ignore and $pick {
+    @return throw.error(
+      "The 'ignore' named argument cannot be provided alongside the 'pick' argument.  If selecting " +
+        "just a subset of parameters, provide the 'pick' argument without the 'ignore' named " + "argument.",
+      $source: "pick-or-ignore()",
+      $pick: $pick,
+      $ignore: $ignore,
+      $data: $data
+    );
+  } @else if $ignore {
+    $ignore: validate-type($ignore, list);
+    @each $ignore-property in $ignore {
+      @if not map.has-key($data, $ignore-property) {
+        @if $strict {
+          @return throw.error(
+            "The ignore property #{$ignore-property} does not exist in the set of typography " +
+              "properties, #{map.keys($properties)}.",
+            $source: "pick-or-ignore()",
+            $ignore: $ignore,
+            $data: $data
+          );
+        }
+      }
+      $data: map.remove($data, $ignore-property);
+    }
+    @return $data;
+  } @else if $pick {
+    $new-data: ();
+    @each $pick-property in $pick {
+      @if not map.has-key($data, $pick-property) {
+        @if $strict {
+          @return throw.error(
+            "The pick property #{$pick-property} does not exist in the set of properties, " + "#{map.keys($data)}.",
+            $source: "pick-or-ignore()",
+            $pick: $pick,
+            $data: $data
+          );
+        }
+      }
+      $new-data: map.set($new-data, $pick-property, mapget($data, $pick-property));
+    }
+    @return $new-data;
+  }
+  @return $data;
 }

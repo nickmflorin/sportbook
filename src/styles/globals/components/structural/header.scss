@@ -9,12 +9,16 @@
     display: flex;
     flex-direction: column;
 
-    > .title {
-      @include partials.font("body", $size: "lg", $weight: "medium");
+    > .header__title {
+      // We allow the font size to be defined in the component itself.
+      color: partials.get-font-color("heading", $shade: 8);
+      font-weight: partials.get-font-weight("heading", $weight: "medium");
     }
 
-    > .subtitle {
-      @include partials.font("body", $size: "sm", $weight: "regular", $color: "gray", $shade: 4);
+    > .header__subtitle {
+      // We allow the font size to be defined in the component itself.
+      color: partials.get-font-color("body", $shade: 5);
+      font-weight: partials.get-font-weight("body", $weight: "regular");
     }
   }
 

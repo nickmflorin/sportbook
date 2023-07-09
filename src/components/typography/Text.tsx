@@ -1,13 +1,10 @@
-import classNames from "classnames";
+import { type ComponentProps, pluckNativeComponentProps } from "~/lib/ui";
 
-import { type Color, type ColorShade, getColorClassName } from "~/styles";
-
-export interface TextProps {
-  readonly color: Color;
+export interface TextProps extends Pick<ComponentProps, "className" | "style" | "color" | "fontSize" | "fontWeight"> {
   readonly children: string;
-  readonly shade?: ColorShade;
 }
 
-export const Text = ({ color, children, shade }: TextProps): JSX.Element => (
-  <div className={classNames("text", getColorClassName({ form: "color", color, shade }))}>{children}</div>
-);
+export const Text = (props: TextProps): JSX.Element => {
+  const [{ children }, nativeProps] = pluckNativeComponentProps({ className: "body" }, props);
+  return <div {...nativeProps}>{children}</div>;
+};

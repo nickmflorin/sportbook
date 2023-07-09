@@ -1,5 +1,8 @@
 const STYLELINT_RULES = {
-  "at-rule-empty-line-before": ["always", { except: ["first-nested", "inside-block", "after-same-name"] }],
+  "at-rule-empty-line-before": [
+    "always",
+    { ignore: ["after-comment", "first-nested", "inside-block"], ignoreAtRules: ["use", "import", "forward"] },
+  ],
   /* These two properties are required such that the colors that are imported in TS are of an expected form, which is a
      HEX color with 6 characters (not including the '#'). */
   "color-hex-length": "long",
@@ -10,7 +13,6 @@ const STYLELINT_RULES = {
   "declaration-property-value-disallowed-list": {
     border: [],
   },
-  "function-max-empty-lines": 1,
   /* Newer versions of Stylelint and related packages/extensions seem to have an issue detecting whether or not the
      usage of a function is considered "unknown", for both sass built-in modules and internal modules.  If we turn off
      "function-no-unknown" in favor of the "scss/function-no-unknown" rules, it will properly treat functions from sass
@@ -20,10 +22,7 @@ const STYLELINT_RULES = {
      rule back on (but not "function-no-unknown"). */
   "function-no-unknown": null,
   "length-zero-no-unit": null,
-  "max-empty-lines": 1,
-  "max-line-length": [122, { ignore: ["non-comments"] }],
   "max-nesting-depth": null,
-  "no-empty-first-line": true,
   "no-invalid-double-slash-comments": true,
   /* This rule is updated in order to allow class selector notation for nested classes using double underscores (__)
      (i.e. button__content). */

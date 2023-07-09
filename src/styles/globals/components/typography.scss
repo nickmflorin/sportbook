@@ -1,20 +1,7 @@
 @use "sass:map";
 @use "partials";
-@include partials.font-face("avenir", "Light", 300 399);
-@include partials.font-face("avenir", "Regular", 400 499);
-@include partials.font-face("avenir", "Regular", 400 499, italic);
-@include partials.font-face("avenir", "Medium", 500 599);
-@include partials.font-face("avenir", "SemiBold", 600 699);
-@include partials.font-face("avenir", "SemiBold", 600 699, italic);
-@include partials.font-face("avenir", "Bold", 700);
-@include partials.font-face("avenir", "Bold", 700, italic);
-@include partials.font-face("roboto", "Light", 300 399);
-@include partials.font-face("roboto", "Light", 300 399, italic);
-@include partials.font-face("roboto", "Regular", 400 499);
-@include partials.font-face("roboto", "Medium", 500 699);
-@include partials.font-face("roboto", "Medium", 500 699, italic);
-@include partials.font-face("roboto", "Bold", 700);
-@include partials.font-face("roboto", "Bold", 700, italic);
+
+@include partials.font-faces;
 
 %typography-base {
   font-feature-settings:
@@ -36,17 +23,11 @@
 }
 
 %body-defaults {
-  @include partials.body-font-weight;
-  @include partials.body-font-size;
-  @include partials.body-font-color;
-  @include partials.body-font-family;
+  @include partials.font("body");
 }
 
 %heading-defaults {
-  @include partials.heading-font-weight;
-  @include partials.heading-font-size;
-  @include partials.heading-font-color;
-  @include partials.heading-font-family;
+  @include partials.font("heading");
 }
 
 html,
@@ -80,41 +61,56 @@ p {
   }
 }
 
-@mixin typography-type-variants($type) {
-  @each $size in partials.$typography-sizes {
-    &--#{$size} {
-      $size: partials.get-font-size($type, $size);
-      $line-height: partials.get-line-height($type, $level: $level);
-
-      // This will include the default font weight name for the given level.
-      @include partials.font($type, $size: $size);
-
-      > .icon {
-        height: $size;
-        margin-right: 6px;
-        padding-bottom: 0.5 * ($line-height - $size);
-        padding-top: 0.5 * ($line-height - $size);
-        width: auto;
-      }
-    }
-  }
-
+@mixin font-weights($type) {
   @each $weight in partials.$font-weight-names {
-    &--weight-#{$weight} {
+    .font-weight-#{$weight} {
       @include partials.font-weight($type, $weight);
     }
   }
 }
 
-label:not(.checkbox) {
-  @include partials.label;
+@mixin font-sizes($type) {
+  @each $size in partials.$typography-sizes {
+    .font-size-#{$size} {
+      @include partials.font($type, $size: $size, $pick: (line-height, font-size));
+    }
+  }
+}
 
-  display: flex;
+// By default, the "font-weight-x" classes will apply to body text (unless the element is an h-tag).
+@include font-weights("body");
 
+// By default, the "font-size-x" classes will apply to body text (unless the element is an h-tag).
+@include font-sizes("body");
+
+@mixin typography-type-variants($type) {
+  // Repeat here to make sure it takes precedence under the more specific selector for font sizes.
+  @include font-sizes($type);
+
+  @each $size in partials.$typography-sizes {
+    &.font-size-#{$size} {
+      $font-size: partials.get-font-size($type, $size);
+      $line-height: partials.get-line-height($type, $size);
+
+      > .icon {
+        height: $font-size;
+        margin-right: 6px;
+        padding-bottom: 0.5 * ($line-height - $font-size);
+        padding-top: 0.5 * ($line-height - $font-size);
+        width: auto;
+      }
+    }
+  }
+  // Repeat here to make sure it takes precedence under the more specific selector for font weights.
+  @include font-weights($type);
+}
+
+label {
   @extend %typography-base;
-  @extend %body-defaults;
+  @include partials.label;
   @include typography-type-variants("label");
 
+  display: flex;
   width: 100%;
 
   &--transform-underline {

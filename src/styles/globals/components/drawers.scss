@@ -4,6 +4,8 @@
   padding: partials.get-spacing("md");
   height: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   > .header {
     margin-bottom: partials.get-spacing("md");
@@ -11,5 +13,6 @@
 
   > .drawer__content {
     overflow-y: scroll;
+    flex-grow: 100;
   }
 }
