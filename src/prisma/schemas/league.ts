@@ -19,7 +19,7 @@ export const LeagueSchema = z.object({
   // TODO: Should we enforce that each league be associated with a least one location?  How do we do this in the DB?
   locations: z.array(LocationSchema).optional(),
   leagueType: z.nativeEnum(LeagueType).optional(), // Defaults to Pickup
-  // sportId: z.string({ required_error: "A league must belong to a sport." }).uuid(),
+  sportId: z.string({ required_error: "A league must belong to a sport." }).uuid(),
   isPublic: z.boolean().optional(), // Defaults to true
   competitionLevel: z.nativeEnum(LeagueCompetitionLevel).optional(), // Defaults to SOCIAL
 });

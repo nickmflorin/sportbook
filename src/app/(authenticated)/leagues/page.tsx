@@ -14,14 +14,15 @@ export default async function Leagues() {
   }
   const sports = await prisma.sport.findMany();
 
-  async function createLeague(data: FormData) {
-    "use server";
-    console.log(data);
-  }
-
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <LeaguesHeader action={createLeague} />
+      <LeaguesHeader
+        action={async ({ locations, ...data }) => {
+          "use server";
+          console.log(data);
+          await prisma.league.create({ data: { createdById: userId, updatedById: userId, ...data } });
+        }}
+      />
       {sports.map((sport, i) => (
         <SportLeagues key={i} sport={sport} userId={userId} />
       ))}

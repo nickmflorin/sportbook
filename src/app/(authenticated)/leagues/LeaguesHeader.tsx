@@ -8,7 +8,6 @@ export type LeaguesHeaderProps = Pick<CreateLeagueDrawerProps, "action">;
 
 export const LeaguesHeader = ({ action }: LeaguesHeaderProps): JSX.Element => {
   const [createLeagueDrawerOpen, { open: openLeagueDrawer }] = useDisclosure(false);
-
   return (
     <>
       <Flex direction="row" justify="right">
