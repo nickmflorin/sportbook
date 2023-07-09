@@ -1,0 +1,22 @@
+@use "sass:map";
+@use "sass:string";
+@use "../../functions" as fn;
+@use "../colors" as colors;
+
+$icon-contain-names: ("square", "fit");
+
+$icon-size-small: 16px;
+$icon-size-medium: 20px;
+$icon-size-large: 24px;
+$icon-size-fill: 100%;
+
+$icon-sizes: (
+  "small": $icon-size-small,
+  "medium": $icon-size-medium,
+  "large": $icon-size-large,
+  "fill": $icon-size-fill,
+);
+$icon-size-names: map.keys($icon-sizes);
+
+$icon-default-size-contain: "fit";
+$icon-default-size-axis: "vertical";

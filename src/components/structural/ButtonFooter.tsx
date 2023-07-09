@@ -1,12 +1,13 @@
 import { Button } from "@mantine/core";
 
-import { mergeComponentProps } from "~/lib/ui";
 import { logger } from "~/internal/logger";
+import { pluckNativeComponentProps, type ComponentProps } from "~/lib/ui";
+
 import { ShowHide } from "../util";
 
 type ButtonFooterOrientation = "right-justified" | "full-width";
 
-export type ButtonFooterProps = ComponentProps & {
+export type ButtonFooterProps = Pick<ComponentProps, "className" | "style"> & {
   readonly orientation?: ButtonFooterOrientation;
   readonly submitText?: string;
   readonly cancelText?: string;
@@ -39,19 +40,25 @@ export const ButtonFooter = ({
   orientation = "right-justified",
   ...props
 }: ButtonFooterProps) => {
+  const [rest, nativeProps] = pluckNativeComponentProps(
+    {
+      className: ["button-footer", `button-footer--${orientation}`],
+    },
+    props,
+  );
   const visibility = buttonVisibility({ submitButtonType, ...props });
   if (!(visibility.submit || visibility.cancel)) {
     logger.error("The button footer is not configured to show a submit or cancel button.");
     return <></>;
   }
   return (
-    <div {...mergeComponentProps(props, { className: ["button-footer", `button-footer--${orientation}`] })}>
+    <div {...nativeProps}>
       <ShowHide show={visibility.cancel}>
         <Button
           className="button-footer__button"
           variant="default"
-          onClick={props.onCancel}
-          disabled={props.disabled || props.submitting || props.cancelDisabled}
+          onClick={rest.onCancel}
+          disabled={rest.disabled || rest.submitting || rest.cancelDisabled}
         >
           {cancelText}
         </Button>
@@ -61,8 +68,8 @@ export const ButtonFooter = ({
           className="button-footer__button"
           type={submitButtonType}
           variant="default"
-          onClick={props.onSubmit}
-          disabled={props.disabled || props.submitting || props.submitDisabled}
+          onClick={rest.onSubmit}
+          disabled={rest.disabled || rest.submitting || rest.submitDisabled}
         >
           {submitText}
         </Button>

@@ -7,7 +7,7 @@ import { LeagueCompetitionLevel, LeagueType } from "@prisma/client";
 
 import type * as z from "zod";
 
-import { LeagueSchema } from "~/prisma/schemas";
+import { type LeagueSchema } from "~/prisma/schemas";
 
 import { Form, type FormProps } from "../Form";
 import { LeagueTypeSelect, LeagueCompetitionLevelSelect } from "../input";

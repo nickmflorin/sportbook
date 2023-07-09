@@ -117,8 +117,12 @@ export const env = createEnv({
       development: z.string().optional(),
       test: STRICT_OMISSION,
     }[process.env.NODE_ENV],
-    /* --------- Tentative ----------- */
-    API_SCHEME: z.union([z.literal("http"), z.literal("https")]),
+    /* --------- Tentative - Not Currently Used ----------- */
+    API_SCHEME: {
+      production: z.literal("https"),
+      development: z.union([z.literal("http"), z.literal("https")]),
+      test: STRICT_OMISSION,
+    }[process.env.NODE_ENV],
     API_HOST: {
       production: STRICT_OMISSION,
       development: z.string(),
@@ -129,7 +133,7 @@ export const env = createEnv({
       development: z.coerce.number().int().positive(),
       test: STRICT_OMISSION,
     }[process.env.NODE_ENV],
-    /* --------- Tentative ----------- */
+    /* --------- Tentative - Not Currently Used ----------- */
   },
   /* ----------------------------------- Client Environment Variables ------------------------------------ */
   client: {

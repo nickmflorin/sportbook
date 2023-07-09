@@ -1,12 +1,11 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { auth } from "@clerk/nextjs";
 
 import { prisma } from "~/server/db";
 
-import SportLeagues from "./SportLeagues";
 import { LeaguesHeader } from "./LeaguesHeader";
+import SportLeagues from "./SportLeagues";
 
 export default async function Leagues() {
   const { userId } = await auth();

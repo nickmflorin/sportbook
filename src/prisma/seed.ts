@@ -4,7 +4,7 @@ import { type User, LeagueCompetitionLevel, LeagueType, type League, type Sport,
 
 import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
 
-import { infiniteLoop, infiniteLoopSelection } from "~/lib/utils/random";
+import { infiniteLoop, infiniteLoopSelection } from "~/lib/util/random";
 import { prisma } from "~/server/db";
 
 import { data } from "./fixtures";

@@ -1,0 +1,184 @@
+@use "sass:map";
+@use "partials";
+@include partials.font-face("avenir", "Light", 300 399);
+@include partials.font-face("avenir", "Regular", 400 499);
+@include partials.font-face("avenir", "Regular", 400 499, italic);
+@include partials.font-face("avenir", "Medium", 500 599);
+@include partials.font-face("avenir", "SemiBold", 600 699);
+@include partials.font-face("avenir", "SemiBold", 600 699, italic);
+@include partials.font-face("avenir", "Bold", 700);
+@include partials.font-face("avenir", "Bold", 700, italic);
+@include partials.font-face("roboto", "Light", 300 399);
+@include partials.font-face("roboto", "Light", 300 399, italic);
+@include partials.font-face("roboto", "Regular", 400 499);
+@include partials.font-face("roboto", "Medium", 500 699);
+@include partials.font-face("roboto", "Medium", 500 699, italic);
+@include partials.font-face("roboto", "Bold", 700);
+@include partials.font-face("roboto", "Bold", 700, italic);
+
+%typography-base {
+  font-feature-settings:
+    "tnum" on,
+    "lnum" on;
+  font-style: normal !important;
+  font-variant: tabular-nums;
+  margin: 0;
+  padding: 0;
+
+  em,
+  b {
+    font-style: normal !important;
+  }
+
+  i {
+    font-style: normal !important;
+  }
+}
+
+%body-defaults {
+  @include partials.body-font-weight;
+  @include partials.body-font-size;
+  @include partials.body-font-color;
+  @include partials.body-font-family;
+}
+
+%heading-defaults {
+  @include partials.heading-font-weight;
+  @include partials.heading-font-size;
+  @include partials.heading-font-color;
+  @include partials.heading-font-family;
+}
+
+html,
+body {
+  @extend %typography-base;
+
+  font-family:
+    partials.get-font-family("body"),
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
+    sans-serif;
+}
+
+p {
+  @extend %typography-base;
+  @extend %body-defaults;
+
+  em,
+  b {
+    font-family: inherit;
+    font-style: inherit;
+    font-weight: inherit;
+  }
+}
+
+@mixin typography-type-variants($type) {
+  @each $size in partials.$typography-sizes {
+    &--#{$size} {
+      $size: partials.get-font-size($type, $size);
+      $line-height: partials.get-line-height($type, $level: $level);
+
+      // This will include the default font weight name for the given level.
+      @include partials.font($type, $size: $size);
+
+      > .icon {
+        height: $size;
+        margin-right: 6px;
+        padding-bottom: 0.5 * ($line-height - $size);
+        padding-top: 0.5 * ($line-height - $size);
+        width: auto;
+      }
+    }
+  }
+
+  @each $weight in partials.$font-weight-names {
+    &--weight-#{$weight} {
+      @include partials.font-weight($type, $weight);
+    }
+  }
+}
+
+label:not(.checkbox) {
+  @include partials.label;
+
+  display: flex;
+
+  @extend %typography-base;
+  @extend %body-defaults;
+  @include typography-type-variants("label");
+
+  width: 100%;
+
+  &--transform-underline {
+    text-decoration: underline;
+  }
+
+  &--transform-caps {
+    text-transform: uppercase;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @extend %typography-base;
+  @extend %heading-defaults;
+  @include typography-type-variants("heading");
+
+  width: 100%;
+
+  em,
+  b {
+    font-family: inherit;
+    font-style: inherit;
+    font-weight: inherit;
+  }
+}
+
+.body {
+  @extend %typography-base;
+  @include typography-type-variants("body");
+
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+
+  &--transform-underline {
+    text-decoration: underline;
+  }
+
+  &--transform-caps {
+    text-transform: uppercase;
+  }
+
+  &--align-left {
+    justify-content: left;
+  }
+
+  &--align-center {
+    justify-content: center;
+  }
+
+  &--align-right {
+    justify-content: right;
+  }
+
+  > .icon {
+    color: inherit;
+    font-size: inherit;
+    font-style: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+  }
+}

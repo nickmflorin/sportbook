@@ -2,7 +2,7 @@ import { LoadingOverlay } from "@mantine/core";
 import { type UseFormReturnType } from "@mantine/form";
 
 import { LocalFeedback, type Feedback } from "~/components/feedback";
-import { ButtonFooter, ButtonFooterProps } from "~/components/structural/ButtonFooter";
+import { ButtonFooter, type ButtonFooterProps } from "~/components/structural/ButtonFooter";
 
 export type FormProps<T extends Record<string, unknown>> = Omit<ButtonFooterProps, "onSubmit" | "submitButtonType"> & {
   readonly form: UseFormReturnType<T>;

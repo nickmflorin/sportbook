@@ -1,25 +1,10 @@
 @use "sass:list";
 @use "sass:map";
 @use "sass:meta";
-
 @use "throw";
-
-/*
-All SASS value types, which do not seem to be accessible directly from SASS as its own imported variable.
-
-https://sass-lang.com/documentation/modules/meta#type-of
-*/
-$sass-types: (number, string, color, list, map, calculation, bool, null, function, arglist);
 
 // SASS value types that are not maps, lists, functions or non-primitive data types.
 $sass-primitives: (number, string, color, calculation, bool, null);
-
-/*
-SASS value types that represent primitive-types for valid CSS property values.  Note that this does not mean the
-property itself is guaranteed to be valid for a specific property name, it just means that if we are dynamically
-defining the value for any CSS property, it must be of these types.
-*/
-$sass-css-primitives: (number, string, color, calculation);
 
 /// Returns whether or not the provided value is in the provided list.
 @function in-list($value, $list) {
@@ -31,6 +16,7 @@ $sass-css-primitives: (number, string, color, calculation);
       $list: $list
     );
   }
+
   @return (null != list.index($list, $value));
 }
 
@@ -49,20 +35,24 @@ $sass-css-primitives: (number, string, color, calculation);
   $strict: if(map.has-key(meta.keywords($keys), "strict"), map.get(meta.keywords($keys), "strict"), false);
 
   $previous: ();
+
   @for $i from 1 through list.length($keys) {
     $k: list.nth($keys, $i);
     $level: $i;
+
     @if meta.type-of($running) != map or not map.has-key($running, $k) {
       @if $strict {
         // Here - the additional debugging information is widely helpful.
         $message: "The provided map, '#{meta.inspect($map)}', does not have key #{$k} " +
           "(type = #{meta.inspect(meta.type-of($k))}) at level #{$level}";
+
         @if list.length($previous) != 0 {
           // Including the running map is only applicable if there were previous keys, because if there are no previous
           // keys the running map is the same as the original map.
           $message: $message +
             ", (previous keys were #{meta.inspect($previous)}) (map at level is #{meta.inspect($running)})";
         }
+
         @return throw.error($message, $source: "missing-map-key()");
       }
       // We are only concerned with identifying the first key that is missing because further keys will always be
@@ -70,11 +60,13 @@ $sass-css-primitives: (number, string, color, calculation);
       @if list.length($previous) != 0 {
         @return ("level": $level, "key": $k, "previous": $previous);
       }
+
       @return ("level": $level, "key": $k);
     }
     $previous: list.append($previous, $k, comma);
     $running: map.get($running, $k);
   }
+
   @return null;
 }
 
@@ -87,48 +79,8 @@ $sass-css-primitives: (number, string, color, calculation);
 @function map-get($map, $keys...) {
   $map: validate-type($map, map);
   $_: missing-map-key($map, $keys..., $strict: true);
+
   @return map.get($map, $keys...);
-}
-
-/// Returns a mapping of values in the provided list to the number of times the value is in the provided list.
-///
-/// @param {list} $list
-///   The list that contains the values that should be counted.
-@function list-count($list) {
-  $result: ();
-  @each $li in $list {
-    @if map.has-key($result, $li) {
-      /* stylelint-disable-next-line scss/no-global-function-names */
-      $curr: map-get($result, $li);
-      $result: map.set($result, $li, $curr + 1);
-    } @else {
-      $result: map.set($result, $li, 1);
-    }
-  }
-  @return $result;
-}
-
-/// Returns whether or not there are duplicate values in the provided list.  If the 'value' argument is provided, the
-/// function will only return `true` if the 'value' is in the list multiple times. Otherwise, it will return `true` if
-/// any value is in the list multiple times.
-///
-/// @param {list} $list
-///   The list for which the presence of duplicates should be checked.
-///
-/// @param {} $value
-///   A specific value for which the function should return `true` if present multiple times.
-@function list-contains-duplicates($list, $value: null) {
-  $count: list-count($list);
-  @if $value {
-    $value: validate-value($value, $list);
-    @return map-get($count, $value) > 1;
-  }
-  @each $k in map.keys($count) {
-    @if map-get($count, $k) != 1 {
-      @return true;
-    }
-  }
-  @return false;
 }
 
 /// Validates whether or not the provided value is of any of the provided types.
@@ -138,10 +90,12 @@ $sass-css-primitives: (number, string, color, calculation);
   } @else if list.length($types) != 1 {
     @each $tp in $types {
       $result: validate-type($value, $tp, $throw: false);
+
       @if $result {
         @return $value;
       }
     }
+
     @return throw.error(
       "The provided value '#{meta.inspect($value)}' is not a type of any of '#{meta.inspect($types)}'.",
       $source: "validate-type()",
@@ -149,6 +103,7 @@ $sass-css-primitives: (number, string, color, calculation);
     );
   }
   $type: ensure-sass-primitive(list.nth($types, 1));
+
   @if type-of($value) == $value {
     @return throw.error(
       "The provided value '#{meta.inspect($value)}' cannot be a type.",
@@ -160,54 +115,12 @@ $sass-css-primitives: (number, string, color, calculation);
   } @else if not $throw {
     @return false;
   }
+
   @return throw.error(
     "The provided value '#{meta.inspect($value)}' is not of type #{meta.inspect($type)}.",
     $source: "validate-type()",
     $value: $value
   );
-}
-
-/// Reverses the provided map such that the values become the keys and the keys become the values.
-///
-/// This should ONLY be used for cases where the map's keys are not maps themselves (i.e. it is a single level map).
-///
-/// @param {map} $map
-///   The map that should be reversed.
-@function reverse-map($map) {
-  $map: validate-type($map, map);
-
-  // A map cannot be reversed if there are repeated values because it will lead to data loss.
-  @if list-contains-duplicates(map.values($map)) {
-    @return throw.error(
-      "The provided map '#{meta.inspect($map)}' contains duplicate values.  Map reversal does " +
-        "not support duplicate values.",
-      $source: "reverse-map()"
-    );
-  }
-
-  $new-map: ();
-  @each $k in map.keys($map) {
-    /* stylelint-disable-next-line scss/no-global-function-names */
-    $v: map-get($map, $k);
-    @if meta.type-of($v) == map {
-      @return throw.error(
-        "The provided map '#{meta.inspect($map)}' has a value at key '#{meta.inspect($k)}' that " +
-          "is a map. Map reversal does not support nested maps.",
-        $source: "reverse-map()"
-      );
-    }
-    $new-map: map.set($new-map, $v, $k);
-  }
-  @return $new-map;
-}
-
-/// Returns the key in the provided map associated with the provided value.
-///
-/// @param {map} $map
-///   The map that contains the provided value that is being looked up.
-///
-@function map-get-reverse($map, $value) {
-  @return map-get(reverse-map($map), $value);
 }
 
 /// Validates the provided value based on whether or not they exist in a provided list or map, where the existence in
@@ -227,14 +140,17 @@ $sass-css-primitives: (number, string, color, calculation);
       $values: $values
     );
   }
+
   @if $valid {
     @return $value;
   }
 
   $invalids: meta.inspect($values);
+
   @if meta.type-of($values) == map {
     $invalids: meta.inspect(map.keys($values));
   }
+
   @return throw.error(
     "The provided #{$reference} '#{$value}' is invalid, must be one of #{$invalids}.",
     $source: "validate-value()",
@@ -247,30 +163,34 @@ $sass-css-primitives: (number, string, color, calculation);
   @return in-list(meta.type-of($v), $sass-primitives);
 }
 
-@function is-sass-css-primitive($v) {
-  @return in-list(meta.type-of($v), $sass-css-primitives);
-}
-
 @function ensure-sass-primitive($v) {
   @if not is-sass-primitive($v) {
     $invalid: meta.type-of($v);
+
     @return throw.error(
       "The value #{meta.inspect($v)} is not a SASS primitive, but has type #{$invalid}.",
       $source: "ensure-sass-primitive()",
       $value: $v
     );
   }
+
   @return $v;
 }
 
-@function ensure-sass-css-primitive($v) {
-  @if not is-sass-css-primitive($v) {
-    $invalid: meta.type-of($v);
-    @return throw.error(
-      "The value #{meta.inspect($v)} is not a SASS CSS primitive, but has type #{$invalid}.",
-      $source: "ensure-sass-css-primitive()",
-      $value: $v
-    );
-  }
-  @return $v;
+/// Parses an optionally provided keyword argument from an arbitrary set of arguments,
+///
+/// @param {string} $name
+///   The name of the optionally provided keyword argument that may or may not be in the arbitrary
+///   set of arguments.
+/// @param {arglist} $args...
+///   The arbitrary set of arguments provided to a function or mixin that may or may not include
+///   the optional argument defined by `name`.
+/// @param {} $default
+///   A default value that should be used in the case that the argument is not present in the
+///   set of provided arbitrary arguments.
+@function get-optional-kwarg($name, $args...) {
+  $default: if(map.has-key(meta.keywords($args), "default"), map.get(meta.keywords($args), "default"), null);
+  $value: if(map.has-key(meta.keywords($args), $name), map.get(meta.keywords($args), $name), $default);
+
+  @return $value;
 }

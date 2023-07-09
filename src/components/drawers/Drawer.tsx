@@ -4,7 +4,7 @@ import classNames from "classnames";
 
 import { ActionIcon } from "~/components/buttons/ActionIcon";
 import { Portal } from "~/components/layout/Portal";
-import { Header, HeaderProps } from "~/components/structural/Header";
+import { Header, type HeaderProps } from "~/components/structural/Header";
 
 export interface DrawerProps extends Pick<HeaderProps, "title" | "subTitle"> {
   readonly className?: string;

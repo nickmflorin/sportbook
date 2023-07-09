@@ -1,0 +1,79 @@
+@use "sass:map";
+@use "sass:color";
+@use "throw";
+@use "partials";
+
+%icon-svg-base {
+  fill: currentcolor;
+  max-height: 100%;
+  max-width: 100%;
+  padding: 0;
+  vertical-align: 0;
+
+  path {
+    color: inherit;
+    fill: inherit;
+  }
+}
+
+@mixin icon-size($size, $axis: "vertical") {
+  $axis: partials.validate-value($axis, ("horizontal", "vertical"));
+  $size: partials.validate-value($size, partials.$icon-sizes);
+
+  @if $axis == "vertical" {
+    height: partials.map-get(partials.$icon-sizes, $size);
+    width: auto;
+  } @else {
+    height: auto;
+    width: partials.map-get(partials.$icon-sizes, $size);
+  }
+}
+
+@mixin icon-contain($contain) {
+  $contain: partials.validate-value($contain, ("square", "fit"));
+
+  @if $contain == "square" {
+    aspect-ratio: 1;
+  }
+}
+
+@mixin icon-size-classes($axis) {
+  @each $size in map.keys(partials.$icon-sizes) {
+    &.icon--size-#{$size} {
+      @include icon-size($size, $axis);
+    }
+  }
+}
+
+.icon {
+  @extend %icon-svg-base;
+
+  // For when the icon is a spinner and indicating loading state.
+  animation-duration: 1s;
+  padding: 0;
+  vertical-align: 0;
+  align-items: center;
+  -webkit-box-align: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+
+  &--contain-square:not(&--contain-fit) {
+    @include icon-contain("square");
+  }
+
+  &--contain-fit:not(&--contain-square) {
+    @include icon-contain("fit");
+  }
+
+  &:not(&--contain-fit, &--contain-square) {
+    @include icon-contain(partials.$icon-default-size-contain);
+  }
+
+  &--axis-vertical:not(&--axis-horizontal) {
+    @include icon-size-classes("vertical");
+  }
+
+  &--axis-horizontal:not(&--axis-vertical) {
+    @include icon-size-classes("horizontal");
+  }
+}

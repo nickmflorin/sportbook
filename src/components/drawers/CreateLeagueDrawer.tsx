@@ -1,6 +1,7 @@
 "use client";
-import { Drawer, DrawerProps } from "./Drawer";
-import { CreateLeagueForm, CreateLeagueFormProps } from "~/components/forms/league";
+import { CreateLeagueForm, type CreateLeagueFormProps } from "~/components/forms/league";
+
+import { Drawer, type DrawerProps } from "./Drawer";
 
 export interface CreateLeagueDrawerProps extends Omit<DrawerProps, "children">, Pick<CreateLeagueFormProps, "action"> {}
 

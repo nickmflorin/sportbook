@@ -1,6 +1,7 @@
 "use client";
 import { Flex, type FlexProps, Text } from "@mantine/core";
 import classNames from "classnames";
+
 import { Actions, type Action, filterVisibleActions } from "./Actions";
 
 export type ExposedHeaderProps = {

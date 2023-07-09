@@ -8,6 +8,6 @@ export interface TextProps {
   readonly shade?: ColorShade;
 }
 
-export const Text = ({ color, children, shade }: TextProps): JSX.Element => {
-  return <div className={classNames("text", getColorClassName({ form: "color", color, shade }))}>{children}</div>;
-};
+export const Text = ({ color, children, shade }: TextProps): JSX.Element => (
+  <div className={classNames("text", getColorClassName({ form: "color", color, shade }))}>{children}</div>
+);

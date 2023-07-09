@@ -65,10 +65,8 @@ export const ActionIcon = ({
   size = 16,
   color = ActionIconColor.GRAY,
   ...props
-}: ActionIconProps) => {
-  return (
-    <RootActionIcon {...props} size={size} variant={variant} {...digestColorSet({ color, ...props })}>
-      <Icon stroke={stroke} />
-    </RootActionIcon>
-  );
-};
+}: ActionIconProps) => (
+  <RootActionIcon {...props} size={size} variant={variant} {...digestColorSet({ color, ...props })}>
+    <Icon stroke={stroke} />
+  </RootActionIcon>
+);

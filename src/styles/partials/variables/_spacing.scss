@@ -1,0 +1,29 @@
+@use "sass:map";
+@use "throw";
+@use "../functions" as fn;
+
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 20px;
+$spacing-xxl: 24px;
+$spacing-xxxl: 32px;
+
+$spacing: (
+  xs: $spacing-xs,
+  sm: $spacing-sm,
+  md: $spacing-md,
+  lg: $spacing-lg,
+  xl: $spacing-xl,
+  xxl: $spacing-xxl,
+  xxxl: $spacing-xxxl,
+);
+
+@function get-spacing($size) {
+  @if not map.has-key($spacing, $size) {
+    @return throw.error("The provided size #{$size} is invalid.", $size: $size, $source: "get-spacing()");
+  }
+
+  @return fn.map-get($spacing, $size);
+}

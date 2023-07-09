@@ -40,8 +40,10 @@ const BASE_RULES = {
       ignorePattern: "\\/\\*\\s+eslint-disable-next-line(.?)+\\*\\/$",
     },
   ],
+  "arrow-body-style": ["error", "as-needed"],
   "no-console": "error",
   "no-multiple-empty-lines": "error",
+  "multiline-comment-style": ["warn", "bare-block"],
   "no-unexpected-multiline": "error",
   "object-curly-spacing": [1, "always"],
   "prefer-const": "error",
@@ -73,6 +75,7 @@ const TS_BASE_RULES = {
   "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
   "react/jsx-newline": [1, { prevent: true }],
   "react/jsx-curly-brace-presence": [1, { props: "never", children: "never" }],
+  "react/display-name": "off",
 };
 
 /** @type {import("eslint").Linter.Config} */
