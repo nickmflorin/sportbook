@@ -272,6 +272,8 @@ $ psql -d postgres
 
 ---
 
+##### Creating the Database
+
 Once inside of the [psql] shell, create the appropriate [postgres] database associated with this application, based on
 the configuration parameters defined in the environment:
 
@@ -292,6 +294,23 @@ Finally, assign the created or existing user as the owner of the created or exis
 ```bash
 $ ALTER DATABASE <DATABASE_NAME> OWNER TO <DATABASE_USER>;
 ```
+
+##### Assigning Permissions to Create Database
+
+In the above section, a database with name `<DATABASE_NAME>` was created and the appropriate permissions on that
+database were assigned to the database user, `<DATABASE_USER>`. However, we still need to allow the `<DATABASE_USER>` to
+create new databases (versus just modifying the existing database). This is required for [prisma] migrations to properly
+function.
+
+To do this, simply give the database user, `<DATABASE_USER>`, the required permissions to create databases so [prisma]
+migrations can function properly:
+
+```bash
+$ ALTER USER <DATABASE_USER> CREATEDB;
+```
+
+Now, the database user, `<DATABASE_USER>`, will be able to create databases in the [postgres] service and [prisma]
+migrations will properly function.
 
 You can now quit the [psql] shell:
 
