@@ -7,11 +7,11 @@
   align-items: center;
   gap: partials.get-spacing("md");
 
-  &.button-footer-right-justified {
+  &.button-footer--right-justified {
     justify-content: flex-end;
   }
 
-  &.button-footer-full-width {
+  &.button-footer--full-width {
     > .button-footer__button {
       flex: 1;
     }

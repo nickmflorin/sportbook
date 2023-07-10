@@ -1,6 +1,8 @@
-import { env } from "~/env.mjs";
 import { NextResponse } from "next/server";
+
 import superjson from "superjson";
+
+import { env } from "~/env.mjs";
 
 export const getApiUrl = () => {
   // The browser should use a relative URL.

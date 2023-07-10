@@ -11,7 +11,7 @@ $font-family-roboto: roboto;
 $font-families: ($font-family-avenir, $font-family-roboto);
 
 $heading-font-family: $font-family-avenir;
-$body-font-family: $font-family-avenir;
+$body-font-family: $font-family-roboto;
 $label-font-family: $font-family-avenir;
 
 $typography-font-families: (
@@ -306,11 +306,11 @@ $typography-default-weights: (
 
 @function get-font($type, $args...) {
   $properties: (
-    font-family: fn.get-optional-kwarg("font-family", get-font-family($type), $args...),
-    font-weight: fn.get-optional-kwarg("weight", get-font-weight($type, $args...), $args...),
+    font-family: fn.get-optional-kwarg("font-family", $default: get-font-family($type), $args...),
+    font-weight: fn.get-optional-kwarg("weight", $default: get-font-weight($type, $args...), $args...),
     color: fn.get-optional-kwarg(color, $default: get-font-color($type), $args...),
     line-height: fn.get-optional-kwarg(line-height, $default: get-line-height($type, $args...), $args...),
-    font-size: fn.get-optional-kwarg(font-size, get-font-size($type, $args...), $args...),
+    font-size: fn.get-optional-kwarg(font-size, $default: get-font-size($type, $args...), $args...),
   );
   $overrides: map.get(meta.keywords($args), "override");
   @if $overrides {
@@ -325,6 +325,8 @@ $typography-default-weights: (
   @each $k in map.keys($properties) {
     @if map.get($properties, $k) {
       #{$k}: fn.mapget($properties, $k);
+    } @else {
+      @error "The property #{$k} is nullish!";
     }
   }
 }

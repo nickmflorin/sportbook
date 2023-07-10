@@ -8,6 +8,7 @@
   &__titles {
     display: flex;
     flex-direction: column;
+    gap: 2px;
 
     > .header__title {
       // We allow the font size to be defined in the component itself.
@@ -17,7 +18,7 @@
 
     > .header__subtitle {
       // We allow the font size to be defined in the component itself.
-      color: partials.get-font-color("body", $shade: 5);
+      color: partials.get-color("gray", $shade: 6);
       font-weight: partials.get-font-weight("body", $weight: "regular");
     }
   }

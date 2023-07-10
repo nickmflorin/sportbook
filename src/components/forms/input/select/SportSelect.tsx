@@ -5,7 +5,7 @@ import { useSports } from "~/lib/api";
 
 import { ModelSelect, type ModelSelectProps } from "./abstract";
 
-export interface SportSelectProps extends Omit<ModelSelectProps<Sport>, "loading" | "data"> {
+export interface SportSelectProps extends Omit<ModelSelectProps<Sport>, "loading" | "data" | "getLabel"> {
   /**
    * Whether or not the request to load the data should be disabled.  Used for cases where the select is in a drawer
    * and the drawer is not yet open.
@@ -23,5 +23,5 @@ export const SportSelect = ({ requestDisabled, onError, ...props }: SportSelectP
     },
     fallbackData: [],
   });
-  return <ModelSelect placeholder="Sport" {...props} loading={true} data={data} />;
+  return <ModelSelect placeholder="Sport" {...props} loading={isLoading} data={data} getLabel={sport => sport.name} />;
 };

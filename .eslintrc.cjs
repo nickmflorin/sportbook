@@ -1,3 +1,36 @@
+/**
+ * Defines whether or not Prettier formatting rules should be enforced and auto-fixed as a part of the ESLint routine.
+ *
+ * This application is equipped with the Prettier formatting tool/package, which means that Prettier can be run outside
+ * the context of ESLint (i.e. npx prettier -c . - which runs "prettier" checks on the codebase).  However, it is
+ * sometimes useful for Prettier to be run as a part of ESLint.  To run Prettier as a part of ESLint, the ESLint
+ * configuration must include:
+ *
+ * 1. "eslint-config-prettier": An ESLint configuration that turns off formatting-related rules that might conflict with
+ *                              Prettier.
+ * 2. "eslint-plugin-prettier": An ESLint plugin that contain implementations for additional Prettier-related rules that
+ *                              ESLint will check for.  The plugin uses Prettier under the hood and will raise ESLint
+ *                              errors when your code differs from Prettier's expected output.
+ *
+ * Including the "eslint-plugin-prettier" plugin and "eslint-config-prettier" can, at times, slow down your IDE
+ * considerably - especially if "source.fixAll.eslint" (VSCode setting) is enabled.  For this reason, we will (for now)
+ * allow the inclusion of Prettier in the ESLint routine to be toggled via this parameter.
+ */
+const INCLUDE_PRETTIER = true;
+
+/** @type {(options?: { typescriptSupport: boolean }) => string[] } */
+const getExtensions = options => {
+  /* "prettier" must always be last, and "next/core-web-vitals" must always be first. */
+  let baseExtensions = ["next/core-web-vitals"];
+  if (options?.typescriptSupport === true) {
+    baseExtensions = [...baseExtensions, "plugin:@typescript-eslint/recommended"];
+  }
+  if (INCLUDE_PRETTIER) {
+    return [...baseExtensions, "prettier"];
+  }
+  return baseExtensions;
+};
+
 const IMPORT_ORDER_CONFIG = {
   groups: ["builtin", "external", "type", "internal", "parent", "sibling", "index", "object"],
   "newlines-between": "always",
@@ -80,21 +113,19 @@ const TS_BASE_RULES = {
 
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
-  extends: ["next/core-web-vitals", "prettier"],
-  plugins: ["prettier"],
+  extends: getExtensions(),
+  plugins: INCLUDE_PRETTIER ? ["prettier"] : [],
   rules: BASE_RULES,
   ignorePatterns: ["next-env.d.ts", "!.*", "package.json", "package-lock.json", "src/prisma/migrations/*"],
   overrides: [
     {
       files: ["**/*.ts", "**/*.tsx"],
-      // "prettier" must always be last, and "next/core-web-vitals" must always be first.
-      extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended", "prettier"],
+      extends: getExtensions({ typescriptSupport: true }),
       rules: TS_BASE_RULES,
     },
     {
       files: ["**/*.test.ts", "**/*.test.tsx", "**/tests/utils/*"],
-      // "prettier" must always be last, and "next/core-web-vitals" must always be first.
-      extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended", "prettier"],
+      extends: getExtensions({ typescriptSupport: true }),
       rules: {
         ...TS_BASE_RULES,
         // In tests, we need to use var-requires quite often when mocking.

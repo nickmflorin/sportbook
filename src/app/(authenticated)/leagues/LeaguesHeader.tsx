@@ -7,13 +7,18 @@ import { CreateLeagueDrawer, type CreateLeagueDrawerProps } from "~/components/d
 export type LeaguesHeaderProps = Pick<CreateLeagueDrawerProps, "action">;
 
 export const LeaguesHeader = ({ action }: LeaguesHeaderProps): JSX.Element => {
-  const [createLeagueDrawerOpen, { open: openLeagueDrawer }] = useDisclosure(false);
+  const [createLeagueDrawerOpen, { open: openLeagueDrawer, close: closeLeaguesDrawer }] = useDisclosure(false);
   return (
     <>
       <Flex direction="row" justify="right">
         <Button onClick={() => openLeagueDrawer()}>New League</Button>
       </Flex>
-      <CreateLeagueDrawer open={createLeagueDrawerOpen} action={action} />
+      <CreateLeagueDrawer
+        open={createLeagueDrawerOpen}
+        action={action}
+        onClose={() => closeLeaguesDrawer()}
+        onCancel={() => closeLeaguesDrawer()}
+      />
     </>
   );
 };

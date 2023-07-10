@@ -13,11 +13,11 @@ export const LocationSchema = z.object({
 // TODO: Include league requirements and league registration parameters.
 export const LeagueSchema = z.object({
   name: z.string({ required_error: "The name of the league is required." }),
-  description: z.string().optional(),
-  leagueStart: z.date().optional(),
-  leagueEnd: z.date().optional(),
+  description: z.string().nullable(),
+  leagueStart: z.date().nullable(),
+  leagueEnd: z.date().nullable(),
   // TODO: Should we enforce that each league be associated with a least one location?  How do we do this in the DB?
-  locations: z.array(LocationSchema).optional(),
+  locations: z.array(LocationSchema),
   leagueType: z.nativeEnum(LeagueType).optional(), // Defaults to Pickup
   sportId: z.string({ required_error: "A league must belong to a sport." }).uuid(),
   isPublic: z.boolean().optional(), // Defaults to true

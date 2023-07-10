@@ -67,7 +67,6 @@ export const ButtonFooter = ({
         <Button
           className="button-footer__button"
           type={submitButtonType}
-          variant="default"
           onClick={rest.onSubmit}
           disabled={rest.disabled || rest.submitting || rest.submitDisabled}
         >

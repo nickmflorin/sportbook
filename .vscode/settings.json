@@ -4,13 +4,17 @@
   "editor.rulers": [120],
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "source.fixAll.stylelint": true
+    "source.fixAll.eslint": true
   },
   "eslint.run": "onSave",
   "editor.trimAutoWhitespace": true,
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
+  },
+  "[scss]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.stylelint": true
+    }
   },
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,

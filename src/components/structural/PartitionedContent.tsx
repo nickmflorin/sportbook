@@ -1,8 +1,10 @@
 import React, { type ReactNode } from "react";
 
+import { LoadingOverlay } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import classNames from "classnames";
 
+import { LocalFeedback, type Feedback } from "~/components/feedback";
 import { type ComponentProps } from "~/lib/ui";
 
 import { Header, type ExposedHeaderProps } from "./Header";
@@ -17,6 +19,8 @@ export interface PartitionedContentProps extends Pick<ComponentProps, "className
   readonly onClose?: () => void;
   readonly container?: (props: PartitionedContentRenderProps) => JSX.Element;
   readonly children: ReactNode;
+  readonly loading?: boolean;
+  readonly feedback?: Feedback;
   readonly footer?: JSX.Element | JSX.Element[];
 }
 
@@ -34,6 +38,8 @@ export const PartitionedContent = ({
   subTitle,
   actions,
   children,
+  loading,
+  feedback,
   footer,
   onClose,
 }: PartitionedContentProps): JSX.Element =>
@@ -49,10 +55,14 @@ export const PartitionedContent = ({
         actions={onClose ? [...(actions || []), { icon: IconX, onClick: () => onClose?.() }] : actions}
       />,
       <div key="1" className="partitioned-content__content">
+        <LoadingOverlay visible={loading === true} />
         {children}
       </div>,
       <React.Fragment key="2">
-        {footer ? <div className="partitioned-content__footer">{footer}</div> : <></>}
+        <div className="partitioned-content__footer">
+          <LocalFeedback feedback={feedback} mb="md" />
+          {footer}
+        </div>
       </React.Fragment>,
     ],
   });

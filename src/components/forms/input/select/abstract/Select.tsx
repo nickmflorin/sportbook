@@ -2,7 +2,7 @@
 import { Select as RootSelect, type SelectProps as RootSelectProps } from "@mantine/core";
 import { Loader } from "@mantine/core";
 
-export type BaseSelectOption<V = string> = { value: V };
+export type BaseSelectOption<V = string> = { value: V; label: string };
 
 export interface SelectProps<O extends BaseSelectOption<V>, V extends string = O["value"]>
   extends Omit<RootSelectProps, "data" | "onChange" | "onError"> {

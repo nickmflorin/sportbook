@@ -1,47 +1,43 @@
-import { LoadingOverlay } from "@mantine/core";
-import { type UseFormReturnType } from "@mantine/form";
+import classNames from "classnames";
 
-import { LocalFeedback, type Feedback } from "~/components/feedback";
 import { ButtonFooter, type ButtonFooterProps } from "~/components/structural/ButtonFooter";
+import { PartitionedContent, type PartitionedContentProps } from "~/components/structural/PartitionedContent";
+import { type ComponentProps } from "~/lib/ui";
 
-export type FormProps<T extends Record<string, unknown>> = Omit<ButtonFooterProps, "onSubmit" | "submitButtonType"> & {
-  readonly form: UseFormReturnType<T>;
-  readonly children: JSX.Element | JSX.Element[];
-  readonly feedback?: Feedback;
-  readonly fieldGap?: string | number;
-  readonly loading?: boolean;
-  readonly action?: (data: T) => void;
-};
+import { Field, FieldConditions } from "./Field";
+import { NativeForm, type NativeFormProps } from "./NativeForm";
+import { useForm } from "./useForm";
+
+export { type NativeFormProps } from "./NativeForm";
+export { type FormInstance } from "./types";
+
+export type FormProps<T extends Record<string, unknown>> = Omit<PartitionedContentProps, "container"> &
+  Omit<ButtonFooterProps, "onSubmit" | "submitButtonType"> &
+  Omit<NativeFormProps<T>, keyof ComponentProps>;
 
 export const Form = <T extends Record<string, unknown>>({
-  feedback,
-  fieldGap,
   action,
   form,
   children,
   ...props
 }: FormProps<T>): JSX.Element => (
-  <form
-    className="form"
-    action={(formData: FormData) => {
-      const result = form.validate();
-      if (result.hasErrors) {
-        form.setErrors(result.errors);
-      } else {
-        /* TODO: We want to use the formData to reconstruct the values that are provided to the action.  However,
-           Mantine's inputs are controlled (not uncontrolled) and their 'useForm' hook passes the values in.  This
-           means that we would have to use our own 'useForm' hook, and potentially input elements, to get that to work.
-           It is something that we will want to do eventually, but not yet. */
-        action?.(form.values);
-      }
-    }}
+  <PartitionedContent
+    {...props}
+    className={classNames("form", props.className)}
+    footer={
+      <ButtonFooter {...props} submitButtonType="submit" submitDisabled={props.submitDisabled || props.loading} />
+    }
+    container={params => (
+      <NativeForm {...params} action={action} form={form}>
+        {params.children}
+      </NativeForm>
+    )}
   >
-    <div className="form__content">
-      {/* TODO: Replace me with internal loading indicators. */}
-      <LoadingOverlay visible={props.loading === true} />
-      {children}
-    </div>
-    <LocalFeedback feedback={feedback} />
-    <ButtonFooter {...props} submitDisabled={props.submitDisabled || props.loading} />
-  </form>
+    {children}
+  </PartitionedContent>
 );
+
+Form.Native = NativeForm;
+Form.Field = Field;
+Form.FieldCondition = FieldConditions;
+Form.useForm = useForm;

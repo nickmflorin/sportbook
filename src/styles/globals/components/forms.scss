@@ -1,0 +1,46 @@
+@use "partials";
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .form-field__header {
+    width: 100%;
+    margin-bottom: 2px;
+    display: flex;
+    flex-direction: row;
+    height: 20px;
+
+    > .form-field__label {
+      font-size: partials.get-font-size("label", $size: "xs");
+      color: partials.get-color("gray", $shade: 8);
+      line-height: 20px;
+      font-weight: partials.get-font-weight("label", $weight: "medium");
+    }
+
+    > .form-field__condition {
+      flex-grow: 100;
+      justify-content: right;
+      display: flex;
+      flex-direction: row;
+      font-size: partials.get-font-size("label", $size: "xxs");
+
+      > * {
+        line-height: 20px;
+      }
+    }
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .form-field {
+    &:not(:last-of-type) {
+      margin-bottom: partials.get-spacing("sm");
+    }
+  }
+}
