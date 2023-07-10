@@ -1,6 +1,6 @@
 /* eslint-disable no-console -- This script runs outside of the logger context. */
 import clerk from "@clerk/clerk-sdk-node";
-import { type User, LeagueCompetitionLevel, LeagueType, type League, type Sport, type Location } from "@prisma/client";
+import { type User, Sport, LeagueCompetitionLevel, LeagueType, type League, type Location } from "@prisma/client";
 
 import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
 
@@ -99,7 +99,7 @@ async function generateSportLeague(sport: Sport, leagueData: (typeof data.league
       updatedAt: new Date(leagueData.updatedAt),
       createdById: user.id,
       updatedById: user.id,
-      sportId: sport.id,
+      sport,
     },
   });
   await generateLeagueParticipants(league, ctx);
@@ -111,23 +111,7 @@ async function generateSportLeagues(sport: Sport, ctx: SeedContext) {
 }
 
 async function generateSports(ctx: SeedContext) {
-  const sports = await Promise.all(
-    data.sports.map(sportData => {
-      const user = ctx.getUser();
-      return prisma.sport.create({
-        data: {
-          ...sportData,
-          createdAt: new Date(sportData.createdAt),
-          updatedAt: new Date(sportData.updatedAt),
-          createdById: user.id,
-          updatedById: user.id,
-        },
-      });
-    }),
-  );
-  await Promise.all(sports.map(sport => generateSportLeagues(sport, ctx)));
-  console.info(`Generated ${sports.length} sports in the database.`);
-  return sports;
+  await Promise.all(Object.values(Sport).map(sport => generateSportLeagues(sport, ctx)));
 }
 
 async function generateOrganization(clerkOrg: ClerkOrg, clerkUserIds: string[]) {
