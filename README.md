@@ -1,5 +1,7 @@
 # Sportbook
 
+Sportbook is a web application for managing social, social-competitive and competitive (non-professional) sport leagues.
+
 &copy; Nick Florin, 2023
 
 ### System Requirements
