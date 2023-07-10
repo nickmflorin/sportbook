@@ -1,10 +1,10 @@
 import React, { type ReactNode } from "react";
 
-import { LoadingOverlay } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import classNames from "classnames";
 
 import { LocalFeedback, type Feedback } from "~/components/feedback";
+import { Loading } from "~/components/loading";
 import { type ComponentProps } from "~/lib/ui";
 
 import { Header, type ExposedHeaderProps } from "./Header";
@@ -55,8 +55,7 @@ export const PartitionedContent = ({
         actions={onClose ? [...(actions || []), { icon: IconX, onClick: () => onClose?.() }] : actions}
       />,
       <div key="1" className="partitioned-content__content">
-        <LoadingOverlay visible={loading === true} />
-        {children}
+        <Loading loading={loading}>{children}</Loading>
       </div>,
       <React.Fragment key="2">
         <div className="partitioned-content__footer">

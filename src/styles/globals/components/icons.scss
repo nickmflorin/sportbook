@@ -16,31 +16,10 @@
   }
 }
 
-@mixin icon-size($size, $axis: "vertical") {
-  $axis: partials.validate-value($axis, ("horizontal", "vertical"));
-  $size: partials.validate-value($size, partials.$icon-sizes);
-
-  @if $axis == "vertical" {
-    height: partials.mapget(partials.$icon-sizes, $size);
-    width: auto;
-  } @else {
-    height: auto;
-    width: partials.mapget(partials.$icon-sizes, $size);
-  }
-}
-
-@mixin icon-contain($contain) {
-  $contain: partials.validate-value($contain, ("square", "fit"));
-
-  @if $contain == "square" {
-    aspect-ratio: 1;
-  }
-}
-
 @mixin icon-size-classes($axis) {
   @each $size in map.keys(partials.$icon-sizes) {
     &.icon--size-#{$size} {
-      @include icon-size($size, $axis);
+      @include partials.icon-sizing($size, $axis);
     }
   }
 }
@@ -58,15 +37,15 @@
   justify-content: center;
 
   &--contain-square:not(&--contain-fit) {
-    @include icon-contain("square");
+    @include partials.icon-contain("square");
   }
 
   &--contain-fit:not(&--contain-square) {
-    @include icon-contain("fit");
+    @include partials.icon-contain("fit");
   }
 
   &:not(&--contain-fit, &--contain-square) {
-    @include icon-contain(partials.$icon-default-size-contain);
+    @include partials.icon-contain(partials.$default-icon-size-contain);
   }
 
   &--axis-vertical:not(&--axis-horizontal) {

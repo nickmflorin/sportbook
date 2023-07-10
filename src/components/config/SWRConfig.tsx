@@ -1,4 +1,3 @@
-"use client";
 import { type ReactNode } from "react";
 
 import { SWRConfig as RootSWRConfig } from "swr";

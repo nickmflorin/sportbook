@@ -31,6 +31,20 @@
       }
     }
   }
+
+  .form-field__errors {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    > .form-field__error {
+      color: partials.get-color("error", $shade: 7);
+      line-height: partials.get-line-height("body", $size: "xs");
+      font-size: partials.get-font-size("body", $size: "xs");
+      font-weight: partials.get-font-weight("body", $weight: "regular");
+    }
+  }
 }
 
 .form {

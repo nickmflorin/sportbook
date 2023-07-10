@@ -3,41 +3,58 @@ import React, { forwardRef, type ForwardedRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 
-import { pluckNativeComponentProps } from "~/lib/ui";
-import { SizeAxes } from "~/lib/ui/constants";
-import {
-  type IconComponentProps,
-  type IconProps,
-  IconSizes,
-  getNativeIcon,
-  isIconElement,
-  mergeIconElementWithProps,
-} from "~/lib/ui/icons";
+import { pluckNativeComponentProps, icons } from "~/lib/ui";
+import { SizeAxes, SizeContains } from "~/lib/ui/constants";
 
-function _IconComponent({
-  icon,
-  size = IconSizes.MEDIUM,
+export const useIconProps = ({
+  size = icons.IconSizes.MD,
   axis = SizeAxes.VERTICAL,
-  contain,
-  ref,
+  contain = SizeContains.FIT,
+  color = "gray.7",
   ...props
-}: IconComponentProps & { readonly ref?: ForwardedRef<SVGSVGElement> }) {
-  const [rest, nativeProps] = pluckNativeComponentProps(
+}: Pick<icons.IconComponentProps, "axis" | "size" | "contain" | "color" | "className" | "style">) =>
+  pluckNativeComponentProps(
     {
-      className: classNames(
-        "icon",
-        contain !== undefined && `icon--contain-${contain}`,
-        size !== undefined && typeof size !== "number" && `icon--size-${size}`,
-        `icon--axis-${axis}`,
-      ),
+      className: classNames("icon", `icon--contain-${contain}`, `icon--size-${size}`, `icon--axis-${axis}`),
     },
-    props,
+    { color, ...props },
   );
 
-  return <FontAwesomeIcon {...rest} {...nativeProps} ref={ref} icon={getNativeIcon(icon)} />;
+export type SpinnerProps = Omit<icons.IconComponentProps, "spin" | "icon" | "contain">;
+
+export const Spinner = ({ color = "blue.6", loading, ...props }: SpinnerProps): JSX.Element =>
+  loading ? (
+    <_IconComponent
+      {...props}
+      color={color}
+      className={classNames("spinner", props.className)}
+      spin={true}
+      loading={false}
+      icon={icons.IconNames.CIRCLE_NOTCH}
+      contain={SizeContains.SQUARE}
+    />
+  ) : (
+    <></>
+  );
+
+function _IconComponent({
+  ref,
+  loading,
+  spinnerColor,
+  icon,
+  spin,
+  ...props
+}: icons.IconComponentProps & { readonly ref?: ForwardedRef<SVGSVGElement> }) {
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  const [_, nativeProps] = useIconProps(props);
+  if (loading === true) {
+    // Use the original style and className before it was modified by the hook.
+    return <Spinner loading={true} style={props.style} className={props.className} color={spinnerColor} />;
+  }
+  return <FontAwesomeIcon {...nativeProps} spin={spin} ref={ref} icon={icons.getNativeIcon(icon)} />;
 }
 
-const ForwardedIconComponent = forwardRef((props: IconComponentProps, ref: ForwardedRef<SVGSVGElement>) => (
+const ForwardedIconComponent = forwardRef((props: icons.IconComponentProps, ref: ForwardedRef<SVGSVGElement>) => (
   <_IconComponent {...props} ref={ref} />
 )) as typeof _IconComponent;
 
@@ -76,14 +93,13 @@ export const IconComponent = React.memo(ForwardedIconComponent);
  * ReactDOM.render(finalIcon, document.getElementById("#root"));
  * "<svg class="icon--previous icon--button">...</svg>"
  */
-const _Icon = forwardRef(function Icon({ icon, ...props }: IconProps, ref: ForwardedRef<SVGSVGElement>) {
-  if (isIconElement(icon)) {
-    return mergeIconElementWithProps(icon, props);
+const _Icon = forwardRef(function Icon({ icon, ...props }: icons.IconProps, ref: ForwardedRef<SVGSVGElement>) {
+  if (icons.isIconElement(icon)) {
+    return icons.mergeIconElementWithProps(icon, props);
   }
   return <IconComponent {...props} ref={ref} icon={icon} />;
 });
 
-/* It is important that we define the displayName and name such that the `_Icon` component above can
-   properly determine whether or not the provided prop is an actual <Icon /> element or the
-   prefix/name traditional specification. */
+/* It is important that we define the displayName and name such that the `_Icon` component above can properly determine
+   whether or not the provided prop is an actual <Icon /> element or the prefix/name traditional specification. */
 export const Icon = Object.assign(React.memo(_Icon), { displayName: "Icon", name: "Icon" });

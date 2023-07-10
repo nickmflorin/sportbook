@@ -3,8 +3,6 @@ import { type ReactElement } from "react";
 
 import { type FontAwesomeIconProps } from "@fortawesome/react-fontawesome";
 
-import type * as constants from "../constants";
-
 import {
   type IconCodeMap,
   type IconNames,
@@ -13,7 +11,8 @@ import {
   type IconCode,
   type IconPrefix,
 } from "~/application/config/fontAwesome/constants";
-import { type ComponentProps } from "~/lib/ui";
+import { type ComponentProps, type Color } from "~/lib/ui";
+import { type SizeAxis, type SizeContain } from "~/lib/ui/constants";
 import { enumeratedLiterals, type EnumeratedLiteralType } from "~/lib/util/literals";
 
 export * from "~/application/config/fontAwesome/constants";
@@ -111,27 +110,29 @@ export type BasicIconProp = IconName | Icon;
  */
 export type IconProp = BasicIconProp | IconElement;
 
-export const IconSizes = enumeratedLiterals(["small", "medium", "large", "fill"] as const);
+export const IconSizes = enumeratedLiterals(["xxs", "xs", "sm", "md", "lg", "xl", "fill"] as const);
 export type IconSize = EnumeratedLiteralType<typeof IconSizes>;
 
-type _BaseIconProps = ComponentProps &
+type _BaseIconProps = ComponentProps<"className" | "style" | "color"> &
   Pick<FontAwesomeIconProps, "spin"> & {
+    readonly loading?: boolean;
+    readonly spinnerColor?: Color;
     /**
      * A string, "fit" or "square", that defines whether or not the `svg` element should fit snuggly around the inner
      * `path` element of the Icon or SVG ("fit") or the `svg` element should have a 1-1 aspect ratio, with its inner
      * `path` element being centered in the containing `svg` ("square").
      *
-     * Default: "square" (Defaulted in SASS)
+     * Default: "square"
      */
-    readonly contain?: constants.SizeContain;
-    readonly size?: IconSize | number;
+    readonly contain?: SizeContain;
+    readonly size?: IconSize;
     /**
      * The axis {@link Exclude<SizeAxis, "both">} that the Icon should be sized in based on the provided `size` prop.
      * An Icon must maintain its aspect-ratio, so it cannot size in both directions.
      *
      * Default: "vertical";
      */
-    readonly axis?: Exclude<constants.SizeAxis, "both">;
+    readonly axis?: SizeAxis;
   };
 
 /**

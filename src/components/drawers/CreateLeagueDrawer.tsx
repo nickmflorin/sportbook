@@ -8,7 +8,7 @@ import { LeagueCompetitionLevel, LeagueType } from "@prisma/client";
 
 import type * as z from "zod";
 
-import { Form } from "~/components/forms";
+import { Form } from "~/components/forms/Form";
 import { LeagueTypeSelect, LeagueCompetitionLevelSelect, SportSelect } from "~/components/forms/input";
 import { ShowHide } from "~/components/util";
 import { LeagueSchema } from "~/prisma/schemas";
@@ -60,7 +60,12 @@ export const CreateLeagueDrawer = ({ action, ...props }: CreateLeagueDrawerProps
       <Form.Field form={form} name="leagueTleagueCompetitionLevelype" label="Competition Level">
         <LeagueCompetitionLevelSelect {...form.getInputProps("leagueCompetitionLevel")} />
       </Form.Field>
-      <Form.Field form={form} name="sportId" label="Sport">
+      <Form.Field
+        form={form}
+        name="sportId"
+        label="Sport"
+        description="The sport that will be played in your new league."
+      >
         <SportSelect
           requestDisabled={!props.open}
           {...form.getInputProps("sportId")}

@@ -12,8 +12,6 @@ export type SizeAxis = EnumeratedLiteralType<typeof SizeAxes>;
 export const CSSDirections = enumeratedLiterals(["up", "down", "left", "right"] as const);
 export type CSSDirection = EnumeratedLiteralType<typeof CSSDirections>;
 
-const d = CSSDirections.DOWN;
-
 export const SizeContains = enumeratedLiterals(["fit", "square"] as const);
 export type SizeContain = EnumeratedLiteralType<typeof SizeContains>;
 

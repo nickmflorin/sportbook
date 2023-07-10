@@ -2,8 +2,7 @@ import { type ReactNode } from "react";
 
 import { ClerkProvider } from "@clerk/nextjs";
 
-import { MantineProvider } from "./MantineProvider";
-import { SWRConfig } from "./SWRConfig";
+import { ClientConfig } from "./ClientConfig";
 
 export interface AppConfigProps {
   readonly children: ReactNode;
@@ -11,8 +10,6 @@ export interface AppConfigProps {
 
 export const AppConfig = ({ children }: AppConfigProps): JSX.Element => (
   <ClerkProvider>
-    <MantineProvider>
-      <SWRConfig>{children}</SWRConfig>
-    </MantineProvider>
+    <ClientConfig>{children}</ClientConfig>
   </ClerkProvider>
 );

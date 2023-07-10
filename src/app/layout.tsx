@@ -15,9 +15,9 @@ export const metadata = {
 
 const RootLayout = ({ children }: { children: ReactNode }) => (
   <html lang="en">
-    <AppConfig>
-      <body className={inter.className}>{children}</body>
-    </AppConfig>
+    <body className={inter.className}>
+      <AppConfig>{children}</AppConfig>
+    </body>
   </html>
 );
 

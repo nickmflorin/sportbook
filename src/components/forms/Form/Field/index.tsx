@@ -5,7 +5,9 @@ import { Label, Text } from "~/components/typography";
 import { type ComponentProps } from "~/lib/ui";
 import { enumeratedLiterals, type EnumeratedLiteralType } from "~/lib/util/literals";
 
-import { type FormInstance, type DefaultFormValues, type DefaultTransformer, type BaseTransformer } from "./types";
+import { type FormInstance, type DefaultFormValues, type DefaultTransformer, type BaseTransformer } from "../types";
+
+import { FormFieldErrors } from "./FieldErrors";
 
 export const FieldConditions = enumeratedLiterals(["required", "optional"] as const);
 export type FieldCondition = EnumeratedLiteralType<typeof FieldConditions>;
@@ -35,6 +37,7 @@ export interface FieldProps<
   readonly children: JSX.Element;
   readonly label?: string;
   readonly condition?: FieldCondition;
+  readonly description?: string;
   readonly name: F;
   readonly form: FormInstance<V, TV>;
 }
@@ -49,9 +52,10 @@ export const Field = <
   condition,
   form,
   name,
+  description,
   ...props
 }: FieldProps<F, V, TV>): JSX.Element => {
-  const error = form.getFieldError(name);
+  const errors = form.getFieldError(name);
   return (
     <div {...props} className={classNames("form-field", props.className)}>
       {(condition !== undefined || label !== undefined) && (
@@ -60,11 +64,9 @@ export const Field = <
           {condition && <FieldConditionText condition={condition} />}
         </div>
       )}
+      {description !== undefined && <Text className="form-field__description">{description}</Text>}
       {children}
-      {/* TODO: Mantine's form types the error as "any" - which we cannot allow because we do not know how to handle it.
-          We will have to incorporate some sort of type checking around the error, and allow string, string[] or other
-          common forms.  Then, the Field component can properly display the error content. */}
-      {error && <p>{error}</p>}
+      {errors && <FormFieldErrors errors={errors} />}
     </div>
   );
 };

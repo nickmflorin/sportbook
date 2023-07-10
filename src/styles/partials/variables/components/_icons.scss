@@ -1,22 +1,59 @@
 @use "sass:map";
 @use "sass:string";
+
 @use "../../functions" as fn;
-@use "../colors" as colors;
 
 $icon-contain-names: ("square", "fit");
+$icon-size-axes: ("horizontal", "vertical");
+$icon-size-names: ("xxs", "xs", "sm", "md", "lg", "xl", "fill");
 
-$icon-size-small: 16px;
-$icon-size-medium: 20px;
-$icon-size-large: 24px;
-$icon-size-fill: 100%;
+$default-icon-size: "sm";
+$default-icon-size-contain: "fit";
+$default-icon-size-axis: "vertical";
 
 $icon-sizes: (
-  "small": $icon-size-small,
-  "medium": $icon-size-medium,
-  "large": $icon-size-large,
-  "fill": $icon-size-fill,
+  "xxs": 12px,
+  "xs": 14px,
+  "sm": 16px,
+  "md": 20px,
+  "lg": 24px,
+  "xl": 32px,
+  "fill": 100%,
 );
-$icon-size-names: map.keys($icon-sizes);
 
-$icon-default-size-contain: "fit";
-$icon-default-size-axis: "vertical";
+@function get-icon-size($size: $default-icon-size) {
+  $size: fn.validate-value($size, $icon-size-names);
+  @return fn.mapget($icon-sizes, $size);
+}
+
+@mixin icon-contain($contain: $default-icon-size-contain) {
+  $contain: fn.validate-value($contain, ("square", "fit"));
+
+  @if $contain == "square" {
+    aspect-ratio: 1;
+  }
+}
+
+@mixin icon-sizing($size: $default-icon-size, $axis: $default-icon-size-axis, $contain: null) {
+  $size-value: null;
+  @if map.has-key($icon-sizes, $size) {
+    $size-value: fn.mapget($icon-sizes, $size);
+  } @else {
+    // Allow regular CSS sizes to be provided.
+    $size-value: $size;
+  }
+
+  $axis: fn.validate-value($axis, ("horizontal", "vertical"));
+
+  @if $axis == "vertical" {
+    height: fn.mapget($icon-sizes, $size);
+    width: auto;
+  } @else {
+    height: auto;
+    width: fn.mapget($icon-sizes, $size);
+  }
+
+  @if $contain {
+    @include icon-contain($contain);
+  }
+}
