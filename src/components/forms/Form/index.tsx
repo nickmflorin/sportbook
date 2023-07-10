@@ -9,7 +9,7 @@ import { NativeForm, type NativeFormProps } from "./NativeForm";
 import { useForm } from "./useForm";
 
 export { type NativeFormProps } from "./NativeForm";
-export { type FormInstance } from "./types";
+export { type FormInstance, type FormInitialValues } from "./types";
 
 export type FormProps<T extends Record<string, unknown>> = Omit<PartitionedContentProps, "container"> &
   Omit<ButtonFooterProps, "onSubmit" | "submitButtonType"> &

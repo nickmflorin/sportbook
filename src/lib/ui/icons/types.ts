@@ -114,7 +114,7 @@ export const IconSizes = enumeratedLiterals(["xxs", "xs", "sm", "md", "lg", "xl"
 export type IconSize = EnumeratedLiteralType<typeof IconSizes>;
 
 type _BaseIconProps = ComponentProps<"className" | "style" | "color"> &
-  Pick<FontAwesomeIconProps, "spin"> & {
+  Pick<FontAwesomeIconProps, "spin" | "strokeWidth"> & {
     readonly loading?: boolean;
     readonly spinnerColor?: Color;
     /**

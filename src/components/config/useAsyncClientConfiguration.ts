@@ -10,9 +10,9 @@ export const useAsyncClientConfiguration = (): [boolean] => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      /* FontAwesome's "@fortawesome/fontawesome-svg-core" library is very large and causes the size of the initial bundle
-       sent to the browser to be very large.  To avoid this, we instead dynamically import and perform the Font Awesome
-       configuration to avoid a very large initial bundle. */
+      /* FontAwesome's "@fortawesome/fontawesome-svg-core" library is very large and causes the size of the initial
+         bundle sent to the browser to be very large.  To avoid this, we instead dynamically import and perform the
+         Font Awesome configuration to avoid a very large initial bundle. */
       import("~/application/config/client").then((m: ConfigureModule) => {
         m.configureClientApplicationAsync()
           .then(() => {

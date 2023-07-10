@@ -16,7 +16,7 @@
  * considerably - especially if "source.fixAll.eslint" (VSCode setting) is enabled.  For this reason, we will (for now)
  * allow the inclusion of Prettier in the ESLint routine to be toggled via this parameter.
  */
-const INCLUDE_PRETTIER = true;
+const INCLUDE_PRETTIER = false;
 
 /** @type {(options?: { typescriptSupport: boolean }) => string[] } */
 const getExtensions = options => {
@@ -43,6 +43,11 @@ const IMPORT_ORDER_CONFIG = {
       group: "builtin",
       position: "before",
     },
+    {
+      pattern: "{@prisma,@prisma/**}",
+      group: "external",
+      position: "after",
+    },
   ],
   alphabetize: {
     order: "asc",
@@ -53,8 +58,7 @@ const IMPORT_ORDER_CONFIG = {
 
 /* Rules that apply to all files in the project, regardless of file type. */
 /** @type {import("eslint").Linter.Config["rules"]} */
-const BASE_RULES = {
-  "prettier/prettier": "error",
+let BASE_RULES = {
   curly: "error",
   "import/order": ["error", IMPORT_ORDER_CONFIG],
   "import/newline-after-import": ["error"],
@@ -83,6 +87,9 @@ const BASE_RULES = {
   quotes: [1, "double"],
   semi: [1, "always"],
 };
+if (INCLUDE_PRETTIER) {
+  BASE_RULES = { ...BASE_RULES, "prettier/prettier": "error" };
+}
 
 /* Rules that apply to '.ts' or '.tsx' files. */
 /** @type {import("eslint").Linter.Config["rules"]} */
@@ -105,7 +112,7 @@ const TS_BASE_RULES = {
      root "no-unused-vars" rule does, but works properly with types - so it is used in favor of the root
      "no-unused-vars" rule, not in conjunction with. */
   "no-unused-vars": "off",
-  "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+  "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
   "react/jsx-newline": [1, { prevent: true }],
   "react/jsx-curly-brace-presence": [1, { props: "never", children: "never" }],
   "react/display-name": "off",
@@ -116,7 +123,15 @@ module.exports = {
   extends: getExtensions(),
   plugins: INCLUDE_PRETTIER ? ["prettier"] : [],
   rules: BASE_RULES,
-  ignorePatterns: ["next-env.d.ts", "!.*", "package.json", "package-lock.json", "src/prisma/migrations/*"],
+  ignorePatterns: [
+    "next-env.d.ts",
+    "!.*",
+    "package.json",
+    "package-lock.json",
+    "src/prisma/migrations/*",
+    "node_modules/*",
+    ".next/*",
+  ],
   overrides: [
     {
       files: ["**/*.ts", "**/*.tsx"],
@@ -134,7 +149,7 @@ module.exports = {
     },
     {
       files: ["**/*.md"],
-      extends: ["next/core-web-vitals", "prettier"],
+      extends: getExtensions(),
       rules: {
         ...BASE_RULES,
         // This rule allows the formatter to automatically wrap text in markdown files at line 100.

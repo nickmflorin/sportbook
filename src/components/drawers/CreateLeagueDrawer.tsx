@@ -8,7 +8,7 @@ import { LeagueCompetitionLevel, LeagueType } from "@prisma/client";
 
 import type * as z from "zod";
 
-import { Form } from "~/components/forms/Form";
+import { Form, type FormInitialValues } from "~/components/forms";
 import { LeagueTypeSelect, LeagueCompetitionLevelSelect, SportSelect } from "~/components/forms/input";
 import { ShowHide } from "~/components/util";
 import { LeagueSchema } from "~/prisma/schemas";
@@ -23,12 +23,12 @@ export type LeagueFormProps = Omit<DrawerFormProps<LeagueFormValues>, "children"
 
 export type CreateLeagueDrawerProps = Omit<DrawerFormProps<LeagueFormValues>, "children" | "form">;
 
-export const getInitialValues = (): LeagueFormValues => ({
+export const getInitialValues = (): FormInitialValues<LeagueFormValues> => ({
   name: "",
   description: "",
   competitionLevel: LeagueCompetitionLevel.SOCIAL,
   leagueType: LeagueType.PICKUP,
-  sportId: "",
+  sport: null,
   locations: [],
   leagueStart: null,
   leagueEnd: null,
@@ -62,15 +62,11 @@ export const CreateLeagueDrawer = ({ action, ...props }: CreateLeagueDrawerProps
       </Form.Field>
       <Form.Field
         form={form}
-        name="sportId"
+        name="sport"
         label="Sport"
         description="The sport that will be played in your new league."
       >
-        <SportSelect
-          requestDisabled={!props.open}
-          {...form.getInputProps("sportId")}
-          onError={() => form.setFieldError("sportId", "There was an error loading the sports.")}
-        />
+        <SportSelect {...form.getInputProps("sport")} />
       </Form.Field>
       <Switch onChange={e => setHasFiniteDuration(e.target.checked)}></Switch>
       <ShowHide show={hasFiniteDuration}>

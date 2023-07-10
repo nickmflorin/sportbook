@@ -1,5 +1,5 @@
-import { LeagueCompetitionLevel, LeagueType } from "@prisma/client";
 import { z } from "zod";
+import { LeagueCompetitionLevel, LeagueType, Sport } from "@prisma/client";
 
 export const LocationSchema = z.object({
   name: z.string({ required_error: "The name of the location is required." }),
@@ -19,7 +19,7 @@ export const LeagueSchema = z.object({
   // TODO: Should we enforce that each league be associated with a least one location?  How do we do this in the DB?
   locations: z.array(LocationSchema),
   leagueType: z.nativeEnum(LeagueType).optional(), // Defaults to Pickup
-  sportId: z.string({ required_error: "A league must belong to a sport." }).uuid(),
+  sport: z.nativeEnum(Sport, { required_error: "A league must belong to a sport." }),
   isPublic: z.boolean().optional(), // Defaults to true
   competitionLevel: z.nativeEnum(LeagueCompetitionLevel).optional(), // Defaults to SOCIAL
 });

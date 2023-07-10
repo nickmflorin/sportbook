@@ -5,7 +5,13 @@ import { Label, Text } from "~/components/typography";
 import { type ComponentProps } from "~/lib/ui";
 import { enumeratedLiterals, type EnumeratedLiteralType } from "~/lib/util/literals";
 
-import { type FormInstance, type DefaultFormValues, type DefaultTransformer, type BaseTransformer } from "../types";
+import {
+  type FormInstance,
+  type DefaultFormValues,
+  type DefaultTransformer,
+  type BaseTransformer,
+  type BaseFormValues,
+} from "../types";
 
 import { FormFieldErrors } from "./FieldErrors";
 
@@ -31,7 +37,7 @@ const FieldConditionText = ({ condition }: { condition: FieldCondition }): JSX.E
 
 export interface FieldProps<
   F extends LooseKeys<V>,
-  V = DefaultFormValues,
+  V extends BaseFormValues = DefaultFormValues,
   TV extends BaseTransformer<V> = DefaultTransformer<V>,
 > extends Pick<ComponentProps, "className" | "style"> {
   readonly children: JSX.Element;
@@ -44,7 +50,7 @@ export interface FieldProps<
 
 export const Field = <
   F extends LooseKeys<V>,
-  V = DefaultFormValues,
+  V extends BaseFormValues = DefaultFormValues,
   TV extends BaseTransformer<V> = DefaultTransformer<V>,
 >({
   children,

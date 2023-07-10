@@ -1,7 +1,7 @@
 import { AppResponse } from "~/server/api";
-import { prisma } from "~/server/db";
 
+// Left here for example purposes.
 export async function GET(request: Request) {
-  const sports = await prisma.sport.findMany({});
+  const sports: string[] = [];
   return AppResponse.OK(sports);
 }

@@ -7,13 +7,34 @@ import {
   type DefaultFormValues,
   type DefaultTransformer,
   type BaseTransformer,
+  type BaseFormValues,
+  type FormInitialValues,
   assertFieldErrorOrErrors,
 } from "./types";
 
-export const useForm = <V = DefaultFormValues, TV extends BaseTransformer<V> = DefaultTransformer<V>>(
-  input: UseFormInput<V, TV>,
+export type UseFormParams<
+  V extends BaseFormValues = DefaultFormValues,
+  TV extends BaseTransformer<V> = DefaultTransformer<V>,
+> = Omit<UseFormInput<V, TV>, "initialValues"> & {
+  initialValues?: FormInitialValues<V>;
+};
+
+export const useForm = <
+  V extends BaseFormValues = DefaultFormValues,
+  TV extends BaseTransformer<V> = DefaultTransformer<V>,
+>(
+  input: UseFormParams<V, TV>,
 ): FormInstance<V, TV> => {
-  const _original = rootUseForm(input);
+  const _original = rootUseForm({
+    ...input,
+    /* The @mantine/form package does a bad job typing the 'initialValues' such that it allows values that are required
+       by the schema to be initially null.  To alleviate this issue, we incorporate our own type, FormInitialValues,
+       which provides the flexibility of initializing values for the Form in a null state, even if they are required and
+       not nullable by the schema.  Then, we force coerce the type of the 'initialValues' here, back to the original
+       form of the values that is consistent with the schema, and consistent with what the original 'useForm' hook
+       expects. */
+    initialValues: input.initialValues as V | undefined,
+  });
 
   return {
     ..._original,

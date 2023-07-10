@@ -1,6 +1,6 @@
 import { Select, type SelectProps, Text, useMantineTheme, type MantineTheme } from "@mantine/core";
-import { LeagueType } from "@prisma/client";
 import { type TablerIconsProps, IconSocial, IconSportBillard } from "@tabler/icons-react";
+import { LeagueType } from "@prisma/client";
 
 import { SelectOption, type SelectOptionProps } from "./options";
 

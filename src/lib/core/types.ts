@@ -6,8 +6,8 @@ import { type ExtractValues } from "~/lib/util/types";
 export type HTMLElementName = keyof HTMLElementTagNameMap & keyof JSX.IntrinsicElements;
 
 /**
- * A generic type that results in the {@link HTMLElement} type that is associated with the string
- * name, {@link HTMLElementName}, provided as the generic type argument {@link E}.
+ * A generic type that results in the {@link HTMLElement} type that is associated with the string name,
+ * {@link HTMLElementName}, provided as the generic type argument {@link E}.
  *
  * @example
  * HTMLElement<"div"> // HTMLDivElement
@@ -15,8 +15,8 @@ export type HTMLElementName = keyof HTMLElementTagNameMap & keyof JSX.IntrinsicE
 export type FindHTMLElement<E extends HTMLElementName> = HTMLElementTagNameMap[E];
 
 /**
- * A generic type that results in the string tag name of the {@link HTMLElement}, provided as the
- * first generic type argument {@link E}.
+ * A generic type that results in the string tag name of the {@link HTMLElement}, provided as the first generic type
+ * argument {@link E}.
  *
  * @example
  * HTMLElementTag<HTMLButtonElement> // "button"
