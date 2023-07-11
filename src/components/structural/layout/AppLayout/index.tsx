@@ -2,9 +2,10 @@ import { type ReactNode } from "react";
 
 import classNames from "classnames";
 
-import { ShowHide } from "../util";
+import { ShowHide } from "~/components/util";
 
 import { AppHeader } from "./AppHeader";
+import { AppViewport } from "./AppViewport";
 import { Sidebar } from "./Sidebar";
 
 export interface AppLayoutProps {
@@ -19,7 +20,7 @@ export const AppLayout = async ({ children, authenticated }: AppLayoutProps): Pr
       <ShowHide show={authenticated}>
         <Sidebar />
       </ShowHide>
-      {children}
+      {authenticated ? <AppViewport>{children}</AppViewport> : children}
     </main>
   </div>
 );

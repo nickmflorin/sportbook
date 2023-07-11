@@ -8,10 +8,10 @@ import { LeagueCompetitionLevel, LeagueType } from "@prisma/client";
 
 import type * as z from "zod";
 
+import { LeagueSchema } from "~/prisma/schemas";
 import { Form, type FormInitialValues } from "~/components/forms";
 import { LeagueTypeSelect, LeagueCompetitionLevelSelect, SportSelect } from "~/components/forms/input";
 import { ShowHide } from "~/components/util";
-import { LeagueSchema } from "~/prisma/schemas";
 
 import { DrawerForm, type DrawerFormProps } from "./DrawerForm";
 

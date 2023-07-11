@@ -1,8 +1,8 @@
 import classNames from "classnames";
 
+import { type ComponentProps } from "~/lib/ui";
 import { ButtonFooter, type ButtonFooterProps } from "~/components/structural/ButtonFooter";
 import { PartitionedContent, type PartitionedContentProps } from "~/components/structural/PartitionedContent";
-import { type ComponentProps } from "~/lib/ui";
 
 import { Field, FieldConditions } from "./Field";
 import { NativeForm, type NativeFormProps } from "./NativeForm";

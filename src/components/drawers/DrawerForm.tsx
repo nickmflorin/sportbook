@@ -3,9 +3,9 @@ import classNames from "classnames";
 import { type Required } from "utility-types";
 
 import { Form, type NativeFormProps } from "~/components/forms/Form";
-import { Portal } from "~/components/layout/Portal";
 import { ButtonFooter, type ButtonFooterProps } from "~/components/structural/ButtonFooter";
 import { PartitionedContent, type PartitionedContentProps } from "~/components/structural/PartitionedContent";
+import { Portal } from "~/components/structural/Portal";
 
 export type DrawerFormProps<T extends Record<string, unknown>> = Required<
   Omit<PartitionedContentProps, "container">,

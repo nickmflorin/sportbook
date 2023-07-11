@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 
 import { type Sport } from "@prisma/client";
 
-import { prisma } from "~/server/db";
+import { prisma } from "~/lib/db";
 
 const SportLeaguesView = dynamic(() => import("./SportLeaguesView"));
 
@@ -13,7 +13,7 @@ export interface LeagueSportsProps {
 
 const SportLeagues = async ({ userId, sport }: LeagueSportsProps) => {
   const leagues = await prisma.league.findMany({
-    where: { sport, participants: { some: { participant: { clerkId: userId } } } },
+    where: { sport, participants: { some: { participant: { id: userId } } } },
   });
   return <SportLeaguesView leagues={leagues} sport={sport} />;
 };

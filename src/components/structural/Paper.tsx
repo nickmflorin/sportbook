@@ -6,9 +6,9 @@ import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { ActionIconColor } from "~/components/buttons/ActionIcon";
 
 import { Collapse } from "./Collapse";
-import { Header, type ExposedHeaderProps } from "./Header";
+import { Header, type HeaderProps } from "./Header";
 
-export interface PaperProps extends ExposedHeaderProps, RootPaperProps {
+export interface PaperProps extends Omit<HeaderProps, "className" | "style">, RootPaperProps {
   readonly collapsable?: boolean;
   readonly defaultVisible?: boolean;
 }
@@ -18,7 +18,7 @@ export const Paper = ({
   defaultVisible = false,
   collapsable = false,
   actions = [],
-  subTitle,
+  description,
   title,
   ...props
 }: PaperProps): JSX.Element => {
@@ -35,9 +35,9 @@ export const Paper = ({
       ]}
     >
       <Header
-        mb={contentOpened || collapsable === false ? "md" : 0}
+        style={contentOpened || collapsable === false ? { marginBottom: 8 } : {}}
         title={title}
-        subTitle={subTitle}
+        description={description}
         actions={[
           ...(actions || []),
           collapsable

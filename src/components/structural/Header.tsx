@@ -1,40 +1,49 @@
-import { Title, Text } from "~/components/typography";
+import classNames from "classnames";
+
 import { type ComponentProps, pluckNativeComponentProps } from "~/lib/ui";
+import { Title, Text, type TitleProps, type TextProps } from "~/components/typography";
 
 import { Actions, type Action, filterVisibleActions } from "./Actions";
 
-export type ExposedHeaderProps = {
+export interface HeaderProps extends Pick<ComponentProps, "className" | "style"> {
   readonly title?: string | JSX.Element;
-  readonly subTitle?: string;
+  readonly description?: string;
   readonly actions?: Action[];
-};
-
-export interface HeaderProps extends Pick<ComponentProps, "className" | "style">, ExposedHeaderProps {}
+  readonly titleProps?: Omit<TitleProps, "children">;
+  readonly descriptionProps?: Omit<TextProps, "children">;
+}
 
 export const Header = (props: HeaderProps): JSX.Element => {
-  const [{ title, subTitle, actions = [] }, nativeProps] = pluckNativeComponentProps({ className: "header" }, props);
-  if (subTitle || title || filterVisibleActions(actions).length !== 0) {
-    return (
-      <div {...nativeProps}>
-        {(subTitle || title) && (
-          <div className="header__titles">
-            {typeof title === "string" ? (
-              <Title className="header__title" order={5}>
-                {title}
-              </Title>
-            ) : (
-              title
-            )}
-            {subTitle && (
-              <Text fontSize="sm" className="header__subtitle">
-                {subTitle}
-              </Text>
-            )}
-          </div>
-        )}
-        <Actions actions={actions} />
-      </div>
-    );
+  const [{ title, description, actions = [], titleProps, descriptionProps }, nativeProps] = pluckNativeComponentProps(
+    { className: "header" },
+    props,
+  );
+  if (!description && !title && filterVisibleActions(actions).length === 0) {
+    return <></>;
   }
-  return <></>;
+  return (
+    <div {...nativeProps}>
+      {(description || title) && (
+        <div className="header__titles">
+          {typeof title === "string" ? (
+            <Title order={5} {...titleProps} className={classNames("header__title", titleProps?.className)}>
+              {title}
+            </Title>
+          ) : (
+            title
+          )}
+          {description && (
+            <Text
+              fontSize="sm"
+              {...descriptionProps}
+              className={classNames("header__subtitle", descriptionProps?.className)}
+            >
+              {description}
+            </Text>
+          )}
+        </div>
+      )}
+      <Actions actions={actions} />
+    </div>
+  );
 };

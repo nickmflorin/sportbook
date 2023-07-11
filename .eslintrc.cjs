@@ -31,6 +31,15 @@ const getExtensions = options => {
   return baseExtensions;
 };
 
+const FIRST_INTERNAL_MODULE_GROUP = ["prisma", "application", "lib", "internal", "tests"];
+
+// Components and styles should always be the last absolute imports.
+const SECOND_INTERNAL_MODULE_GROUP = ["components", "styles"];
+
+const INTERNAL_MODULES = [...FIRST_INTERNAL_MODULE_GROUP, ...SECOND_INTERNAL_MODULE_GROUP];
+
+const toAbsoluteImports = v => [`~/${v}`, `~/${v}/**`];
+
 const IMPORT_ORDER_CONFIG = {
   groups: ["builtin", "external", "type", "internal", "parent", "sibling", "index", "object"],
   "newlines-between": "always",
@@ -48,6 +57,28 @@ const IMPORT_ORDER_CONFIG = {
       group: "external",
       position: "after",
     },
+    {
+      pattern: "{../*}",
+      group: "sibling",
+      position: "before",
+    },
+    {
+      pattern: "{./*}",
+      group: "sibling",
+      position: "after",
+    },
+    {
+      pattern: `{${FIRST_INTERNAL_MODULE_GROUP.reduce((prev, v) => [...prev, ...toAbsoluteImports(v)], []).join(",")}}`,
+      group: "internal",
+      position: "before",
+    },
+    {
+      pattern: `{${SECOND_INTERNAL_MODULE_GROUP.reduce((prev, v) => [...prev, ...toAbsoluteImports(v)], []).join(
+        ",",
+      )}}`,
+      group: "internal",
+      position: "before",
+    },
   ],
   alphabetize: {
     order: "asc",
@@ -61,6 +92,17 @@ const IMPORT_ORDER_CONFIG = {
 let BASE_RULES = {
   curly: "error",
   "import/order": ["error", IMPORT_ORDER_CONFIG],
+  "no-restricted-imports": [
+    "error",
+    {
+      patterns: [
+        {
+          group: INTERNAL_MODULES.reduce((prev, v) => [...prev, `../${v}`, `../*/${v}`], []),
+          message: "When outside of the module, absolute imports must be used for the directory.",
+        },
+      ],
+    },
+  ],
   "import/newline-after-import": ["error"],
   "import/no-duplicates": "error",
   "import/no-unresolved": "error",

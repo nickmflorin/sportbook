@@ -1,8 +1,8 @@
 "use client";
 import classNames from "classnames";
 
-import { Portal } from "~/components/layout/Portal";
 import { PartitionedContent, type PartitionedContentProps } from "~/components/structural/PartitionedContent";
+import { Portal } from "~/components/structural/Portal";
 
 export interface DrawerProps extends Omit<PartitionedContentProps, "container"> {
   readonly open: boolean;

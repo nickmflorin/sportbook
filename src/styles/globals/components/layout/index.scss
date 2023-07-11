@@ -1,5 +1,7 @@
 @use "partials";
+
 @use "./header";
+@use "./page";
 @use "./sidebar";
 
 .app-layout {

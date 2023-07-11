@@ -1,6 +1,8 @@
+import { forwardRef } from "react";
+
+import { type PrismaEnum, type PrismaEnumValue, type EnumModel, type EnumData } from "~/prisma/enums";
 import { Icon } from "~/components/icons";
 import { Text } from "~/components/typography";
-import { type PrismaEnum, type PrismaEnumValue, type EnumModel, type EnumData } from "~/prisma/enums";
 
 import { SelectOption, type SelectOptionProps } from "../options";
 
@@ -17,13 +19,19 @@ const EnumSelectOption = <E extends PrismaEnum>(
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars -- The value has to be pulled out of spread to not inject into HTML. */
   { value, iconColor, label, icon, ...others }: EnumSelectOptionProps<E>,
 ) => (
-  <SelectOption withCheckbox={true} {...others}>
-    {icon && <Icon size="xs" strokeWidth={1.5} color={iconColor || "gray.7"} icon={icon} style={{ marginRight: 4 }} />}
-    <Text color="gray.6" fontWeight="medium" fontSize="xs">
-      {label}
-    </Text>
+  <SelectOption withCheckbox={false} {...others}>
+    <>
+      {icon && (
+        <Icon size="xs" strokeWidth={1.5} color={iconColor || "gray.7"} icon={icon} style={{ marginRight: 8 }} />
+      )}
+      <Text color="gray.6" fontWeight="medium" fontSize="xs">
+        {label}
+      </Text>
+    </>
   </SelectOption>
 );
+
+const Forwarded = forwardRef(EnumSelectOption) as typeof EnumSelectOption;
 
 export type EnumSelectProps<E extends PrismaEnum> = Omit<
   SelectProps<EnumData<E>>,
@@ -48,15 +56,12 @@ export const EnumSelect = <E extends PrismaEnum>({ model, onChange, ...props }: 
     {...props}
     onChange={(v: string | null) => {
       if (v) {
-        if (!model.isEnumValue(v)) {
-          return model.throwInvalidValue(v);
-        }
-        onChange?.(v);
+        onChange?.(model.toEnumValue(v));
       } else {
         onChange?.(null);
       }
     }}
     data={model.data}
-    itemComponent={EnumSelectOption}
+    itemComponent={Forwarded}
   />
 );

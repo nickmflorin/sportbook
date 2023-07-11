@@ -1,9 +1,9 @@
 import { type LooseKeys } from "@mantine/form/lib/types";
 import classNames from "classnames";
 
-import { Label, Text } from "~/components/typography";
 import { type ComponentProps } from "~/lib/ui";
 import { enumeratedLiterals, type EnumeratedLiteralType } from "~/lib/util/literals";
+import { Label, Text } from "~/components/typography";
 
 import {
   type FormInstance,

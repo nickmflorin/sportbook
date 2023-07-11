@@ -38,15 +38,26 @@ export class EnumModel<E extends types.PrismaEnum> {
     return Object.values(this.prismaEnum) as types.PrismaEnumValue<E>[];
   }
 
-  public throwInvalidValue = (value: unknown) => {
-    throw new Error(`The value '${JSON.stringify(value)}' is not a valid value for the Prisma enum '${this.name}'.`);
+  public throwInvalidValue = (value: unknown): never => {
+    throw new Error(
+      `The value '${JSON.stringify(value)}' is not a valid value for the Prisma enum '${
+        this.name
+      }'.  Must be one of ${this.values.map(v => `'${v}'`).join(", ")}.`,
+    );
   };
 
   public isEnumValue = (value: unknown): value is types.PrismaEnumValue<E> => {
-    if (!this.values.includes(value as types.PrismaEnumValue<E>)) {
+    if (this.values.includes(value as types.PrismaEnumValue<E>)) {
       return true;
     }
     return false;
+  };
+
+  public toEnumValue = (value: unknown): types.PrismaEnumValue<E> => {
+    if (!this.isEnumValue(value)) {
+      return this.throwInvalidValue(value);
+    }
+    return value;
   };
 
   public get data() {

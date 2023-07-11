@@ -3,11 +3,11 @@ import React, { type ReactNode } from "react";
 import { IconX } from "@tabler/icons-react";
 import classNames from "classnames";
 
+import { type ComponentProps } from "~/lib/ui";
 import { LocalFeedback, type Feedback } from "~/components/feedback";
 import { Loading } from "~/components/loading";
-import { type ComponentProps } from "~/lib/ui";
 
-import { Header, type ExposedHeaderProps } from "./Header";
+import { Header, type HeaderProps } from "./Header";
 
 interface PartitionedContentRenderProps {
   readonly className: string;
@@ -15,7 +15,9 @@ interface PartitionedContentRenderProps {
   readonly children: JSX.Element[];
 }
 
-export interface PartitionedContentProps extends Pick<ComponentProps, "className" | "style">, ExposedHeaderProps {
+export interface PartitionedContentProps
+  extends Pick<ComponentProps, "className" | "style">,
+    Omit<HeaderProps, keyof ComponentProps> {
   readonly onClose?: () => void;
   readonly container?: (props: PartitionedContentRenderProps) => JSX.Element;
   readonly children: ReactNode;
@@ -35,7 +37,7 @@ export const PartitionedContent = ({
   className,
   style,
   title,
-  subTitle,
+  description,
   actions,
   children,
   loading,
@@ -51,7 +53,7 @@ export const PartitionedContent = ({
         key="0"
         className="partitioned-content__header"
         title={title}
-        subTitle={subTitle}
+        description={description}
         actions={onClose ? [...(actions || []), { icon: IconX, onClick: () => onClose?.() }] : actions}
       />,
       <div key="1" className="partitioned-content__content">

@@ -2,9 +2,9 @@ import React, { type ReactNode } from "react";
 
 import classNames from "classnames";
 
+import { type ComponentProps, type icons } from "~/lib/ui";
 import { Spinner, type SpinnerProps } from "~/components/icons";
 import { ShowHide } from "~/components/util";
-import { type ComponentProps, type icons } from "~/lib/ui";
 
 export type LoadingProps = Pick<ComponentProps, "className" | "style"> &
   Pick<SpinnerProps, "color" | "size" | "loading"> & {

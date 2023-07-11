@@ -1,29 +1,35 @@
 import { redirect } from "next/navigation";
 
-import { auth } from "@clerk/nextjs";
 import { Sport } from "@prisma/client";
 
-import { prisma } from "~/server/db";
+import { prisma } from "~/lib/db";
+import { getAuthUser } from "~/lib/integrations/clerk";
+import { CreateLeagueButton } from "~/components/buttons/CreateLeagueButton";
+import { Page } from "~/components/structural/layout";
 
-import { LeaguesHeader } from "./LeaguesHeader";
 import SportLeagues from "./SportLeagues";
 
 export default async function Leagues() {
-  const { userId } = await auth();
-  if (!userId) {
+  const user = await getAuthUser();
+  if (!user) {
     return redirect("/login");
   }
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <LeaguesHeader
-        action={async ({ locations: _locations, ...data }) => {
-          "use server";
-          await prisma.league.create({ data: { createdById: userId, updatedById: userId, ...data } });
-        }}
-      />
+    <Page
+      title="Leagues"
+      actions={[
+        <CreateLeagueButton
+          key="0"
+          action={async ({ locations: _locations, ...data }) => {
+            "use server";
+            await prisma.league.create({ data: { createdById: user.id, updatedById: user.id, ...data } });
+          }}
+        />,
+      ]}
+    >
       {Object.values(Sport).map((sport, i) => (
-        <SportLeagues key={i} sport={sport} userId={userId} />
+        <SportLeagues key={i} sport={sport} userId={user.id} />
       ))}
-    </div>
+    </Page>
   );
 }

@@ -13,7 +13,7 @@
     height: 20px;
 
     > .form-field__label {
-      font-size: partials.get-font-size("label", $size: "xs");
+      font-size: partials.get-font-size("label", $size: "sm");
       color: partials.get-color("gray", $shade: 8);
       line-height: 20px;
       font-weight: partials.get-font-weight("label", $weight: "medium");
@@ -24,12 +24,20 @@
       justify-content: right;
       display: flex;
       flex-direction: row;
-      font-size: partials.get-font-size("label", $size: "xxs");
+      font-size: partials.get-font-size("label", $size: "xs");
 
       > * {
         line-height: 20px;
       }
     }
+  }
+
+  > .form-field__description {
+    font-size: partials.get-font-size("body", $size: "xs");
+    color: partials.get-color("gray", $shade: 6);
+    line-height: 16px;
+    font-weight: partials.get-font-weight("body", $weight: "regular");
+    margin-bottom: 4px;
   }
 
   .form-field__errors {
