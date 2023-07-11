@@ -1,8 +1,8 @@
-"use client";
 import React, { useMemo } from "react";
 
-import { Flex, type FlexProps } from "@mantine/core";
+import classNames from "classnames";
 
+import { type ComponentProps } from "~/lib/ui";
 import { ActionIcon, type ActionIconProps } from "~/components/buttons/ActionIcon";
 
 export type RenderAction = {
@@ -29,7 +29,7 @@ export const actionIsVisible = (a: Action) =>
 export const filterVisibleActions = (actions: Action[]) =>
   actions.filter((a): a is Exclude<Action, null | undefined> => actionIsVisible(a));
 
-export interface ActionsProps extends Omit<FlexProps, "align" | "direction" | "h"> {
+export interface ActionsProps extends ComponentProps<"className" | "style"> {
   /**
    * The actions that should be rendered inside of the component.  Each action can either be of type {@link JSX.Element}
    * or an object of type {@link RenderAction} that includes a 'render' function and optional metadata.
@@ -42,19 +42,6 @@ export interface ActionsProps extends Omit<FlexProps, "align" | "direction" | "h
  * A component that is responsible for rendering a list of actions or supplementary elements in a row, usually next to
  * other elements inside of the parent component.  The component will properly size and space each action relative to
  * one another and ensure that the actions are aligned with sibling elements they accompany.
- *
- * @example
- * // Rendering several buttons next to a "Customers" title component.  The Title and Actions will all be aligned at
- * // 24px.
- * <Flex direction="row" align="center" justify="space-between">
- *   <Title order={6} sx={t => ({ fontWeight: t.other.fontWeights.medium, lineHeight: "24px" })}>
- *     Customers
- *   </Title>
- *   <Actions h={24} actions={[
- *     <Button key="0" onClick={() => addCustomer()}>Add</Button>,
- *     { visible: false, render: () => <Button key="1" onClick={() => deleteCustomer()}>Delete</Button> }
- *   ]} />
- * </Flex>
  */
 export const Actions = ({ children = [], actions, ...props }: ActionsProps): JSX.Element => {
   const visibleActions = useMemo<JSX.Element[]>(
@@ -67,11 +54,11 @@ export const Actions = ({ children = [], actions, ...props }: ActionsProps): JSX
 
   if (visibleActions.length !== 0) {
     return (
-      <Flex className="actions" {...props}>
+      <div {...props} className={classNames("actions", props.className)}>
         {visibleActions.map((a: JSX.Element, i: number) => (
           <React.Fragment key={i}>{a}</React.Fragment>
         ))}
-      </Flex>
+      </div>
     );
   }
   return <></>;

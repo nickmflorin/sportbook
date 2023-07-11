@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 
   &__titles {
     display: flex;
@@ -11,15 +12,11 @@
     gap: 2px;
 
     > .header__title {
-      // We allow the font size to be defined in the component itself.
       color: partials.get-font-color("heading", $shade: 8);
-      font-weight: partials.get-font-weight("heading", $weight: "medium");
     }
 
     > .header__subtitle {
-      // We allow the font size to be defined in the component itself.
       color: partials.get-color("gray", $shade: 6);
-      font-weight: partials.get-font-weight("body", $weight: "regular");
     }
   }
 

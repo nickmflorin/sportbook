@@ -37,7 +37,7 @@
 @mixin font-weights($type) {
   @each $weight in partials.$font-weight-names {
     .font-weight-#{$weight} {
-      @include partials.font-weight($type, $weight);
+      @include partials.font-weight($type: $type, $weight: $weight);
     }
   }
 }
@@ -128,7 +128,6 @@ h5,
 h6 {
   @extend %typography-base;
   @extend %heading-defaults;
-  @include font-weights("heading");
 
   width: 100%;
 
@@ -142,26 +141,50 @@ h6 {
 
 h1 {
   @include partials.font("heading", $size: "xl", $pick: (line-height, font-size));
+  // Include the font-size class specifications in this selector so that they can be overridden via the prop on the
+  // component.
+  @include font-weights("heading");
+  @include font-sizes("heading");
 }
 
 h2 {
   @include partials.font("heading", $size: "lg", $pick: (line-height, font-size));
+  // Include the font-size class specifications in this selector so that they can be overridden via the prop on the
+  // component.
+  @include font-weights("heading");
+  @include font-sizes("heading");
 }
 
 h3 {
   @include partials.font("heading", $size: "md", $pick: (line-height, font-size));
+  // Include the font-size class specifications in this selector so that they can be overridden via the prop on the
+  // component.
+  @include font-weights("heading");
+  @include font-sizes("heading");
 }
 
 h4 {
   @include partials.font("heading", $size: "sm", $pick: (line-height, font-size));
+  // Include the font-size class specifications in this selector so that they can be overridden via the prop on the
+  // component.
+  @include font-weights("heading");
+  @include font-sizes("heading");
 }
 
 h5 {
   @include partials.font("heading", $size: "xs", $pick: (line-height, font-size));
+  // Include the font-size class specifications in this selector so that they can be overridden via the prop on the
+  // component.
+  @include font-weights("heading");
+  @include font-sizes("heading");
 }
 
 h6 {
   @include partials.font("heading", $size: "xxs", $pick: (line-height, font-size));
+  // Include the font-size class specifications in this selector so that they can be overridden via the prop on the
+  // component.
+  @include font-weights("heading");
+  @include font-sizes("heading");
 }
 
 .body {
