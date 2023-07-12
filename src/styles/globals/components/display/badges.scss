@@ -23,14 +23,14 @@
 
   // Keep the font sizes and line
   @each $size in partials.$typography-sizes {
-    &--badge-#{$size} {
+    &.badge--size-#{$size} {
       font-size: partials.get-font-size($type: "body", $size: $size);
       line-height: partials.get-line-height($type: "body", $size: $size);
     }
   }
 
   @include partials.with-font-sizes("body") using ($size, $data) {
-    &.badge-size-#{$size} {
+    &.badge--size-#{$size} {
       font-size: partials.mapget($data, font-size);
       line-height: partials.mapget($data, line-height);
       font-weight: partials.mapget($data, font-weight);

@@ -113,9 +113,10 @@ export type IconProp = BasicIconProp | IconElement;
 export const IconSizes = enumeratedLiterals(["xxs", "xs", "sm", "md", "lg", "xl", "fill"] as const);
 export type IconSize = EnumeratedLiteralType<typeof IconSizes>;
 
-type _BaseIconProps = ComponentProps<"className" | "style" | "color"> &
+type _BaseIconProps = ComponentProps &
   Pick<FontAwesomeIconProps, "spin" | "strokeWidth"> & {
     readonly loading?: boolean;
+    readonly color?: Color;
     readonly spinnerColor?: Color;
     /**
      * A string, "fit" or "square", that defines whether or not the `svg` element should fit snuggly around the inner

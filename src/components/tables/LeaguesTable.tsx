@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { type League } from "~/prisma";
 import { LeagueTypeBadge } from "~/components/display/badges";
 import { DateTimeDisplay } from "~/components/display/DateTimeDisplay";
@@ -12,7 +10,6 @@ export type LeagueDatum = Pick<League, LeagueTableLeagueFields>;
 
 export enum LeaguesTableColumn {
   NAME,
-  // CREATED_AT,
   LEAGUE_START,
   LEAGUE_END,
   LEAGUE_TYPE,
@@ -28,7 +25,7 @@ const LeaguesTableColumns: { [key in LeaguesTableColumn]: Column<LeagueDatum> } 
       <>
         <Text>{league.name}</Text>
         {league.description && (
-          <Text fontSize="xs" color="gray.6">
+          <Text size="xs" color="gray.6">
             {league.description}
           </Text>
         )}
@@ -50,40 +47,29 @@ const LeaguesTableColumns: { [key in LeaguesTableColumn]: Column<LeagueDatum> } 
     textAlignment: "center",
     accessor: "leagueType",
     title: "Type",
-    render: (c: LeagueDatum) =>
-      c.leagueType ? <LeagueTypeBadge size="xs" px="xs" leagueType={c.leagueType} /> : <></>,
+    render: (c: LeagueDatum) => (c.leagueType ? <LeagueTypeBadge size="xs" leagueType={c.leagueType} /> : <></>),
   },
 };
 
 export interface LeaguesTableProps<L extends LeagueDatum = LeagueDatum>
   extends Omit<DataTableProps<L>, "onRowEdit" | "columns"> {
-  readonly rowEditable?: boolean;
   readonly columns?: LeaguesTableColumn[];
-  // readonly onUpdated?: (League: League) => void;
 }
 
 export const LeaguesTable = <L extends LeagueDatum = LeagueDatum>({
-  rowEditable,
   columns = [
     LeaguesTableColumn.NAME,
     LeaguesTableColumn.LEAGUE_TYPE,
     LeaguesTableColumn.LEAGUE_START,
     LeaguesTableColumn.LEAGUE_END,
     LeaguesTableColumn.IS_PUBLIC,
-    // LeaguesTableColumn.CREATED_AT,
   ],
-  // onUpdated,
   ...props
-}: LeaguesTableProps<L>): JSX.Element => {
-  const [leagueToEdit, setLeagueToEdit] = useState<L | null>(null);
-
-  return (
-    <DataTable<L>
-      errorMessage="There was an error loading the Leagues."
-      emptyMessage="There are no Leagues."
-      {...props}
-      columns={columns.map(name => LeaguesTableColumns[name])}
-      onRowEdit={rowEditable ? League => setLeagueToEdit(League) : undefined}
-    />
-  );
-};
+}: LeaguesTableProps<L>): JSX.Element => (
+  <DataTable<L>
+    errorMessage="There was an error loading the Leagues."
+    emptyMessage="There are no Leagues."
+    {...props}
+    columns={columns.map(name => LeaguesTableColumns[name])}
+  />
+);

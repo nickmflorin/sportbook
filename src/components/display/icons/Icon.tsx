@@ -3,7 +3,7 @@ import React, { forwardRef, type ForwardedRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 
-import { pluckNativeComponentProps, icons } from "~/lib/ui";
+import { getColorClassName, icons } from "~/lib/ui";
 import { SizeAxes, SizeContains } from "~/lib/ui/constants";
 
 export const useIconProps = ({
@@ -12,13 +12,18 @@ export const useIconProps = ({
   contain = SizeContains.FIT,
   color = "gray.7",
   ...props
-}: Pick<icons.IconComponentProps, "axis" | "size" | "contain" | "color" | "className" | "style">) =>
-  pluckNativeComponentProps(
-    {
-      className: classNames("icon", `icon--contain-${contain}`, `icon--size-${size}`, `icon--axis-${axis}`),
-    },
-    { color, ...props },
-  );
+}: Pick<icons.IconComponentProps, "axis" | "size" | "contain" | "color" | "className" | "style">) => ({
+  ...props,
+  className: classNames(
+    "icon",
+    `icon--contain-${contain}`,
+    `icon--size-${size}`,
+    `icon--axis-${axis}`,
+    getColorClassName("color", { color }),
+    `icon--size-${size}`,
+    props.className,
+  ),
+});
 
 export type SpinnerProps = Omit<icons.IconComponentProps, "spin" | "icon" | "contain">;
 
@@ -46,12 +51,12 @@ function _IconComponent({
   ...props
 }: icons.IconComponentProps & { readonly ref?: ForwardedRef<SVGSVGElement> }) {
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-  const [_, nativeProps] = useIconProps(props);
+  const { style, className } = useIconProps(props);
   if (loading === true) {
     // Use the original style and className before it was modified by the hook.
     return <Spinner loading={true} style={props.style} className={props.className} color={spinnerColor} />;
   }
-  return <FontAwesomeIcon {...nativeProps} spin={spin} ref={ref} icon={icons.getNativeIcon(icon)} />;
+  return <FontAwesomeIcon style={style} className={className} spin={spin} ref={ref} icon={icons.getNativeIcon(icon)} />;
 }
 
 const ForwardedIconComponent = forwardRef((props: icons.IconComponentProps, ref: ForwardedRef<SVGSVGElement>) => (

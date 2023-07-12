@@ -1,13 +1,14 @@
-import { Button } from "@mantine/core";
+import classNames from "classnames";
 
 import { logger } from "~/internal/logger";
-import { pluckNativeComponentProps, type ComponentProps } from "~/lib/ui";
+import { type ComponentProps } from "~/lib/ui";
+import { Button } from "~/components/buttons/Button";
 
 import { ShowHide } from "../util";
 
 type ButtonFooterOrientation = "right-justified" | "full-width";
 
-export type ButtonFooterProps = Pick<ComponentProps, "className" | "style"> & {
+export type ButtonFooterProps = ComponentProps & {
   readonly orientation?: ButtonFooterOrientation;
   readonly submitText?: string;
   readonly cancelText?: string;
@@ -38,27 +39,23 @@ export const ButtonFooter = ({
   submitText = "Save",
   submitButtonType = "submit",
   orientation = "right-justified",
+  style,
+  className,
   ...props
 }: ButtonFooterProps) => {
-  const [rest, nativeProps] = pluckNativeComponentProps(
-    {
-      className: ["button-footer", `button-footer--${orientation}`],
-    },
-    props,
-  );
   const visibility = buttonVisibility({ submitButtonType, ...props });
   if (!(visibility.submit || visibility.cancel)) {
     logger.error("The button footer is not configured to show a submit or cancel button.");
     return <></>;
   }
   return (
-    <div {...nativeProps}>
+    <div style={style} className={classNames("button-footer", `button-footer--${orientation}`, className)}>
       <ShowHide show={visibility.cancel}>
         <Button
           className="button-footer__button"
           variant="default"
-          onClick={rest.onCancel}
-          disabled={rest.disabled || rest.submitting || rest.cancelDisabled}
+          onClick={props.onCancel}
+          disabled={props.disabled || props.submitting || props.cancelDisabled}
         >
           {cancelText}
         </Button>
@@ -67,8 +64,8 @@ export const ButtonFooter = ({
         <Button
           className="button-footer__button"
           type={submitButtonType}
-          onClick={rest.onSubmit}
-          disabled={rest.disabled || rest.submitting || rest.submitDisabled}
+          onClick={props.onSubmit}
+          disabled={props.disabled || props.submitting || props.submitDisabled}
         >
           {submitText}
         </Button>

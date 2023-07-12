@@ -2,7 +2,7 @@ import { type LeagueType, LeagueTypes } from "~/prisma";
 
 import { Badge, type BadgeProps } from "./Badge";
 
-export interface LeagueTypeBadgeProps extends Omit<BadgeProps, "color" | "backgroundColor"> {
+export interface LeagueTypeBadgeProps extends Omit<BadgeProps, "color" | "backgroundColor" | "children"> {
   readonly leagueType: LeagueType;
 }
 

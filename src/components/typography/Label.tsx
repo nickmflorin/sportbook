@@ -1,10 +1,40 @@
-import { type ComponentProps, pluckNativeComponentProps } from "~/lib/ui";
+import classNames from "classnames";
 
-export interface LabelProps extends Pick<ComponentProps, "className" | "style" | "color" | "fontSize" | "fontWeight"> {
+import {
+  type ComponentProps,
+  type TypographySize,
+  TypographySizes,
+  type FontWeight,
+  FontWeights,
+  type Color,
+  getColorClassName,
+} from "~/lib/ui";
+
+export interface LabelProps extends ComponentProps {
   readonly children: string;
+  readonly color?: Color;
+  readonly size?: TypographySize;
+  readonly fontWeight?: FontWeight;
 }
 
-export const Label = (props: LabelProps): JSX.Element => {
-  const [{ children }, nativeProps] = pluckNativeComponentProps({ className: "label" }, props);
-  return <div {...nativeProps}>{children}</div>;
-};
+export const Label = ({
+  children,
+  color = "body",
+  size = TypographySizes.MD,
+  fontWeight = FontWeights.REGULAR,
+  style,
+  className,
+}: LabelProps): JSX.Element => (
+  <label
+    style={style}
+    className={classNames(
+      "label",
+      getColorClassName("color", { color }),
+      `font-size-${size}`,
+      `font-weight-${fontWeight}`,
+      className,
+    )}
+  >
+    {children}
+  </label>
+);

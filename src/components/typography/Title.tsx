@@ -1,12 +1,16 @@
-import { type ComponentProps, pluckNativeComponentProps } from "~/lib/ui";
+import classNames from "classnames";
+
+import { type ComponentProps, type Style, type Color, type FontWeight, getColorClassName } from "~/lib/ui";
 import { ensuresDefinedValue } from "~/lib/util";
 
 type TitleOrder = 1 | 2 | 3 | 4 | 5 | 6;
 
 type Factories = {
-  [key in TitleOrder]: (
-    props: Omit<TitleProps, "order" | "className" | "color" | "fontSize" | "fontWeight">,
-  ) => JSX.Element;
+  [key in TitleOrder]: (props: {
+    readonly children: string;
+    readonly className?: string;
+    readonly style?: Style;
+  }) => JSX.Element;
 };
 
 const factories: Factories = {
@@ -18,15 +22,17 @@ const factories: Factories = {
   6: props => <h6 {...props} />,
 };
 
-export interface TitleProps extends Pick<ComponentProps, "className" | "style" | "color" | "fontSize" | "fontWeight"> {
+export interface TitleProps extends ComponentProps {
   readonly children: string;
   readonly order?: TitleOrder;
+  readonly color?: Color;
+  // Let the weight default in SASS baed on the size.
+  readonly fontWeight?: FontWeight;
 }
 
-export const Title = ({ order = 3, ...props }: TitleProps): JSX.Element => {
-  const [{ children }, nativeProps] = pluckNativeComponentProps({ className: "title" }, props);
-  return ensuresDefinedValue(factories[order])({
-    ...nativeProps,
+export const Title = ({ order = 3, fontWeight, color = "heading", children, ...props }: TitleProps): JSX.Element =>
+  ensuresDefinedValue(factories[order])({
+    ...props,
     children,
+    className: classNames("title", getColorClassName("color", { color }), fontWeight && `font-weight-${fontWeight}`),
   });
-};

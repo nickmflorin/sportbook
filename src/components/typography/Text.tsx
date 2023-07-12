@@ -1,10 +1,40 @@
-import { type ComponentProps, pluckNativeComponentProps } from "~/lib/ui";
+import classNames from "classnames";
 
-export interface TextProps extends Pick<ComponentProps, "className" | "style" | "color" | "fontSize" | "fontWeight"> {
+import {
+  type ComponentProps,
+  type TypographySize,
+  TypographySizes,
+  type FontWeight,
+  type Color,
+  getColorClassName,
+} from "~/lib/ui";
+
+export interface TextProps extends ComponentProps {
   readonly children: string;
+  readonly color?: Color;
+  readonly size?: TypographySize;
+  readonly fontWeight?: FontWeight;
 }
 
-export const Text = (props: TextProps): JSX.Element => {
-  const [{ children }, nativeProps] = pluckNativeComponentProps({ className: "body" }, props);
-  return <div {...nativeProps}>{children}</div>;
-};
+export const Text = ({
+  children,
+  color = "body",
+  size = TypographySizes.MD,
+  // Let the weight default in SASS baed on the size.
+  fontWeight,
+  style,
+  className,
+}: TextProps): JSX.Element => (
+  <div
+    style={style}
+    className={classNames(
+      "body",
+      getColorClassName("color", { color }),
+      `font-size-${size}`,
+      fontWeight && `font-weight-${fontWeight}`,
+      className,
+    )}
+  >
+    {children}
+  </div>
+);

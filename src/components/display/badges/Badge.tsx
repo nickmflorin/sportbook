@@ -8,14 +8,15 @@ import {
   getColorClassName,
   type ComponentProps,
   type Color,
-  type TypoegraphySize,
+  type TypographySize,
+  TypographySizes,
 } from "~/lib/ui";
 
 export interface BadgeProps extends ComponentProps {
   readonly children: string;
   readonly color?: Color;
   readonly backgroundColor?: Color;
-  readonly size?: TypoegraphySize;
+  readonly size?: TypographySize;
   readonly fontWeight?: FontWeight;
 }
 
@@ -24,7 +25,7 @@ export const Badge = ({
   backgroundColor = "gray.1",
   children,
   fontWeight = FontWeights.SEMIBOLD,
-  size = "md",
+  size = TypographySizes.MD,
   ...props
 }: BadgeProps): JSX.Element => (
   <div
@@ -33,7 +34,7 @@ export const Badge = ({
       "badge",
       getColorClassName("color", { color }),
       getColorClassName("backgroundColor", { color: backgroundColor }),
-      `badge-size-${size}`,
+      `badge--size-${size}`,
       `font-weight-${fontWeight}`,
       props.className,
     )}

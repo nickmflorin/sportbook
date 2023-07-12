@@ -1,11 +1,11 @@
 import classNames from "classnames";
 
-import { type ComponentProps, pluckNativeComponentProps } from "~/lib/ui";
+import { type ComponentProps } from "~/lib/ui";
 import { Title, Text, type TitleProps, type TextProps } from "~/components/typography";
 
 import { Actions, type Action, filterVisibleActions } from "./Actions";
 
-export interface HeaderProps extends Pick<ComponentProps, "className" | "style"> {
+export interface HeaderProps extends ComponentProps {
   readonly title?: string | JSX.Element;
   readonly description?: string;
   readonly actions?: Action[];
@@ -13,16 +13,19 @@ export interface HeaderProps extends Pick<ComponentProps, "className" | "style">
   readonly descriptionProps?: Omit<TextProps, "children">;
 }
 
-export const Header = (props: HeaderProps): JSX.Element => {
-  const [{ title, description, actions = [], titleProps, descriptionProps }, nativeProps] = pluckNativeComponentProps(
-    { className: "header" },
-    props,
-  );
+export const Header = ({
+  title,
+  description,
+  actions = [],
+  titleProps,
+  descriptionProps,
+  ...props
+}: HeaderProps): JSX.Element => {
   if (!description && !title && filterVisibleActions(actions).length === 0) {
     return <></>;
   }
   return (
-    <div {...nativeProps}>
+    <div {...props} className={classNames("header", props.className)}>
       {(description || title) && (
         <div className="header__titles">
           {typeof title === "string" ? (
@@ -34,7 +37,7 @@ export const Header = (props: HeaderProps): JSX.Element => {
           )}
           {description && (
             <Text
-              fontSize="sm"
+              size="sm"
               {...descriptionProps}
               className={classNames("header__subtitle", descriptionProps?.className)}
             >
