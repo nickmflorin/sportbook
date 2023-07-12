@@ -1,0 +1,7 @@
+@use "partials";
+
+.table-view {
+  > .table-view__header {
+    margin-bottom: partials.get-spacing("md");
+  }
+}

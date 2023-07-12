@@ -1,12 +1,12 @@
 /* eslint-disable no-console -- This script runs outside of the logger context. */
 import clerk from "@clerk/clerk-sdk-node";
-import { type User, Sport, LeagueCompetitionLevel, LeagueType, type League, type Location } from "@prisma/client";
 
 import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
 
-import { prisma } from "~/lib/db";
 import { infiniteLoop, infiniteLoopSelection } from "~/lib/util/random";
+import { type User, Sport, LeagueCompetitionLevel, LeagueType, type League, type Location } from "~/prisma";
 
+import { prisma } from "./client";
 import { data } from "./fixtures";
 
 const MIN_PARTICIPANTS_PER_LEAGUE = 3;

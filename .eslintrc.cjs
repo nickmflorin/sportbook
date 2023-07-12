@@ -16,7 +16,7 @@
  * considerably - especially if "source.fixAll.eslint" (VSCode setting) is enabled.  For this reason, we will (for now)
  * allow the inclusion of Prettier in the ESLint routine to be toggled via this parameter.
  */
-const INCLUDE_PRETTIER = false;
+const INCLUDE_PRETTIER = true;
 
 /** @type {(options?: { typescriptSupport: boolean }) => string[] } */
 const getExtensions = options => {

@@ -1,17 +1,18 @@
-"use client";
 import { useState } from "react";
 
-import { Text } from "@mantine/core";
-import { type League } from "@prisma/client";
-
+import { type League } from "~/prisma";
 import { LeagueTypeBadge } from "~/components/display/badges";
 import { DateTimeDisplay } from "~/components/display/DateTimeDisplay";
+import { Text } from "~/components/typography";
 
 import { DataTable, type DataTableProps, type Column } from "./DataTable";
 
+type LeagueTableLeagueFields = "name" | "description" | "leagueStart" | "leagueEnd" | "leagueType";
+export type LeagueDatum = Pick<League, LeagueTableLeagueFields>;
+
 export enum LeaguesTableColumn {
   NAME,
-  CREATED_AT,
+  // CREATED_AT,
   LEAGUE_START,
   LEAGUE_END,
   LEAGUE_TYPE,
@@ -19,25 +20,20 @@ export enum LeaguesTableColumn {
   IS_PUBLIC,
 }
 
-const LeaguesTableColumns: { [key in LeaguesTableColumn]: Column<League> } = {
+const LeaguesTableColumns: { [key in LeaguesTableColumn]: Column<LeagueDatum> } = {
   [LeaguesTableColumn.NAME]: {
     title: "Name",
     accessor: "name",
-    render: (league: League) => (
+    render: (league: LeagueDatum) => (
       <>
         <Text>{league.name}</Text>
         {league.description && (
-          <Text size="xs" color="gray.6">
+          <Text fontSize="xs" color="gray.6">
             {league.description}
           </Text>
         )}
       </>
     ),
-  },
-  [LeaguesTableColumn.CREATED_AT]: {
-    title: "Created",
-    accessor: "createdAt",
-    render: ({ createdAt }) => <DateTimeDisplay value={createdAt} />,
   },
   [LeaguesTableColumn.LEAGUE_START]: {
     title: "Starts",
@@ -54,17 +50,19 @@ const LeaguesTableColumns: { [key in LeaguesTableColumn]: Column<League> } = {
     textAlignment: "center",
     accessor: "leagueType",
     title: "Type",
-    render: (c: League) => (c.leagueType ? <LeagueTypeBadge size="xs" px="xs" leagueType={c.leagueType} /> : <></>),
+    render: (c: LeagueDatum) =>
+      c.leagueType ? <LeagueTypeBadge size="xs" px="xs" leagueType={c.leagueType} /> : <></>,
   },
 };
 
-export interface LeaguesDataTableProps extends Omit<DataTableProps<League>, "onRowEdit" | "columns"> {
+export interface LeaguesTableProps<L extends LeagueDatum = LeagueDatum>
+  extends Omit<DataTableProps<L>, "onRowEdit" | "columns"> {
   readonly rowEditable?: boolean;
   readonly columns?: LeaguesTableColumn[];
-  readonly onUpdated?: (League: League) => void;
+  // readonly onUpdated?: (League: League) => void;
 }
 
-export const LeaguesTable = ({
+export const LeaguesTable = <L extends LeagueDatum = LeagueDatum>({
   rowEditable,
   columns = [
     LeaguesTableColumn.NAME,
@@ -72,15 +70,15 @@ export const LeaguesTable = ({
     LeaguesTableColumn.LEAGUE_START,
     LeaguesTableColumn.LEAGUE_END,
     LeaguesTableColumn.IS_PUBLIC,
-    LeaguesTableColumn.CREATED_AT,
+    // LeaguesTableColumn.CREATED_AT,
   ],
-  onUpdated,
+  // onUpdated,
   ...props
-}: LeaguesDataTableProps): JSX.Element => {
-  const [leagueToEdit, setLeagueToEdit] = useState<League | null>(null);
+}: LeaguesTableProps<L>): JSX.Element => {
+  const [leagueToEdit, setLeagueToEdit] = useState<L | null>(null);
 
   return (
-    <DataTable<League>
+    <DataTable<L>
       errorMessage="There was an error loading the Leagues."
       emptyMessage="There are no Leagues."
       {...props}

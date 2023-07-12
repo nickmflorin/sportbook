@@ -18,6 +18,11 @@ import {
   faCopy,
   faCirclePlus,
   faHockeyPuck,
+  faSitemap,
+  faPeopleGroup,
+  faPeopleArrows,
+  faCircleHalfStroke,
+  faMedal,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const ICON_REGISTRY = [
@@ -37,4 +42,9 @@ export const ICON_REGISTRY = [
   faCopy,
   faCirclePlus,
   faHockeyPuck,
+  faSitemap,
+  faPeopleGroup,
+  faPeopleArrows,
+  faCircleHalfStroke,
+  faMedal,
 ] as const;

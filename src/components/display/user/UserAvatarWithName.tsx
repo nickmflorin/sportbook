@@ -1,7 +1,8 @@
 "use client";
 import { type UserResource } from "@clerk/types/dist/user";
 import { Flex, type FlexProps } from "@mantine/core";
-import { type User } from "@prisma/client";
+
+import { type User } from "~/prisma";
 
 import { UserAvatar } from "./UserAvatar";
 import { UserFullNameText, type UserFullNameTextProps } from "./UserFullNameText";

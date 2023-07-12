@@ -1,7 +1,7 @@
 import { type User as ClerkUser, type EmailAddress } from "@clerk/clerk-sdk-node";
 import { auth } from "@clerk/nextjs/server";
 
-import { prisma } from "~/lib/db";
+import { prisma } from "~/prisma";
 
 export const getClerkEmailAddress = (u: ClerkUser): EmailAddress | null => {
   /* The only reason our User model has a nullable email field is due to the fact that the ClerkUser's primary email

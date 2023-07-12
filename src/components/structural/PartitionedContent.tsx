@@ -1,6 +1,5 @@
 import React, { type ReactNode } from "react";
 
-import { IconX } from "@tabler/icons-react";
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
@@ -18,7 +17,6 @@ interface PartitionedContentRenderProps {
 export interface PartitionedContentProps
   extends Pick<ComponentProps, "className" | "style">,
     Omit<HeaderProps, keyof ComponentProps> {
-  readonly onClose?: () => void;
   readonly container?: (props: PartitionedContentRenderProps) => JSX.Element;
   readonly children: ReactNode;
   readonly loading?: boolean;
@@ -43,7 +41,6 @@ export const PartitionedContent = ({
   loading,
   feedback,
   footer,
-  onClose,
 }: PartitionedContentProps): JSX.Element =>
   container({
     style,
@@ -54,7 +51,7 @@ export const PartitionedContent = ({
         className="partitioned-content__header"
         title={title}
         description={description}
-        actions={onClose ? [...(actions || []), { icon: IconX, onClick: () => onClose?.() }] : actions}
+        actions={actions}
       />,
       <div key="1" className="partitioned-content__content">
         <Loading loading={loading}>{children}</Loading>

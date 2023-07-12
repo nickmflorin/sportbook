@@ -4,26 +4,26 @@ import React, { useState } from "react";
 import { TextInput, Switch } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { zodResolver } from "@mantine/form";
-import { LeagueCompetitionLevel, LeagueType } from "@prisma/client";
 
 import type * as z from "zod";
 
-import { LeagueSchema } from "~/prisma/schemas";
-import { Form, type FormInitialValues } from "~/components/forms";
+import { LeagueCompetitionLevel, LeagueType, LeagueSchema } from "~/prisma";
+import { Form } from "~/components/forms";
 import { LeagueTypeSelect, LeagueCompetitionLevelSelect, SportSelect } from "~/components/forms/input";
 import { ShowHide } from "~/components/util";
 
 import { DrawerForm, type DrawerFormProps } from "./DrawerForm";
 
-export type LeagueFormValues = z.infer<typeof LeagueSchema>;
+export type LeagueFormInput = z.input<typeof LeagueSchema>;
+export type LeagueFormOutput = z.output<typeof LeagueSchema>;
 
-export type LeagueFormProps = Omit<DrawerFormProps<LeagueFormValues>, "children"> & {
+export type LeagueFormProps = Omit<DrawerFormProps<LeagueFormInput, LeagueFormOutput>, "children"> & {
   readonly requestDisabled?: boolean;
 };
 
-export type CreateLeagueDrawerProps = Omit<DrawerFormProps<LeagueFormValues>, "children" | "form">;
+export type CreateLeagueDrawerProps = Omit<DrawerFormProps<LeagueFormInput, LeagueFormOutput>, "children" | "form">;
 
-export const getInitialValues = (): FormInitialValues<LeagueFormValues> => ({
+export const getInitialValues = (): z.input<typeof LeagueSchema> => ({
   name: "",
   description: "",
   competitionLevel: LeagueCompetitionLevel.SOCIAL,
@@ -37,19 +37,19 @@ export const getInitialValues = (): FormInitialValues<LeagueFormValues> => ({
 export const CreateLeagueDrawer = ({ action, ...props }: CreateLeagueDrawerProps): JSX.Element => {
   const [hasFiniteDuration, setHasFiniteDuration] = useState(false);
 
-  const form = Form.useForm<LeagueFormValues>({
+  const form = Form.useForm<LeagueFormInput, LeagueFormOutput>({
     validate: zodResolver(LeagueSchema),
     initialValues: getInitialValues(),
   });
 
   return (
-    <DrawerForm<LeagueFormValues>
+    <DrawerForm<LeagueFormInput, LeagueFormOutput>
       {...props}
       form={form}
       style={{ width: 400 }}
       action={action}
       title="Create a New League"
-      subTitle="A league can be used to play sports together."
+      description="Configure your league however you would like."
     >
       <Form.Field form={form} name="name" label="Name" condition={Form.FieldCondition.REQUIRED}>
         <TextInput {...form.getInputProps("name")} placeholder="John Doe" />
@@ -57,8 +57,8 @@ export const CreateLeagueDrawer = ({ action, ...props }: CreateLeagueDrawerProps
       <Form.Field form={form} name="leagueType" label="Type">
         <LeagueTypeSelect {...form.getInputProps("leagueType")} />
       </Form.Field>
-      <Form.Field form={form} name="leagueTleagueCompetitionLevelype" label="Competition Level">
-        <LeagueCompetitionLevelSelect {...form.getInputProps("leagueCompetitionLevel")} />
+      <Form.Field form={form} name="competitionLevel" label="Competition Level">
+        <LeagueCompetitionLevelSelect {...form.getInputProps("competitionLevel")} />
       </Form.Field>
       <Form.Field
         form={form}

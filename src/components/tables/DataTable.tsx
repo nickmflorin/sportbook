@@ -1,23 +1,13 @@
-"use client";
 import { useMemo } from "react";
 
 import { type MantineTheme, LoadingOverlay, ActionIcon, packSx, useMantineTheme } from "@mantine/core";
 import { IconPencil } from "@tabler/icons-react";
-import {
-  type DataTableOuterBorderProps,
-  DataTable as MantineDataTable,
-  type DataTableProps as MantineDataTableProps,
-} from "mantine-datatable";
+import { DataTable as MantineDataTable, type DataTableProps as MantineDataTableProps } from "mantine-datatable";
 
 import { ResponseFeedback, type ResponseFeedbackProps } from "~/components/feedback";
 
 import { DataTableActionMenu, type DataTableAction } from "./DataTableActionMenu";
-
-export enum DataTableStyle {
-  SMALL = "small",
-  MEDIUM = "medium",
-  LARGE = "large",
-}
+import { DataTableStyle } from "./types";
 
 const DataTableStyleAttributes: {
   [key in DataTableStyle]: (t: MantineTheme) => { th: React.CSSProperties; td: React.CSSProperties };
@@ -108,15 +98,14 @@ export const ActionMenuColumn = <T extends Record<string, unknown>>({
   render: (rowData: T) => <DataTableActionMenu actions={actionMenu(rowData)} />,
 });
 
-type OmitDataTableProps = keyof DataTableOuterBorderProps;
-
 /* In the case of a DataTable, the feedback component will only be shown if no records exist.  As such, we simply set
    isEmpty to true, since that will always be the case in the context in which this is used.  The other props that
    dictate whether or not an error is present or whether or not there is search criteria applied will still render the
    correct form of LocalFeedback. */
-export type DataTableProps<T> = Omit<MantineDataTableProps<T>, OmitDataTableProps> &
+export type DataTableProps<T> = Pick<MantineDataTableProps<T>, "columns" | "sx"> &
   Omit<ResponseFeedbackProps, "isEmpty" | "overlay"> & {
     readonly tableStyle?: DataTableStyle;
+    readonly data: T[];
     readonly onRowEdit?: (t: T) => void;
     readonly actionMenu?: (t: T) => DataTableAction[];
   };
@@ -129,6 +118,7 @@ export const DataTable = <T extends Record<string, unknown>>({
   isFiltered,
   tableStyle = DataTableStyle.MEDIUM,
   columns,
+  data,
   onRowEdit,
   actionMenu,
   ...props
@@ -172,6 +162,7 @@ export const DataTable = <T extends Record<string, unknown>>({
       />
     ),
     ...props,
+    records: data,
     columns: _columns,
     sx: [
       theme => ({

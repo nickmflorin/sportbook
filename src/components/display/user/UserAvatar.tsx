@@ -1,7 +1,8 @@
 "use client";
 import { type UserResource } from "@clerk/types/dist/user";
 import { Avatar, type AvatarProps } from "@mantine/core";
-import { type User } from "@prisma/client";
+
+import { type User } from "~/prisma";
 
 type BaseUser = Pick<User, "firstName" | "lastName" | "emailAddress" | "profileImageUrl"> | UserResource;
 

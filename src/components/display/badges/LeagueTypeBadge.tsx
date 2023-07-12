@@ -1,6 +1,7 @@
 "use client";
 import { type MantineTheme, Badge, type BadgeProps, packSx } from "@mantine/core";
-import { LeagueType } from "@prisma/client";
+
+import { LeagueType } from "~/prisma";
 
 const LeagueTypeStyles = (
   theme: MantineTheme,

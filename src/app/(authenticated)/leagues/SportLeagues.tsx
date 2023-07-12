@@ -1,10 +1,7 @@
-import dynamic from "next/dynamic";
-
-import { type Sport } from "@prisma/client";
-
-import { prisma } from "~/lib/db";
-
-const SportLeaguesView = dynamic(() => import("./SportLeaguesView"));
+import { type Sport } from "~/prisma";
+import { prisma } from "~/prisma";
+import { LeaguesTableView } from "~/components/tables/LeaguesTableView";
+import { DataTableStyle } from "~/components/tables/types";
 
 export interface LeagueSportsProps {
   readonly sport: Sport;
@@ -15,7 +12,14 @@ const SportLeagues = async ({ userId, sport }: LeagueSportsProps) => {
   const leagues = await prisma.league.findMany({
     where: { sport, participants: { some: { participant: { id: userId } } } },
   });
-  return <SportLeaguesView leagues={leagues} sport={sport} />;
+  return (
+    <LeaguesTableView
+      title="Your Leagues"
+      description="Leagues you are participating in."
+      data={leagues}
+      tableStyle={DataTableStyle.SMALL}
+    />
+  );
 };
 
 export default SportLeagues;

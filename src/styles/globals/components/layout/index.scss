@@ -33,7 +33,8 @@
         overflow-y: scroll;
         max-height: 100%;
         max-width: 100%;
-        padding: partials.get-spacing("md");
+        padding: partials.get-spacing("md") partials.get-spacing("lg") partials.get-spacing("md")
+          partials.get-spacing("lg");
       }
     }
 

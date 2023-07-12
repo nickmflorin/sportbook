@@ -1,6 +1,4 @@
-import { type Sport } from "@prisma/client";
-
-import { Sports } from "~/prisma/enums";
+import { type Sport, Sports } from "~/prisma";
 
 import { EnumSelect, type EnumSelectProps } from "./abstract";
 

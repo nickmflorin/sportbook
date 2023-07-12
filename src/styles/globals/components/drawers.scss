@@ -2,5 +2,12 @@
 
 .drawer,
 .drawer-form {
-  padding: partials.get-spacing("md");
+  padding: partials.get-spacing("md") partials.get-spacing("lg") partials.get-spacing("md") partials.get-spacing("lg");
+  border-left: 1px solid partials.get-color("gray", $shade: 3);
+
+  .drawer__close-button {
+    position: absolute;
+    top: partials.get-spacing("md");
+    right: partials.get-spacing("md");
+  }
 }

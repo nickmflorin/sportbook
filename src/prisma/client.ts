@@ -18,12 +18,10 @@ are not reloaded:
 See: https://www.prisma.io/docs/guides/performance-and-optimization/connection-management
      #prevent-hot-reloading-from-creating-new-instances-of-prismaclient
 */
-import { PrismaClient } from "@prisma/client";
-
+import { PrismaClient } from "~/prisma";
 import { env } from "~/env.mjs";
 
-import { userModelExtension } from "./extensions";
-import { userModelMetaDataMiddleware } from "./middleware";
+import { ModelMetaDataMiddleware } from "./middleware";
 import { getDatabaseUrl, type DatabaseParams } from "./util";
 
 export * from "./errors";
@@ -33,23 +31,24 @@ export * from "./errors";
  *
  * @returns {PrismaClient}
  */
-export const initializePrismaClient = (params?: DatabaseParams) => {
+export const initializePrismaClient = (params?: DatabaseParams): PrismaClient => {
   const url = getDatabaseUrl(params);
-  const _prisma = new PrismaClient({
+  const prisma = new PrismaClient({
     log: env.DATABASE_LOG_LEVEL,
     datasources: { db: { url } },
   });
-  _prisma.$use(userModelMetaDataMiddleware);
-  return _prisma.$extends({
-    model: {
-      user: userModelExtension(_prisma),
-    },
-  });
+  prisma.$use(ModelMetaDataMiddleware);
+  return prisma;
+  /* return _prisma.$extends({
+       model: {
+         user: userModelExtension(_prisma),
+       },
+     }); */
 };
 
 export type ClientType = ReturnType<typeof initializePrismaClient>;
 
-export let prisma: ClientType;
+export let prisma: PrismaClient;
 
 const globalPrisma = global as unknown as { prisma: ClientType };
 

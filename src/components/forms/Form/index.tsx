@@ -6,21 +6,25 @@ import { PartitionedContent, type PartitionedContentProps } from "~/components/s
 
 import { Field, FieldConditions } from "./Field";
 import { NativeForm, type NativeFormProps } from "./NativeForm";
+import { type BaseFormValues, type DefaultFormValues } from "./types";
 import { useForm } from "./useForm";
 
 export { type NativeFormProps } from "./NativeForm";
-export { type FormInstance, type FormInitialValues } from "./types";
+export * from "./types";
 
-export type FormProps<T extends Record<string, unknown>> = Omit<PartitionedContentProps, "container"> &
+export type FormProps<I extends BaseFormValues = DefaultFormValues, O extends BaseFormValues = I> = Omit<
+  PartitionedContentProps,
+  "container"
+> &
   Omit<ButtonFooterProps, "onSubmit" | "submitButtonType"> &
-  Omit<NativeFormProps<T>, keyof ComponentProps>;
+  Omit<NativeFormProps<I, O>, keyof ComponentProps>;
 
-export const Form = <T extends Record<string, unknown>>({
+export const Form = <I extends BaseFormValues = DefaultFormValues, O extends BaseFormValues = I>({
   action,
   form,
   children,
   ...props
-}: FormProps<T>): JSX.Element => (
+}: FormProps<I, O>): JSX.Element => (
   <PartitionedContent
     {...props}
     className={classNames("form", props.className)}

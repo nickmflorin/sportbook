@@ -1,30 +1,33 @@
 "use client";
+import { IconX } from "@tabler/icons-react";
 import classNames from "classnames";
-import { type Required } from "utility-types";
 
-import { Form, type NativeFormProps } from "~/components/forms/Form";
+import { ActionIcon } from "~/components/buttons/ActionIcon";
+import { Form, type NativeFormProps, type BaseFormValues, type DefaultFormValues } from "~/components/forms";
 import { ButtonFooter, type ButtonFooterProps } from "~/components/structural/ButtonFooter";
 import { PartitionedContent, type PartitionedContentProps } from "~/components/structural/PartitionedContent";
 import { Portal } from "~/components/structural/Portal";
 
-export type DrawerFormProps<T extends Record<string, unknown>> = Required<
-  Omit<PartitionedContentProps, "container">,
-  "onClose"
+export type DrawerFormProps<I extends BaseFormValues = DefaultFormValues, O extends BaseFormValues = I> = Omit<
+  PartitionedContentProps,
+  "container"
 > &
   Omit<ButtonFooterProps, "onSubmit" | "submitButtonType"> &
-  NativeFormProps<T> & {
+  NativeFormProps<I, O> & {
     readonly open: boolean;
+    readonly onClose?: () => void;
   };
 
-export const DrawerForm = <T extends Record<string, unknown>>({
+export const DrawerForm = <I extends BaseFormValues = DefaultFormValues, O extends BaseFormValues = I>({
   action,
+  onClose,
   form,
   open,
   children,
   style,
   className,
   ...props
-}: DrawerFormProps<T>): JSX.Element =>
+}: DrawerFormProps<I, O>): JSX.Element =>
   open ? (
     <Portal id="drawer-target">
       <PartitionedContent
@@ -41,7 +44,10 @@ export const DrawerForm = <T extends Record<string, unknown>>({
         }
         container={params => (
           <Form.Native {...params} action={action} form={form}>
-            {params.children}
+            <>
+              {onClose && <ActionIcon className="drawer__close-button" icon={IconX} onClick={onClose} />}
+              {params.children}
+            </>
           </Form.Native>
         )}
       >

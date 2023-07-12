@@ -2,7 +2,8 @@ import superjson from "superjson";
 import { type SuperJSONResult } from "superjson/dist/types";
 import useRootSWR, { type SWRResponse } from "swr";
 import { type SWRConfiguration } from "swr/_internal";
-import { type Sport } from "@prisma/client";
+
+import { type Sport } from "~/prisma";
 
 type FetchResponseBody = { data: SuperJSONResult };
 

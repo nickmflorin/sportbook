@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-import { type PrismaEnum, type PrismaEnumValue, type EnumModel, type EnumData } from "~/prisma/enums";
+import { type PrismaEnum, type PrismaEnumValue, type EnumModel, type EnumData } from "~/prisma";
 import { Icon } from "~/components/icons";
 import { Text } from "~/components/typography";
 
@@ -21,10 +21,8 @@ const EnumSelectOption = <E extends PrismaEnum>(
 ) => (
   <SelectOption withCheckbox={false} {...others}>
     <>
-      {icon && (
-        <Icon size="xs" strokeWidth={1.5} color={iconColor || "gray.7"} icon={icon} style={{ marginRight: 8 }} />
-      )}
-      <Text color="gray.6" fontWeight="medium" fontSize="xs">
+      {icon && <Icon size="xs" color={iconColor || "gray.8"} icon={icon} style={{ marginRight: 8 }} />}
+      <Text color="gray.8" fontWeight="medium" fontSize="xs">
         {label}
       </Text>
     </>

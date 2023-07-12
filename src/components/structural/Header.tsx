@@ -21,7 +21,6 @@ export const Header = (props: HeaderProps): JSX.Element => {
   if (!description && !title && filterVisibleActions(actions).length === 0) {
     return <></>;
   }
-  console.log({ titleProps });
   return (
     <div {...nativeProps}>
       {(description || title) && (

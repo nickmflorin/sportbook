@@ -1,9 +1,9 @@
 import { type User as ClerkUser } from "@clerk/clerk-sdk-node";
 import { DateTime } from "luxon";
-import { type User, type PrismaClient, type League } from "@prisma/client";
 
 import { logger } from "~/internal/logger";
 import { getClerkEmailAddress } from "~/lib/integrations/clerk";
+import { type User, type PrismaClient, type League } from "~/prisma";
 
 import { isPrismaDoesNotExistError } from "./errors";
 
@@ -74,8 +74,8 @@ export const userModelExtension = (prisma: PrismaClient) => ({
     const _userId = typeof user === "string" ? user : user.id;
     const _assignedById = typeof assignedBy === "string" ? assignedBy : assignedBy.id;
 
-    // TODO: Do we need to validate it is a valid League?  What about if it is a balid UUID?
-    prisma.leagueOnUsers.create({ data: { leagueId: _leagueId, userId: _userId, assignedById: _assignedById } });
-    return null;
+    return await prisma.leagueOnParticipants.create({
+      data: { leagueId: _leagueId, participantId: _userId, assignedById: _assignedById },
+    });
   },
 });
