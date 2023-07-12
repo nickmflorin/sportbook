@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 
 import { type PrismaEnum, type PrismaEnumValue, type EnumModel, type EnumData } from "~/prisma";
-import { Icon } from "~/components/icons";
+import { Icon } from "~/components/display/icons";
 import { Text } from "~/components/typography";
 
 import { SelectOption, type SelectOptionProps } from "../options";

@@ -37,29 +37,27 @@ export const ColorNames = enumeratedLiterals([
   "heading",
   "orange",
   "gray",
+  "white",
+  "black",
 ] as const);
 
 export type ColorName = EnumeratedLiteralType<typeof ColorNames>;
 
 export type Color = ColorName | `${ColorName}.${ColorShade}`;
 
-type ColorNativePropName = "background-color" | "color" | "background" | "border-color";
-type ColorPropName = "backgroundColor" | "color" | "background" | "borderColor";
-type ColorProps = Partial<Record<ColorPropName, Color>>;
+export const ColorPropNames = ["backgroundColor", "color", "borderColor"] as const;
+export type ColorPropName = (typeof ColorPropNames)[number];
 
-type ComponentStylePropName = ColorPropName;
-type ComponentStyleNativePropName = ColorNativePropName;
-type ComponentStyleProps = ColorProps;
+type ColorNativePropName = "background-color" | "color" | "border-color";
 
-export const ComponentStylePropNameMap: { [key in ComponentStylePropName]: ComponentStyleNativePropName } = {
-  background: "background",
+export const ColorPropNameMap: { [key in ColorPropName]: ColorNativePropName } = {
   backgroundColor: "background-color",
   borderColor: "border-color",
   color: "color",
 };
 
 export interface ColorClassNameParams {
-  readonly color: Color;
+  readonly color?: Color | null;
   readonly shade?: ColorShade;
 }
 
@@ -78,12 +76,15 @@ export const parseColor = (color: Color): [ColorName, ColorShade | null] => {
 };
 
 export const getColorClassName = (prop: ColorPropName, { color, shade }: ColorClassNameParams): string => {
-  const [name, sh] = parseColor(color);
-  if (shade) {
-    // The provided shade should override the shade in the color string.
-    return `${ComponentStylePropNameMap[prop]}-${name}-${shade}`;
-  } else if (sh) {
-    return `${ComponentStylePropNameMap[prop]}-${name}-${sh}`;
+  if (color) {
+    const [name, sh] = parseColor(color);
+    if (shade) {
+      // The provided shade should override the shade in the color string.
+      return `${ColorPropNameMap[prop]}-${name}-${shade}`;
+    } else if (sh) {
+      return `${ColorPropNameMap[prop]}-${name}-${sh}`;
+    }
+    return `${ColorPropNameMap[prop]}-${name}`;
   }
-  return `${ComponentStylePropNameMap[prop]}-${name}`;
+  return "";
 };

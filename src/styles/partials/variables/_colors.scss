@@ -1,16 +1,96 @@
 @use "sass:map";
 @use "sass:list";
+@use "sass:meta";
+@use "sass:string";
+
 @use "throw";
 @use "../functions" as fn;
 
-$blue-shades: (#eff6ff, #e9f2ff, #cce1fe, #b0d2ff, #76b0ff, #5198f9, #1f71e1, #074599, #012e6c, #001d44);
-$green-shades: (#f0fdf4, #dcfce7, #bbf7d0, #86f7d0, #4ade80, #22c55e, #16a34a, #15803d, #166534, #14132d);
+$app-background-color: #fbfbfb;
+$disabled-color: #a1a9b4;
+$body-color: #231f20;
+$heading-color: #111827;
+$white: #ffffff;
+$black: #000000;
+
+// Color Scheme Color: #2660A4
+$blue-shades: (
+  #b8d1ee,
+  #acc9ec,
+  #a0c1e9,
+  #94bae6,
+  #88b2e3,
+  #7caae1,
+  #70a3de,
+  #649bdb,
+  #5893d8,
+  #4c8cd6,
+  #4084d3,
+  #357cd0,
+  #2e75c8,
+  #2c6ebc,
+  #2967b0
+);
+
+// Color Scheme Color: #6DA34D
+$green-shades: (
+  #d5e6cb,
+  #cee2c2,
+  #c7deb9,
+  #c0dab0,
+  #b9d6a8,
+  #b2d29f,
+  #abcd96,
+  #a4c98d,
+  #9dc585,
+  #96c17c,
+  #8fbd73,
+  #88b96b,
+  #81b562,
+  #7ab159,
+  #73ac51
+);
+
+// Color Scheme Color: #f19953
+$orange-shades: (
+  #fbe2ce,
+  #faddc6,
+  #fad8bd,
+  #f9d3b5,
+  #f8cead,
+  #f8caa5,
+  #f7c59d,
+  #f6c095,
+  #f6bb8c,
+  #f5b684,
+  #f4b17c,
+  #f4ac74,
+  #f3a86c,
+  #f2a363,
+  #f29e5b
+);
+
 $gray-shades: (#f9f9fa, #f1f3f5, #eaecef, #dee2e6, #cfd4d9, #aeb5bc, #878e95, #494056, #353a3f, #222529);
-$red-shades: (#fef2f2, #fee2e2, #fecaca, #fca5a5, #f87171, #ef4444, #dc2626, #b91c1c, #991b1b, #7f1d1d);
-$yellow-shades: (#fff5eb, #fef3c7, #fde68a, #fbd34d, #fbbf24, #f59e0b, #d79706, #b45309, #92400e, #78350f);
-$orange-shades: (#fff4e6, #ffe8cc, #ffd8a8, #ffc078, #ffa94d, #ff922b, #fd7e14, #f76707, #e8590c, #d9480f);
-$heading-shades: (#121929, #121928, #111828, #111827, #111827, #111827, #111826, #101726, #101725, #101725);
-$body-shades: (#121929, #121928, #111828, #111827, #111827, #111827, #111826, #101726, #101725, #101725);
+
+// Color Scheme Color: #881600
+$red-shades: (
+  #dbb9b3,
+  #cfa299,
+  #c9968c,
+  #c48b80,
+  #be7f73,
+  #b87366,
+  #b26859,
+  #ac5c4d,
+  #a65040,
+  #a04533,
+  #942d19,
+  #8e220d,
+  #811500,
+  #7a1400,
+  #741300
+);
+$yellow-shades: (#fff5eb, #fef3c7, #fde68a, #fbd34d, #fbbf24);
 
 $colors: (
   "blue": $blue-shades,
@@ -20,39 +100,35 @@ $colors: (
   "success": $green-shades,
   "error": $red-shades,
   "warning": $yellow-shades,
-  "body": $body-shades,
-  "heading": $heading-shades,
+  "body": $body-color,
+  "heading": $heading-color,
   "orange": $orange-shades,
   "gray": $gray-shades,
   "neutral": $gray-shades,
+  "white": $white,
+  "black": $black,
 );
 
 $color-names: map.keys($colors);
-$shades: (1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+
 $default-shades: (
-  "blue": 6,
-  "green": 6,
-  "red": 6,
-  "yellow": 6,
-  "success": 6,
-  "error": 6,
-  "warning": 6,
-  "body": 6,
-  "heading": 6,
-  "orange": 6,
+  "blue": 10,
+  "green": 14,
+  "red": 12,
+  "yellow": 5,
+  "success": 15,
+  "error": 14,
+  "warning": 5,
+  "orange": 15,
   "gray": 6,
   "neutral": 6,
 );
 
-$app-background-color: #f9f9f9;
-$disabled-color: #a1a9b4;
-$white: #ffffff;
-
 @function get-default-shade($name) {
-  @if not map.has-key($default-shades, $name) {
-    @return throw.error("The provided name #{$name} is invalid.", $name: $name, $source: "get-default-shade()");
+  @if map.has-key($default-shades, $name) {
+    @return map.get($default-shades, $name);
   }
-  @return fn.mapget($default-shades, $name);
+  @return null;
 }
 
 @function get-color($name, $shade: null) {
@@ -60,11 +136,24 @@ $white: #ffffff;
     @return throw.error("The provided name #{$name} is invalid.", $name: $name, $source: "get-color()");
   }
   $cs: fn.mapget($colors, $name);
-  @if $shade and not list.nth($cs, $shade) {
-    @return throw.error("The provided shade #{$shade} is invalid.", $shade: $shade, $source: "get-color()");
+  @if $shade {
+    @if meta.type-of($cs) != list {
+      @return $cs;
+    } @else if not list.nth($cs, $shade) {
+      @if $shade < 1 {
+        @return throw.error("The provided shade #{$shade} is invalid.", $shade: $shade, $source: "get-color()");
+      }
+      // Return the last shade that is available if the shade exceeds the number of available shades.
+      @return list.nth($cs, list.length($cs));
+    } @else {
+      @return list.nth($cs, $shade);
+    }
   }
-  $sh: if($shade, $shade, get-default-shade($name));
-  @return list.nth($cs, $sh);
+  $default-shade: get-default-shade($name);
+  @if $default-shade {
+    @return get-color($name, $shade: $default-shade);
+  }
+  @return $cs;
 }
 
 @mixin background-color($color, $shade: null) {
@@ -81,4 +170,33 @@ $white: #ffffff;
 
 @mixin color($color, $shade: null) {
   color: get-color($color, $shade);
+}
+
+@function get-color-class-name($p, $c, $shade: null) {
+  @if $shade {
+    @return "#{$p}-#{$c}-#{$shade}";
+  }
+  @return "#{$p}-#{$c}";
+}
+
+@mixin with-color-classes($color-type) {
+  @each $name in $color-names {
+    $default-color: get-color($name);
+    $classname: get-color-class-name($color-type, $name);
+    @content ($name, string.unquote($classname), $default-color);
+
+    @for $i from 1 through list.length(fn.mapget($colors, $name)) {
+      $color: get-color($name, $i);
+      $classname: get-color-class-name($color-type, $name, $i);
+      @content ($name, string.unquote($classname), $color);
+    }
+  }
+}
+
+@mixin colors($color-type) {
+  @include with-color-classes($color-type) using ($name, $classname, $color) {
+    .#{$classname} {
+      #{$color-type}: $color;
+    }
+  }
 }

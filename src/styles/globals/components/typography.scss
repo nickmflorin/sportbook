@@ -22,40 +22,6 @@
   }
 }
 
-%body-defaults {
-  @include partials.font("body");
-}
-
-%heading-defaults {
-  @include partials.font("heading");
-}
-
-%label-defaults {
-  @include partials.font("label");
-}
-
-@mixin font-weights($type) {
-  @each $weight in partials.$font-weight-names {
-    .font-weight-#{$weight} {
-      @include partials.font-weight($type: $type, $weight: $weight);
-    }
-  }
-}
-
-@mixin font-sizes($type) {
-  @each $size in partials.$typography-sizes {
-    .font-size-#{$size} {
-      @include partials.font($type, $size: $size, $pick: (line-height, font-size));
-    }
-  }
-}
-
-// By default, the "font-weight-x" classes will apply to body text (unless the element is an h-tag).
-@include font-weights("body");
-
-// By default, the "font-size-x" classes will apply to body text (unless the element is an h-tag).
-@include font-sizes("body");
-
 html,
 body {
   @extend %typography-base;
@@ -77,7 +43,7 @@ body {
 
 p {
   @extend %typography-base;
-  @extend %body-defaults;
+  @include partials.font("body");
 
   em,
   b {
@@ -87,29 +53,44 @@ p {
   }
 }
 
+@mixin with-fonts($type) {
+  @include partials.with-font-sizes($type) using ($size, $data) {
+    .font-size-#{$size} {
+      font-size: partials.mapget($data, font-size);
+      line-height: partials.mapget($data, line-height);
+      font-weight: partials.mapget($data, font-weight);
+      @content ($data);
+
+      // Allow the font-weight to be overridden for each size.
+      @include partials.with-font-weights($type) using ($weight, $value) {
+        &.font-weight-#{$weight} {
+          font-weight: $value;
+        }
+      }
+    }
+  }
+}
+
 label {
   // Do not define defaults for the typography properties.  This allows the typography properties to only be applied if
   // the component is provided with the appropriate props, and allows us to override the properties in SASS elsewhere
   // in cases where the component is not provided with those props.
   @extend %typography-base;
+  @include with-fonts("label") using ($data) {
+    $font-size: partials.mapget($data, font-size);
+    $line-height: partials.mapget($data, line-height);
+
+    > .icon {
+      height: $font-size;
+      margin-right: 6px;
+      padding-bottom: 0.5 * ($line-height - $font-size);
+      padding-top: 0.5 * ($line-height - $font-size);
+      width: auto;
+    }
+  }
 
   display: flex;
   width: 100%;
-
-  @each $size in partials.$typography-sizes {
-    &.font-size-#{$size} {
-      $font-size: partials.get-font-size("label", $size);
-      $line-height: partials.get-line-height("label", $size);
-
-      > .icon {
-        height: $font-size;
-        margin-right: 6px;
-        padding-bottom: 0.5 * ($line-height - $font-size);
-        padding-top: 0.5 * ($line-height - $font-size);
-        width: auto;
-      }
-    }
-  }
 
   &--transform-underline {
     text-decoration: underline;
@@ -127,7 +108,7 @@ h4,
 h5,
 h6 {
   @extend %typography-base;
-  @extend %heading-defaults;
+  @include with-fonts("heading");
 
   width: 100%;
 
@@ -141,50 +122,26 @@ h6 {
 
 h1 {
   @include partials.font("heading", $size: "xl", $pick: (line-height, font-size));
-  // Include the font-size class specifications in this selector so that they can be overridden via the prop on the
-  // component.
-  @include font-weights("heading");
-  @include font-sizes("heading");
 }
 
 h2 {
   @include partials.font("heading", $size: "lg", $pick: (line-height, font-size));
-  // Include the font-size class specifications in this selector so that they can be overridden via the prop on the
-  // component.
-  @include font-weights("heading");
-  @include font-sizes("heading");
 }
 
 h3 {
   @include partials.font("heading", $size: "md", $pick: (line-height, font-size));
-  // Include the font-size class specifications in this selector so that they can be overridden via the prop on the
-  // component.
-  @include font-weights("heading");
-  @include font-sizes("heading");
 }
 
 h4 {
   @include partials.font("heading", $size: "sm", $pick: (line-height, font-size));
-  // Include the font-size class specifications in this selector so that they can be overridden via the prop on the
-  // component.
-  @include font-weights("heading");
-  @include font-sizes("heading");
 }
 
 h5 {
   @include partials.font("heading", $size: "xs", $pick: (line-height, font-size));
-  // Include the font-size class specifications in this selector so that they can be overridden via the prop on the
-  // component.
-  @include font-weights("heading");
-  @include font-sizes("heading");
 }
 
 h6 {
   @include partials.font("heading", $size: "xxs", $pick: (line-height, font-size));
-  // Include the font-size class specifications in this selector so that they can be overridden via the prop on the
-  // component.
-  @include font-weights("heading");
-  @include font-sizes("heading");
 }
 
 .body {
@@ -192,6 +149,18 @@ h6 {
   // the component is provided with the appropriate props, and allows us to override the properties in SASS elsewhere
   // in cases where the component is not provided with those props.
   @extend %typography-base;
+  @include with-fonts("body") using ($data) {
+    $font-size: partials.mapget($data, font-size);
+    $line-height: partials.mapget($data, line-height);
+
+    > .icon {
+      height: $font-size;
+      margin-right: 6px;
+      padding-bottom: 0.5 * ($line-height - $font-size);
+      padding-top: 0.5 * ($line-height - $font-size);
+      width: auto;
+    }
+  }
 
   align-items: center;
   display: flex;
@@ -223,20 +192,5 @@ h6 {
     font-style: inherit;
     font-weight: inherit;
     line-height: inherit;
-  }
-
-  @each $size in partials.$typography-sizes {
-    &.font-size-#{$size} {
-      $font-size: partials.get-font-size("body", $size);
-      $line-height: partials.get-line-height("body", $size);
-
-      > .icon {
-        height: $font-size;
-        margin-right: 6px;
-        padding-bottom: 0.5 * ($line-height - $font-size);
-        padding-top: 0.5 * ($line-height - $font-size);
-        width: auto;
-      }
-    }
   }
 }

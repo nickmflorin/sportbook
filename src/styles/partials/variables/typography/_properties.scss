@@ -142,6 +142,12 @@ $font-family-weights: (
   font-weight: get-font-weight($type: "label", $args...);
 }
 
+@mixin with-font-weights($type) {
+  @each $weight in $font-weight-names {
+    @content ($weight, get-font-weight($type: $type, $weight: $weight));
+  }
+}
+
 /* --------------------------------------- Font Sizes ----------------------------------------- */
 $typography-sizes: ("xxs", "xs", "sm", "md", "lg", "xl");
 
@@ -464,6 +470,13 @@ $typography-default-colors: (
     } @else {
       @error "The property #{$k} is nullish!";
     }
+  }
+}
+
+@mixin with-font-sizes($type) {
+  @each $size in $typography-sizes {
+    $properties: get-font($type, $size: $size);
+    @content ($size, $properties);
   }
 }
 

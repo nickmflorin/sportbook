@@ -18,10 +18,14 @@ export const LeagueTypes = new EnumModel("leagueType", LeagueType, {
   [LeagueType.ORGANIZED]: {
     label: "Organized",
     icon: icons.IconNames.SITEMAP,
+    badgeColor: "white",
+    badgeBackgroundColor: "blue",
   },
   [LeagueType.PICKUP]: {
     label: "Pickup",
     icon: icons.IconNames.PEOPLE_GROUP,
+    badgeColor: "white",
+    badgeBackgroundColor: "green",
   },
 });
 

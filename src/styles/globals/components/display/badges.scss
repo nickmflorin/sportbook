@@ -1,0 +1,46 @@
+@use "partials";
+
+.badge {
+  text-decoration: none;
+  display: flex;
+  border-radius: 8px;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  width: fit-content;
+  text-transform: uppercase;
+  letter-spacing: 0.0156em;
+  cursor: inherit;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  border: 0.0625rem solid transparent;
+  padding-right: 4px;
+  padding-left: 4px;
+  font-family: partials.get-font-family("body");
+
+  // Keep the font sizes and line
+  @each $size in partials.$typography-sizes {
+    &--badge-#{$size} {
+      font-size: partials.get-font-size($type: "body", $size: $size);
+      line-height: partials.get-line-height($type: "body", $size: $size);
+    }
+  }
+
+  @include partials.with-font-sizes("body") using ($size, $data) {
+    &.badge-size-#{$size} {
+      font-size: partials.mapget($data, font-size);
+      line-height: partials.mapget($data, line-height);
+      font-weight: partials.mapget($data, font-weight);
+
+      // Allow the font-weight to be overridden for each size.
+      @include partials.with-font-weights("body") using ($weight, $value) {
+        &.font-weight-#{$weight} {
+          font-weight: $value;
+        }
+      }
+    }
+  }
+}

@@ -1,28 +1,9 @@
-@use "sass:string";
-@use "sass:selector";
 @use "partials";
 
-@function get-color-class-name($p, $c, $shade) {
-  @return "#{$p}-#{$c}-#{$shade}";
-}
+@include partials.colors("color");
 
-@mixin colors($color-type) {
-  @each $name in partials.$color-names {
-    $default-shade: partials.get-default-shade($name);
+@include partials.colors("background-color");
 
-    .#{$color-type}-#{$name} {
-      #{$color-type}: partials.get-color($name, $default-shade);
-    }
-    @each $shade in partials.$shades {
-      $v: get-color-class-name($color-type, $name, $shade);
-      .#{string.unquote($v)} {
-        #{$color-type}: partials.get-color($name, $shade);
-      }
-    }
-  }
-}
+@include partials.colors("background");
 
-@include colors("color");
-@include colors("background-color");
-@include colors("background");
-@include colors("border-color");
+@include partials.colors("border-color");

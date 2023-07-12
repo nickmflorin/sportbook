@@ -11,6 +11,8 @@ export type EnumData<
       readonly label: string;
       readonly iconColor?: Color;
       readonly icon?: icons.BasicIconProp;
+      readonly badgeBackgroundColor?: Color;
+      readonly badgeColor?: Color;
     }
   : never;
 
@@ -85,4 +87,8 @@ export class EnumModel<E extends types.PrismaEnum> {
   getIcon = (v: types.PrismaEnumValue<E>): icons.BasicIconProp | undefined => this.config[v].icon;
 
   getIconColor = (v: types.PrismaEnumValue<E>): Color | undefined => this.config[v].iconColor;
+
+  getBadgeBackgroundColor = (v: types.PrismaEnumValue<E>): Color | undefined => this.config[v].badgeBackgroundColor;
+
+  getBadgeColor = (v: types.PrismaEnumValue<E>): Color | undefined => this.config[v].badgeColor;
 }
