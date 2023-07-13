@@ -22,6 +22,7 @@
   "typescript.updateImportsOnFileMove.enabled": "always",
   "typescript.validate.enable": true,
   "eslint.options": {},
+  "eslint.runtime": "/Users/nickflorin/.nvm/versions/node/v20.0.0/bin/node",
   "eslint.validate": ["typescript", "typescriptreact", "javascript"],
   "eslint.format.enable": true,
   "prettier.useTabs": true,

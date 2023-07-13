@@ -165,6 +165,9 @@ module.exports = {
   extends: getExtensions(),
   plugins: INCLUDE_PRETTIER ? ["prettier"] : [],
   rules: BASE_RULES,
+  parserOptions: {
+    sourceType: "module",
+  },
   ignorePatterns: [
     "next-env.d.ts",
     "!.*",
