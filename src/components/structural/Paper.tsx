@@ -1,9 +1,8 @@
 "use client";
 import { Flex, Paper as RootPaper, type PaperProps as RootPaperProps } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 
-import { ActionIconColor } from "~/components/buttons/ActionIcon";
+import { CaretButton } from "~/components/buttons";
 
 import { Collapse } from "./Collapse";
 import { Header, type HeaderProps } from "./Header";
@@ -40,13 +39,9 @@ export const Paper = ({
         description={description}
         actions={[
           ...(actions || []),
-          collapsable
-            ? {
-                onClick: () => _toggleContent(),
-                color: ActionIconColor.GRAY,
-                icon: contentOpened ? IconChevronDown : IconChevronUp,
-              }
-            : undefined,
+          collapsable ? (
+            <CaretButton key={actions.length + 1} open={contentOpened} onClick={() => _toggleContent()} />
+          ) : undefined,
         ]}
       />
       <Collapse opened={collapsable === true ? contentOpened : undefined}>

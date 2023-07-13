@@ -1,8 +1,7 @@
 "use client";
-import { IconX } from "@tabler/icons-react";
 import classNames from "classnames";
 
-import { ActionIcon } from "~/components/buttons/ActionIcon";
+import { CloseButton } from "~/components/buttons";
 import { PartitionedContent, type PartitionedContentProps } from "~/components/structural/PartitionedContent";
 import { Portal } from "~/components/structural/Portal";
 
@@ -16,7 +15,7 @@ export const Drawer = ({ open, children, onClose, ...props }: DrawerProps): JSX.
     return (
       <Portal id="drawer-target">
         <PartitionedContent {...props} className={classNames("drawer", props.className)}>
-          {onClose && <ActionIcon className="drawer__close-button" icon={IconX} onClick={onClose} />}
+          {onClose && <CloseButton className="drawer__close-button" onClick={onClose} />}
           {children}
         </PartitionedContent>
       </Portal>

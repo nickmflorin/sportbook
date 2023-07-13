@@ -3,14 +3,14 @@ import React, { useMemo } from "react";
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
-import { ActionIcon, type ActionIconProps } from "~/components/buttons/ActionIcon";
+import { BareActionButton, type BareActionButtonProps } from "~/components/buttons";
 
 export type RenderAction = {
   readonly render: () => JSX.Element;
   readonly visible?: boolean;
 };
 
-export type IconAction = Pick<ActionIconProps, "color" | "icon" | "stroke" | "onClick"> & {
+export type IconAction = Pick<BareActionButtonProps, "color" | "icon" | "onClick"> & {
   readonly visible?: boolean;
   readonly disabled?: boolean;
 };
@@ -29,7 +29,7 @@ export const actionIsVisible = (a: Action) =>
 export const filterVisibleActions = (actions: Action[]) =>
   actions.filter((a): a is Exclude<Action, null | undefined> => actionIsVisible(a));
 
-export interface ActionsProps extends ComponentProps<"className" | "style"> {
+export interface ActionsProps extends ComponentProps {
   /**
    * The actions that should be rendered inside of the component.  Each action can either be of type {@link JSX.Element}
    * or an object of type {@link RenderAction} that includes a 'render' function and optional metadata.
@@ -47,7 +47,7 @@ export const Actions = ({ children = [], actions, ...props }: ActionsProps): JSX
   const visibleActions = useMemo<JSX.Element[]>(
     () =>
       filterVisibleActions(actions || (Array.isArray(children) ? children : [children])).map(a =>
-        isRenderAction(a) ? a.render() : isIconAction(a) ? <ActionIcon {...a} /> : a,
+        isRenderAction(a) ? a.render() : isIconAction(a) ? <BareActionButton {...a} /> : a,
       ),
     [actions, children],
   );

@@ -13,6 +13,6 @@ export const BareActionButton = ({ color, ...props }: BareActionButtonProps) => 
   <ActionButton
     {...props}
     variant={ButtonActionVariants.BARE}
-    className={classNames("button--action--bare", getColorClassName("color", { color }), props.className)}
+    className={classNames(getColorClassName("color", { color }), props.className)}
   />
 );

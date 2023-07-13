@@ -27,7 +27,7 @@
     "start": "next start",
     "test": "jest --watchAll  --silent=false",
     "test:ci": "jest --ci",
-    "tsc": "tsc --project ./tsconfig.json --",
+    "tsc": "tsc --project ./tsconfig.json --explainFiles > explanations.txt",
     "tsc:watch": "tsc -w"
   },
   "dependencies": {

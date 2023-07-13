@@ -2,6 +2,7 @@
 @use "sass:list";
 @use "sass:map";
 @use "sass:meta";
+@use "sass:color";
 
 @use "../../functions" as fn;
 @use "../../mixins" as mixins;
@@ -303,26 +304,24 @@ $private-danger: (
   ),
 );
 
-$private-bare: (
-  color: colors.get-color("blue", $shade: 14),
-  background-color: colors.$transparent,
-  outline-color: colors.$transparent,
-  "hovered": (
-    color: colors.get-color("blue", $shade: 12),
-  ),
-  "focused": (
-    color: colors.get-color("blue", $shade: 12),
-  ),
-  "disabled": (
-    color: colors.get-color("gray", $shade: 6),
-  ),
-);
-
 $button-color-properties: (
   "solid": (
     "primary": $private-primary,
     "secondary": $private-secondary,
-    "bare": $private-bare,
+    "bare": (
+      color: colors.get-color("blue", $shade: 14),
+      background-color: colors.$transparent,
+      outline-color: colors.$transparent,
+      "hovered": (
+        color: colors.get-color("blue", $shade: 12),
+      ),
+      "focused": (
+        color: colors.get-color("blue", $shade: 12),
+      ),
+      "disabled": (
+        color: colors.get-color("gray", $shade: 6),
+      ),
+    ),
     "danger": $private-danger,
     "white": (
       color: colors.get-color("body"),
@@ -343,9 +342,12 @@ $button-color-properties: (
   "action": (
     "primary": $private-primary,
     "secondary": $private-secondary,
-    // These colors will be the default, but the bare action button will have a color override based
-    // on the icon colors.
-    "bare": $private-bare,
+    // The BareActionButton should not have a predefined color - it is specified via props.
+    "bare":
+      (
+        background-color: colors.$transparent,
+        outline-color: colors.$transparent,
+      ),
     "danger": $private-danger,
   ),
   "alternate": (

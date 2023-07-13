@@ -23,6 +23,8 @@ export const NativeForm = <I extends BaseFormValues = DefaultFormValues, O exten
     {...props}
     className={classNames("form", props.className)}
     action={(formData: FormData) => {
+      console.log({ data: formData.values() });
+
       /* TODO: We want to use the formData to reconstruct the values that are provided to the action.  However,
          Mantine's inputs are controlled (not uncontrolled) and their 'useForm' hook passes the values in.  This means
          that we would have to use our own 'useForm' hook, and potentially input elements, to get that to work. It is

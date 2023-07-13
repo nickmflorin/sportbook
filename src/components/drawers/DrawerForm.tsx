@@ -1,8 +1,7 @@
 "use client";
-import { IconX } from "@tabler/icons-react";
 import classNames from "classnames";
 
-import { ActionIcon } from "~/components/buttons/ActionIcon";
+import { CloseButton } from "~/components/buttons";
 import { Form, type NativeFormProps, type BaseFormValues, type DefaultFormValues } from "~/components/forms";
 import { ButtonFooter, type ButtonFooterProps } from "~/components/structural/ButtonFooter";
 import { PartitionedContent, type PartitionedContentProps } from "~/components/structural/PartitionedContent";
@@ -45,7 +44,7 @@ export const DrawerForm = <I extends BaseFormValues = DefaultFormValues, O exten
         container={params => (
           <Form.Native {...params} action={action} form={form}>
             <>
-              {onClose && <ActionIcon className="drawer__close-button" icon={IconX} onClick={onClose} />}
+              {onClose && <CloseButton className="drawer__close-button" onClick={onClose} />}
               {params.children}
             </>
           </Form.Native>
