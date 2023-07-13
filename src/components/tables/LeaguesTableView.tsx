@@ -4,7 +4,7 @@ import { experimental_useOptimistic as useOptimistic } from "react";
 
 import { useDisclosure } from "@mantine/hooks";
 
-import { Button } from "~/components/buttons/Button";
+import { PrimaryButton } from "~/components/buttons";
 import { createLeague } from "~/app/actions/league";
 
 import { LeaguesTable, type LeaguesTableProps, type LeagueDatum } from "./LeaguesTable";
@@ -43,9 +43,9 @@ export const LeaguesTableView = ({
         className={className}
         actions={[
           ...(actions || []),
-          <Button key={actions.length + 1} onClick={() => openLeagueDrawer()}>
+          <PrimaryButton key={actions.length + 1} onClick={() => openLeagueDrawer()}>
             Create League
-          </Button>,
+          </PrimaryButton>,
         ]}
       >
         <LeaguesTable {...props} data={optimisticLeagues} />

@@ -1,0 +1,12 @@
+@use "sass:list";
+@use "sass:map";
+
+@use "partials";
+@use "./base" as *;
+
+a {
+  @extend %button-link-base;
+
+  color: inherit;
+  text-decoration: none;
+}

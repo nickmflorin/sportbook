@@ -2,9 +2,10 @@ import React, { forwardRef, type ForwardedRef } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
+import { type Optional } from "utility-types";
 
 import { getColorClassName, icons } from "~/lib/ui";
-import { SizeAxes, SizeContains } from "~/lib/ui/constants";
+import { SizeAxes, SizeContains } from "~/lib/ui/types";
 
 export const useIconProps = ({
   size = icons.IconSizes.MD,
@@ -44,19 +45,36 @@ export const Spinner = ({ color = "blue.6", loading, ...props }: SpinnerProps): 
 
 function _IconComponent({
   ref,
-  loading,
-  spinnerColor,
+  loading = false,
+  spinnerColor = "blue",
   icon,
   spin,
+  size = icons.IconSizes.MD,
+  axis = SizeAxes.VERTICAL,
+  contain = SizeContains.FIT,
+  color = "gray.7",
   ...props
 }: icons.IconComponentProps & { readonly ref?: ForwardedRef<SVGSVGElement> }) {
-  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-  const { style, className } = useIconProps(props);
   if (loading === true) {
-    // Use the original style and className before it was modified by the hook.
-    return <Spinner loading={true} style={props.style} className={props.className} color={spinnerColor} />;
+    return <Spinner {...props} loading={true} color={spinnerColor} size={size} />;
   }
-  return <FontAwesomeIcon style={style} className={className} spin={spin} ref={ref} icon={icons.getNativeIcon(icon)} />;
+  return (
+    <FontAwesomeIcon
+      {...props}
+      className={classNames(
+        "icon",
+        `icon--contain-${contain}`,
+        `icon--size-${size}`,
+        `icon--axis-${axis}`,
+        getColorClassName("color", { color }),
+        `icon--size-${size}`,
+        props.className,
+      )}
+      spin={spin}
+      ref={ref}
+      icon={icons.getNativeIcon(icon)}
+    />
+  );
 }
 
 const ForwardedIconComponent = forwardRef((props: icons.IconComponentProps, ref: ForwardedRef<SVGSVGElement>) => (
@@ -108,3 +126,6 @@ const _Icon = forwardRef(function Icon({ icon, ...props }: icons.IconProps, ref:
 /* It is important that we define the displayName and name such that the `_Icon` component above can properly determine
    whether or not the provided prop is an actual <Icon /> element or the prefix/name traditional specification. */
 export const Icon = Object.assign(React.memo(_Icon), { displayName: "Icon", name: "Icon" });
+
+export const IconOrSpinner = ({ icon, loading, ...props }: Optional<icons.IconProps, "icon">): JSX.Element =>
+  icon !== undefined ? <Icon {...props} icon={icon} /> : loading === true ? <Spinner {...props} /> : <></>;

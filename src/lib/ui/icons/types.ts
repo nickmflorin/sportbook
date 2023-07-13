@@ -12,7 +12,7 @@ import {
   type IconPrefix,
 } from "~/application/config/fontAwesome/constants";
 import { type ComponentProps, type Color } from "~/lib/ui";
-import { type SizeAxis, type SizeContain } from "~/lib/ui/constants";
+import { type SizeAxis, type SizeContain } from "~/lib/ui/types";
 import { enumeratedLiterals, type EnumeratedLiteralType } from "~/lib/util/literals";
 
 export * from "~/application/config/fontAwesome/constants";

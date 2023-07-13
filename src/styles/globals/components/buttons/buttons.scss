@@ -1,0 +1,121 @@
+@use "sass:list";
+@use "sass:map";
+
+@use "partials";
+@use "./variants" as variants;
+@use "./base" as *;
+
+button {
+  @extend %button-link-base;
+
+  // Use the default button variant if no variant class is on the element.
+  @include partials.without-selectors(partials.$button-types, $prefix: ".button--") {
+    @include variants.button-type(partials.$button-default-type);
+  }
+}
+
+.button {
+  @extend %button-link-base;
+
+  @include partials.disabled;
+
+  outline-offset: -1 * partials.$button-outline-width;
+
+  @include partials.with-selectors((partials.$button-locked-class, partials.$button-loading-class)) {
+    pointer-events: none;
+  }
+
+  &--corner-style-square {
+    border-radius: 0px !important;
+  }
+
+  &--corner-style-rounded {
+    border-radius: 50px !important;
+  }
+
+  > .button__content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+    position: relative;
+    text-align: inherit;
+    width: 100%;
+
+    > .button__sub-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      /* The button-text should fill up the entire horizontal space unless affixes are present on the left and/or
+         right. */
+      flex-grow: 100;
+      text-align: inherit;
+      vertical-align: middle;
+
+      &--string {
+        /* We use this hidden psuedo-element to establish the width of the text the button contains, such that in the
+           event that characteristics of the text that effect its width are altered - the width is already consistent
+           with what it would otherwise be before it was altered and the overall width of the button and/or anchor does
+           not change. */
+        font-size: inherit;
+        line-height: inherit;
+        text-align: inherit;
+        text-transform: inherit;
+
+        &::before {
+          content: attr(title);
+          display: block;
+          height: 0;
+          overflow: hidden;
+          text-decoration: none;
+          visibility: hidden;
+        }
+      }
+    }
+
+    > .button__icon-or-spinner-wrapper {
+      @include partials.flex-c;
+
+      height: 100%;
+      padding-bottom: partials.$button-icon-padding;
+      // When an icon or loading indicator is in the button, we want the height to slightly smaller than the line height
+      // of the accompanying text - so we subtract a little height from the wrapper.
+      padding-top: partials.$button-icon-padding;
+      // The aspect-ratio should be 1 inherently, based on the size specifications of the Spinner component when an icon
+      // is being used.
+      width: fit-content;
+
+      // Include 8px of spacing between the wrapped icon/spinner and the text if the icon/spinner
+      // is before the text.
+      + * {
+        margin-left: 8px;
+      }
+    }
+
+    // Include 8px of spacing between the wrapped icon/spinner and the text if the icon/spinner is after the text.
+    > * + .button__icon-or-spinner-wrapper {
+      margin-left: 8px;
+    }
+  }
+
+  .icon {
+    color: inherit;
+    filter: inherit;
+  }
+
+  /*
+  For each variant, use the variant mixin that it is associated with as long as it is the only variant (i.e. distinct)
+  on the class:
+
+  &--primary:not(&--alternate, &--secondary, &--action, &--bare) {
+    ...
+  }
+  */
+  @each $type in partials.$button-types {
+    @include partials.with-distinct-selector($type, partials.$button-types, $prefix: ".button--") {
+      @include variants.button-type($type);
+    }
+  }
+}

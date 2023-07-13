@@ -1,0 +1,83 @@
+@use "sass:list";
+@use "sass:map";
+@use "sass:meta";
+
+@use "throw";
+@use "./fn" as fn;
+
+@function first($list) {
+  @return list.nth($list, 1);
+}
+
+@function last($list) {
+  @return list.nth($list, list.length($list));
+}
+
+@function is-separator($value) {
+  $separators: ("space", "comma", "slash", "auto");
+  @return fn.in-list($value, $separators);
+}
+
+@function arglist-to-list($data...) {
+  $list: ();
+  @each $d in $data {
+    $list: list.append($list, $d, comma);
+  }
+  @return $list;
+}
+
+/// Parses an optionally provided keyword argument from an arbitrary set of arguments,
+///
+/// @param {string} $name
+///   The name of the optionally provided keyword argument that may or may not be in the arbitrary set of arguments.
+/// @param {arglist} $args...
+///   The arbitrary set of arguments provided to a function or mixin that may or may not include the optional argument
+///   defined by `name`.
+/// @param {} $default
+///   A default value that should be used in the case that the argument is not present in the set of provided arbitrary
+///   arguments.
+@function get-optional-kwarg($name, $args...) {
+  $default: if(map.has-key(meta.keywords($args), "default"), map.get(meta.keywords($args), "default"), null);
+  $value: if(map.has-key(meta.keywords($args), $name), map.get(meta.keywords($args), $name), $default);
+  @return $value;
+}
+
+/// Returns a new list with the provided elements removed.
+///
+/// @param {list} $list
+///   A list for which the provided elements should be removed.
+/// @param {arglist} $values...
+///   The values that should be removed from the list.
+/// @param {bool} $strict
+///   Whether or not a value that does not exist in the list should cause an error to be thrown.
+///   Default: true
+@function list-remove($list, $values...) {
+  $strict: get-optional-kwarg("strict", $values..., $default: true);
+
+  // Validate the values being provided.
+  @each $v in $values {
+    @if meta.type-of($v) == list {
+      @return throw.error(
+        "The provided value '#{$v}' is a list.  Did you mean to provide as a rest arg?",
+        $source: "list-remove()",
+        $value: $v
+      );
+    } @else if $strict and not fn.in-list($v, $list) {
+      @return throw.error(
+        "The provided value '#{$v}' is not in the provided list, '#{$list}'.",
+        $source: "list-remove()",
+        $value: $v,
+        $list: $list
+      );
+    }
+  }
+  $new-list: ();
+  @each $l in $list {
+    @if not fn.in-list($l, $values) {
+      $new-list: list.append($new-list, $l, list.separator($list));
+    }
+  }
+  @return $new-list;
+}
+
+/// An extension

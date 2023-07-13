@@ -1,0 +1,124 @@
+@use "sass:list";
+@use "sass:map";
+@use "sass:meta";
+@use "sass:string";
+
+@use "partials";
+
+@mixin solid-type() {
+  font-weight: partials.get-font-weight("body", $weight: "medium");
+
+  @each $variant in partials.get-button-variants("solid") {
+    &.button--solid--#{$variant} {
+      @include partials.button-colors($type: "solid", $variant: $variant);
+    }
+  }
+
+  @each $size in partials.$button-size-names {
+    &.button--#{$size} {
+      @include partials.button-solid-size($size);
+    }
+  }
+}
+
+@mixin alternate-type {
+  font-weight: partials.get-font-weight("body", $weight: "bold");
+  padding: partials.get-button-padding("alternate");
+
+  /* Do not default the size of the button or anchor - this will prevent SASS from overriding the size of the button in
+     classes or elements that use the button.  Only size the button and/or anchor if the class exists on the element
+     (which happens when the `size` prop is provided). */
+  @each $size in partials.$button-size-names {
+    &.button--#{$size} {
+      font-size: partials.get-button-font-size("alternate", $size: $size);
+      height: partials.get-button-size("alternate", $size: $size);
+      line-height: partials.get-button-size("alternate", $size: $size);
+    }
+  }
+
+  @each $variant in partials.get-button-variants("alternate") {
+    @include partials.button-colors($type: "alternate", $variant: $variant);
+  }
+
+  &.button--alternate--link {
+    font-weight: partials.get-font-weight("body", $weight: "regular");
+    text-decoration: underline;
+
+    /* We use this hidden psuedo-element to establish the width of the text the button or anchor contains when it is
+       bold, such that when the text changes to bold on hover or focus - the width is already consistent with what it
+       would otherwise be when bold and the overall width of the button and/or anchor does not change. */
+    .button__text::before {
+      font-weight: partials.get-font-weight("body", $weight: "bold");
+    }
+  }
+}
+
+@mixin action-secondary-variant {
+  @include partials.button-colors($type: "action", $variant: "secondary");
+
+  padding: partials.get-button-padding("action", "secondary");
+}
+
+@mixin action-primary-variant {
+  @include partials.button-colors($type: "action", $variant: "primary");
+
+  padding: partials.get-button-padding("action", "primary");
+}
+
+@mixin action-bare-variant {
+  @include partials.button-colors($type: "action", $variant: "bare");
+
+  padding: partials.get-button-padding("action", "bare");
+}
+
+@mixin action-variant-properties($variant) {
+  @if string.quote($variant) == "bare" {
+    @include action-bare-variant;
+  } @else if string.quote($variant) == "primary" {
+    @include action-primary-variant;
+  } @else if string.quote($variant) == "secondary" {
+    @include action-secondary-variant;
+  } @else {
+    @error "The provided variant #{meta.inspect($variant)} is not a supported action variant.";
+  }
+}
+
+@mixin action-type {
+  $default-variant: partials.get-button-default-variant("action");
+  $variants: partials.get-button-variants("action");
+
+  aspect-ratio: 1;
+
+  @include partials.without-selectors($variants, $prefix: ".button--action--") {
+    @include action-variant-properties($default-variant);
+  }
+
+  @each $variant in $variants {
+    &.button--action--#{$variant} {
+      @include action-variant-properties($variant);
+
+      /* Do not default the size of the button - this will prevent SASS from overriding the size of the button in
+         classes or elements that use the button.  Only size the button and/or anchor if the class exists on the element
+         (which happens when the `size` prop is provided). */
+      @each $size in partials.$button-size-names {
+        &.button--#{$size} {
+          height: partials.get-button-size("action", $variant: $variant, $size: $size);
+          width: partials.get-button-size("action", $variant: $variant, $size: $size);
+        }
+      }
+    }
+  }
+}
+
+@mixin button-type($type) {
+  $type: partials.validate-value($type, partials.$button-types);
+  @if string.quote($type) == "solid" {
+    @include solid-type;
+  } @else if string.quote($type) == "alternate" {
+    @include alternate-type;
+  } @else if string.quote($type) == "action" {
+    @include action-type;
+  } @else {
+    @error "The provided button type #{meta.inspect($type)} is not a supported type.";
+  }
+}

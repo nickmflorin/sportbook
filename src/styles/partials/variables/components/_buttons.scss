@@ -1,0 +1,509 @@
+@use "sass:string";
+@use "sass:list";
+@use "sass:map";
+@use "sass:meta";
+
+@use "../../functions" as fn;
+@use "../../mixins" as mixins;
+
+@use "../colors" as colors;
+@use "../typography" as typography;
+@use "./icons" as icons;
+
+/* ----------------------------------------- Variants ------------------------------------------ */
+$button-types: ("solid", "alternate", "action");
+$button-default-type: "solid";
+$button-variant-map: (
+  "solid": (
+    "danger",
+    "primary",
+    "secondary",
+    "bare",
+    "white",
+  ),
+  "alternate": (
+    "danger",
+    "link",
+  ),
+  "action": (
+    "bare",
+    "primary",
+    "secondary",
+  ),
+);
+
+$button-default-variants: (
+  "solid": "primary",
+  "alternate": "link",
+  "action": "bare",
+);
+
+@function get-button-variants($type) {
+  $type: fn.validate-value($type, $button-types);
+  @return fn.mapget($button-variant-map, $type);
+}
+
+@function get-button-default-variant($type) {
+  $type: fn.validate-value($type, $button-types);
+  @return fn.mapget($button-default-variants, $type);
+}
+
+/* ------------------------------------------------------- Mixins --------------------------------------------------- */
+$button-locked-class: ".button--locked";
+$button-loading-class: ".button--loading";
+
+@mixin button-hovered {
+  @include mixins.hovered {
+    @include mixins.without-selectors(($button-loading-class, $button-locked-class)) {
+      @content;
+    }
+  }
+}
+
+@mixin button-focused {
+  @include mixins.focused {
+    @include mixins.without-selectors(($button-loading-class, $button-locked-class)) {
+      @content;
+    }
+  }
+}
+
+/* ---------------------------------------------------- Properties -------------------------------------------------- */
+
+/*
+Buttons  need to leverage an outline instead of a border, because an outline is inset and a border is outset. In other
+words, the border will contribute size to the overall Button, while the outline will not.
+*/
+$button-outline-width: 1px;
+$button-border-radius: 6px;
+
+/*
+When an Icon and/or Spinner are in the Button (or Anchor), the size of the Icon or Spinner needs to be just a hair
+smaller than the line-height of the accompanying text (per designers).  To do this, the height of the element inside of
+the Button that wraps the Icon or Spinner needs to still consume 100% of the available height (i.e. size = "fill"), but
+needs to have inner padding to shrink the size of the Icon or Spinner it contains.
+*/
+$button-icon-padding: 2px;
+
+/* ------------------------------------------------------- Sizing --------------------------------------------------- */
+$button-size-names: ("xs", "sm", "md", "lg");
+$button-default-size: "sm";
+
+/*
+Note: The mapped values are not applicable for the Alternate Variant - just the buttons/anchors that have borders and/or
+backgrounds with text (Primary, Secondary and Bare Variants).
+*/
+$button-solid-padding: (
+  "xs": 6px 14px,
+  "sm": 8px 16px,
+  "md": 10px 20px,
+  "lg": 14px 30px,
+);
+
+/*
+The Action Button sizes are designed such that the sizes of the actual Icons, which are already defined for icons, stay
+consistent between the Bare variant (where there is no background or border) and the Primary/Secondary variants (where
+there is a background and border) - for a given size string.  For instance, a medium sized Primary Action Button should
+have a medium sized Icon and a medium sized Bare Action Button shyould have a medium sized icon, even if the outer sizes
+of the buttons themselves differ.
+*/
+$button-action-bare-padding: 2px;
+$button-action-primary-padding: 6px;
+$button-action-secondary-padding: 6px;
+
+$button-action-padding: (
+  "bare": $button-action-bare-padding,
+  "primary": $button-action-primary-padding,
+  "secondary": $button-action-secondary-padding,
+);
+
+$button-padding: (
+  "action": $button-action-padding,
+  "solid": $button-solid-padding,
+  "alternate": 0px,
+);
+
+@function get-button-padding($type, $size: null, $variant: null) {
+  @if $size and $variant {
+    @return throw.error(
+      "Both the size and variant cannot be provided together when obtaining the button padding for button type #{$type}.",
+      $type,
+      $size,
+      $variant,
+      $source: "get-button-padding("
+    );
+  }
+  $type: fn.validate-value($type, $button-types);
+  $p: fn.mapget($button-padding, $type);
+  @if meta.type-of($p) == map {
+    @if $size {
+      @return fn.mapget($p, $size);
+    } @else if $variant {
+      @return fn.mapget($p, $size);
+    }
+    @return throw.error(
+      "The size or variant must be provided to obtain the button padding for button type #{$type}.",
+      $type,
+      $source: "get-button-padding("
+    );
+  }
+  @return $p;
+}
+
+/*
+Usually, the height of the button would just be determined by the combination of the vertical padding and line-height
+(i.e. height = 2 * vertical-padding + line-height).  However, we need to constrain the height (and not allow it to be
+"auto") such that the SVG icons or spinners can properly fill up the available height and size responsively.  If we did
+not define the height explicitly, it would not be constrained and this would not work.
+
+So instead of calculating the height based on the padding and line-height, we define the heights and the padding and
+then calculate the line-height based on the padding and height - and all 3 consistent with each other while still
+allowing the height to be constrained.
+*/
+$button-solid-sizes: (
+  "xs": 28px,
+  "sm": 32px,
+  "md": 40px,
+  "lg": 48px,
+);
+
+$button-alternate-sizes: (
+  "xs": 12px,
+  "sm": 14px,
+  "md": 16px,
+  "lg": 18px,
+);
+
+$button-action-sizes: ();
+
+// For each button size and each action variant, calculate the size of the action button based on the size of the icon
+// plus two times the padding.
+@each $variant in get-button-variants("action") {
+  @each $size in $button-size-names {
+    $button-action-sizes: map.set(
+      $button-action-sizes,
+      $variant,
+      $size,
+      fn.mapget(icons.$icon-sizes, $size) + 2 * fn.mapget($button-action-padding, $variant)
+    );
+  }
+}
+
+$button-sizes: (
+  "solid": $button-solid-sizes,
+  "alternate": $button-alternate-sizes,
+  "action": $button-action-sizes,
+);
+
+@function get-button-size($type, $variant: null, $size: null) {
+  $type: fn.validate-value($type, $button-types);
+  $size: fn.validate-value(if($size, $size, $button-default-size), $button-size-names);
+  // Sizes for that type of button.
+  $type-sizes: fn.mapget($button-sizes, $type);
+  @if $variant {
+    // For the alternate case, the size of the button depends on the variant.
+    @if not map.has-key($type-sizes, $variant) {
+      @return throw.error(
+        "The variant is not applicable or is invalid for button type #{$type}.",
+        $type,
+        $source: "get-button-size()"
+      );
+    }
+    $type-sizes: fn.mapget($type-sizes, $variant);
+  }
+  @return fn.mapget($type-sizes, $size);
+}
+
+/* ------------------------------------------------------- Fonts --------------------------------------------------- */
+$button-font-weight: typography.get-font-weight(
+  $type: "body",
+  $size: "md",
+);
+$button-font-family: typography.get-font-family("body");
+
+$button-solid-font-sizes: (
+  "xs": 12px,
+  "sm": 14px,
+  "md": 16px,
+  "lg": 18px,
+);
+
+// The alternate button has no padding, and its line height is equal to the font-size.
+$button-alternate-font-sizes: $button-alternate-sizes;
+
+$button-font-sizes: (
+  "alternate": $button-alternate-font-sizes,
+  "solid": $button-solid-font-sizes,
+  "action": null,
+);
+
+@function get-button-font-size($type, $size: null) {
+  $type: fn.validate-value($type, $button-types);
+  $size: if($size, $size, $button-default-size);
+  $size: fn.validate-value($size, $button-size-names);
+  @return fn.mapget($button-font-sizes, $type, $size);
+}
+
+/* ------------------------------------------------------- Colors --------------------------------------------------- */
+$private-primary: (
+  color: colors.get-color("white"),
+  background-color: colors.get-color("blue", $shade: 14),
+  outline-color: colors.get-color("blue", $shade: 14),
+  "hovered": (
+    background-color: colors.get-color("blue", $shade: 12),
+    outline-color: colors.get-color("blue", $shade: 12),
+  ),
+  "focused": (
+    background-color: colors.get-color("blue", $shade: 12),
+    outline-color: colors.get-color("blue", $shade: 12),
+  ),
+  // We may want to treat disabled states for different variant colors differently in the
+  // future, but for now they are mostly the same.
+  "disabled":
+    (
+      outline-color: colors.get-color("blue", $shade: 2),
+      background-color: colors.get-color("blue", $shade: 2),
+    ),
+);
+
+$private-secondary: (
+  color: colors.get-color("body"),
+  background-color: colors.get-color("gray", $shade: 2),
+  outline-color: colors.get-color("gray", $shade: 2),
+  "hovered": (
+    background-color: colors.get-color("gray", $shade: 4),
+    outline-color: colors.get-color("gray", $shade: 4),
+  ),
+  "focused": (
+    background-color: colors.get-color("gray", $shade: 4),
+    outline-color: colors.get-color("gray", $shade: 4),
+  ),
+  "disabled": (
+    color: colors.get-color("gray", $shade: 6),
+    background-color: colors.get-color("gray", $shade: 4),
+    outline-color: colors.get-color("gray", $shade: 4),
+  ),
+);
+
+$private-danger: (
+  color: colors.get-color("white"),
+  background-color: colors.get-color("red", $shade: 12),
+  outline-color: colors.get-color("red", $shade: 12),
+  "hovered": (
+    background-color: colors.get-color("red", $shade: 14),
+    outline-color: colors.get-color("red", $shade: 14),
+  ),
+  "focused": (
+    background-color: colors.get-color("red", $shade: 14),
+    outline-color: colors.get-color("red", $shade: 14),
+  ),
+  "disabled": (
+    outline-color: colors.get-color("red", $shade: 4),
+    background-color: colors.get-color("red", $shade: 4),
+  ),
+);
+
+$private-bare: (
+  color: colors.get-color("blue", $shade: 14),
+  background-color: colors.$transparent,
+  outline-color: colors.$transparent,
+  "hovered": (
+    color: colors.get-color("blue", $shade: 12),
+  ),
+  "focused": (
+    color: colors.get-color("blue", $shade: 12),
+  ),
+  "disabled": (
+    color: colors.get-color("gray", $shade: 6),
+  ),
+);
+
+$button-color-properties: (
+  "solid": (
+    "primary": $private-primary,
+    "secondary": $private-secondary,
+    "bare": $private-bare,
+    "danger": $private-danger,
+    "white": (
+      color: colors.get-color("body"),
+      background-color: colors.get-color("white"),
+      outline-color: colors.get-color("gray", $shade: 4),
+      "hovered": (
+        outline-color: colors.get-color("gray", $shade: 8),
+      ),
+      "focused": (
+        outline-color: colors.get-color("gray", $shade: 8),
+      ),
+      "disabled": (
+        color: colors.$disabled-color,
+        outline-color: colors.$disabled-color,
+      ),
+    ),
+  ),
+  "action": (
+    "primary": $private-primary,
+    "secondary": $private-secondary,
+    // These colors will be the default, but the bare action button will have a color override based
+    // on the icon colors.
+    "bare": $private-bare,
+    "danger": $private-danger,
+  ),
+  "alternate": (
+    "link": (
+      color: colors.get-color("blue", $shade: 12),
+      background-color: colors.$transparent,
+      outline-color: colors.$transparent,
+      "hovered": (
+        color: colors.get-color("blue", $shade: 14),
+      ),
+      "focused": (
+        color: colors.get-color("blue", $shade: 14),
+      ),
+      "disabled": (
+        color: colors.$disabled-color,
+      ),
+    ),
+    "danger": (
+      color: colors.get-color("red", $shade: 12),
+      background-color: colors.$transparent,
+      outline-color: colors.$transparent,
+      "hovered": (
+        color: colors.get-color("red", $shade: 14),
+      ),
+      "focused": (
+        color: colors.get-color("red", $shade: 14),
+      ),
+      "disabled": (
+        color: colors.$disabled-color,
+      ),
+    ),
+  ),
+);
+
+/* ------------------------------------------------------- States --------------------------------------------------- */
+$button-state-names: ("hovered", "focused", "disabled");
+
+@function map-has-state-key($data) {
+  @each $state-name in $button-state-names {
+    @if map.has-key($data, $state-name) {
+      @return true;
+    }
+  }
+  @return false;
+}
+
+@function parse-state-colors($attributes, $state-name, $args...) {
+  $state-name: fn.validate-value($state-name, $button-state-names);
+  $arguments: meta.keywords($args);
+  @if map.has-key($arguments, $state-name) {
+    $state: fn.mapget($arguments, $state-name);
+    @if map-has-state-key($state) {
+      @return throw.error(
+        "Detected nested state key(s) in state attribute #{$state-name}.  This will cause an infinite recursion.",
+        $source: "button-colors()"
+      );
+    }
+    // If the state defines an override for the outline-color, we need to also override the outline
+    // because it will have been defaulted in the original base set of attributes based on the
+    // outline color of the base state.
+    @if map.has-key($state, outline-color) and not map.has-key($state, outline) {
+      $state: map.set($state, outline, $button-outline-width solid fn.mapget($state, outline-color));
+    }
+
+    @return map.merge($attributes, $state);
+  }
+  @return null;
+}
+
+@mixin button-colors($args...) {
+  $arguments: meta.keywords($args);
+
+  @if map.has-key($arguments, "type") {
+    @if not map.has-key($arguments, "variant") {
+      @include throw.error-mixin(
+        "If the 'type' argument is provided, the 'variant' must also be provided.",
+        $source: "button-colors()",
+        $type: fn.mapget($arguments, "type")
+      );
+    } @else {
+      $type: fn.validate-value(fn.mapget($arguments, "type"), $button-types);
+      $variant: fn.validate-value(fn.mapget($arguments, "variant"), fn.mapget($button-variant-map, $type));
+      $colors: fn.mapget($button-color-properties, $type, $variant);
+      @include button-colors($colors...);
+    }
+  } @else {
+    $background-color: fn.get-optional-kwarg(background-color, $default: colors.$transparent, $args...);
+    $outline-color: fn.get-optional-kwarg(outline-color, $default: $background-color, $args...);
+    $outline: fn.get-optional-kwarg(outline, $default: $button-outline-width solid $outline-color, $args...);
+
+    $attributes: (
+      background-color: $background-color,
+      outline-color: $outline-color,
+      outline: $outline,
+      color: fn.get-optional-kwarg(color, $default: null, $args...),
+    );
+
+    @each $attr in map.keys($attributes) {
+      // Do not set null keys.
+      @if fn.mapget($attributes, $attr) {
+        #{$attr}: fn.mapget($attributes, $attr);
+      }
+    }
+    // If a 'hovered' argument is provided, include this mixin recursively to define the colors of the button when it
+    // is hovered.
+    $hovered: parse-state-colors($attributes, "hovered", $args...);
+    @if $hovered {
+      @include button-hovered {
+        // Use the original, non-hovered and non-focused attributes as defaults such that only the hovered attributes
+        // that are provided are overridden when the button is hovered.
+        $hovered: map.merge($attributes, $hovered);
+        @include button-colors($hovered...);
+      }
+    }
+    // If a 'focused' argument is provided, include this mixin recursively to define the colors of the button when it is
+    // focused.
+    $focused: parse-state-colors($attributes, "focused", $args...);
+    @if $focused {
+      @include button-focused {
+        // Use the original, non-hovered and non-focused attributes as defaults such that only the hovered attributes
+        // that are provided are overridden when the button is hovered.
+        $focused: map.merge($attributes, $focused);
+        @include button-colors($focused...);
+      }
+    }
+    // If a 'disabled' argument is provided, include this mixin recursively to define the colors of the button when it
+    // is disabled.
+    $disabled: parse-state-colors($attributes, "disabled", $args...);
+    @if $disabled {
+      @include mixins.disabled {
+        // Use the original, non-hovered and non-focused attributes as defaults such that only
+        // the hovered attributes that are provided are overridden when the button is hovered.
+        $disabled: map.merge($attributes, $disabled);
+        @include button-colors($disabled...);
+      }
+    }
+  }
+}
+
+@mixin button-solid-size($size) {
+  $padding: get-button-padding("solid", $size: $size);
+  $height: get-button-size("solid", $size: $size);
+
+  $vertical-padding: list.nth($padding, 1);
+  $line-height: $height - 2 * $vertical-padding;
+
+  font-size: get-button-font-size("solid", $size: $size);
+
+  /*
+  Usually, the height of the button would just be determined by the combination of the vertical padding and line-height
+  (i.e. height = 2 * vertical-padding + line-height).  However, we need to constrain the height (and not allow it to be
+  "auto") such that the SVG icons or spinners can properly fill up the available height and size responsively.  If we
+  did not define the height explicitly, this would not work.
+
+  So instead of calculating the height based on the padding and line-height, we calculate the line-height based on the
+  padding and height - and all 3 consistent with each other while still allowing the height to be constrained.
+  */
+  height: $height;
+  line-height: $line-height;
+  padding: $padding;
+}

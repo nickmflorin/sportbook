@@ -2,7 +2,7 @@ import classNames from "classnames";
 
 import { logger } from "~/internal/logger";
 import { type ComponentProps } from "~/lib/ui";
-import { Button } from "~/components/buttons/Button";
+import { PrimaryButton } from "~/components/buttons";
 
 import { ShowHide } from "../util";
 
@@ -51,24 +51,23 @@ export const ButtonFooter = ({
   return (
     <div style={style} className={classNames("button-footer", `button-footer--${orientation}`, className)}>
       <ShowHide show={visibility.cancel}>
-        <Button
+        <PrimaryButton
           className="button-footer__button"
-          variant="default"
           onClick={props.onCancel}
           disabled={props.disabled || props.submitting || props.cancelDisabled}
         >
           {cancelText}
-        </Button>
+        </PrimaryButton>
       </ShowHide>
       <ShowHide show={visibility.submit}>
-        <Button
+        <PrimaryButton
           className="button-footer__button"
           type={submitButtonType}
           onClick={props.onSubmit}
           disabled={props.disabled || props.submitting || props.submitDisabled}
         >
           {submitText}
-        </Button>
+        </PrimaryButton>
       </ShowHide>
     </div>
   );
