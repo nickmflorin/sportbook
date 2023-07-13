@@ -69,6 +69,26 @@ $button-loading-class: ".button--loading";
   }
 }
 
+@mixin button-hovered-colors($color-type) {
+  @include colors.with-color-classes($color-type) using ($name, $classname, $color) {
+    &.#{$classname}-hovered {
+      @include button-hovered {
+        #{$color-type}: $color;
+      }
+    }
+  }
+}
+
+@mixin button-focused-colors($color-type) {
+  @include colors.with-color-classes($color-type) using ($name, $classname, $color) {
+    &.#{$classname}-focused {
+      @include button-focused {
+        #{$color-type}: $color;
+      }
+    }
+  }
+}
+
 /* ---------------------------------------------------- Properties -------------------------------------------------- */
 
 /*

@@ -5,6 +5,7 @@
 
 @use "throw";
 @use "../functions" as fn;
+@use "../mixins" as mixins;
 
 $app-background-color: #fbfbfb;
 $disabled-color: #a1a9b4;
@@ -198,6 +199,16 @@ $default-shades: (
   @include with-color-classes($color-type) using ($name, $classname, $color) {
     .#{$classname} {
       #{$color-type}: $color;
+    }
+  }
+}
+
+@mixin hovered-colors($color-type) {
+  @include with-color-classes($color-type) using ($name, $classname, $color) {
+    .#{$classname}-hovered {
+      @include mixins.hovered {
+        #{$color-type}: $color;
+      }
     }
   }
 }

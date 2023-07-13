@@ -70,6 +70,8 @@
   @include partials.button-colors($type: "action", $variant: "bare");
 
   padding: partials.get-button-padding("action", "bare");
+  @include partials.button-hovered-colors("color");
+  @include partials.button-focused-colors("color");
 }
 
 @mixin action-variant-properties($variant) {

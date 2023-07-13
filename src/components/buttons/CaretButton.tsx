@@ -7,5 +7,11 @@ export interface CaretButtonProps extends Omit<BareActionButtonProps, "icon"> {
 }
 
 export const CaretButton = ({ open, ...props }: CaretButtonProps) => (
-  <BareActionButton {...props} icon={open ? icons.IconNames.CARET_DOWN : icons.IconNames.CARET_UP} color="gray.7" />
+  <BareActionButton
+    {...props}
+    icon={open ? icons.IconNames.CARET_DOWN : icons.IconNames.CARET_UP}
+    color="gray.7"
+    hoveredColor="gray.8"
+    focusedColor="gray.8"
+  />
 );

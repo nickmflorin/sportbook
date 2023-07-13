@@ -59,6 +59,7 @@ export const ColorPropNameMap: { [key in ColorPropName]: ColorNativePropName } =
 export interface ColorClassNameParams {
   readonly color?: Color | null;
   readonly shade?: ColorShade;
+  readonly state?: "focused" | "hovered" | null;
 }
 
 export const parseColor = (color: Color): [ColorName, ColorShade | null] => {
@@ -75,16 +76,18 @@ export const parseColor = (color: Color): [ColorName, ColorShade | null] => {
   return [name, null];
 };
 
-export const getColorClassName = (prop: ColorPropName, { color, shade }: ColorClassNameParams): string => {
+export const getColorClassName = (prop: ColorPropName, { color, shade, state }: ColorClassNameParams): string => {
   if (color) {
     const [name, sh] = parseColor(color);
     if (shade) {
       // The provided shade should override the shade in the color string.
-      return `${ColorPropNameMap[prop]}-${name}-${shade}`;
+      return state
+        ? `${ColorPropNameMap[prop]}-${name}-${shade}-${state}`
+        : `${ColorPropNameMap[prop]}-${name}-${shade}`;
     } else if (sh) {
-      return `${ColorPropNameMap[prop]}-${name}-${sh}`;
+      return state ? `${ColorPropNameMap[prop]}-${name}-${sh}-${state}` : `${ColorPropNameMap[prop]}-${name}-${sh}`;
     }
-    return `${ColorPropNameMap[prop]}-${name}`;
+    return state ? `${ColorPropNameMap[prop]}-${name}-${state}` : `${ColorPropNameMap[prop]}-${name}`;
   }
   return "";
 };
