@@ -36,7 +36,6 @@ export const LeaguesTableView = ({
   return (
     <>
       <TableView
-        {...props}
         title={title}
         description={description}
         style={style}

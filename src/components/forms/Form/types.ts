@@ -32,6 +32,7 @@ export type FormInstance<I extends BaseFormValues = DefaultFormValues, O extends
   /* The @mantine/form package types the errors for each field as "any" - for now, we will assume they are either a
      single string or an array of strings, and make an assertion as such.  We may need to expand this type in the
      future. */
-  readonly getFieldError: <F extends FieldKeys<I>>(path: F) => FieldError[] | null;
+  readonly getFieldError: <F extends FieldKeys<I>>(path: F) => FieldError[];
+  readonly getFieldErrors: <F extends FieldKeys<I>>(path: F[]) => FieldError[];
   readonly getInputProps: (...args: Parameters<GetInputProps<I>>) => Omit<ReturnType<GetInputProps<I>>, "error">;
 };

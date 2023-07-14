@@ -1,10 +1,14 @@
 @use "partials";
 
-.form-field {
+.form,
+.form-field,
+.form-field-group {
   display: flex;
   flex-direction: column;
   width: 100%;
+}
 
+.form-field {
   .form-field__header {
     width: 100%;
     margin-bottom: 2px;
@@ -55,14 +59,28 @@
   }
 }
 
-.form {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+.form-field-group {
+  .form-field__header {
+    margin-bottom: 6px;
+  }
+}
 
-  .form-field {
+.form,
+.form-field-group {
+  .form-field,
+  .form-field-group {
     &:not(:last-of-type) {
       margin-bottom: partials.get-spacing("sm");
     }
+  }
+}
+
+.form {
+  position: relative;
+
+  .form__close-button {
+    position: absolute;
+    top: partials.get-spacing("md");
+    right: partials.get-spacing("md");
   }
 }

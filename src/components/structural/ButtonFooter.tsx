@@ -63,7 +63,7 @@ export const ButtonFooter = ({
         <PrimaryButton
           className="button-footer__button"
           type={submitButtonType}
-          onClick={props.onSubmit}
+          onClick={() => props.onSubmit?.()}
           disabled={props.disabled || props.submitting || props.submitDisabled}
         >
           {submitText}

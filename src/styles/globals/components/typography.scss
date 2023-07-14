@@ -71,7 +71,7 @@ p {
   }
 }
 
-label {
+.label {
   // Do not define defaults for the typography properties.  This allows the typography properties to only be applied if
   // the component is provided with the appropriate props, and allows us to override the properties in SASS elsewhere
   // in cases where the component is not provided with those props.
