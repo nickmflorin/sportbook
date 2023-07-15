@@ -1,6 +1,7 @@
 # Sportbook
 
-Sportbook is a web application for managing social, social-competitive and competitive (non-professional) sport leagues.
+Sportbook is a web application for managing social and competitive (non-professional) sport leagues (and everything in
+between).
 
 &copy; Nick Florin, 2023
 
@@ -11,17 +12,17 @@ Sportbook is a web application for managing social, social-competitive and compe
 - [homebrew]: A MacOSX package manager.
 - [postgresql] ([homebrew] package)
 
-## Getting Started
+## 1. Getting Started
 
 This section of the documentation outlines - at a high level - how to setup your machine for local development for the
 first time. For more detailed explanations related to local development or production deployments, see the next section;
 "Development".
 
-**Note**: This documentation describes how to setup and configure the application for local development on _MacOSX_.
+**Note**: _This documentation describes how to setup and configure the application for local development on \_MacOSX_.
 Many of the steps outlined in this section may also be applicable for a Windows/Ubuntu machine as well, but the steps
-will not be exactly as they are described here.
+will not be exactly as they are described here.\_
 
-### Step 1: Repository
+### Step 1.1: Repository
 
 Clone this repository locally and `cd` into the directory.
 
@@ -29,24 +30,25 @@ Clone this repository locally and `cd` into the directory.
 $ git clone git@github.com:nickmflorin/sportbook.git
 ```
 
-### Step 2: Environment
+### Step 1.2: Installing System Requirements
 
 This section walks through how to install and configure the prerequisites (System Requirements) for this project.
 
-#### 2.a Node
+#### 1.2.a [Node][node]
 
 [Node][node] is the engine that supports the application. This project uses [node] v19.0.0. Your machine will most
-likely already have a system installation of [node], but even if it does not - that is okay. We will not be using a
-system installation of [node] but will rather isolate the version of [node] to this repository, using [nvm].
+likely already have a system installation of [node], but even if it does not - that is okay, we will not be using the
+system installation of [node] but will rather isolate the version of [node] being used for this project to this
+repository using [nvm].
 
-**Important**: Do not use a system installation of [node]. It will complicate your development environment. Instead, see
-the next section for details about usage of [nvm].
+**Important**: _Do not use a system installation of [node]. It will complicate your development environment. Instead,
+see the next section for details about usage of [nvm]._
 
-##### 2.a.i Installing [nvm]
+##### 1.2.a.i Installing [nvm]
 
-It is recommended that you use [nvm] to manage [node] versions as it relates to this project. It will allow you to
-isolate the version of [node] being used for this project to the project directory, avoiding conflicts with global or
-system installations of [node].
+It is strongly recommended that you use [nvm] to manage the version(s) of [node] that are being used for this project,
+rather than system installations. It will allow you to more easily isolate the version of [node] being used for this
+project to the project directory, avoiding conflicts with global or system installations of [node].
 
 Instructions for installing [nvm] can be found [here](https://github.com/nvm-sh/nvm#installing-and-updating), but are
 also mentioned below for purposes of completeness:
@@ -57,9 +59,9 @@ First, simply run the install script:
 $ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 ```
 
-The above command will download a script and then run it. The script first clones the [nvm] repository at `~/.nvm` and
-then attempts to add the following source lines to your machine's shell profile script (`~/.bash_profile`, `~/.zshrc`,
-`~/.profile`, or `~/.bashrc`):
+The above command will download a script and then run it. The script it runs will first clone the [nvm] repository at
+`~/.nvm` and then attempt to add the following source lines to your machine's shell profile script (which may be either
+`~/.bash_profile`, `~/.zshrc`, `~/.profile`, or `~/.bashrc` - depending on your OS):
 
 ```bash
 $ export NVM_DIR="$HOME/.nvm"
@@ -73,7 +75,7 @@ shell profile script will be `~/.zshrc` - which is the shell profile used for Ma
 the M1 processor._
 
 Since the [nvm] installation involved making changes to your shell profile script behind the scenes, in order for those
-changes to take effect you need to source your `~/.zshrc` (or whatever shell script your system uses):
+changes to take effect, you need to subsequently source your shell profile script (`~/.zshrc` in this example):
 
 ```bash
 $ . ~/.zshrc`
@@ -85,11 +87,11 @@ Finally, verify that your system recognizes the `nvm` command by running the fol
 $ nvm
 ```
 
-##### 2.a.ii Node Version
+##### 1.2.a.ii Node Version
 
-You now need to establish the correct version of [node], 19, that will be used for this project. This project comes
-equipped with a `.nvmrc` file that automatically tells [nvm] what version of [node] to use - but that version may still
-need to be installed.
+Now that [nvm] is installed, we need to use it to establish the correct version of [node], 19, that is suitable for this
+project. This project's repository comes equipped with a `.nvmrc` file that automatically tells [nvm] what version of
+[node] to use - but that version may still need to be installed.
 
 First, instruct [nvm] to use the [node] version specified by the `.nvmrc` file with the following command:
 
@@ -106,7 +108,7 @@ Now using node v19.0.0 (npm v8.6.0)
 
 It means that the correct version of [node] that is required for this project is already installed with [nvm] and that
 version of [node] is active for this project's directory. The rest of this step can be skipped and you can proceed to
-the next step, "Dependencies".
+the next step, "1.2.a.iii: Homebrew".
 
 On the other hand, if you see an error similar to the following:
 
@@ -118,7 +120,7 @@ You need to run "nvm install v19.0.0" to install it before using it.
 ```
 
 It means that the correct version of [node] that is required for this project is not already installed with [nvm], and
-must be installed before using it. To do this, simply run the following command:
+must be installed before using it. To do this, simply run the following command from the root of the project repository:
 
 ```bash
 $ nvm install
@@ -127,7 +129,8 @@ $ nvm install
 This command will use [nvm] to install the correct version of [node] that is required for this project, based on the
 specification in the project's `.nvmrc` file.
 
-Finally, all that is left to do is to instruct [nvm] to use this version of [node] by executing the following command:
+Finally, all that is left to do is to instruct [nvm] to use this version of [node] by executing the following command -
+again, from the root of the project repository;
 
 ```bash
 $ nvm use
@@ -149,7 +152,13 @@ $ v19.x.x
 At this point, if [nvm] is not pointing at the correct version of [node] or is pointing at a system installation of
 [node], something went awry - consult a team member before proceeding.
 
-#### 2.a.iii: Dependencies
+### 1.2.a.iii: Homebrew
+
+If on MacOSX, you will need to install [homebrew], which is a MacOSX package manager.
+
+### Step 1.3: Environment
+
+#### 1.3.a: Dependencies
 
 When setting up the environment for the first time, you must do a fresh install of the dependencies:
 
@@ -159,32 +168,29 @@ $ npm install
 
 This will install the project dependencies in the `package.json` file.
 
-#### 2.a.iv ENV File
+#### 1.3.b ENV File
 
-When running the application locally, there are two files that are used to define environment variables that the
-application relies on:
+When running the application locally, there will likely be additional keys that you need to add to your environment
+without committing them to source control. There are two files that are used to define environment variables that the
+application relies on locally, without committing them to source control:
 
 1. `.env.local`
-2. `.env.development`
+2. `.env.development.local`
 
-The `.env.development` file is committed to source control, and its contents should not be changed unless the intention
-is to commit the change to the application codebase. On the other hand, `.env.local` is not committed to source control,
-and any environment variables placed in `.env.local` will override those in `.env.development` (or `.env.production` if
-in a production environment).
+Both of these files will not be in the cloned repository by default (because they are not committed to source control)
+and will likely need to be created. The `.env.local` file takes precedence over the `.env.development.local` file, but
+both take precedence over all other `.env.*` files (when the `NODE_ENV` is `"development"`).
 
-In certain cases you will need to create this `.env.local` file (in the project root) that defines or overrides
-environment variables that the application relies on. In other cases, a `.env.local` file will not be needed, as the
-environment variables defined in `.env.development` are suitable.
+**Note:** _Sensitive keys, tokens or keys related to access control should **only** ever be added to `.env.local` or
+`.env.development.local`. Other environment files (`.env`, `.env.development`, .etc) are committed to source control,
+and should **never** contain sensitive information._
 
-For environment variables that need to be specified in the `.env.local` file - if there are any - please reach out to a
-team member when you reach this step. For more information, please refer to the below section in this documentation,
-"Environment".
+For this step, it is best to reach out to a team member for the additional keys that you will need in your
+`.env.development.local` or `.env.local` file.
 
-### Step 3: Homebrew
+For more information regarding the environment variables, refer to section 2.5.
 
-If on MacOSX, you will need to install [homebrew], which is a MacOSX package manager.
-
-### Step 4: Database
+### Step 1.4: Database
 
 This project uses a [postgres] database for both production and local development. First, check to see if your machine
 already has [postgres] installed:
@@ -208,40 +214,36 @@ server:
 $ brew services start postgresql
 ```
 
-#### 4.a Database Environment Variables
+#### 1.4.a Database Environment Variables
 
-The database connection parameters for the application are defined in the relevant `.env.X` files. These include the
-following:
+The database connection parameters for the application are defined in the relevant `.env.*` files. In local development,
+they will be defaulted in the `.env.development` file, but can be overridden in your `.env.local` or
+`.env.development.local` files.
 
-1. `DATABASE_URL`: The explicit URL connection string of the [postgres] database. This connection string can be omitted
-   from the environment if the desired behavior is for the connection string to be formed directly from the
-   `DATABASE_NAME`, `DATABASE_PASSWORD`, `DATABSE_HOST`, `DATABASE_USER` and `DATABASE_PORT` parameters.
-2. `DATABASE_NAME`: The name of the [postgres] database. Only required when `DATABASE_URL` is not set.
-3. `DATABASE_PASSWORD`: The password of the [postgres] database. Only required when `DATABASE_URL` is not set.
-4. `DATABSE_HOST`: The host that the [postgres] database is running on. Only required when `DATABASE_URL` is not set.
-5. `DATABASE_PORT`: The port that the [postgres] database is running on. Only required when `DATABASE_URL` is not set.
-6. `DATABASE_USER` The user of the [postgres] database. Only required when `DATABASE_URL` is not set.
+These database connection parameters are used to construct a URL connection string that points to the application
+database, which is used by the [prisma] ORM (more on this later) to connect to the application database.
 
-These parameters are defaulted in the `.env.development` file, but can be overridden in your `.env.local` or
-`.env.development.local` file:
+When defining the parameters, they can either be defined explicitly as the `DATABASE_URL`:
 
 ```bash
-DATABASE_USER=sportbook
-DATABASE_PASSWORD=sportbook
-DATABASE_HOST=localhost
-DATABASE_PORT=5432
-DATABASE_NAME=sportbook
+DATABASE_URL=postgresql://${user}:${password}@${host}:${port}/${name}
+```
+
+or each parameter in the URL connection string can be defined individually:
+
+```bash
+DATABSE_NAME="..."
+DATABASE_PORT=xxxx
+DATABASE_HOST="..."
+DATABASE_USER="..."
+DATABASE_PASSWORD="..."
 ```
 
 If the `DATABASE_URL` parameter is defined in the environment, the application will connect to the database at that URL.
 If it is not defined, the application will attempt to connect to a database at a URL constructed with the other
-parameters:
+parameters.
 
-```bash
-DATABASE_URL = postgresql://<DATABASE_USER>:<DATABASE_PASSWORD>@<DATABASE_HOST>:<DATABASE_PORT>/<DATABASE_NAME>
-```
-
-#### 4.b Setting Up Application Database
+#### 1.4.b Setting Up Application Database
 
 The above database connection parameters defined in the `.env.development` file (or overridden in your `.env.local` or
 `.env.development.local` file) will be needed to create and setup the application database from the [psql] shell. Since
@@ -253,9 +255,7 @@ installation of [postgres]:
 $ psql -d postgres
 ```
 
----
-
-##### Aside
+##### 1.4.b.i Troubleshooting
 
 It is possible (although very unlikely) that either your [postgres] installation did not come with the default
 `"postgres"` database, or it was somehow removed. If this is the case, you may see an error similar to the following:
@@ -272,9 +272,7 @@ $ createdb postgres
 $ psql -d postgres
 ```
 
----
-
-##### Creating the Database
+##### 1.4.b.ii Creating the Database
 
 Once inside of the [psql] shell, create the appropriate [postgres] database associated with this application, based on
 the configuration parameters defined in the environment:
@@ -297,7 +295,7 @@ Finally, assign the created or existing user as the owner of the created or exis
 $ ALTER DATABASE <DATABASE_NAME> OWNER TO <DATABASE_USER>;
 ```
 
-##### Assigning Permissions to Create Database
+##### 1.4.b.iii Assigning Permissions to Create Database
 
 In the above section, a database with name `<DATABASE_NAME>` was created and the appropriate permissions on that
 database were assigned to the database user, `<DATABASE_USER>`. However, we still need to allow the `<DATABASE_USER>` to
@@ -322,20 +320,20 @@ $ \q
 
 The application should now be ready to connect to the database for local development.
 
-## Development
+## 2. Development
 
 This section of the documentation describes various interactions that you will need to understand in order to properly
 work with this application locally. This section assumes that you have already completed the steps outlined in the prior
 section, "Getting Started".
 
-### IDE
+### 2.1 IDE
 
 This project is optimized for development using the [VSCode][vscode] IDE. While other IDEs may also work in this
 repository, you must take steps to ensure that our editor configurations (like trimmed whitespace, indentation, and
 `prettyprint` with [Prettier][prettier]) that are applied to this repository while using [VSCode][vscode] are also
 consistently applied in your IDE. This ensures that your commits will conform to the established repository style.
 
-### Running Locally
+### 2.2 Running Locally
 
 After pulling down the latest state of the repository, the development server can be started by running the following
 command:
@@ -346,7 +344,7 @@ $ npm run dev
 
 **Note**: If changes were made to the `package.json` file, you may need to install the dependencies via `npm install`.
 
-### Building
+### 2.3 Building
 
 Before committing any changes you have made, you must ensure that you validate your work by ensuring that you can
 successfully build the project:
@@ -378,7 +376,7 @@ $ npm run build-local
 errors will result in the build failing automatically but linting warnings will not. This includes linting performed by
 [ESLint][eslint], [Stylelint][stylelint] and [Prettier][prettier].
 
-### Linting
+### 2.4 Linting
 
 This project uses [ESLint][eslint] to lint files that are not CSS or SCSS based, [Stylelint][stylelint] to lint files
 that are CSS or SCSS based, and [Prettier][prettier] inside of the [ESLint][eslint] configuration which is responsible
@@ -386,7 +384,7 @@ for formatting files of all types. Both [ESLint][eslint] and [Stylelint][styleli
 format the file when the file is saved (a configuration that is defined in `./vscode/settings.json`). If that is not
 desirable, you can easily turn that setting off in yoru local [VSCode][vscode] settings.
 
-#### Formatting & Code Style
+#### 2.4.a Formatting & Code Style
 
 The philosophy that the project has in regard to formatting and/or code styles can be summarized as follows:
 
@@ -396,7 +394,7 @@ In other words, many formatting rules were not chosen for a specific reason othe
 to rely on the available formatting tools to remove as much ambiguity as possible, rather than spending time debating or
 arguing the rules themselves.
 
-#### Performing Linting Checks
+#### 2.4.b Performing Linting Checks
 
 [NextJS][nextjs] will automatically perform linting checks during the `build` process, but it is desired that they be
 performed independently without performing the entire `build` process, use the following command:
@@ -421,7 +419,7 @@ $ npm run test
 For more information related to [Jest][jest] and the linting checks it performs, please see the section further down in
 this documentation, "Testing".
 
-#### Automatically Fixing [ESLint][eslint] Violations
+#### 2.4.c Automatically Fixing [ESLint][eslint] Violations
 
 Some [ESLint][eslint] violations can be automatically fixed by [ESLint][eslint] itself. This can be performed via the
 `eslint-fix` command, which is defined in the `package.json` file:
@@ -433,7 +431,7 @@ $ npm run eslint-fix
 This command will automatically fix and format all [ESLint][eslint] and [Prettier][prettier] violations in the
 repository that are capable of being auto-fixed.
 
-### Environment
+### 2.5 Environment
 
 There are 3 distinct environments that the application runs in, with the current environment being dictated by the
 `NODE_ENV` environment variable:
@@ -456,7 +454,7 @@ Similarly, when the environment is `production`, the default environment variabl
 `.env.test`. In each case, any environment variables defined in the environment specific file, `.env.${NODE_ENV}`, will
 override those defined in the global environment variable file, `.env`.
 
-#### Local Overrides
+#### 2.5.a Local Overrides
 
 It is often necessary that the environment variables for any given environment be overridden, either locally in
 development or on a server. When overriding the default environment variables for a given environment is required, a
@@ -471,7 +469,7 @@ the `.env.local` file.
 For further documentation regarding the environment configuration, please see the
 [NextJS Documentation](https://nextjs.org/docs/basic-features/environment-variables).
 
-### Testing
+### 2.6 Testing
 
 This documentation is intended to outline configurations, patterns and methodologies that are used to test the Console
 application.
@@ -485,7 +483,7 @@ test suite can be run with the following command:
 $ npm run test
 ```
 
-#### Projects
+#### 2.6.a Projects
 
 Originally, there was only one configuration file for the testing suite, `jest.config.ts`. However, due to the
 complexities of some of the tests that have to be run, the configuration had to be split up into
@@ -512,7 +510,7 @@ project in the application:
 |        ESLint         |        `jest.config.eslint.ts`        | All Relevant, non `.scss` |               N/A               |
 |       Stylelint       |      `jest.config.stylelint.ts`       |          `.scss`          | `src/styles` & `src/components` |
 
-#### Linting
+#### 2.6.b Linting
 
 Linting checks from [ESLint](https://eslint.org/), [Stylelint](https://stylelint.io/), and
 [Prettier](https://prettier.io/) can be performed both via the `npm run lint` command or simply the command that runs
@@ -528,7 +526,7 @@ providing clearer, more detailed and more readable debugging information when th
 [Jest](https://jestjs.io/docs/getting-started) provides the benefit of "watch mode" - which allows you to dynamically
 make the changes and immediately see the checks pass as a result of the changes that were made.
 
-### Database
+### 2.7 Database
 
 This section of the documentation outlines how to manage the application database as it relates to this application.
 
@@ -553,13 +551,13 @@ Stopping the [postgres] service can be done as follows:
 $ brew services stop postgresql
 ```
 
-#### Prisma
+#### 2.7.a Prisma
 
 This application uses [Prisma][prisma], an ORM that that maps records in the database to typescript objects while
 exposing a database client that can be used to interact with those records. To properly use this client, a developer
 must understand how this ORM works.
 
-##### Schema
+##### 2.7.a.i Schema
 
 The database structure for the application is defined in a [prisma] `*.schema` file. This application's `*.schema` file
 is located at [`src/prisma/schema.prisma`](./src/prisma/schema.prisma). The [prisma] ORM uses the definitions in that
@@ -586,7 +584,7 @@ $ npx prisma migrate dev --create-only
 
 This will create the migration file, but will not apply it.
 
-##### `PrismaClient`
+##### 2.7.a.ii `PrismaClient`
 
 The [`PrismaClient`](./src/server/db/index.ts) is what the application uses to communicate with the database. This
 client ([`prisma`](./src/server/db/index.ts)) relies on type bindings that are dynamically generated by [prisma] based
@@ -603,7 +601,7 @@ $ npx prisma db push
 Note that when running the `reset` command (discussed below), the [`PrismaClient`](./src/server/db/index.ts) is
 automatically updated.
 
-##### Seeding
+##### 2.7.a.iii Seeding
 
 The application comes equipped with a databae seed file [`./src/prisma/seed.ts](./src/prisma/seed.ts). This file is used
 to populate the database with dummy data/fixtures for development. This script can be run as:
