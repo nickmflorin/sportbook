@@ -30,6 +30,20 @@
         background-color: partials.get-color("gray", 1);
         color: partials.get-color("gray", 8);
       }
+
+      > .select__option__createable {
+        display: flex;
+        align-items: center;
+
+        > .icon {
+          margin-right: partials.get-spacing("md");
+        }
+
+        > .label {
+          color: partials.get-color("gray", 9);
+          @include partials.font($type: "body", $weight: "medium", $size: "md");
+        }
+      }
     }
   }
 }

@@ -18,6 +18,7 @@ type SelectOptionOptions = {
 type SelectOptionProps = React.ComponentPropsWithoutRef<"div"> & BaseSelectOptionProps & SelectOptionOptions;
 
 type WithSelectOptionValue<T, V> = T & {
+  readonly label: string;
   readonly value: V;
 };
 
@@ -41,7 +42,7 @@ export const createSelectOption = <T, V>(
   options?: SelectOptionOptions,
 ) =>
   forwardRef<HTMLDivElement, WithSelectOptionProps<T, V>>(function CustomSelectOption(props, ref) {
-    const [params, originalProps] = pluckObjAttributes(props, ["value", ...names]);
+    const [params, originalProps] = pluckObjAttributes(props, ["value", "label", ...names]);
     return (
       <SelectOption {...originalProps} {...options} ref={ref}>
         {renderer(params)}

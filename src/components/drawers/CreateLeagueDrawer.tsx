@@ -9,7 +9,7 @@ import type * as z from "zod";
 
 import { LeagueCompetitionLevel, LeagueType, LeagueSchema } from "~/prisma";
 import { PrimaryButton } from "~/components/buttons";
-import { Form, type FormProps, LocationsField } from "~/components/forms";
+import { Form, type FormProps, LocationsField, LocationsChooser } from "~/components/forms";
 import { CreateLocationForm } from "~/components/forms/CreateLocationForm";
 import { LeagueTypeSelect, LeagueCompetitionLevelSelect, SportSelect } from "~/components/forms/input";
 import { Text } from "~/components/typography";
@@ -98,21 +98,7 @@ export const CreateLeagueDrawer = ({ action, open, onClose, ...props }: CreateLe
                 </Form.Field>
               </ShowHide>
             </Form.FieldGroup>
-            <>
-              {form.values.locations.map((loc, i) =>
-                typeof loc !== "string" ? <Text key={i}>{loc.name}</Text> : <></>,
-              )}
-            </>
-            <LocationsField
-              {...form.getInputProps("locations")}
-              name="locations"
-              form={form}
-              requestDisabled={!open}
-              label="Locations"
-              condition="optional"
-              description="What locations are associated with this league?"
-              onAdd={() => handler.current.open("locations")}
-            />
+            <LocationsChooser requestDisabled={!open} onAdd={() => handler.current.open("locations")} />
             <PrimaryButton onClick={() => handler.current.open("locations")}>Add Location</PrimaryButton>
           </Form>
         ),

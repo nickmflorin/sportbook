@@ -12,15 +12,21 @@ export const useIconProps = ({
   axis = SizeAxes.VERTICAL,
   contain = SizeContains.FIT,
   color = "gray.7",
+  hoveredColor = "gray.8",
+  focusedColor = "gray.8",
   ...props
-}: Pick<icons.IconComponentProps, "axis" | "size" | "contain" | "color" | "className" | "style">) => ({
+}: Pick<
+  icons.IconComponentProps,
+  "axis" | "size" | "contain" | "color" | "focusedColor" | "hoveredColor" | "className" | "style"
+>) => ({
   ...props,
   className: classNames(
     "icon",
     `icon--contain-${contain}`,
     `icon--size-${size}`,
     `icon--axis-${axis}`,
-    getColorClassName("color", { color }),
+    getColorClassName("color", color, { hovered: hoveredColor, focused: focusedColor }),
+    props.className,
     `icon--size-${size}`,
     props.className,
   ),
@@ -47,6 +53,8 @@ function _IconComponent({
   ref,
   loading = false,
   spinnerColor = "blue",
+  hoveredColor,
+  focusedColor,
   icon,
   spin,
   size = icons.IconSizes.MD,
@@ -66,7 +74,10 @@ function _IconComponent({
         `icon--contain-${contain}`,
         `icon--size-${size}`,
         `icon--axis-${axis}`,
-        getColorClassName("color", { color }),
+        getColorClassName("color", color, {
+          hovered: hoveredColor === undefined ? focusedColor : hoveredColor,
+          focused: focusedColor === undefined ? hoveredColor : undefined,
+        }),
         `icon--size-${size}`,
         props.className,
       )}

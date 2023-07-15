@@ -1,13 +1,14 @@
+"use client";
 import { type Optional } from "utility-types";
 
 import { logger } from "~/internal/logger";
 import { useLocations } from "~/lib/api";
 import { type Location } from "~/prisma";
 
-import { ModelSelect, type ModelSelectProps } from "./abstract";
+import { AsyncModelSelect, type AsyncModelSelectProps, type SelectMode } from "./abstract";
 
-export interface LocationSelectProps
-  extends Optional<Omit<ModelSelectProps<Location>, "loading" | "getLabel" | "model">, "data"> {
+export interface LocationSelectProps<M extends SelectMode>
+  extends Optional<Omit<AsyncModelSelectProps<Location, M>, "getLabel" | "model">, "data"> {
   /**
    * Whether or not the request to load the data should be disabled.  Used for cases where the select is in a drawer
    * and the drawer is not yet open.
@@ -16,7 +17,12 @@ export interface LocationSelectProps
   readonly onError?: (err: Error) => void;
 }
 
-export const LocationSelect = ({ requestDisabled, onError, data, ...props }: LocationSelectProps) => {
+export const LocationSelect = <M extends SelectMode>({
+  requestDisabled,
+  onError,
+  data,
+  ...props
+}: LocationSelectProps<M>) => {
   const { data: _data = [], isLoading } = useLocations({
     isPaused: () => data !== undefined || requestDisabled === true,
     onError: err => {
@@ -26,12 +32,12 @@ export const LocationSelect = ({ requestDisabled, onError, data, ...props }: Loc
     fallbackData: [],
   });
   return (
-    <ModelSelect
+    <AsyncModelSelect
       placeholder="Location"
       {...props}
       loading={isLoading}
       data={data === undefined ? _data : data}
-      getLabel={option => option.model.name}
+      getLabel={loc => loc.name}
     />
   );
 };

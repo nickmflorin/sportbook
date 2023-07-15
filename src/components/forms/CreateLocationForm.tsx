@@ -30,17 +30,17 @@ export const CreateLocationForm = (props: CreateLocationFormProps): JSX.Element 
 
   return (
     <Form<LocationFormInput, LocationFormOutput> {...props} form={form}>
-      <Form.FieldControl form={form} name="name" label="Name" condition={Form.FieldCondition.REQUIRED}>
+      <Form.Field form={form} name="name" label="Name" condition={Form.FieldCondition.REQUIRED}>
         <TextInput {...form.getInputProps("name")} placeholder="John Doe" />
-      </Form.FieldControl>
-      <Form.FieldControl
+      </Form.Field>
+      <Form.Field
         form={form}
         name="primaryStreetAddress"
         label="Primary Address"
         condition={Form.FieldCondition.REQUIRED}
       >
         <TextInput {...form.getInputProps("primaryStreetAddress")} placeholder="123 Main St" />
-      </Form.FieldControl>
+      </Form.Field>
     </Form>
   );
 };

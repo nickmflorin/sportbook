@@ -117,6 +117,8 @@ type _BaseIconProps = ComponentProps &
   Pick<FontAwesomeIconProps, "spin" | "strokeWidth"> & {
     readonly loading?: boolean;
     readonly color?: Color;
+    readonly hoveredColor?: Color;
+    readonly focusedColor?: Color;
     readonly spinnerColor?: Color;
     /**
      * A string, "fit" or "square", that defines whether or not the `svg` element should fit snuggly around the inner

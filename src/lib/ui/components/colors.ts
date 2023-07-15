@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { z } from "zod";
 
 import { type EnumeratedLiteralType, enumeratedLiterals } from "~/lib/util/literals";
@@ -43,7 +44,9 @@ export const ColorNames = enumeratedLiterals([
 
 export type ColorName = EnumeratedLiteralType<typeof ColorNames>;
 
-export type Color = ColorName | `${ColorName}.${ColorShade}`;
+type _Color = ColorName | `${ColorName}.${ColorShade}`;
+
+export type Color = _Color | [_Color, ColorShade | null] | { color: _Color; shade?: ColorShade | null };
 
 export const ColorPropNames = ["backgroundColor", "color", "borderColor"] as const;
 export type ColorPropName = (typeof ColorPropNames)[number];
@@ -56,38 +59,69 @@ export const ColorPropNameMap: { [key in ColorPropName]: ColorNativePropName } =
   color: "color",
 };
 
-export interface ColorClassNameParams {
+export const ColorStates = enumeratedLiterals(["focused", "hovered"] as const);
+export type ColorState = EnumeratedLiteralType<typeof ColorStates>;
+
+export type ColorParams = {
   readonly color?: Color | null;
   readonly shade?: ColorShade;
-  readonly state?: "focused" | "hovered" | null;
-}
+};
 
 export const parseColor = (color: Color): [ColorName, ColorShade | null] => {
-  if (color.includes(".")) {
-    const name = ColorNames.validate(color.split(".")[0]);
-    const shade = color.split(".")[1];
-    if (!shade) {
-      throw new Error(`The provided color '${color}' is invalid!`);
+  if (typeof color === "string") {
+    if (color.includes(".")) {
+      const name = ColorNames.validate(color.split(".")[0]);
+      const shade = color.split(".")[1];
+      if (!shade) {
+        throw new Error(`The provided color '${color}' is invalid!`);
+      }
+      assertColorShade(shade);
+      return [name, shade];
     }
-    assertColorShade(shade);
-    return [name, shade];
+    const name = ColorNames.validate(color);
+    return [name, null];
+  } else if (Array.isArray(color)) {
+    return [parseColor(color[0])[0], color[1]];
   }
-  const name = ColorNames.validate(color);
-  return [name, null];
+  return color.shade === undefined ? parseColor(color.color) : [parseColor(color.color)[0], color.shade];
 };
 
-export const getColorClassName = (prop: ColorPropName, { color, shade, state }: ColorClassNameParams): string => {
-  if (color) {
-    const [name, sh] = parseColor(color);
-    if (shade) {
-      // The provided shade should override the shade in the color string.
-      return state
-        ? `${ColorPropNameMap[prop]}-${name}-${shade}-${state}`
-        : `${ColorPropNameMap[prop]}-${name}-${shade}`;
-    } else if (sh) {
-      return state ? `${ColorPropNameMap[prop]}-${name}-${sh}-${state}` : `${ColorPropNameMap[prop]}-${name}-${sh}`;
+type _ColorStateColors = Partial<Record<ColorState, Color | null>>;
+
+const isColor = (p: _ColorStateColors | Color | null): p is Color =>
+  (typeof p === "object" && !Array.isArray(p) && p !== null && "color" in p && typeof p.color === "string") ||
+  (typeof p === "string" && !ColorStates.contains(p)) ||
+  Array.isArray(p);
+
+export function getColorClassName(prop: ColorPropName, color?: Color | null): string;
+export function getColorClassName(prop: ColorPropName, color?: Color | null, state?: ColorState): string;
+export function getColorClassName(prop: ColorPropName, color?: Color | null, state?: _ColorStateColors): string;
+export function getColorClassName(prop: ColorPropName, state: _ColorStateColors): string;
+
+export function getColorClassName(
+  propName: ColorPropName,
+  arg1?: Color | null | _ColorStateColors,
+  arg2?: ColorState | _ColorStateColors,
+): string {
+  if (arg1) {
+    if (isColor(arg1)) {
+      const [name, sh] = parseColor(arg1);
+      if (!arg2) {
+        return sh !== null ? `${ColorPropNameMap[propName]}-${name}-${sh}` : `${ColorPropNameMap[propName]}-${name}`;
+      } else if (ColorStates.contains(arg2)) {
+        return `${getColorClassName(propName, [name, sh])}-${arg2}`;
+      } else {
+        return classNames(
+          getColorClassName(propName, [name, sh]),
+          getColorClassName(propName, arg2.focused, ColorStates.FOCUSED),
+          getColorClassName(propName, arg2.hovered, ColorStates.HOVERED),
+        );
+      }
     }
-    return state ? `${ColorPropNameMap[prop]}-${name}-${state}` : `${ColorPropNameMap[prop]}-${name}`;
+    return classNames(
+      getColorClassName(propName, arg1.focused, ColorStates.FOCUSED),
+      getColorClassName(propName, arg1.hovered, ColorStates.HOVERED),
+    );
   }
   return "";
-};
+}
