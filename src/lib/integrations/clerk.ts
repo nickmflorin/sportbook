@@ -1,7 +1,8 @@
 import { type User as ClerkUser, type EmailAddress } from "@clerk/clerk-sdk-node";
-import { auth } from "@clerk/nextjs/server";
+import { auth, getAuth } from "@clerk/nextjs/server";
 
-import { prisma } from "~/prisma";
+import { throwIfClient } from "~/lib/server";
+import { prisma } from "~/prisma/client";
 
 export const getClerkEmailAddress = (u: ClerkUser): EmailAddress | null => {
   /* The only reason our User model has a nullable email field is due to the fact that the ClerkUser's primary email
@@ -19,11 +20,18 @@ export const getClerkEmailAddress = (u: ClerkUser): EmailAddress | null => {
   return null;
 };
 
-export const getAuthUser = async () => {
-  if (typeof window !== "undefined") {
-    throw new Error("This function is only permitted to be used on the server.");
+export const getAuthUserFromRequest = async (...args: Parameters<typeof getAuth>) => {
+  throwIfClient();
+  const { userId } = getAuth(...args);
+  if (!userId) {
+    return null;
   }
-  const { userId } = await auth();
+  return await prisma.user.findUniqueOrThrow({ where: { clerkId: userId } });
+};
+
+export const getAuthUser = async () => {
+  throwIfClient();
+  const { userId } = auth();
   if (!userId) {
     return null;
   }

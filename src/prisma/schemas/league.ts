@@ -1,6 +1,5 @@
 import { z } from "zod";
-
-import { LeagueCompetitionLevel, LeagueType, Sport } from "~/prisma";
+import { LeagueCompetitionLevel, LeagueType, Sport } from "@prisma/client";
 
 import { LocationSchema } from "./location";
 

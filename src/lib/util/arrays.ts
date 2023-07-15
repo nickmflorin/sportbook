@@ -34,7 +34,7 @@ export const countInArray = <T extends ArrayPrimitive>(arr: T[], compare?: (a: T
     if (ind === undefined) {
       return [...prev, { count: 1, value: curr }];
     }
-    prev[ind] = { ...prevCount, value: curr, count: prevCount?.count || 0 + 1 };
+    prev[ind] = { ...prevCount, value: curr, count: (prevCount?.count || 0) + 1 };
     return prev;
   }, []);
 

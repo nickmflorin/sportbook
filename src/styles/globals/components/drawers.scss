@@ -1,7 +1,29 @@
 @use "partials";
 
-.drawer,
-.drawer-form {
-  padding: partials.get-spacing("md") partials.get-spacing("lg") partials.get-spacing("md") partials.get-spacing("lg");
+.managed-drawers {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.drawer {
+  > .drawer__close-button {
+    position: absolute;
+    z-index: 100;
+    top: partials.get-spacing("lg");
+    right: partials.get-spacing("md");
+  }
+}
+
+.drawer-view {
   border-left: 1px solid partials.get-color("gray", $shade: 3);
+  padding: partials.get-spacing("md") partials.get-spacing("lg") partials.get-spacing("md") partials.get-spacing("lg");
+  position: relative;
+
+  > .drawer__close-button {
+    position: absolute;
+    z-index: 100;
+    top: partials.get-spacing("lg");
+    right: partials.get-spacing("md");
+  }
 }

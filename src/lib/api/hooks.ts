@@ -3,7 +3,7 @@ import { type SuperJSONResult } from "superjson/dist/types";
 import useRootSWR, { type SWRResponse } from "swr";
 import { type SWRConfiguration } from "swr/_internal";
 
-import { type Sport } from "~/prisma";
+import { type Sport, type Location } from "~/prisma";
 
 type FetchResponseBody = { data: SuperJSONResult };
 
@@ -37,6 +37,6 @@ export type OnError<T> = SWRConfig<T>["onError"];
 
 export const useSWR = <T>(url: string, config?: SWRConfig<T>): SWRResponse<T> => useRootSWR(url, swrFetcher<T>, config);
 
-export type OnSportsError = OnError<Sport[]>;
-
 export const useSports = (config?: SWRConfig<Sport[]>) => useSWR<Sport[]>("/api/sports", config);
+
+export const useLocations = (config?: SWRConfig<Location[]>) => useSWR<Location[]>("/api/locations", config);

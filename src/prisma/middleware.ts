@@ -1,4 +1,4 @@
-import { Prisma } from "~/prisma";
+import { Prisma } from "@prisma/client";
 
 type UpdateAction = Extract<Prisma.PrismaAction, `update${string}`>;
 

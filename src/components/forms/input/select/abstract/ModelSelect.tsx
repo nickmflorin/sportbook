@@ -1,18 +1,34 @@
 import { type Model } from "~/lib/api";
 
-import { Select, type SelectProps } from "./Select";
+import { Select, type SelectProps, type SelectChangeHandler } from "./Select";
 
-export type ModelSelectOption<M extends Model> = {
-  readonly value: M["id"];
-  readonly model: M;
-  readonly label: string;
+/* The model data, M, needs to be nested in a 'model' key - which allows us to safely remove the fields from the prop
+   injection into the div. */
+export type ModelSelectProps<M extends Model> = Omit<
+  SelectProps<{ model: M }, M["id"]>,
+  "getValue" | "datumKeys" | "data" | "onChange"
+> & {
+  readonly data: M[];
+  readonly onChange: SelectChangeHandler<M, M["id"]>;
 };
 
-export interface ModelSelectProps<M extends Model> extends Omit<SelectProps<ModelSelectOption<M>>, "data"> {
-  readonly data: M[];
-  readonly getLabel: (m: M) => string;
-}
-
-export const ModelSelect = <M extends Model>({ data, getLabel, ...props }: ModelSelectProps<M>): JSX.Element => (
-  <Select<ModelSelectOption<M>> {...props} data={data.map(d => ({ model: d, value: d.id, label: getLabel(d) }))} />
-);
+export const ModelSelect = <M extends Model>({ onChange, ...props }: ModelSelectProps<M>): JSX.Element => {
+  if (!props.data.map) {
+    console.error(props);
+  }
+  return (
+    <Select
+      {...props}
+      getValue={m => m.model.id}
+      datumKeys={["model"]}
+      data={props.data.map(m => ({ model: m }))}
+      onChange={(value, model) => {
+        if (value === null || model === null) {
+          onChange(null, null);
+        } else {
+          onChange(value, model.model);
+        }
+      }}
+    />
+  );
+};

@@ -2,7 +2,7 @@ import { useForm as rootUseForm } from "@mantine/form";
 import { type UseFormInput, type GetInputPropsType } from "@mantine/form/lib/types";
 
 import {
-  type FieldKeys,
+  type FormKeys,
   type FormInstance,
   type DefaultFormValues,
   type BaseFormValues,
@@ -22,7 +22,7 @@ export const useForm = <I extends BaseFormValues = DefaultFormValues, O extends 
 ): FormInstance<I, O> => {
   const _original = rootUseForm<I, (v: I) => O>(input);
 
-  const getFieldError = <F extends FieldKeys<I>>(path: F) => {
+  const _getFieldErrors = <F extends FormKeys<I>>(path: F) => {
     const { error } = _original.getInputProps<F>(path);
     if (error !== undefined && error !== null) {
       assertFieldErrorOrErrors(error);
@@ -33,18 +33,11 @@ export const useForm = <I extends BaseFormValues = DefaultFormValues, O extends 
 
   return {
     ..._original,
-    getFieldError,
-    getFieldErrors: <F extends FieldKeys<I>>(paths: F[]) =>
-      paths.reduce((prev: FieldError[], path: F) => {
-        const err = getFieldError(path);
-        if (err !== null) {
-          return [...prev, ...err];
-        }
-        return prev;
-      }, []),
+    getFieldErrors: <F extends FormKeys<I>>(...paths: F[]) =>
+      paths.reduce((prev: FieldError[], path: F) => [...prev, ..._getFieldErrors(path)], []),
     /* Modify the original getInputProps such that the error is not included in the arguments passed to the input
        itself.  We pass the error into the custom Field component, which wraps the Input. */
-    getInputProps: <F extends FieldKeys<I>>(
+    getInputProps: <F extends FormKeys<I>>(
       path: F,
       options?: {
         type?: GetInputPropsType;

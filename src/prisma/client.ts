@@ -18,9 +18,11 @@ are not reloaded:
 See: https://www.prisma.io/docs/guides/performance-and-optimization/connection-management
      #prevent-hot-reloading-from-creating-new-instances-of-prismaclient
 */
-import { PrismaClient } from "~/prisma";
+import { PrismaClient } from "@prisma/client";
+
 import { env } from "~/env.mjs";
 
+import { userModelExtension } from "./extensions";
 import { ModelMetaDataMiddleware } from "./middleware";
 import { getDatabaseUrl, type DatabaseParams } from "./util";
 
@@ -31,24 +33,23 @@ export * from "./errors";
  *
  * @returns {PrismaClient}
  */
-export const initializePrismaClient = (params?: DatabaseParams): PrismaClient => {
+export const initializePrismaClient = (params?: DatabaseParams) => {
   const url = getDatabaseUrl(params);
-  const prisma = new PrismaClient({
+  const _prisma = new PrismaClient({
     log: env.DATABASE_LOG_LEVEL,
     datasources: { db: { url } },
   });
-  prisma.$use(ModelMetaDataMiddleware);
-  return prisma;
-  /* return _prisma.$extends({
-       model: {
-         user: userModelExtension(_prisma),
-       },
-     }); */
+  _prisma.$use(ModelMetaDataMiddleware);
+  return _prisma.$extends({
+    model: {
+      user: userModelExtension(_prisma),
+    },
+  });
 };
 
 export type ClientType = ReturnType<typeof initializePrismaClient>;
 
-export let prisma: PrismaClient;
+export let prisma: ClientType;
 
 const globalPrisma = global as unknown as { prisma: ClientType };
 

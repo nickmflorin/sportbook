@@ -1,5 +1,6 @@
+import { Sport, LeagueType, LeagueCompetitionLevel } from "@prisma/client";
+
 import { icons } from "~/lib/ui";
-import { Sport, LeagueType, LeagueCompetitionLevel } from "~/prisma";
 
 import { EnumModel } from "./model";
 

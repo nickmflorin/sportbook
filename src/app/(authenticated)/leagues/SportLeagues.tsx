@@ -1,5 +1,5 @@
 import { type Sport } from "~/prisma";
-import { prisma } from "~/prisma";
+import { prisma } from "~/prisma/client";
 import { LeaguesTableView } from "~/components/tables/LeaguesTableView";
 import { DataTableStyle } from "~/components/tables/types";
 

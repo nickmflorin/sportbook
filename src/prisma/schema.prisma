@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["jsonProtocol"]
+  previewFeatures = []
 }
 
 datasource db {
@@ -25,6 +25,7 @@ model User {
   lastUpdatedFromClerk DateTime               @default(now())
   teams                TeamOnPlayers[]        @relation("teams")
   participatingLeagues LeagueOnParticipants[] @relation("participatingLeagues")
+  createdLocations     Location[]             @relation("createdLocations")
 }
 
 model Org {
@@ -50,7 +51,10 @@ enum Sport {
 model Location {
   id                     String              @id @default(uuid()) @db.Uuid
   name                   String              @unique
+  // There needs to be a notion of who created a location so that we can use that location for suggestions to the user.
+  // But there may be issues with CASCADE deletes - we will likely need to revisit.
   createdById            String              @db.Uuid
+  createdBy              User                @relation("createdLocations", fields: [createdById], references: [id])
   createdAt              DateTime            @default(now())
   updatedAt              DateTime            @updatedAt
   updatedById            String              @db.Uuid

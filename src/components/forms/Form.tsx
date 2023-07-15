@@ -5,18 +5,17 @@ import { CloseButton } from "~/components/buttons";
 import { ButtonFooter, type ButtonFooterProps } from "~/components/structural/ButtonFooter";
 import { PartitionedContent, type PartitionedContentProps } from "~/components/structural/PartitionedContent";
 
-import { NativeForm, type NativeFormProps } from "../NativeForm";
-
-import { Field, FieldConditions, FieldGroupControl, FieldControl, FieldGroup } from "./Field";
+import { Field, FieldConditions, FieldGroup } from "./fields/Field";
+import { NativeForm, type NativeFormProps } from "./NativeForm";
 import { type FormInstance, type BaseFormValues, type DefaultFormValues } from "./types";
 import { useForm } from "./useForm";
 
-export { type NativeFormProps } from "../NativeForm";
+export { type NativeFormProps } from "./NativeForm";
 export * from "./types";
 
 export type FormProps<I extends BaseFormValues = DefaultFormValues, O extends BaseFormValues = I> = Omit<
   PartitionedContentProps,
-  "container"
+  "container" | "footer"
 > &
   Omit<ButtonFooterProps, "onSubmit" | "submitButtonType"> &
   Omit<NativeFormProps, keyof ComponentProps | "action"> & {
@@ -30,6 +29,14 @@ export type FormProps<I extends BaseFormValues = DefaultFormValues, O extends Ba
 export const Form = <I extends BaseFormValues = DefaultFormValues, O extends BaseFormValues = I>({
   form,
   children,
+  className,
+  style,
+  loading,
+  actions,
+  title,
+  titleProps,
+  description,
+  descriptionProps,
   component = "form",
   action,
   onClose,
@@ -43,11 +50,8 @@ export const Form = <I extends BaseFormValues = DefaultFormValues, O extends Bas
      Eventually we will want to improve this, and likely ditch Mantine's 'useForm' hook - while making the inputs it
      offers controlled such that they work with the action of the underlying <form />. */
   const _action = () => {
-    console.log("VALIDATING");
     const result = form.validate();
     if (result.hasErrors) {
-      console.log("HJAS ERRORS");
-      console.log(result.errors);
       form.setErrors(result.errors);
     } else {
       /* The way that the custom 'useForm' hook is typed is such that the two generic types, I and O, represent the type
@@ -60,21 +64,26 @@ export const Form = <I extends BaseFormValues = DefaultFormValues, O extends Bas
          value of 'form.values' - but 'form.getTransformedValues()' is typed based on O, not I.
 
          This should be improved in the future as we will likely move away from Mantine's form hook. */
-      console.log({ d: form.getTransformedValues() });
       action?.(form.getTransformedValues());
     }
   };
 
   return (
     <PartitionedContent
-      {...props}
-      className={classNames("form", props.className)}
+      style={style}
+      loading={loading}
+      actions={actions}
+      title={title}
+      titleProps={titleProps}
+      description={description}
+      descriptionProps={descriptionProps}
+      className={classNames("form", className)}
       footer={
         <ButtonFooter
           {...props}
           submitButtonType={component === "form" ? "submit" : "button"}
           onSubmit={component === "form" ? undefined : () => _action()}
-          submitDisabled={props.submitDisabled || props.loading}
+          submitDisabled={props.submitDisabled || loading}
         />
       }
       container={params =>
@@ -100,8 +109,6 @@ export const Form = <I extends BaseFormValues = DefaultFormValues, O extends Bas
 
 Form.Native = NativeForm;
 Form.Field = Field;
-Form.FieldControl = FieldControl;
-Form.FieldGroupControl = FieldGroupControl;
 Form.FieldGroup = FieldGroup;
 Form.FieldCondition = FieldConditions;
 Form.useForm = useForm;

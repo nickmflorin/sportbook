@@ -1,4 +1,4 @@
-import { type FieldError } from "../types";
+import { type FieldError } from "../../types";
 
 import { FormFieldError } from "./FieldError";
 

@@ -1,0 +1,35 @@
+@use "partials";
+
+.select {
+  .select__option {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: partials.get-color("white");
+    color: partials.get-color("gray", 8);
+    @include partials.font($type: "body", $weight: "regular", $size: "md");
+
+    @include partials.hovered {
+      background-color: partials.get-color("gray", 1);
+      color: partials.get-color("gray", 8);
+    }
+    @include partials.focused {
+      background-color: partials.get-color("gray", 1);
+      color: partials.get-color("gray", 8);
+    }
+
+    &.selected {
+      background-color: partials.get-color("white");
+      color: partials.get-color("gray", 8);
+
+      @include partials.hovered {
+        background-color: partials.get-color("gray", 1);
+        color: partials.get-color("gray", 8);
+      }
+      @include partials.focused {
+        background-color: partials.get-color("gray", 1);
+        color: partials.get-color("gray", 8);
+      }
+    }
+  }
+}

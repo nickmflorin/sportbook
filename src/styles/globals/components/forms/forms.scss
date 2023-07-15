@@ -77,10 +77,4 @@
 
 .form {
   position: relative;
-
-  .form__close-button {
-    position: absolute;
-    top: partials.get-spacing("md");
-    right: partials.get-spacing("md");
-  }
 }
