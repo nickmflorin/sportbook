@@ -15,7 +15,8 @@ import { LeagueTypeSelect, LeagueCompetitionLevelSelect, SportSelect } from "~/c
 import { Text } from "~/components/typography";
 import { ShowHide } from "~/components/util";
 
-import { ManagedDrawers, useManagedDrawers } from "./ManagedDrawers";
+import { useManagedDrawers } from "./hooks";
+import { ManagedDrawers } from "./ManagedDrawers";
 
 export type LeagueFormInput = z.input<typeof LeagueSchema>;
 export type LeagueFormOutput = z.output<typeof LeagueSchema>;

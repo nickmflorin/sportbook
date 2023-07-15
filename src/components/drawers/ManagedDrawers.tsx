@@ -1,12 +1,15 @@
-import { useReducer, type Reducer, useImperativeHandle, useRef } from "react";
+import { useReducer, type Reducer, useImperativeHandle } from "react";
 
 import classNames from "classnames";
+import difference from "lodash.difference";
 import intersection from "lodash.intersection";
+import uniq from "lodash.uniq";
 
 import { logger } from "~/internal/logger";
 
 import { Drawer, type DrawerProps } from "./Drawer";
 import { DrawerView } from "./DrawerView";
+import { type ManagedDrawersHandler } from "./hooks";
 
 type ManagedDrawersState<N> = N[];
 
@@ -23,12 +26,10 @@ type ManagedDrawerOpenAction<
       [ManagedDrawerActionType.OPEN]: {
         readonly drawer: N | N[];
         readonly type: ManagedDrawerActionType.OPEN;
-        readonly closeOthers?: boolean | N[];
       };
       [ManagedDrawerActionType.CLOSE]: {
-        readonly drawer: N | N[];
+        readonly drawer: N | N[] | "all";
         readonly type: ManagedDrawerActionType.CLOSE;
-        readonly openOthers?: N[];
       };
     }[T]
   : never;
@@ -37,44 +38,34 @@ const managedDrawerReducer = <N extends string>(
   state: ManagedDrawersState<N> = [],
   action: ManagedDrawerOpenAction<N>,
 ): ManagedDrawersState<N> => {
-  const toToggle = Array.isArray(action.drawer) ? action.drawer : [action.drawer];
   switch (action.type) {
     case ManagedDrawerActionType.OPEN:
-      let toClose =
-        action.closeOthers === true ? state.filter(v => !toToggle.includes(v)) : [...(action.closeOthers || [])];
-      const conflictsWhileClosing = intersection(toToggle, toClose);
-      if (conflictsWhileClosing.length !== 0) {
-        logger.warn(
-          `Conflicting State: Drawer(s) ${conflictsWhileClosing.join(", ")} cannot be both opened and closed.")}`,
-        );
-      }
-      toClose = toClose.filter(v => !toToggle.includes(v));
-      return [...state.filter(v => !toClose.includes(v)), ...toToggle];
+      return uniq(Array.isArray(action.drawer) ? action.drawer : [action.drawer]).reduce((prev: N[], curr: N) => {
+        if (state.includes(curr)) {
+          logger.warn(`Conflicting State: Drawer ${curr} is already in the opened state.")}`);
+          return prev;
+        }
+        return [...prev, curr];
+      }, state);
     case ManagedDrawerActionType.CLOSE:
-      let toAlsoOpen = action.openOthers || [];
-      const conflictsWhileOpening = intersection(toToggle, toAlsoOpen);
-      if (conflictsWhileOpening.length !== 0) {
-        logger.warn(
-          `Conflicting State: Drawer(s) ${conflictsWhileOpening.join(", ")} cannot be both opened and closed.")}`,
-        );
+      if (action.drawer === "all") {
+        return [];
       }
-      toAlsoOpen = toAlsoOpen.filter(v => !toToggle.includes(v));
-      return [...state.filter(v => !toToggle.includes(v)), ...toAlsoOpen];
+      const toClose = uniq(Array.isArray(action.drawer) ? action.drawer : [action.drawer]);
+      // Determine if there are any drawers being closed that are not opened in state.
+      const conflicting = intersection(toClose, difference(toClose, state));
+      if (conflicting.length !== 0) {
+        logger.warn(`Conflicting State: Drawer(s) ${conflicting.join(", ")} are already in the closed state.")}`);
+      }
+      return state.reduce((prev: N[], curr: N) => {
+        if (!toClose.includes(curr)) {
+          logger.warn(`Conflicting State: Drawer ${curr} is already in the opened state.")}`);
+          return [...prev, curr];
+        }
+        return prev;
+      }, []);
   }
 };
-
-export type ManagedDrawersHandler<N extends string> = {
-  readonly open: (drawer: N | N[], closeOthers?: boolean | N[]) => void;
-  readonly close: (drawer: N | N[], openOthers?: N[]) => void;
-};
-
-export const useManagedDrawers = <N extends string>() =>
-  useRef<ManagedDrawersHandler<N>>({
-    /* eslint-disable-next-line @typescript-eslint/no-empty-function */
-    open: () => {},
-    /* eslint-disable-next-line @typescript-eslint/no-empty-function */
-    close: () => {},
-  });
 
 export interface ManagedDrawersProps<N extends string, A extends string> extends Omit<DrawerProps, "children"> {
   readonly drawers: Record<N | A, JSX.Element>;
@@ -97,9 +88,8 @@ export const ManagedDrawers = <N extends string, A extends string>({
   );
 
   useImperativeHandle(handler, () => ({
-    open: (drawer: N | N[], closeOthers?: boolean | N[]) =>
-      dispatch({ type: ManagedDrawerActionType.OPEN, drawer, closeOthers }),
-    close: (drawer: N | N[], openOthers?: N[]) => dispatch({ type: ManagedDrawerActionType.CLOSE, drawer, openOthers }),
+    open: (drawer: N | N[]) => dispatch({ type: ManagedDrawerActionType.OPEN, drawer }),
+    close: (drawer: N | N[] | "all") => dispatch({ type: ManagedDrawerActionType.CLOSE, drawer }),
   }));
 
   return (

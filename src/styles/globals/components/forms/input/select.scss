@@ -1,13 +1,31 @@
 @use "partials";
 
-.select {
-  .select__option {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+@mixin select-option-structure {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: partials.get-color("white");
+  color: partials.get-color("gray", 8);
+  padding: 6px 8px;
+
+  > .icon {
+    margin-right: partials.get-spacing("md");
+  }
+
+  @include partials.font($type: "body", $weight: "regular", $size: "md");
+
+  @include partials.hovered {
+    background-color: partials.get-color("gray", 1);
+    color: partials.get-color("gray", 8);
+  }
+  @include partials.focused {
+    background-color: partials.get-color("gray", 1);
+    color: partials.get-color("gray", 8);
+  }
+
+  &.selected {
     background-color: partials.get-color("white");
     color: partials.get-color("gray", 8);
-    @include partials.font($type: "body", $weight: "regular", $size: "md");
 
     @include partials.hovered {
       background-color: partials.get-color("gray", 1);
@@ -17,33 +35,17 @@
       background-color: partials.get-color("gray", 1);
       color: partials.get-color("gray", 8);
     }
+  }
+}
 
-    &.selected {
-      background-color: partials.get-color("white");
-      color: partials.get-color("gray", 8);
+.select {
+  .select__option {
+    @include select-option-structure;
+  }
 
-      @include partials.hovered {
-        background-color: partials.get-color("gray", 1);
-        color: partials.get-color("gray", 8);
-      }
-      @include partials.focused {
-        background-color: partials.get-color("gray", 1);
-        color: partials.get-color("gray", 8);
-      }
+  .select-option-createable {
+    @include select-option-structure;
 
-      > .select__option__createable {
-        display: flex;
-        align-items: center;
-
-        > .icon {
-          margin-right: partials.get-spacing("md");
-        }
-
-        > .label {
-          color: partials.get-color("gray", 9);
-          @include partials.font($type: "body", $weight: "medium", $size: "md");
-        }
-      }
-    }
+    color: partials.get-color("gray", 9);
   }
 }

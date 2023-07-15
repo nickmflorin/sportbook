@@ -121,6 +121,7 @@ let BASE_RULES = {
   ],
   "arrow-body-style": ["error", "as-needed"],
   "no-console": "error",
+  "no-unused-vars": "warn",
   "no-multiple-empty-lines": "error",
   "multiline-comment-style": ["warn", "bare-block"],
   "no-unexpected-multiline": "error",
@@ -154,7 +155,7 @@ const TS_BASE_RULES = {
      root "no-unused-vars" rule does, but works properly with types - so it is used in favor of the root
      "no-unused-vars" rule, not in conjunction with. */
   "no-unused-vars": "off",
-  "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+  "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
   "react/jsx-newline": [1, { prevent: true }],
   "react/jsx-curly-brace-presence": [1, { props: "never", children: "never" }],
   "react/display-name": "off",

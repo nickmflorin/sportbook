@@ -113,7 +113,7 @@ export const useSelectProps = <
       return null;
     },
     getCreateLabel: (query: string) => (
-      <div className="select__option__createable">
+      <div className="select-option-createable">
         <AddIcon />
         <Label>{getCreateLabel?.(query) || "Create"}</Label>
       </div>
@@ -162,7 +162,6 @@ export const Select = <
         {...(original as _RootSelectProps<"multiple">)}
         onChange={(values: V[]) => {
           const fn = onChange as SelectChangeHandler<T, V, "multiple">;
-          console.log({ values });
           return fn(
             values,
             values.map(v => ({ value: v, model: getOptionModel(v) })),
