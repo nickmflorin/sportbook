@@ -13,19 +13,11 @@
   }
 
   @include partials.font($type: "body", $weight: "regular", $size: "md");
+}
 
-  @include partials.hovered {
-    background-color: partials.get-color("gray", 1);
-    color: partials.get-color("gray", 8);
-  }
-  @include partials.focused {
-    background-color: partials.get-color("gray", 1);
-    color: partials.get-color("gray", 8);
-  }
-
-  &.selected {
-    background-color: partials.get-color("white");
-    color: partials.get-color("gray", 8);
+.select {
+  .select__option {
+    @include select-option-structure;
 
     @include partials.hovered {
       background-color: partials.get-color("gray", 1);
@@ -35,17 +27,50 @@
       background-color: partials.get-color("gray", 1);
       color: partials.get-color("gray", 8);
     }
-  }
-}
 
-.select {
-  .select__option {
-    @include select-option-structure;
+    &.selected {
+      background-color: partials.get-color("white");
+      color: partials.get-color("gray", 8);
+
+      @include partials.hovered {
+        background-color: partials.get-color("gray", 1);
+        color: partials.get-color("gray", 8);
+      }
+      @include partials.focused {
+        background-color: partials.get-color("gray", 1);
+        color: partials.get-color("gray", 8);
+      }
+    }
   }
 
   .select-option-createable {
+    /*  Note: Right now, we cannot add the custom hover and focus background color behavior to the creatable option at
+        the bottom of the select.  This is because Mantine does not use the optionComponent prop for this option, and
+        thus we cannot provide the custom .select__option class to the wrapping option element.  This means that the
+        hover and focus background colors will apply to the inner section of the creatable option - but not the outer
+        section.
+
+        Eventually, we will use our own select and this issue will be alleviated. */
     @include select-option-structure;
 
     color: partials.get-color("gray", 9);
+
+    @include partials.hovered {
+      color: partials.get-color("gray", 9);
+    }
+    @include partials.focused {
+      color: partials.get-color("gray", 9);
+    }
+
+    &.selected {
+      color: partials.get-color("gray", 9);
+
+      @include partials.hovered {
+        color: partials.get-color("gray", 9);
+      }
+      @include partials.focused {
+        color: partials.get-color("gray", 9);
+      }
+    }
   }
 }

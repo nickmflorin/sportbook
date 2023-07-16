@@ -51,6 +51,7 @@ enum Sport {
 model Location {
   id                     String              @id @default(uuid()) @db.Uuid
   name                   String              @unique
+  description            String?
   // There needs to be a notion of who created a location so that we can use that location for suggestions to the user.
   // But there may be issues with CASCADE deletes - we will likely need to revisit.
   createdById            String              @db.Uuid

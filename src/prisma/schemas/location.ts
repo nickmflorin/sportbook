@@ -4,6 +4,7 @@ import { createRequiredStringField } from "./util";
 
 export const LocationSchema = z.object({
   name: createRequiredStringField({ requiredError: "The name of the location is required." }),
+  description: z.string().nullable(),
   primaryStreetAddress: createRequiredStringField({
     requiredError: "The primary address of the location is required.",
   }),

@@ -185,6 +185,25 @@ module.exports = {
       rules: TS_BASE_RULES,
     },
     {
+      files: ["**/*.scss"],
+      extends: getExtensions(),
+      rules: {
+        ...BASE_RULES,
+        "max-len": [
+          "warn",
+          {
+            code: 140,
+            comments: 120,
+            tabWidth: 2,
+            ignoreUrls: true,
+            ignoreTemplateLiterals: true,
+            ignoreRegExpLiterals: true,
+            ignorePattern: "\\/\\*\\s+eslint-disable-next-line(.?)+\\*\\/$",
+          },
+        ],
+      },
+    },
+    {
       files: ["**/*.test.ts", "**/*.test.tsx", "**/tests/utils/*"],
       extends: getExtensions({ typescriptSupport: true }),
       rules: {

@@ -13,20 +13,36 @@ import { useForm } from "./useForm";
 export { type NativeFormProps } from "./NativeForm";
 export * from "./types";
 
-export type FormProps<I extends BaseFormValues = DefaultFormValues, O extends BaseFormValues = I> = Omit<
+type Native = Omit<NativeFormProps, keyof ComponentProps | "action">;
+type ButtonFootProps = Omit<ButtonFooterProps, "onSubmit" | "submitButtonType">;
+
+type FormNativeProps<O extends BaseFormValues> = Native & {
+  readonly action?: (data: O) => void;
+  readonly component: "form";
+  readonly onSubmit?: never;
+};
+
+type FormDivProps<O extends BaseFormValues> = Record<keyof Native, never> & {
+  readonly action?: never;
+  readonly component: "div";
+  readonly onSubmit: (data: O) => void;
+};
+
+type FormComponentProps<C extends "div" | "form", O extends BaseFormValues> = C extends "div"
+  ? FormDivProps<O>
+  : FormNativeProps<O>;
+
+export type FormProps<I extends BaseFormValues, O extends BaseFormValues, C extends "div" | "form"> = Omit<
   PartitionedContentProps,
   "container" | "footer"
 > &
-  Omit<ButtonFooterProps, "onSubmit" | "submitButtonType"> &
-  Omit<NativeFormProps, keyof ComponentProps | "action"> & {
-    // We have to allow our Form mechanics to work inside of a <div> for cases where we have nested forms.
-    readonly component?: "form" | "div";
+  ButtonFootProps &
+  FormComponentProps<C, O> & {
     readonly form: FormInstance<I, O>;
-    readonly action?: (data: O) => void;
     readonly onClose?: () => void;
   };
 
-export const Form = <I extends BaseFormValues = DefaultFormValues, O extends BaseFormValues = I>({
+export const Form = <I extends BaseFormValues, O extends BaseFormValues, C extends "div" | "form">({
   form,
   children,
   className,
@@ -37,11 +53,12 @@ export const Form = <I extends BaseFormValues = DefaultFormValues, O extends Bas
   titleProps,
   description,
   descriptionProps,
-  component = "form",
+  component,
   action,
   onClose,
+  onSubmit,
   ...props
-}: FormProps<I, O>): JSX.Element => {
+}: FormProps<I, O, C>): JSX.Element => {
   /* Normally, we would want to use the FormData from the action to reconstruct the values that are then provided to the
      API request.  However, because we are using Mantine's input components with Mantine's useForm hook (right now at
      least), the FormData will not have the corresponding values in the underlying <form /> because Mantine uses
@@ -82,8 +99,19 @@ export const Form = <I extends BaseFormValues = DefaultFormValues, O extends Bas
         <ButtonFooter
           {...props}
           submitButtonType={component === "form" ? "submit" : "button"}
-          onSubmit={component === "form" ? undefined : () => _action()}
           submitDisabled={props.submitDisabled || loading}
+          onSubmit={
+            component === "form"
+              ? undefined
+              : () => {
+                  const result = form.validate();
+                  if (result.hasErrors) {
+                    form.setErrors(result.errors);
+                  } else {
+                    onSubmit?.(form.getTransformedValues());
+                  }
+                }
+          }
         />
       }
       container={params =>

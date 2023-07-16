@@ -107,6 +107,7 @@
     "prettier-plugin-prisma": "^4.13.0",
     "prisma": "^4.14.0",
     "stylelint": "^15.10.1",
+    "stylelint-config-recess-order": "^4.3.0",
     "stylelint-config-standard-scss": "^10.0.0",
     "stylelint-scss": "^5.0.1",
     "stylelint-webpack-plugin": "^4.1.1",

@@ -2,6 +2,7 @@
   "locations": [
     {
       "name": "Park Plaza",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\nSuspendisse commodo mattis nisl, vel fermentum ipsum efficitur sit amet.\n\nSed vitae dui non lacus semper sollicitudin.\n\nNulla facilisi.",
       "primaryStreetAddress": "123 Park Street",
       "secondaryStreetAddress": "Unit 1",
       "city": "New York",
@@ -21,6 +22,7 @@
     },
     {
       "name": "Mountain Resort",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\nSuspendisse commodo mattis nisl, vel fermentum ipsum efficitur sit amet.\n\nSed vitae dui non lacus semper sollicitudin.\n\nNulla facilisi.",
       "primaryStreetAddress": "789 Hilltop Road",
       "secondaryStreetAddress": "Suite 202",
       "city": "Denver",
@@ -40,6 +42,7 @@
     },
     {
       "name": "Lake Cabin",
+      "description": "Lorem ipsum dolor sit amet.",
       "primaryStreetAddress": "654 Pine Tree Lane",
       "secondaryStreetAddress": "Cabin 7",
       "city": "Seattle",
@@ -68,6 +71,7 @@
     },
     {
       "name": "Skyline Plaza",
+      "description": "Lorem ipsum dolor sit amet.",
       "primaryStreetAddress": "222 High Rise Avenue",
       "secondaryStreetAddress": "Floor 25",
       "city": "Chicago",
@@ -87,6 +91,7 @@
     },
     {
       "name": "Island Villa",
+      "description": "Lorem ipsum dolor sit amet.",
       "primaryStreetAddress": "999 Oceanview Lane",
       "city": "Honolulu",
       "state": "HI",
@@ -105,6 +110,7 @@
     },
     {
       "name": "Town Center",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\nSuspendisse commodo mattis nisl, vel fermentum ipsum efficitur sit amet.",
       "primaryStreetAddress": "777 Central Square",
       "city": "Austin",
       "state": "TX",
@@ -123,6 +129,7 @@
     },
     {
       "name": "Harbor Market",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\nSuspendisse commodo mattis nisl.",
       "primaryStreetAddress": "555 Harbor Drive",
       "city": "Baltimore",
       "state": "MD",
@@ -151,6 +158,7 @@
     },
     {
       "name": "Downtown Lofts",
+      "description": "Lorem ipsum dolor sit amet.",
       "primaryStreetAddress": "222 City Center",
       "secondaryStreetAddress": "Loft 30",
       "city": "Atlanta",

@@ -44,8 +44,9 @@ const SCSS_RULES = {
 };
 
 module.exports = {
-  extends: ["stylelint-config-standard-scss", "stylelint-config-recommended-scss"],
+  extends: ["stylelint-config-standard-scss", "stylelint-config-recommended-scss", "stylelint-config-recess-order"],
   plugins: ["stylelint-scss"],
+  cache: true,
   fix: true,
   rules: {
     ...STYLELINT_RULES,

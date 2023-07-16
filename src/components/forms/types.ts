@@ -1,5 +1,6 @@
+import type React from "react";
+
 import { type UseFormReturnType } from "@mantine/form";
-import { type GetInputProps } from "@mantine/form/lib/types";
 
 export type BaseFormValues = Record<string, unknown>;
 export type DefaultFormValues = Record<string, unknown>;
@@ -33,5 +34,17 @@ export type FormInstance<I extends BaseFormValues = DefaultFormValues, O extends
      single string or an array of strings, and make an assertion as such.  We may need to expand this type in the
      future. */
   readonly getFieldErrors: <F extends FormKeys<I>>(...path: F[]) => FieldError[];
-  readonly getInputProps: (...args: Parameters<GetInputProps<I>>) => Omit<ReturnType<GetInputProps<I>>, "error">;
+  readonly getInputProps: <F extends FormKeys<I>>(
+    path: F,
+  ) => {
+    // This is the ReturnType of GetInputProps with the 'error' field removed and better typing incorporated.
+    value: I[F];
+    onChange: (v: I[F] | React.ChangeEvent) => void;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any -- We should type this better, but this is from the original hook. */
+    checked?: any;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any -- We should type this better, but this is from the original hook. */
+    onFocus?: any;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any -- We should type this better, but this is from the original hook. */
+    onBlur?: any;
+  };
 };

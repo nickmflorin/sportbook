@@ -8,7 +8,10 @@ import { type Location } from "~/prisma";
 import { AsyncModelSelect, type AsyncModelSelectProps, type SelectMode } from "./abstract";
 
 export interface LocationSelectProps<M extends SelectMode>
-  extends Optional<Omit<AsyncModelSelectProps<Location, M>, "getLabel" | "model">, "data"> {
+  extends Optional<
+    Omit<AsyncModelSelectProps<Pick<Location, "id" | "name" | "description">, M>, "getLabel" | "model">,
+    "data"
+  > {
   /**
    * Whether or not the request to load the data should be disabled.  Used for cases where the select is in a drawer
    * and the drawer is not yet open.

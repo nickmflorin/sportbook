@@ -1,0 +1,13 @@
+@use "partials";
+
+.locations-chooser {
+  display: flex;
+  flex-direction: column;
+  gap: partials.get-spacing("sm");
+
+  .locations-chooser__locations {
+    display: flex;
+    flex-direction: column;
+    gap: partials.get-spacing("sm");
+  }
+}

@@ -72,58 +72,63 @@ $font-family-weights: (
   ),
 );
 
-@function get-font-weight($type: null, $family: null, $size: null, $weight: null) {
-  $type: if($type, fn.validate-value($type, $typography-types), null);
-  $family: if($family, fn.validate-value($family, $font-families), null);
-  $size: if($size, fn.validate-value($size, $typography-sizes), null);
-  $weight: if($weight, fn.validate-value($weight, $font-weight-names), null);
+@function get-font-family-weight($family, $weight) {
+  $family: fn.validate-value($family, $font-families);
+  $weight: fn.validate-value($weight, $font-weight-names);
+  @return fn.mapget($font-family-weights, $family, $weight);
+}
 
+// // Used in cases where we are setting the font-weight based on a family but not a weight name.
+$font-family-default-weights: (
+  avenir: "medium",
+  roboto: "regular",
+);
+
+@function get-default-font-weight($type: null, $family: null, $size: null) {
   @if $type {
-    // The font-family is constant per typography type.
-    @if $family {
-      @return throw.error(
-        "When the type is provided the family is superfluous.",
-        $family,
-        $type,
-        $source: "get-font-weight()"
-      );
-    } @else if $size {
-      @if $weight {
-        @return throw.error(
-          "When the size is provided the weight is superfluous.",
-          $weight,
-          $size,
-          $source: "get-font-weight()"
-        );
-      }
-      @return fn.mapget($typography-size-properties, $type, $size, font-weight);
-    } @else if $weight {
-      @return get-font-weight($family: get-font-family($type), $weight: $weight);
-    } @else {
-      // Return the weight associated with the default size for that typography type.
-      $default-size: fn.mapget($typography-default-sizes, $type);
-      @return get-font-weight($type: $type, $size: $default-size);
-    }
+    $size: parse-size($type, $size: $size);
+    $family: get-font-family($type);
+    @return fn.mapget($typography-size-properties, $type, $size, font-weight);
   } @else if $family {
-    @if $size {
-      @return throw.error(
-        "When the family is provided the size is superfluous.",
-        $size,
-        $family,
-        $source: "get-font-weight()"
-      );
-    } @else if $weight {
-      @return fn.mapget($font-family-weights, $family, $weight);
-    } @else {
-      @return throw.error(
-        "When the family is provided the weight must be provided.",
-        $family,
-        $source: "get-font-weight()"
-      );
-    }
-  } @else {
-    @return throw.error("Invalid arguments.", $source: "get-font-weight()");
+    @return fn.mapget($font-family-default-weights);
   }
+  @return throw.error(
+    "The 'family' argument or the 'type'/'size' arguments must be provided. ffffff t be provided. fffffft be provided. fffffft be provided. ffffff",
+    $family: $family,
+    $type: $type,
+    $source: "get-font-weight()"
+  );
+}
+
+@function get-font-weight($type: null, $family: null, $size: null, $weight: null) {
+  $size: if($size, fn.validate-value($size, $typography-sizes), null);
+
+  // The family needs to take precedence over the type when dictating what the font weight is.  This is because the
+  // font weight depends on the family - the dependence on the type is through the family (i.e. the type is used to
+  // infer the family).
+  @if $family {
+    $family: if($family, fn.validate-value($family, $font-families), null);
+    $weight: if(
+      $weight,
+      fn.validate-value($weight, $font-weight-names),
+      fn.mapget($font-family-default-weights, $family)
+    );
+    @return get-font-family-weight($family, $weight);
+  } @else if $type {
+    @if $weight {
+      @return get-font-family-weight(get-font-family($type), $weight);
+    }
+    // This will use a default size if it is not provided.
+    $size: parse-size($type, $size);
+    @return get-font-family-weight(
+      get-font-family($type),
+      fn.mapget($typography-size-properties, $type, $size, font-weight)
+    );
+  }
+  @return throw.error(
+    "Invalid arguments: either the 'type' or 'family' must be provided.",
+    $source: "get-font-weight()"
+  );
 }
 
 @mixin font-weight($args...) {
@@ -156,168 +161,96 @@ $typography-size-properties: (
     "xxs": (
       font-size: 11px,
       line-height: 14px,
-      font-weight:
-        get-font-weight(
-          $type: "body",
-          $weight: "regular",
-        ),
+      font-weight: "regular",
     ),
     "xs": (
       font-size: 12px,
       line-height: 16px,
-      font-weight:
-        get-font-weight(
-          $type: "body",
-          $weight: "regular",
-        ),
+      font-weight: "regular",
     ),
     "sm": (
       font-size: 13px,
       line-height: 18px,
-      font-weight:
-        get-font-weight(
-          $type: "body",
-          $weight: "regular",
-        ),
+      font-weight: "regular",
     ),
     "md": (
       font-size: 14px,
       line-height: 20px,
-      font-weight:
-        get-font-weight(
-          $type: "body",
-          $weight: "regular",
-        ),
+      font-weight: "regular",
     ),
     "lg": (
       font-size: 16px,
       line-height: 24px,
-      font-weight:
-        get-font-weight(
-          $type: "body",
-          $weight: "regular",
-        ),
+      font-weight: "regular",
     ),
     "xl": (
       font-size: 18px,
       line-height: 28px,
-      font-weight:
-        get-font-weight(
-          $type: "body",
-          $weight: "regular",
-        ),
+      font-weight: "regular",
     ),
   ),
   "heading": (
     "xxs": (
       font-size: 14px,
       line-height: 20px,
-      font-weight:
-        get-font-weight(
-          $type: "heading",
-          $weight: "medium",
-        ),
+      font-weight: "medium",
     ),
     "xs": (
       font-size: 16px,
       line-height: 22px,
-      font-weight:
-        get-font-weight(
-          $type: "heading",
-          $weight: "medium",
-        ),
+      font-weight: "medium",
     ),
     "sm": (
       font-size: 18px,
       line-height: 24px,
-      font-weight:
-        get-font-weight(
-          $type: "heading",
-          $weight: "semibold",
-        ),
+      font-weight: "semibold",
     ),
     "md": (
       font-size: 24px,
       line-height: 30px,
-      font-weight:
-        get-font-weight(
-          $type: "heading",
-          $weight: "semibold",
-        ),
+      font-weight: "semibold",
     ),
     "lg": (
       font-size: 28px,
       line-height: 34px,
-      font-weight:
-        get-font-weight(
-          $type: "heading",
-          $weight: "semibold",
-        ),
+      font-weight: "semibold",
     ),
     "xl": (
       font-size: 32px,
       line-height: 36px,
-      font-weight:
-        get-font-weight(
-          $type: "heading",
-          $weight: "semibold",
-        ),
+      font-weight: "bold",
     ),
   ),
   "label": (
     "xxs": (
       font-size: 11px,
       line-height: 14px,
-      font-weight:
-        get-font-weight(
-          $type: "label",
-          $weight: "regular",
-        ),
+      font-weight: "regular",
     ),
     "xs": (
       font-size: 12px,
       line-height: 16px,
-      font-weight:
-        get-font-weight(
-          $type: "label",
-          $weight: "regular",
-        ),
+      font-weight: "regular",
     ),
     "sm": (
       font-size: 13px,
       line-height: 18px,
-      font-weight:
-        get-font-weight(
-          $type: "label",
-          $weight: "medium",
-        ),
+      font-weight: "medium",
     ),
     "md": (
       font-size: 14px,
       line-height: 20px,
-      font-weight:
-        get-font-weight(
-          $type: "label",
-          $weight: "medium",
-        ),
+      font-weight: "medium",
     ),
     "lg": (
       font-size: 16px,
       line-height: 24px,
-      font-weight:
-        get-font-weight(
-          $type: "label",
-          $weight: "semibold",
-        ),
+      font-weight: "semibold",
     ),
     "xl": (
       font-size: 18px,
       line-height: 28px,
-      font-weight:
-        get-font-weight(
-          $type: "label",
-          $weight: "semibold",
-        ),
+      font-weight: "semibold",
     ),
   ),
 );
@@ -332,21 +265,20 @@ $typography-default-sizes: (
   "label": $label-default-size,
 );
 
-@function parse-size($type, $size: null) {
+@function get-default-size($type) {
   $type: fn.validate-value($type, $typography-types);
-  $default-size: fn.mapget($typography-default-sizes, $type);
-  $size: if($size, $size, $default-size);
-  $size: fn.validate-value($size, $typography-sizes);
-  @return $size;
+  @return fn.mapget($typography-default-sizes, $type);
+}
+
+@function parse-size($type, $size: null) {
+  @return if($size, fn.validate-value($size, $typography-sizes), get-default-size($type));
 }
 
 @function get-font-size($type, $size: null) {
-  $type: fn.validate-value($type, $typography-types);
   @return fn.mapget($typography-size-properties, $type, parse-size($type, $size: $size), font-size);
 }
 
 @function get-line-height($type, $size: null) {
-  $type: fn.validate-value($type, $typography-types);
   @return fn.mapget($typography-size-properties, $type, parse-size($type, $size: $size), line-height);
 }
 
@@ -437,18 +369,15 @@ $typography-default-colors: (
 }
 
 /* --------------------------------------- Font Specs ------------------------------------------ */
-@function get-font($type, $size: null, $args...) {
+@function get-font($type, $size: null, $weight: null, $family: null, $args...) {
   $properties: (
-    font-family: get-font-family($type),
+    font-family: if($family, $family, get-font-family($type)),
     font-weight:
-      fn.get-optional-kwarg(
-        "weight",
-        $default:
-          get-font-weight(
-            $type: $type,
-            $size: $size,
-          ),
-        $args...
+      get-font-weight(
+        $type: $type,
+        $size: $size,
+        $weight: $weight,
+        $family: $family,
       ),
     color: fn.get-optional-kwarg(color, $default: get-font-color($type), $args...),
     line-height: fn.get-optional-kwarg(line-height, $default: get-line-height($type, $size: $size), $args...),

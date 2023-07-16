@@ -99,11 +99,25 @@ export const CreateLeagueDrawer = ({ action, open, onClose, ...props }: CreateLe
                 </Form.Field>
               </ShowHide>
             </Form.FieldGroup>
-            <LocationsChooser requestDisabled={!open} onAdd={() => handler.current.open("locations")} />
-            <PrimaryButton onClick={() => handler.current.open("locations")}>Add Location</PrimaryButton>
+            <Form.Field form={form} name="locations" label="Locations" condition={Form.FieldCondition.OPTIONAL}>
+              <LocationsChooser
+                requestDisabled={!open}
+                onAdd={() => handler.current.open("locations")}
+                {...form.getInputProps("locations")}
+              />
+            </Form.Field>
           </Form>
         ),
-        locations: <CreateLocationForm style={{ width: 300 }} />,
+        locations: (
+          <CreateLocationForm<"div">
+            style={{ width: 300 }}
+            component="div"
+            onSubmit={data => {
+              form.setFieldValue("locations", [...form.values.locations, data]);
+              handler.current.close("locations");
+            }}
+          />
+        ),
       }}
     />
   );

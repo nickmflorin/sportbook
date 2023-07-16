@@ -46,11 +46,11 @@ $icon-sizes: (
   $axis: fn.validate-value($axis, ("horizontal", "vertical"));
 
   @if $axis == "vertical" {
-    height: fn.mapget($icon-sizes, $size);
     width: auto;
+    height: fn.mapget($icon-sizes, $size);
   } @else {
-    height: auto;
     width: fn.mapget($icon-sizes, $size);
+    height: auto;
   }
 
   @if $contain {
