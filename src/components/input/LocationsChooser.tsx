@@ -1,6 +1,7 @@
 import { type z } from "zod";
 
 import { logger } from "~/internal/logger";
+import { DeleteButton } from "~/components/buttons";
 import { useLocations } from "~/lib/api";
 import { type LocationSchema } from "~/prisma";
 import { LocationTile } from "~/components/display/tiles";
@@ -15,9 +16,17 @@ export interface LocationsChooserProps extends Omit<LocationSelectProps<"multipl
   readonly value: (Unsaved | string)[];
   readonly initialValue?: Loc[];
   readonly onAdd: (name: string) => void;
+  readonly onDelete: (id: string) => void;
 }
 
-export const LocationsChooser = ({ onAdd, onError, requestDisabled, value, ...props }: LocationsChooserProps) => {
+export const LocationsChooser = ({
+  onAdd,
+  onError,
+  onDelete,
+  requestDisabled,
+  value,
+  ...props
+}: LocationsChooserProps) => {
   const { data = [], isLoading } = useLocations({
     isPaused: () => requestDisabled === true,
     onError: err => {
@@ -42,7 +51,9 @@ export const LocationsChooser = ({ onAdd, onError, requestDisabled, value, ...pr
               );
               return <></>;
             }
-            return <LocationTile key={i} model={model} />;
+            return (
+              <LocationTile key={i} model={model} actions={[<DeleteButton key="0" onClick={() => onDelete(loc)} />]} />
+            );
           }
           return <LocationTile key={i} model={loc} />;
         })}

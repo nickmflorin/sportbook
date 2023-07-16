@@ -4,6 +4,9 @@
   display: flex;
   flex-direction: row;
   width: 100%;
+  border: 1px solid partials.get-color("gray", 2);
+  border-radius: 4px;
+  padding: 4px 6px;
 
   > .tile__content {
     display: flex;

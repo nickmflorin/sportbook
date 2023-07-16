@@ -8,9 +8,9 @@ import { zodResolver } from "@mantine/form";
 import type * as z from "zod";
 
 import { LeagueCompetitionLevel, LeagueType, LeagueSchema } from "~/prisma";
-import { Form, type FormProps, LocationsChooser } from "~/components/forms";
+import { Form, type FormProps } from "~/components/forms";
 import { CreateLocationForm } from "~/components/forms/CreateLocationForm";
-import { LeagueTypeSelect, LeagueCompetitionLevelSelect, SportSelect } from "~/components/forms/input";
+import { LeagueTypeSelect, LeagueCompetitionLevelSelect, SportSelect, LocationsChooser } from "~/components/input";
 import { ShowHide } from "~/components/util";
 
 import { useManagedDrawers } from "./hooks";
@@ -107,6 +107,12 @@ export const CreateLeagueDrawer = ({ action, open, onClose, ...props }: CreateLe
               <LocationsChooser
                 requestDisabled={!open}
                 onAdd={() => handler.current.open("locations")}
+                onDelete={(id: string) =>
+                  form.setFieldValue(
+                    "locations",
+                    form.values.locations.filter(v => typeof v !== "string" || v !== id),
+                  )
+                }
                 {...form.getInputProps("locations")}
               />
             </Form.Field>
