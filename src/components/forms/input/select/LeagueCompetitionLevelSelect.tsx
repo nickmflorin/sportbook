@@ -3,10 +3,10 @@ import { type LeagueCompetitionLevel, LeagueCompetitionLevels } from "~/prisma";
 import { EnumSelect, type EnumSelectProps } from "./abstract";
 
 export type LeagueCompetitionLevelSelectProps = Omit<
-  EnumSelectProps<typeof LeagueCompetitionLevel>,
-  "loading" | "data" | "getLabel" | "model"
+  EnumSelectProps<typeof LeagueCompetitionLevel, "single", null>,
+  "loading" | "data" | "getLabel" | "model" | "mode"
 >;
 
 export const LeagueCompetitionLevelSelect = (props: LeagueCompetitionLevelSelectProps) => (
-  <EnumSelect placeholder="Competition Level" {...props} model={LeagueCompetitionLevels} />
+  <EnumSelect placeholder="Competition Level" {...props} mode="single" model={LeagueCompetitionLevels} />
 );

@@ -1,7 +1,7 @@
 import { type Color, type icons } from "~/lib/ui";
 
 export type PrismaEnum = Record<string, string>;
-export type PrismaEnumValue<E extends PrismaEnum> = E[keyof E];
+export type PrismaEnumValue<E extends PrismaEnum> = E[keyof E] & string;
 
 export type EnumData<
   E extends PrismaEnum,
@@ -12,6 +12,8 @@ export type EnumData<
       readonly label: string;
       readonly iconColor?: Color;
       readonly icon?: icons.BasicIconProp;
+      readonly badgeBackgroundColor?: Color;
+      readonly badgeColor?: Color;
     }
   : never;
 

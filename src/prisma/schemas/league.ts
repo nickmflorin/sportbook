@@ -43,7 +43,6 @@ export const LeagueSchema = z
     leagueEnd: z.date().nullable(),
     // TODO: Should we enforce that each league be associated with a least one location?  How do we do this in the DB?
     locations: z.array(z.union([LocationSchema, z.string().uuid()])),
-    leagueType: z.nativeEnum(LeagueType),
     sport: z
       .nativeEnum(Sport, {
         required_error: "A league must belong to a sport.",
@@ -62,8 +61,33 @@ export const LeagueSchema = z
         }
         return value;
       }),
-    isPublic: z.boolean().optional(), // Defaults to true
-    competitionLevel: z.nativeEnum(LeagueCompetitionLevel).optional(), // Defaults to SOCIAL
+    isPublic: z.boolean().default(true),
+    competitionLevel: z
+      .nativeEnum(LeagueCompetitionLevel)
+      .nullable()
+      .transform((value, ctx): LeagueCompetitionLevel => {
+        if (value == null) {
+          ctx.addIssue({
+            code: "custom",
+            message: "A league must have a competition level.",
+          });
+          return z.NEVER;
+        }
+        return value;
+      }),
+    leagueType: z
+      .nativeEnum(LeagueType)
+      .nullable()
+      .transform((value, ctx): LeagueType => {
+        if (value == null) {
+          ctx.addIssue({
+            code: "custom",
+            message: "A league must have a type.",
+          });
+          return z.NEVER;
+        }
+        return value;
+      }),
   })
   .refine(data => !data.leagueStart || !data.leagueEnd || data.leagueEnd > data.leagueStart, {
     message: "The league's start date must be before the end date.",

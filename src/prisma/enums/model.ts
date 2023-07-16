@@ -2,35 +2,17 @@ import type * as types from "./types";
 
 import { type Color, type icons } from "~/lib/ui";
 
-export type EnumData<
-  E extends types.PrismaEnum,
-  V extends types.PrismaEnumValue<E> = types.PrismaEnumValue<E>,
-> = V extends types.PrismaEnumValue<E>
-  ? {
-      readonly value: V;
-      readonly label: string;
-      readonly iconColor?: Color;
-      readonly icon?: icons.BasicIconProp;
-      readonly badgeBackgroundColor?: Color;
-      readonly badgeColor?: Color;
-    }
-  : never;
-
-export type EnumModelConfig<E extends types.PrismaEnum> = {
-  [key in types.PrismaEnumValue<E>]: Omit<EnumData<E, key>, "value">;
-};
-
 export type PrismaEnumAssertion<E extends types.PrismaEnum> = (
   this: EnumModel<E>,
   value: unknown,
 ) => asserts value is types.PrismaEnumValue<E>;
 
 export class EnumModel<E extends types.PrismaEnum> {
-  private readonly config: EnumModelConfig<E>;
+  private readonly config: types.EnumModelConfig<E>;
   private readonly prismaEnum: E;
   private readonly name: string;
 
-  constructor(name: string, prismaEnum: E, config: EnumModelConfig<E>) {
+  constructor(name: string, prismaEnum: E, config: types.EnumModelConfig<E>) {
     this.name = name;
     this.config = config;
     this.prismaEnum = prismaEnum;
@@ -66,17 +48,17 @@ export class EnumModel<E extends types.PrismaEnum> {
     return [...this.iterate()].map(v => v[0]);
   }
 
-  *iterate(): IterableIterator<[EnumData<E>, number]> {
+  *iterate(): IterableIterator<[types.EnumData<E>, number]> {
     for (let i = 0; i < this.values.length; i++) {
       const k = this.values[i];
       if (k === undefined) {
         throw new Error("Unexpected condition!");
       }
-      yield [{ ...this.config[k], value: k } as EnumData<E>, i];
+      yield [{ ...this.config[k], value: k } as types.EnumData<E>, i];
     }
   }
 
-  map = (callback: (s: EnumData<E>, i: number) => void) => {
+  map = (callback: (s: types.EnumData<E>, i: number) => void) => {
     for (const [config, index] of this.iterate()) {
       callback(config, index);
     }

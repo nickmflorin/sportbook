@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic";
 import { experimental_useOptimistic as useOptimistic } from "react";
 
-import { useDisclosure } from "@mantine/hooks";
+import { randomId, useDisclosure } from "@mantine/hooks";
 
 import { PrimaryButton } from "~/components/buttons";
 import { createLeague } from "~/app/actions/league";
@@ -30,9 +30,9 @@ export const LeaguesTableView = ({
   const [createLeagueDrawerOpen, { open: openLeagueDrawer, close: closeLeaguesDrawer }] = useDisclosure(false);
   const [optimisticLeagues, addOptimisticLeague] = useOptimistic<LeagueDatum[], LeagueDatum>(
     data,
-    (state, newLeague) => [...state, newLeague],
+    // Unsaved optimistically added rows need to be given an ID to avoid unique key errors w React.
+    (state, newLeague) => [...state, { id: `unsaved-league-${randomId()}`, ...newLeague }],
   );
-
   return (
     <>
       <TableView
@@ -42,7 +42,7 @@ export const LeaguesTableView = ({
         className={className}
         actions={[
           ...(actions || []),
-          <PrimaryButton key={actions.length + 1} onClick={() => openLeagueDrawer()}>
+          <PrimaryButton key={randomId()} onClick={() => openLeagueDrawer()}>
             Create League
           </PrimaryButton>,
         ]}

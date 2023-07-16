@@ -24,7 +24,6 @@
     "preeslint-fix": "npm run requirements-check",
     "eslint-fix": "npx eslint . --fix",
     "precheck-stylelint-prettier-conflicts": "npm run requirements-check",
-    "check-stylelint-prettier-conflicts": "npx stylelint-config-prettier-check",
     "pretest": "npm run setup-env",
     "test": "jest --watchAll  --silent=false",
     "test:ci": "jest --ci",

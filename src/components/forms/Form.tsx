@@ -7,42 +7,25 @@ import { PartitionedContent, type PartitionedContentProps } from "~/components/s
 
 import { Field, FieldConditions, FieldGroup } from "./fields/Field";
 import { NativeForm, type NativeFormProps } from "./NativeForm";
-import { type FormInstance, type BaseFormValues, type DefaultFormValues } from "./types";
+import { type FormInstance, type BaseFormValues } from "./types";
 import { useForm } from "./useForm";
 
 export { type NativeFormProps } from "./NativeForm";
 export * from "./types";
 
-type Native = Omit<NativeFormProps, keyof ComponentProps | "action">;
-type ButtonFootProps = Omit<ButtonFooterProps, "onSubmit" | "submitButtonType">;
-
-type FormNativeProps<O extends BaseFormValues> = Native & {
-  readonly action?: (data: O) => void;
-  readonly component: "form";
-  readonly onSubmit?: never;
-};
-
-type FormDivProps<O extends BaseFormValues> = Record<keyof Native, never> & {
-  readonly action?: never;
-  readonly component: "div";
-  readonly onSubmit: (data: O) => void;
-};
-
-type FormComponentProps<C extends "div" | "form", O extends BaseFormValues> = C extends "div"
-  ? FormDivProps<O>
-  : FormNativeProps<O>;
-
-export type FormProps<I extends BaseFormValues, O extends BaseFormValues, C extends "div" | "form"> = Omit<
+export type FormProps<I extends BaseFormValues, O extends BaseFormValues = I> = Omit<
   PartitionedContentProps,
   "container" | "footer"
 > &
-  ButtonFootProps &
-  FormComponentProps<C, O> & {
+  Omit<NativeFormProps, keyof ComponentProps | "action" | "onSubmit" | "submitButtonType"> &
+  Omit<ButtonFooterProps, "onSubmit"> & {
     readonly form: FormInstance<I, O>;
+    readonly onSubmit?: (data: O) => void;
+    readonly action?: (data: O) => void;
     readonly onClose?: () => void;
   };
 
-export const Form = <I extends BaseFormValues, O extends BaseFormValues, C extends "div" | "form">({
+export const Form = <I extends BaseFormValues, O extends BaseFormValues = I>({
   form,
   children,
   className,
@@ -53,12 +36,11 @@ export const Form = <I extends BaseFormValues, O extends BaseFormValues, C exten
   titleProps,
   description,
   descriptionProps,
-  component,
   action,
   onClose,
   onSubmit,
   ...props
-}: FormProps<I, O, C>): JSX.Element => {
+}: FormProps<I, O>): JSX.Element => {
   /* Normally, we would want to use the FormData from the action to reconstruct the values that are then provided to the
      API request.  However, because we are using Mantine's input components with Mantine's useForm hook (right now at
      least), the FormData will not have the corresponding values in the underlying <form /> because Mantine uses
@@ -66,7 +48,7 @@ export const Form = <I extends BaseFormValues, O extends BaseFormValues, C exten
 
      Eventually we will want to improve this, and likely ditch Mantine's 'useForm' hook - while making the inputs it
      offers controlled such that they work with the action of the underlying <form />. */
-  const _action = () => {
+  const handler = (cb: (data: O) => void) => {
     const result = form.validate();
     if (result.hasErrors) {
       form.setErrors(result.errors);
@@ -81,9 +63,16 @@ export const Form = <I extends BaseFormValues, O extends BaseFormValues, C exten
          value of 'form.values' - but 'form.getTransformedValues()' is typed based on O, not I.
 
          This should be improved in the future as we will likely move away from Mantine's form hook. */
-      action?.(form.getTransformedValues());
+      cb(form.getTransformedValues());
     }
   };
+
+  const _action = action !== undefined ? () => handler(data => action?.(data)) : undefined;
+  const _onSubmit = onSubmit !== undefined ? () => handler(data => onSubmit(data)) : undefined;
+
+  if (_onSubmit && _action) {
+    throw new Error("Both the action and submit handler cannot be simultaneously provided.");
+  }
 
   return (
     <PartitionedContent
@@ -95,40 +84,15 @@ export const Form = <I extends BaseFormValues, O extends BaseFormValues, C exten
       description={description}
       descriptionProps={descriptionProps}
       className={classNames("form", className)}
-      footer={
-        <ButtonFooter
-          {...props}
-          submitButtonType={component === "form" ? "submit" : "button"}
-          submitDisabled={props.submitDisabled || loading}
-          onSubmit={
-            component === "form"
-              ? undefined
-              : () => {
-                  const result = form.validate();
-                  if (result.hasErrors) {
-                    form.setErrors(result.errors);
-                  } else {
-                    onSubmit?.(form.getTransformedValues());
-                  }
-                }
-          }
-        />
-      }
-      container={params =>
-        component === "form" ? (
-          <NativeForm {...params} action={_action}>
-            <>
-              {onClose && <CloseButton className="form__close-button" onClick={onClose} />}
-              {params.children}
-            </>
-          </NativeForm>
-        ) : (
-          <div {...params}>
+      footer={<ButtonFooter {...props} submitDisabled={props.submitDisabled || loading} />}
+      container={params => (
+        <NativeForm {...params} action={_action} onSubmit={_onSubmit}>
+          <>
             {onClose && <CloseButton className="form__close-button" onClick={onClose} />}
             {params.children}
-          </div>
-        )
-      }
+          </>
+        </NativeForm>
+      )}
     >
       {children}
     </PartitionedContent>

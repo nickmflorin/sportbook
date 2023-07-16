@@ -1,41 +1,24 @@
-import { useState } from "react";
-
 import { type z } from "zod";
 
 import { logger } from "~/internal/logger";
 import { useLocations } from "~/lib/api";
-import { type Location, type LocationSchema } from "~/prisma";
+import { type LocationSchema } from "~/prisma";
 import { LocationTile } from "~/components/display/tiles";
 
 import { LocationSelect, type LocationSelectProps } from "./select";
 
-type UnsavedLocation = z.output<typeof LocationSchema> & {
-  readonly id: `unsaved-${string}`;
-};
-type Loc = string | UnsavedLocation;
+type Unsaved = z.output<typeof LocationSchema>;
 
-const locIsUnsaved = (loc: Loc): loc is UnsavedLocation => typeof loc !== "string" && loc.id.startsWith("unsaved-");
+type Loc = string | Unsaved;
 
 export interface LocationsChooserProps extends Omit<LocationSelectProps<"multiple">, "loading" | "mode"> {
-  readonly value: Loc[];
+  readonly value: (Unsaved | string)[];
   readonly initialValue?: Loc[];
   readonly onAdd: (name: string) => void;
 }
 
-export const LocationsChooser = ({
-  onAdd,
-  onError,
-  /* unsaved,
-     onChange, */
-  requestDisabled,
-  value,
-  ...props
-}: LocationsChooserProps) => {
-  // const [_value, setValue] = useState<Loc[]>(initialValue);
-
-  // const overallValue = value === undefined ? _value : value;
-
-  const { data: _data = [], isLoading } = useLocations({
+export const LocationsChooser = ({ onAdd, onError, requestDisabled, value, ...props }: LocationsChooserProps) => {
+  const { data = [], isLoading } = useLocations({
     isPaused: () => requestDisabled === true,
     onError: err => {
       logger.error({ error: err }, "There was an error loading the sports data used to populate the select.");
@@ -44,26 +27,29 @@ export const LocationsChooser = ({
     fallbackData: [],
   });
 
-  const locations: (Location | UnsavedLocation)[] = [
-    ..._data,
-    ...value.filter((vi): vi is UnsavedLocation => locIsUnsaved(vi)),
-  ];
-
   return (
     <div className="locations-chooser">
       <div className="locations-chooser__locations">
         {value.map((loc, i) => {
-          const model = _data.find(d => d.id === loc);
-          if (!model) {
-            logger.error("");
-            return <></>;
+          if (typeof loc === "string") {
+            const model = data.find(d => d.id === loc);
+            if (!model) {
+              logger.error(
+                { loc },
+                `The location with ID '${loc}' could not be found in the data returned from the API for the ` +
+                  "locations chooser form field.  This is likely an indication that the API data has been mutated " +
+                  "since the first render.",
+              );
+              return <></>;
+            }
+            return <LocationTile key={i} model={model} />;
           }
-          return <LocationTile key={i} model={model} />;
+          return <LocationTile key={i} model={loc} />;
         })}
       </div>
       <LocationSelect
         {...props}
-        data={locations}
+        data={data}
         searchable={true}
         creatable={true}
         shouldCreate={() => true}
@@ -71,13 +57,6 @@ export const LocationsChooser = ({
         onCreate={query => onAdd(query)}
         loading={isLoading}
         mode="multiple"
-        // onChange={(value, data) => {
-
-        // }}
-        /* onChange={(value, data) => {
-             // setValue(data.map(d => d.model.model));
-             onChange?.(data.map(d => d.model.value));
-           }} */
       />
     </div>
   );

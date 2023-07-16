@@ -166,9 +166,6 @@ module.exports = {
   extends: getExtensions(),
   plugins: INCLUDE_PRETTIER ? ["prettier"] : [],
   rules: BASE_RULES,
-  parserOptions: {
-    sourceType: "module",
-  },
   ignorePatterns: [
     "next-env.d.ts",
     "!.*",
@@ -183,25 +180,6 @@ module.exports = {
       files: ["**/*.ts", "**/*.tsx"],
       extends: getExtensions({ typescriptSupport: true }),
       rules: TS_BASE_RULES,
-    },
-    {
-      files: ["**/*.scss"],
-      extends: getExtensions(),
-      rules: {
-        ...BASE_RULES,
-        "max-len": [
-          "warn",
-          {
-            code: 140,
-            comments: 120,
-            tabWidth: 2,
-            ignoreUrls: true,
-            ignoreTemplateLiterals: true,
-            ignoreRegExpLiterals: true,
-            ignorePattern: "\\/\\*\\s+eslint-disable-next-line(.?)+\\*\\/$",
-          },
-        ],
-      },
     },
     {
       files: ["**/*.test.ts", "**/*.test.tsx", "**/tests/utils/*"],

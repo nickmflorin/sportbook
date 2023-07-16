@@ -2,6 +2,8 @@ export * from "./arrays";
 export * from "./composites";
 export * from "./strings";
 
+export type NonNull<V> = V extends infer T | null ? T : V;
+
 export type ExtractValues<T> = keyof T extends string ? T[keyof T] : never;
 
 export type Mutable<T> = { -readonly [P in keyof T]: T[P] };

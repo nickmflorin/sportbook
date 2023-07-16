@@ -8,11 +8,9 @@ import { zodResolver } from "@mantine/form";
 import type * as z from "zod";
 
 import { LeagueCompetitionLevel, LeagueType, LeagueSchema } from "~/prisma";
-import { PrimaryButton } from "~/components/buttons";
-import { Form, type FormProps, LocationsField, LocationsChooser } from "~/components/forms";
+import { Form, type FormProps, LocationsChooser } from "~/components/forms";
 import { CreateLocationForm } from "~/components/forms/CreateLocationForm";
 import { LeagueTypeSelect, LeagueCompetitionLevelSelect, SportSelect } from "~/components/forms/input";
-import { Text } from "~/components/typography";
 import { ShowHide } from "~/components/util";
 
 import { useManagedDrawers } from "./hooks";
@@ -99,7 +97,13 @@ export const CreateLeagueDrawer = ({ action, open, onClose, ...props }: CreateLe
                 </Form.Field>
               </ShowHide>
             </Form.FieldGroup>
-            <Form.Field form={form} name="locations" label="Locations" condition={Form.FieldCondition.OPTIONAL}>
+            <Form.Field
+              form={form}
+              name="locations"
+              label="Locations"
+              description="Associate certain locations with your league, either existing locations or new ones."
+              condition={Form.FieldCondition.OPTIONAL}
+            >
               <LocationsChooser
                 requestDisabled={!open}
                 onAdd={() => handler.current.open("locations")}
@@ -109,9 +113,9 @@ export const CreateLeagueDrawer = ({ action, open, onClose, ...props }: CreateLe
           </Form>
         ),
         locations: (
-          <CreateLocationForm<"div">
+          <CreateLocationForm
             style={{ width: 300 }}
-            component="div"
+            onCancel={() => handler.current.close("locations")}
             onSubmit={data => {
               form.setFieldValue("locations", [...form.values.locations, data]);
               handler.current.close("locations");

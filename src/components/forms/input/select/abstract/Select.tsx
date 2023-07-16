@@ -1,4 +1,3 @@
-"use client";
 import { useCallback } from "react";
 
 import {
@@ -23,14 +22,13 @@ export type BaseSelectOption<T, V> = T & {
   readonly icon?: icons.BasicIconProp | undefined;
 };
 
-type _SelectChangeHandler<T, V> = {
-  (value: null): void;
-  (value: V, params: { value: V; model: T }): void;
-};
+type _SelectChangeHandlerValue<V extends string | null, M extends SelectMode> = M extends "multiple"
+  ? NonNullable<V>[]
+  : V | null;
 
-type _MultiSelectChangeHandler<T, V> = {
-  (value: V[], params: { value: V; model: T }[]): void;
-};
+type _SelectChangeHandlerParams<T, V extends string | null, M extends SelectMode> = M extends "single"
+  ? { value: V; model: V extends null ? T | null : T }
+  : { value: NonNullable<V>; model: T }[];
 
 export type SelectMode = "single" | "multiple";
 
@@ -39,14 +37,14 @@ type _RootSelectProps<M extends SelectMode> = {
   multiple: _RootMultiSelectProps;
 }[M];
 
-export type SelectChangeHandler<T, V, M extends SelectMode> = {
-  single: _SelectChangeHandler<T, V>;
-  multiple: _MultiSelectChangeHandler<T, V>;
-}[M];
+export type SelectChangeHandler<T, V extends string | null, M extends SelectMode = SelectMode> = (
+  value: _SelectChangeHandlerValue<V, M>,
+  params: _SelectChangeHandlerParams<T, V, M>,
+) => void;
 
 export type SelectProps<
   T,
-  V extends string,
+  V extends string | null,
   M extends SelectMode,
   O extends BaseSelectOption<T, V> = BaseSelectOption<T, V>,
 > = {
@@ -73,7 +71,7 @@ export type SelectProps<
 
 export const useSelectProps = <
   T,
-  V extends string,
+  V extends string | null,
   M extends SelectMode,
   O extends BaseSelectOption<T, V> = BaseSelectOption<T, V>,
 >({
@@ -87,14 +85,14 @@ export const useSelectProps = <
   getLabel,
   getCreateLabel,
   ...props
-}: Omit<SelectProps<T, V, M, O>, "onChange">): [_RootSelectProps<M>, (v: V) => T] => {
+}: Omit<SelectProps<T, V, M, O>, "onChange">): [_RootSelectProps<M>, (v: NonNullable<V>) => T] => {
   const _data = data.map((datum: O) => ({
     value: datum.value || getValue?.(datum) || "",
     label: datum.label || getLabel?.(datum) || "",
     ...datum,
   }));
   const getOptionModel = useCallback(
-    (value: V): T => {
+    (value: NonNullable<V>): T => {
       const optionModel = _data.find(datum => datum.value === value);
       if (!optionModel) {
         throw new Error(`Inconsistent State: Option model could not be found for value '${value}'!`);
@@ -147,7 +145,7 @@ export const useSelectProps = <
 
 export const Select = <
   T,
-  V extends string,
+  V extends string | null,
   M extends SelectMode,
   O extends BaseSelectOption<T, V> = BaseSelectOption<T, V>,
 >({
@@ -160,11 +158,11 @@ export const Select = <
     return (
       <RootMultiSelect
         {...(original as _RootSelectProps<"multiple">)}
-        onChange={(values: V[]) => {
+        onChange={(values: string[]) => {
           const fn = onChange as SelectChangeHandler<T, V, "multiple">;
           return fn(
-            values,
-            values.map(v => ({ value: v, model: getOptionModel(v) })),
+            values as NonNullable<V>[],
+            (values as NonNullable<V>[]).map(v => ({ value: v, model: getOptionModel(v) })),
           );
         }}
       />
@@ -173,12 +171,9 @@ export const Select = <
   return (
     <RootSingleSelect
       {...(original as _RootSelectProps<"single">)}
-      onChange={(value: V | null) => {
+      onChange={(value: V) => {
         const fn = onChange as SelectChangeHandler<T, V, "single">;
-        if (value === null) {
-          return fn(null);
-        }
-        return fn(value, { value, model: getOptionModel(value) });
+        return fn(value, { value, model: (value ? getOptionModel(value) : null) as V extends null ? T | null : T });
       }}
     />
   );
