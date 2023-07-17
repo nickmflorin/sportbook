@@ -2,6 +2,8 @@
 @use "throw";
 @use "../functions" as fn;
 
+$spacing-sizes: ("xs", "sm", "md", "lg", "xl", "xxl", "xxxl");
+
 $spacing-xs: 4px;
 $spacing-sm: 8px;
 $spacing-md: 12px;
@@ -24,6 +26,11 @@ $spacing: (
   @if not map.has-key($spacing, $size) {
     @return throw.error("The provided size #{$size} is invalid.", $size: $size, $source: "get-spacing()");
   }
-
   @return fn.mapget($spacing, $size);
+}
+
+@mixin with-spacing() {
+  @each $size in $spacing-sizes {
+    @content ($size, get-spacing($size));
+  }
 }

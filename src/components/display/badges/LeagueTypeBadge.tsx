@@ -1,17 +1,17 @@
-import { type LeagueType, LeagueTypes } from "~/prisma";
+import { type LeagueType, LeagueTypes, type League } from "~/prisma";
 
 import { Badge, type BadgeProps } from "./Badge";
 
 export interface LeagueTypeBadgeProps extends Omit<BadgeProps, "color" | "backgroundColor" | "children"> {
-  readonly leagueType: LeagueType;
+  readonly value: LeagueType | Pick<League, "leagueType">;
 }
 
-export const LeagueTypeBadge = ({ leagueType, ...props }: LeagueTypeBadgeProps): JSX.Element => (
+export const LeagueTypeBadge = ({ value, ...props }: LeagueTypeBadgeProps): JSX.Element => (
   <Badge
     {...props}
-    color={LeagueTypes.getBadgeColor(leagueType)}
-    backgroundColor={LeagueTypes.getBadgeBackgroundColor(leagueType)}
+    color={LeagueTypes.getBadgeColor(typeof value === "string" ? value : value.leagueType)}
+    backgroundColor={LeagueTypes.getBadgeBackgroundColor(typeof value === "string" ? value : value.leagueType)}
   >
-    {LeagueTypes.getLabel(leagueType)}
+    {LeagueTypes.getLabel(typeof value === "string" ? value : value.leagueType)}
   </Badge>
 );

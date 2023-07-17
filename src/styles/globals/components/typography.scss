@@ -174,16 +174,10 @@ h6 {
     text-transform: uppercase;
   }
 
-  &--align-left {
-    justify-content: left;
-  }
-
-  &--align-center {
-    justify-content: center;
-  }
-
-  &--align-right {
-    justify-content: right;
+  @include partials.with-alignment() using ($alignment) {
+    &--align-#{$alignment} {
+      justify-content: $alignment;
+    }
   }
 
   > .icon {

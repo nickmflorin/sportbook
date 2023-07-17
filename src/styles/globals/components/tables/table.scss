@@ -1,3 +1,4 @@
+@use "sass:list";
 @use "partials";
 
 $table-sizes: ("sm", "md", "lg");
@@ -5,7 +6,7 @@ $table-sizes: ("sm", "md", "lg");
 $table-size-properties: (
   "sm": (
     th: (
-      padding: "3px 6px",
+      padding: 4px 6px,
       font: (
         type: "body",
         family: "avenir",
@@ -15,7 +16,7 @@ $table-size-properties: (
       ),
     ),
     td: (
-      padding: "3px 6px",
+      padding: 4px 6px,
       font: (
         type: "body",
         size: "md",
@@ -26,7 +27,7 @@ $table-size-properties: (
   ),
   "md": (
     th: (
-      padding: "4px 8px",
+      padding: 6px 8px,
       font: (
         type: "body",
         family: "avenir",
@@ -36,7 +37,7 @@ $table-size-properties: (
       ),
     ),
     td: (
-      padding: "4px 8px",
+      padding: 6px 8px,
       font: (
         type: "body",
         size: "md",
@@ -47,7 +48,7 @@ $table-size-properties: (
   ),
   "lg": (
     th: (
-      padding: "6px 10px",
+      padding: 8px 10px,
       font: (
         type: "body",
         family: "avenir",
@@ -57,7 +58,7 @@ $table-size-properties: (
       ),
     ),
     td: (
-      padding: "6px 10px",
+      padding: 8px 10px,
       font: (
         type: "body",
         size: "lg",
@@ -68,39 +69,53 @@ $table-size-properties: (
   ),
 );
 
-@mixin th($size) {
+@mixin th-size($size) {
   $properties: partials.mapget($table-size-properties, $size, "th");
   @include partials.font(partials.mapget($properties, "font")...);
   padding: partials.mapget($properties, "padding");
   background-color: partials.get-color("gray", $shade: 1);
 }
 
-@mixin td($size) {
+@mixin td-size($size) {
   $properties: partials.mapget($table-size-properties, $size, "td");
   @include partials.font(partials.mapget($properties, "font")...);
   padding: partials.mapget($properties, "padding");
 }
 
-@mixin table-th($size) {
+@mixin tr-size($size) {
+  $properties: partials.mapget($table-size-properties, $size, "td");
+  $line-height: partials.mapget($properties, font, line-height);
+  $vertical-padding: list.nth(partials.mapget($properties, "padding"), 1);
+  // Account for two lines of text in the row.
+  height: 2 * $line-height + 2 * $vertical-padding;
+}
+
+@mixin table-th {
   table {
     thead {
       tr {
         th {
-          @include th($size);
+          @content;
         }
       }
     }
   }
 }
 
-@mixin table-td($size) {
+@mixin table-tr {
   table {
     tbody {
       tr {
-        td {
-          @include td($size);
-        }
+        @content;
       }
+    }
+  }
+}
+
+@mixin table-td {
+  @include table-tr {
+    td {
+      @content;
     }
   }
 }
@@ -108,8 +123,15 @@ $table-size-properties: (
 .table {
   @each $size in $table-sizes {
     &--size-#{$size} {
-      @include table-th($size);
-      @include table-td($size);
+      @include table-tr {
+        @include tr-size($size);
+      }
+      @include table-th {
+        @include th-size($size);
+      }
+      @include table-td {
+        @include td-size($size);
+      }
     }
   }
 }

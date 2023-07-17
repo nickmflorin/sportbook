@@ -10,6 +10,15 @@ import { type ColorPropName } from "./colors";
 export const TypographySizes = enumeratedLiterals(["xxs", "xs", "sm", "md", "lg", "xl"] as const);
 export type TypographySize = EnumeratedLiteralType<typeof TypographySizes>;
 
+export const Spacings = enumeratedLiterals(["xs", "sm", "md", "lg", "xl", "xll", "xlll"] as const);
+export type Spacing = EnumeratedLiteralType<typeof Spacings>;
+
+export const Alignments = enumeratedLiterals(["left", "center", "right"] as const);
+export type Alignment = EnumeratedLiteralType<typeof Alignments>;
+
+export const Orientations = enumeratedLiterals(["horizontal", "vertical"] as const);
+export type Orientation = EnumeratedLiteralType<typeof Orientations>;
+
 export const FontWeights = enumeratedLiterals(["light", "regular", "medium", "semibold", "bold"] as const);
 export type FontWeight = EnumeratedLiteralType<typeof FontWeights>;
 

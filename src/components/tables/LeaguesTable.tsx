@@ -1,19 +1,18 @@
 import { type League } from "~/prisma";
-import { LeagueTypeBadge } from "~/components/display/badges";
-import { DateTimeDisplay } from "~/components/display/DateTimeDisplay";
-import { Text } from "~/components/typography";
+import { LeagueCompetitionLevelBadge, LeagueTypeBadge } from "~/components/display/badges";
+import { Text, DateTimeText } from "~/components/typography";
 
 import { DataTable, type DataTableProps, type Column } from "./DataTable";
 
-type LeagueTableLeagueFields = "name" | "description" | "leagueStart" | "leagueEnd" | "leagueType";
+type LeagueTableLeagueFields = "name" | "description" | "leagueStart" | "leagueEnd" | "leagueType" | "competitionLevel";
 export type LeagueDatum = Pick<League, LeagueTableLeagueFields>;
 
 export enum LeaguesTableColumn {
   NAME,
-  LEAGUE_START,
-  LEAGUE_END,
+  START,
+  END,
   LEAGUE_TYPE,
-  // COMPETITION_LEVEL,
+  COMPETITION_LEVEL,
   IS_PUBLIC,
 }
 
@@ -32,22 +31,28 @@ const LeaguesTableColumns: { [key in LeaguesTableColumn]: Column<LeagueDatum> } 
       </>
     ),
   },
-  [LeaguesTableColumn.LEAGUE_START]: {
+  [LeaguesTableColumn.START]: {
     title: "Starts",
     accessor: "leagueStart",
-    render: ({ leagueStart }) => (leagueStart ? <DateTimeDisplay value={leagueStart} /> : <></>),
+    render: ({ leagueStart }) => (leagueStart ? <DateTimeText value={leagueStart} /> : <></>),
   },
-  [LeaguesTableColumn.LEAGUE_END]: {
+  [LeaguesTableColumn.END]: {
     title: "Ends",
     accessor: "leagueEnd",
-    render: ({ leagueEnd }) => (leagueEnd ? <DateTimeDisplay value={leagueEnd} /> : <></>),
+    render: ({ leagueEnd }) => (leagueEnd ? <DateTimeText value={leagueEnd} /> : <></>),
   },
   [LeaguesTableColumn.IS_PUBLIC]: { accessor: "isPublic", title: "Public" },
   [LeaguesTableColumn.LEAGUE_TYPE]: {
     textAlignment: "center",
     accessor: "leagueType",
     title: "Type",
-    render: (c: LeagueDatum) => (c.leagueType ? <LeagueTypeBadge size="xs" leagueType={c.leagueType} /> : <></>),
+    render: (c: LeagueDatum) => <LeagueTypeBadge size="xs" value={c.leagueType} />,
+  },
+  [LeaguesTableColumn.COMPETITION_LEVEL]: {
+    textAlignment: "center",
+    accessor: "competitionLevel",
+    title: "Competition Level",
+    render: (c: LeagueDatum) => <LeagueCompetitionLevelBadge size="xs" value={c.competitionLevel} />,
   },
 };
 
@@ -60,8 +65,9 @@ export const LeaguesTable = <L extends LeagueDatum = LeagueDatum>({
   columns = [
     LeaguesTableColumn.NAME,
     LeaguesTableColumn.LEAGUE_TYPE,
-    LeaguesTableColumn.LEAGUE_START,
-    LeaguesTableColumn.LEAGUE_END,
+    LeaguesTableColumn.COMPETITION_LEVEL,
+    LeaguesTableColumn.START,
+    LeaguesTableColumn.END,
     LeaguesTableColumn.IS_PUBLIC,
   ],
   ...props

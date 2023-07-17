@@ -13,6 +13,7 @@ export interface TextProps extends ComponentProps {
   readonly children: string;
   readonly color?: Color;
   readonly size?: TypographySize;
+  readonly truncate?: boolean;
   readonly fontWeight?: FontWeight;
 }
 
@@ -24,6 +25,7 @@ export const Text = ({
   fontWeight,
   style,
   className,
+  truncate = false,
 }: TextProps): JSX.Element => (
   <div
     style={style}
@@ -32,6 +34,7 @@ export const Text = ({
       getColorClassName("color", color),
       `font-size-${size}`,
       fontWeight && `font-weight-${fontWeight}`,
+      { truncate },
       className,
     )}
   >

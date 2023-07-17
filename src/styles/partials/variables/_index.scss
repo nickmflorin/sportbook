@@ -2,3 +2,11 @@
 @forward "./components";
 @forward "./spacing";
 @forward "./typography";
+
+$alignments: (left, center, right);
+
+@mixin with-alignment {
+  @each $alignment in $alignments {
+    @content ($alignment);
+  }
+}

@@ -1,0 +1,43 @@
+@use "partials";
+
+@mixin horizontal-orientation() {
+  flex-direction: row;
+  @include partials.with-alignment() using ($alignment) {
+    &.flex--align-#{$alignment} {
+      text-align: $alignment;
+      justify-content: $alignment;
+    }
+  }
+}
+
+@mixin vertical-orientation() {
+  flex-direction: column;
+  @include partials.with-alignment() using ($alignment) {
+    &.flex--align-#{$alignment} {
+      text-align: $alignment;
+      align-items: $alignment;
+    }
+  }
+}
+
+.flex {
+  display: flex;
+
+  @include partials.without-selectors((vertical, horizontal), $prefix: ".flex--orientation-") {
+    @include horizontal-orientation();
+  }
+
+  &--orientation-vertical {
+    @include vertical-orientation();
+  }
+
+  &--orientation-horizontal {
+    @include horizontal-orientation();
+  }
+
+  @include partials.with-spacing() using ($size, $spacing) {
+    &.flex--gap-#{$size} {
+      gap: $spacing;
+    }
+  }
+}
