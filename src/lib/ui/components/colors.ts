@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { type EnumeratedLiteralType, enumeratedLiterals } from "~/lib/util/literals";
 
-type _ColorShade = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+type _ColorShade = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15;
 
 type ColorShade = _ColorShade | `${_ColorShade}`;
 

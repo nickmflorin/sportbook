@@ -1,7 +1,7 @@
 import { type Sport } from "~/prisma";
 import { prisma } from "~/prisma/client";
 import { LeaguesTableView } from "~/components/tables/LeaguesTableView";
-import { DataTableStyle } from "~/components/tables/types";
+import { DataTableSizes } from "~/components/tables/types";
 
 export interface LeagueSportsProps {
   readonly sport: Sport;
@@ -17,7 +17,7 @@ const SportLeagues = async ({ userId, sport }: LeagueSportsProps) => {
       title="Your Leagues"
       description="Leagues you are participating in."
       data={leagues}
-      tableStyle={DataTableStyle.SMALL}
+      size={DataTableSizes.SM}
     />
   );
 };

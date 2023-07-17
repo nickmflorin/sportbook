@@ -1,7 +1,9 @@
-import React, { useImperativeHandle, useState, useRef, useMemo } from "react";
+import React, { useImperativeHandle, useState, useRef } from "react";
 
-import { Menu, Flex, ActionIcon, type MenuProps, type MantineTheme, Loader, useMantineTheme } from "@mantine/core";
-import { IconDots, type TablerIconsProps } from "@tabler/icons-react";
+import { icons, type Color } from "~/lib/ui";
+import { Icon, IconOrSpinner } from "~/components/display/icons";
+import { EllipsisButton } from "~/components/buttons";
+import { Menu, Flex, type MenuProps } from "@mantine/core";
 
 type DataTableActionItem = {
   readonly setLoading: (v: boolean) => void;
@@ -42,18 +44,15 @@ export type DataTableAction = {
    */
   readonly hidden?: boolean;
   /**
-   * The color of the 'icon' ({@link React.ComponentType<TablerIconsProps>}) that is used in the
-   * {@link DataTableActionMenuItem}.  Can be provided as a string or a callback, taking the {@link MantineTheme} as its
-   * first and only argument.
+   * The color of the 'icon' ({@link Icon}) that is used in the {@link DataTableActionMenuItem}.
    *
    * Default: "gray.5"
    */
-  readonly iconColor?: string | ((t: MantineTheme) => string);
+  readonly iconColor?: Color;
   /**
-   * The optional icon, {@link React.ComponentType<TablerIconsProps>}, that should be rendered in the
-   * {@link DataTableActionMenuItem}.
+   * The optional icon, {@link icons.IconProp}, that should be rendered in the {@link DataTableActionMenuItem}.
    */
-  readonly icon?: React.ComponentType<TablerIconsProps>;
+  readonly icon?: icons.IconProp;
   /**
    * The text content of the {@link DataTableActionMenuItem}.
    */
@@ -85,12 +84,11 @@ const DataTableActionMenuItem = ({
   disabled,
   visible,
   hidden,
-  icon: Icon,
-  iconColor = (t: MantineTheme) => t.colors.gray[5],
+  icon,
+  iconColor = "gray.5",
   label,
   onClick,
 }: DataTableAction) => {
-  const theme = useMantineTheme();
   const [_loading, setLoading] = useState<boolean | undefined>(false);
   const menuItem = useRef<DataTableActionItem>(InitialDataTableActionItem);
 
@@ -102,20 +100,10 @@ const DataTableActionMenuItem = ({
 
   const isVisible = !(visible === false) && hidden !== true;
 
-  const iconComponent = useMemo(() => {
-    const _iconColor = typeof iconColor === "function" ? iconColor(theme) : iconColor;
-    if (isLoading) {
-      return <Loader size={16} color={_iconColor} />;
-    } else if (Icon) {
-      return <Icon stroke={1.8} size={16} color={_iconColor} />;
-    }
-    return <></>;
-  }, [Icon, isLoading, iconColor, theme]);
-
   if (isVisible) {
     return (
       <Menu.Item
-        icon={iconComponent}
+        icon={<IconOrSpinner color={iconColor} icon={icon} loading={isLoading} />}
         h="28px"
         onClick={e => {
           e.stopPropagation();
@@ -143,43 +131,24 @@ export interface DataTableActionMenuProps extends MenuProps {
  * A Menu implementation (with an ellipsis dropdown button) that can be used in the {@link DataTable} component to show
  * a series of actions that are associated with a given row in a dropdown menu.
  */
-export const DataTableActionMenu = ({ actions, ...props }: DataTableActionMenuProps) => {
-  const theme = useMantineTheme();
-
-  return (
-    <Menu
-      {...props}
-      styles={{
-        itemIcon: {
-          marginRight: theme.spacing.sm,
-        },
-      }}
-    >
-      <Menu.Target>
-        <Flex direction="column" align="center" justify="center">
-          <ActionIcon
-            variant="transparent"
-            size="xs"
-            color="gray.5"
-            sx={t => ({
-              /* We use the SVG selector to set the color such that the hover color takes affect when the ActionIcon is
-                 hovered.  If we do not use the > svg selector, and set the color on the Icon directly, the Icon will
-                 not change color when the ActionIcon is hovered. */
-              "> svg": {
-                color: t.colors.gray[5],
-              },
-              ...t.fn.hover({ "> svg": { color: t.colors.gray[6] } }),
-            })}
-          >
-            <IconDots size="xs" />
-          </ActionIcon>
-        </Flex>
-      </Menu.Target>
-      <Menu.Dropdown>
-        {actions.map((action, index) => (
-          <DataTableActionMenuItem key={index} {...action} />
-        ))}
-      </Menu.Dropdown>
-    </Menu>
-  );
-};
+export const DataTableActionMenu = ({ actions, ...props }: DataTableActionMenuProps) => (
+  <Menu
+    {...props}
+    styles={{
+      itemIcon: {
+        marginRight: "6px",
+      },
+    }}
+  >
+    <Menu.Target>
+      <Flex direction="column" align="center" justify="center">
+        <EllipsisButton />
+      </Flex>
+    </Menu.Target>
+    <Menu.Dropdown>
+      {actions.map((action, index) => (
+        <DataTableActionMenuItem key={index} {...action} />
+      ))}
+    </Menu.Dropdown>
+  </Menu>
+);

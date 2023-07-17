@@ -1,89 +1,27 @@
 import { useMemo } from "react";
+import classNames from "classnames";
 
-import { type MantineTheme, LoadingOverlay, ActionIcon, packSx, useMantineTheme } from "@mantine/core";
-import { IconPencil } from "@tabler/icons-react";
+import { LoadingOverlay } from "@mantine/core";
 import { DataTable as MantineDataTable, type DataTableProps as MantineDataTableProps } from "mantine-datatable";
-
+import { ClassName } from "~/lib/ui";
 import { ResponseFeedback, type ResponseFeedbackProps } from "~/components/feedback";
-
+import { EditTableRowButton } from "~/components/buttons";
 import { DataTableActionMenu, type DataTableAction } from "./DataTableActionMenu";
-import { DataTableStyle } from "./types";
 
-const DataTableStyleAttributes: {
-  [key in DataTableStyle]: (t: MantineTheme) => { th: React.CSSProperties; td: React.CSSProperties };
-} = {
-  [DataTableStyle.LARGE]: (theme: MantineTheme) => ({
-    th: {
-      fontWeight: theme.other.fontWeights.semibold,
-      fontSize: theme.fontSizes.md,
-      lineHeight: theme.other.textLineHeights.md,
-      padding: "8px 16px",
-    },
-    td: {
-      padding: "8px 16px",
-      fontSize: theme.fontSizes.md,
-      lineHeight: theme.other.textLineHeights.md,
-    },
-  }),
-  [DataTableStyle.MEDIUM]: (theme: MantineTheme) => ({
-    th: {
-      fontWeight: theme.other.fontWeights.medium,
-      fontSize: theme.fontSizes.sm,
-      lineHeight: theme.other.textLineHeights.sm,
-      padding: "4px 8px",
-    },
-    td: {
-      padding: "4px 8px",
-      fontSize: theme.fontSizes.sm,
-      lineHeight: theme.other.textLineHeights.sm,
-    },
-  }),
-  [DataTableStyle.SMALL]: (theme: MantineTheme) => ({
-    th: {
-      fontWeight: theme.other.fontWeights.medium,
-      fontSize: theme.fontSizes.xs,
-      lineHeight: theme.other.textLineHeights.xs,
-      padding: "3px 6px",
-    },
-    td: {
-      padding: "3px 6px",
-      fontSize: theme.fontSizes.xs,
-      lineHeight: theme.other.textLineHeights.xs,
-    },
-  }),
-};
+import { DataTableSize, DataTableSizes } from "./types";
 
 export type Column<T = unknown> = Exclude<MantineDataTableProps<T>["columns"], undefined>[number];
 
 export const EditRowColumn = <T extends Record<string, unknown>>({
   onRowEdit,
-  theme,
 }: {
   onRowEdit: (t: T) => void;
-  theme: MantineTheme;
 }): Column<T> => ({
   title: "",
   accessor: "",
   width: 40,
   textAlignment: "center",
-  render: (rowData: T) => (
-    <ActionIcon
-      variant="transparent"
-      onClick={() => onRowEdit(rowData)}
-      sx={t => ({
-        loader: { backgroundColor: "transparent" },
-        /* We use the SVG selector to set the color such that the hover color takes affect when the ActionIcon is
-           hovered.  If we do not use the > svg selector, and set the color on the Icon directly, the Icon will not
-           change color when the ActionIcon is hovered. */
-        "> svg": {
-          color: theme.colors.blue[6],
-        },
-        ...t.fn.hover({ "> svg": { color: theme.colors.blue[5] } }),
-      })}
-    >
-      <IconPencil stroke={1.5} size={16} />
-    </ActionIcon>
-  ),
+  render: (rowData: T) => <EditTableRowButton onClick={() => onRowEdit(rowData)} />,
 });
 
 export const ActionMenuColumn = <T extends Record<string, unknown>>({
@@ -104,8 +42,9 @@ export const ActionMenuColumn = <T extends Record<string, unknown>>({
    correct form of LocalFeedback. */
 export type DataTableProps<T> = Pick<MantineDataTableProps<T>, "columns" | "sx"> &
   Omit<ResponseFeedbackProps, "isEmpty" | "overlay"> & {
-    readonly tableStyle?: DataTableStyle;
+    readonly size?: DataTableSize;
     readonly data: T[];
+    readonly className?: ClassName;
     readonly onRowEdit?: (t: T) => void;
     readonly actionMenu?: (t: T) => DataTableAction[];
   };
@@ -116,20 +55,19 @@ export const DataTable = <T extends Record<string, unknown>>({
   emptyMessage,
   noResultsMessage,
   isFiltered,
-  tableStyle = DataTableStyle.MEDIUM,
+  size = DataTableSizes.SM,
   columns,
   data,
+  className,
   onRowEdit,
   actionMenu,
   ...props
 }: DataTableProps<T>) => {
-  const theme = useMantineTheme();
-
   const _columns = useMemo(() => {
     if (columns) {
       let cs = [...columns];
       if (onRowEdit) {
-        return [...cs, EditRowColumn({ onRowEdit, theme })];
+        return [...cs, EditRowColumn({ onRowEdit })];
       }
       if (actionMenu) {
         cs = [...cs, ActionMenuColumn({ actionMenu })];
@@ -137,7 +75,7 @@ export const DataTable = <T extends Record<string, unknown>>({
       return cs;
     }
     return undefined;
-  }, [columns, theme, onRowEdit, actionMenu]);
+  }, [columns, onRowEdit, actionMenu]);
 
   /* Mantine's <DataTable /> component defines the props as a set of base props intersected with a bunch of
      supplementary props, such as 'DataTableEmptyStateProps', each of which is a union type.  This introduces typing
@@ -148,6 +86,8 @@ export const DataTable = <T extends Record<string, unknown>>({
     highlightOnHover: true,
     withBorder: false,
     height: "100%",
+    className: classNames("table", `table--size-${size}`, className),
+    // TODO: Replace with a custom LoadingOverlay.
     customLoader: <LoadingOverlay visible={true} />,
     /* Here, we use the ResponseFeedback to show alerts that pertain to an empty state, an error state and a no results
        state (i.e. filters are applied and there is no data, but there is data without filters applied). */
@@ -164,32 +104,6 @@ export const DataTable = <T extends Record<string, unknown>>({
     ...props,
     records: data,
     columns: _columns,
-    sx: [
-      theme => ({
-        table: {
-          thead: {
-            background: theme.colors.gray[0],
-            tr: {
-              th: {
-                borderBottom: "none",
-                background: theme.colors.gray[0],
-                color: theme.colors.gray[7],
-                ...DataTableStyleAttributes[tableStyle](theme).th,
-              },
-            },
-          },
-          tbody: {
-            tr: {
-              td: {
-                color: theme.colors.black,
-                ...DataTableStyleAttributes[tableStyle](theme).td,
-              },
-            },
-          },
-        },
-      }),
-      ...packSx(props.sx),
-    ],
   } as MantineDataTableProps<T>;
 
   return <MantineDataTable<T> {...rootProps} />;

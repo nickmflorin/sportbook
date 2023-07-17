@@ -249,117 +249,180 @@ $button-state-names: ("hovered", "focused", "disabled");
 $themes: (
   "danger": (
     base: colors.get-color("red", $shade: 12),
-    states: (
-      hovered: colors.get-color("red", $shade: 14),
-      focused: colors.get-color("red", $shade: 14),
-      disabled: colors.get-color("red", $shade: 4),
-    ),
+    hovered: colors.get-color("red", $shade: 14),
+    focused: colors.get-color("red", $shade: 14),
+    disabled: colors.get-color("red", $shade: 4),
   ),
   "primary": (
     base: colors.get-color("blue", $shade: 12),
-    states: (
-      hovered: colors.get-color("blue", $shade: 14),
-      focused: colors.get-color("blue", $shade: 14),
-      disabled: colors.$disabled-color,
-    ),
+    hovered: colors.get-color("blue", $shade: 14),
+    focused: colors.get-color("blue", $shade: 14),
+    disabled: colors.$disabled-color,
   ),
   "secondary": (
     base: colors.get-color("gray", $shade: 2),
-    states: (
-      hovered: colors.get-color("gray", $shade: 4),
-      focused: colors.get-color("gray", $shade: 4),
-      disabled: colors.$disabled-color,
-    ),
+    hovered: colors.get-color("gray", $shade: 4),
+    focused: colors.get-color("gray", $shade: 4),
+    disabled: colors.$disabled-color,
   ),
   "bare": (),
 );
 
-$background-properties: (background-color, outline-color);
-$foreground-properties: (color);
-
-@function set-bg-colors($data, $c, $keys...) {
-  @each $p in $background-properties {
-    $data: map.set($data, $keys..., $p, $c);
-  }
-  @return $data;
-}
-
-@function set-fg-colors($data, $c, $keys...) {
-  @each $p in $foreground-properties {
-    $data: map.set($data, $keys..., $p, $c);
-  }
-  @return $data;
-}
-
-@function bg-color-theme($variant, $foreground: null) {
-  $theme-obj: fn.mapget($themes, fn.validate-value($variant, $button-variants));
-
-  $colors: ();
-  @if $foreground {
-    $colors: set-fg-colors($colors, $foreground);
-  }
-  @if map.has-key($theme-obj, "base") {
-    $colors: set-bg-colors($colors, fn.mapget($theme-obj, "base"));
-  }
-  @if map.has-key($theme-obj, "states") {
-    @each $state in map.keys(fn.mapget($theme-obj, "states")) {
-      $colors: map.set($colors, $state, set-bg-colors((), fn.mapget($theme-obj, "states", $state)));
-    }
-  }
-  @return $colors;
-}
-
-@function fg-color-theme($variant, $background: null) {
-  $theme-obj: fn.mapget($themes, fn.validate-value($variant, $button-variants));
-
-  $colors: ();
-  @if $background {
-    $colors: set-bg-colors($colors, $background);
-  }
-  @if map.has-key($theme-obj, "base") {
-    $colors: set-fg-colors($colors, fn.mapget($theme-obj, "base"));
-  }
-  @if map.has-key($theme-obj, "states") {
-    @each $state in map.keys(fn.mapget($theme-obj, "states")) {
-      $colors: map.set($colors, $state, set-fg-colors((), fn.mapget($theme-obj, "states", $state)));
-    }
-  }
-  @return $colors;
-}
-
-@function get-color-scheme($type, $variant) {
-  $type: fn.validate-value($type, $button-types);
-  $variant: fn.validate-value($variant, $button-variants);
-  @if $type == "solid" {
-    @return bg-color-theme(
-      $variant,
-      $foreground:
-        map.get(
-          (
-            "primary": colors.get-color("white"),
-            "secondary": colors.get-color("gray", $shade: 8),
-            "danger": colors.get-color("white"),
-          ),
-          $variant
-        )
-    );
-  } @else if $type == "alternate" {
-    @return fg-color-theme($variant, $background: colors.$transparent);
-  } @else if $type == "action" {
-    @return bg-color-theme(
-      $variant,
-      $foreground:
-        map.get(
-          (
-            "primary": colors.get-color("white"),
-            "secondary": colors.get-color("gray", $shade: 8),
-            "danger": colors.get-color("white"),
-          ),
-          $variant
-        )
-    );
-  }
-}
+$button-color-properties: (
+  "solid": (
+    "primary": (
+      background-color: fn.mapget($themes, "primary", "base"),
+      color: colors.$white,
+      outline-color: fn.mapget($themes, "primary", "base"),
+      hovered: (
+        background-color: fn.mapget($themes, "primary", "hovered"),
+        outline-color: fn.mapget($themes, "primary", "hovered"),
+      ),
+      focused: (
+        background-color: fn.mapget($themes, "primary", "focused"),
+        outline-color: fn.mapget($themes, "primary", "focused"),
+      ),
+      disabled: (
+        background-color: fn.mapget($themes, "primary", "disabled"),
+        outline-color: fn.mapget($themes, "primary", "disabled"),
+      ),
+    ),
+    "secondary": (
+      background-color: fn.mapget($themes, "secondary", "base"),
+      color: colors.get-color("gray", $shade: 8),
+      outline-color: fn.mapget($themes, "secondary", "base"),
+      hovered: (
+        background-color: fn.mapget($themes, "secondary", "hovered"),
+        outline-color: fn.mapget($themes, "secondary", "hovered"),
+      ),
+      focused: (
+        background-color: fn.mapget($themes, "secondary", "focused"),
+        outline-color: fn.mapget($themes, "secondary", "focused"),
+      ),
+      disabled: (
+        background-color: fn.mapget($themes, "secondary", "disabled"),
+        outline-color: fn.mapget($themes, "secondary", "disabled"),
+      ),
+    ),
+    "danger": (
+      background-color: fn.mapget($themes, "danger", "base"),
+      color: colors.$white,
+      outline-color: fn.mapget($themes, "danger", "base"),
+      hovered: (
+        background-color: fn.mapget($themes, "danger", "hovered"),
+        outline-color: fn.mapget($themes, "danger", "hovered"),
+      ),
+      focused: (
+        background-color: fn.mapget($themes, "danger", "focused"),
+        outline-color: fn.mapget($themes, "danger", "focused"),
+      ),
+      disabled: (
+        background-color: fn.mapget($themes, "danger", "disabled"),
+        outline-color: fn.mapget($themes, "danger", "disabled"),
+      ),
+    ),
+    "bare": (),
+  ),
+  "action": (
+    "primary": (
+      background-color: fn.mapget($themes, "primary", "base"),
+      color: colors.$white,
+      outline-color: fn.mapget($themes, "primary", "base"),
+      hovered: (
+        background-color: fn.mapget($themes, "primary", "hovered"),
+        outline-color: fn.mapget($themes, "primary", "hovered"),
+      ),
+      focused: (
+        background-color: fn.mapget($themes, "primary", "focused"),
+        outline-color: fn.mapget($themes, "primary", "focused"),
+      ),
+      disabled: (
+        background-color: fn.mapget($themes, "primary", "disabled"),
+        outline-color: fn.mapget($themes, "primary", "disabled"),
+      ),
+    ),
+    "secondary": (
+      background-color: fn.mapget($themes, "secondary", "base"),
+      color: colors.get-color("gray", $shade: 8),
+      outline-color: fn.mapget($themes, "secondary", "base"),
+      hovered: (
+        background-color: fn.mapget($themes, "secondary", "hovered"),
+        outline-color: fn.mapget($themes, "secondary", "hovered"),
+      ),
+      focused: (
+        background-color: fn.mapget($themes, "secondary", "focused"),
+        outline-color: fn.mapget($themes, "secondary", "focused"),
+      ),
+      disabled: (
+        background-color: fn.mapget($themes, "secondary", "disabled"),
+        outline-color: fn.mapget($themes, "secondary", "disabled"),
+      ),
+    ),
+    "danger": (
+      background-color: fn.mapget($themes, "danger", "base"),
+      color: colors.$white,
+      outline-color: fn.mapget($themes, "danger", "base"),
+      hovered: (
+        background-color: fn.mapget($themes, "danger", "hovered"),
+        outline-color: fn.mapget($themes, "danger", "hovered"),
+      ),
+      focused: (
+        background-color: fn.mapget($themes, "danger", "focused"),
+        outline-color: fn.mapget($themes, "danger", "focused"),
+      ),
+      disabled: (
+        background-color: fn.mapget($themes, "danger", "disabled"),
+        outline-color: fn.mapget($themes, "danger", "disabled"),
+      ),
+    ),
+    "bare": (),
+  ),
+  "alternate": (
+    "primary": (
+      background-color: colors.$transparent,
+      color: fn.mapget($themes, "primary", "base"),
+      outline-color: colors.$transparent,
+      hovered: (
+        color: fn.mapget($themes, "primary", "hovered"),
+      ),
+      focused: (
+        color: fn.mapget($themes, "primary", "focused"),
+      ),
+      disabled: (
+        color: fn.mapget($themes, "primary", "disabled"),
+      ),
+    ),
+    "secondary": (
+      background-color: colors.$transparent,
+      color: colors.get-color("gray", $shade: 8),
+      outline-color: colors.$transparent,
+      hovered: (
+        color: colors.get-color("gray", $shade: 9),
+      ),
+      focused: (
+        color: colors.get-color("gray", $shade: 9),
+      ),
+      disabled: (
+        color: fn.mapget($themes, "secondary", "disabled"),
+      ),
+    ),
+    "danger": (
+      background-color: colors.$transparent,
+      color: fn.mapget($themes, "danger", "base"),
+      outline-color: colors.$transparent,
+      hovered: (
+        color: fn.mapget($themes, "danger", "hovered"),
+      ),
+      focused: (
+        color: fn.mapget($themes, "danger", "focused"),
+      ),
+      disabled: (
+        color: fn.mapget($themes, "danger", "disabled"),
+      ),
+    ),
+    "bare": (),
+  ),
+);
 
 @function parse-state-colors($attributes, $state-name, $args...) {
   $state-name: fn.validate-value($state-name, $button-state-names);
@@ -399,7 +462,7 @@ $foreground-properties: (color);
         $variant: $variant
       );
     } @else {
-      $colors: get-color-scheme($type, $variant);
+      $colors: fn.mapget($button-color-properties, $type, $variant);
       @include button-colors($colors...);
     }
   } @else {
