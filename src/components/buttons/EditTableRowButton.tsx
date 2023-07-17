@@ -2,8 +2,10 @@ import { icons } from "~/lib/ui";
 
 import { ActionButton, type ActionButtonPolymorphicProps } from "./ActionButton";
 
-export interface EditTableRowButtonProps
-  extends Omit<ActionButtonPolymorphicProps<"bare">, "icon" | "color" | "hoveredColor" | "focusedColor"> {}
+export type EditTableRowButtonProps = Omit<
+  ActionButtonPolymorphicProps<"bare">,
+  "icon" | "color" | "hoveredColor" | "focusedColor"
+>;
 
 export const EditTableRowButton = (props: EditTableRowButtonProps) => (
   <ActionButton.Bare

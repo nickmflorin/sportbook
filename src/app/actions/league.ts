@@ -9,12 +9,6 @@ import { ActionError, ActionErrorCodes } from "./errors";
 
 export const createLeague = async ({ locations, ...data }: z.output<typeof LeagueSchema>) => {
   const user = await getAuthUser();
-  if (!user) {
-    throw new ActionError({
-      message: "You must be authenticated to create a League.",
-      code: ActionErrorCodes.NOT_AUTHENTICATED,
-    });
-  }
   return await prisma.$transaction(
     async tx => {
       if (user) {
@@ -46,7 +40,12 @@ export const createLeague = async ({ locations, ...data }: z.output<typeof Leagu
             ...newLocations.map(loc => loc.id),
           ].map(locationId => ({ leagueId: league.id, locationId, assignedById: user.id })),
         });
+        return league;
       }
+      throw new ActionError({
+        message: "You must be authenticated to create a League.",
+        code: ActionErrorCodes.NOT_AUTHENTICATED,
+      });
     },
     { isolationLevel: Prisma.TransactionIsolationLevel.ReadUncommitted },
   );

@@ -3,11 +3,10 @@ import React, { useState } from "react";
 
 import { TextInput, Switch } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import { zodResolver } from "@mantine/form";
 
 import type * as z from "zod";
 
-import { LeagueCompetitionLevel, LeagueType, LeagueSchema } from "~/prisma";
+import { type LeagueSchema } from "~/prisma";
 import { Form, type FormProps } from "~/components/forms";
 import { CreateLocationForm } from "~/components/forms/CreateLocationForm";
 import { LeagueTypeSelect, LeagueCompetitionLevelSelect, SportSelect, LocationsChooser } from "~/components/input";
@@ -19,30 +18,14 @@ import { ManagedDrawers } from "./ManagedDrawers";
 export type LeagueFormInput = z.input<typeof LeagueSchema>;
 export type LeagueFormOutput = z.output<typeof LeagueSchema>;
 
-export type CreateLeagueDrawerProps = Omit<FormProps<LeagueFormInput, LeagueFormOutput>, "children" | "form"> & {
+export type CreateLeagueDrawerProps = Omit<FormProps<LeagueFormInput, LeagueFormOutput>, "children"> & {
   readonly open: boolean;
   readonly onClose?: () => void;
 };
 
-export const getInitialValues = (): z.input<typeof LeagueSchema> => ({
-  name: "",
-  description: "",
-  competitionLevel: LeagueCompetitionLevel.SOCIAL,
-  leagueType: LeagueType.PICKUP,
-  sport: null,
-  locations: [],
-  leagueStart: null,
-  leagueEnd: null,
-});
-
-export const CreateLeagueDrawer = ({ action, open, onClose, ...props }: CreateLeagueDrawerProps): JSX.Element => {
+export const CreateLeagueDrawer = ({ action, open, form, onClose, ...props }: CreateLeagueDrawerProps): JSX.Element => {
   const [hasFiniteDuration, setHasFiniteDuration] = useState(false);
   const handler = useManagedDrawers<"locations">();
-
-  const form = Form.useForm<LeagueFormInput, LeagueFormOutput>({
-    validate: zodResolver(LeagueSchema),
-    initialValues: getInitialValues(),
-  });
 
   return (
     <ManagedDrawers
@@ -81,8 +64,8 @@ export const CreateLeagueDrawer = ({ action, open, onClose, ...props }: CreateLe
               <Switch
                 onChange={e => {
                   if (e.target.checked === false) {
-                    form.setFieldValue("leagueStart", getInitialValues().leagueStart);
-                    form.setFieldValue("leagueEnd", getInitialValues().leagueEnd);
+                    form.setFieldValue("leagueStart", form.getInitialValues().leagueStart);
+                    form.setFieldValue("leagueEnd", form.getInitialValues().leagueEnd);
                   }
                   setHasFiniteDuration(e.target.checked);
                 }}

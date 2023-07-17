@@ -4,7 +4,7 @@ import classNames from "classnames";
 
 import { type icons, type CSSDirection, CSSDirections } from "~/lib/ui";
 import { type ButtonType, type ButtonTypes } from "~/components/buttons";
-import { IconOrSpinner } from "~/components/display/icons";
+import { Icon } from "~/components/display/icons";
 
 import { Button, type ButtonProps } from "./Button";
 
@@ -26,9 +26,9 @@ const ButtonContent = ({
   children,
 }: ButtonContentProps): JSX.Element => (
   <div className="button__content">
-    {iconLocation === CSSDirections.LEFT && (icon || loading) && (
+    {iconLocation === CSSDirections.LEFT && (icon !== undefined || loading === true) && (
       <div className="button__icon-or-spinner-wrapper">
-        <IconOrSpinner icon={icon} loading={loading} />
+        <Icon icon={icon} loading={loading} />
       </div>
     )}
     {/* In cases where the text characteristics are altered on user interaction events (such as making the text bold
@@ -44,9 +44,9 @@ const ButtonContent = ({
     >
       {children}
     </div>
-    {iconLocation === CSSDirections.RIGHT && (icon || loading) && (
+    {iconLocation === CSSDirections.RIGHT && (icon !== undefined || loading === true) && (
       <div className="button__icon-or-spinner-wrapper">
-        <IconOrSpinner icon={icon} loading={loading} />
+        <Icon icon={icon} loading={loading} />
       </div>
     )}
   </div>

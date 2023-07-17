@@ -1,9 +1,10 @@
 import React, { useImperativeHandle, useState, useRef } from "react";
 
-import { icons, type Color } from "~/lib/ui";
-import { Icon, IconOrSpinner } from "~/components/display/icons";
-import { EllipsisButton } from "~/components/buttons";
 import { Menu, Flex, type MenuProps } from "@mantine/core";
+
+import { type icons, type Color } from "~/lib/ui";
+import { EllipsisButton } from "~/components/buttons";
+import { Icon, IconOrSpinner } from "~/components/display/icons";
 
 type DataTableActionItem = {
   readonly setLoading: (v: boolean) => void;

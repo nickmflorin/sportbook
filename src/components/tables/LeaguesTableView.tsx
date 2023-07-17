@@ -1,13 +1,15 @@
 "use client";
 import dynamic from "next/dynamic";
-import { experimental_useOptimistic as useOptimistic } from "react";
+import { useState } from "react";
 
 import { randomId, useDisclosure } from "@mantine/hooks";
 
+import { type League } from "~/prisma";
 import { SolidButton } from "~/components/buttons";
+import { hooks } from "~/components/forms";
 import { createLeague } from "~/app/actions/league";
 
-import { LeaguesTable, type LeaguesTableProps, type LeagueDatum } from "./LeaguesTable";
+import { LeaguesTable, type LeaguesTableProps } from "./LeaguesTable";
 import { TableView, type TableViewProps } from "./TableView";
 
 const CreateLeagueDrawer = dynamic(() =>
@@ -15,8 +17,10 @@ const CreateLeagueDrawer = dynamic(() =>
 );
 
 export interface LeaguesTableViewProps
-  extends Omit<LeaguesTableProps<LeagueDatum>, "style" | "className" | "sx">,
-    Pick<TableViewProps, "title" | "description" | "actions" | "className" | "style"> {}
+  extends Omit<LeaguesTableProps<League>, "style" | "className" | "sx" | "data">,
+    Pick<TableViewProps, "title" | "description" | "actions" | "className" | "style"> {
+  readonly data: League[];
+}
 
 export const LeaguesTableView = ({
   data,
@@ -28,11 +32,9 @@ export const LeaguesTableView = ({
   ...props
 }: LeaguesTableViewProps): JSX.Element => {
   const [createLeagueDrawerOpen, { open: openLeagueDrawer, close: closeLeaguesDrawer }] = useDisclosure(false);
-  const [optimisticLeagues, addOptimisticLeague] = useOptimistic<LeagueDatum[], LeagueDatum>(
-    data,
-    // Unsaved optimistically added rows need to be given an ID to avoid unique key errors w React.
-    (state, newLeague) => [...state, { id: `unsaved-league-${randomId()}`, ...newLeague }],
-  );
+  const [leagues, setLeagues] = useState<League[]>(data);
+  const form = hooks.useLeagueForm();
+
   return (
     <>
       <TableView
@@ -47,13 +49,15 @@ export const LeaguesTableView = ({
           </SolidButton.Primary>,
         ]}
       >
-        <LeaguesTable {...props} data={optimisticLeagues} />
+        <LeaguesTable {...props} data={leagues} />
       </TableView>
       <CreateLeagueDrawer
+        form={form}
         open={createLeagueDrawerOpen}
-        action={async data => {
-          addOptimisticLeague(data);
-          await createLeague(data);
+        action={async leagueData => {
+          const result = await createLeague(leagueData);
+          form.reset();
+          setLeagues((leagues: League[]) => [...leagues, result]);
         }}
         onClose={() => closeLeaguesDrawer()}
         onCancel={() => closeLeaguesDrawer()}

@@ -1,5 +1,6 @@
-import { BaseSolidButton, type BaseSolidButtonProps } from "./BaseSolidButton";
 import { ButtonVariants } from "../types";
+
+import { BaseSolidButton, type BaseSolidButtonProps } from "./BaseSolidButton";
 
 export type DangerButtonProps = Omit<BaseSolidButtonProps<typeof ButtonVariants.DANGER>, "variant">;
 

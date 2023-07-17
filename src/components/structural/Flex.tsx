@@ -1,8 +1,8 @@
 import { type ReactNode } from "react";
 
-import { ComponentProps, Spacing, Alignment, Orientation } from "~/lib/ui";
-import { EnumeratedLiteralType, enumeratedLiterals } from "~/lib/util/literals";
 import classNames from "classnames";
+
+import { type ComponentProps, type Spacing, type Alignment, type Orientation } from "~/lib/ui";
 
 export interface FlexProps extends ComponentProps {
   readonly align?: Alignment;

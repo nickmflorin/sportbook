@@ -7,10 +7,12 @@ import { type Optional } from "utility-types";
 import { getColorClassName, icons } from "~/lib/ui";
 import { SizeAxes, SizeContains } from "~/lib/ui/types";
 
-export type SpinnerProps = Omit<icons.IconComponentProps, "spin" | "icon" | "contain">;
+export type SpinnerProps = Omit<icons.IconComponentProps, "spin" | "icon" | "contain" | "loading"> & {
+  readonly loading: boolean;
+};
 
 export const Spinner = ({ color = "blue.6", loading, ...props }: SpinnerProps): JSX.Element =>
-  loading ? (
+  loading === true ? (
     <_IconComponent
       {...props}
       color={color}
@@ -64,11 +66,16 @@ function _IconComponent({
   );
 }
 
-const ForwardedIconComponent = forwardRef((props: icons.IconComponentProps, ref: ForwardedRef<SVGSVGElement>) => (
+const IconComponent = forwardRef((props: icons.IconComponentProps, ref: ForwardedRef<SVGSVGElement>) => (
   <_IconComponent {...props} ref={ref} />
 )) as typeof _IconComponent;
 
-export const IconComponent = React.memo(ForwardedIconComponent);
+const _Icon = forwardRef(function Icon({ icon, ...props }: icons.IconProps, ref: ForwardedRef<SVGSVGElement>) {
+  if (icons.isIconElement(icon)) {
+    return icons.mergeIconElementWithProps(icon, props);
+  }
+  return <IconComponent {...props} ref={ref} icon={icon} />;
+});
 
 /**
  * Renders a FontAwesome icon based on the provided `icon` prop.
@@ -103,16 +110,11 @@ export const IconComponent = React.memo(ForwardedIconComponent);
  * ReactDOM.render(finalIcon, document.getElementById("#root"));
  * "<svg class="icon--previous icon--button">...</svg>"
  */
-const _Icon = forwardRef(function Icon({ icon, ...props }: icons.IconProps, ref: ForwardedRef<SVGSVGElement>) {
-  if (icons.isIconElement(icon)) {
-    return icons.mergeIconElementWithProps(icon, props);
-  }
-  return <IconComponent {...props} ref={ref} icon={icon} />;
-});
-
-/* It is important that we define the displayName and name such that the `_Icon` component above can properly determine
-   whether or not the provided prop is an actual <Icon /> element or the prefix/name traditional specification. */
-export const Icon = Object.assign(React.memo(_Icon), { displayName: "Icon", name: "Icon" });
-
-export const IconOrSpinner = ({ icon, loading, ...props }: Optional<icons.IconProps, "icon">): JSX.Element =>
-  icon !== undefined ? <Icon {...props} icon={icon} /> : loading === true ? <Spinner {...props} /> : <></>;
+export const Icon = ({ icon, loading, ...props }: Optional<icons.IconProps, "icon">): JSX.Element =>
+  icon !== undefined ? (
+    <_Icon {...props} loading={loading} icon={icon} />
+  ) : loading !== undefined ? (
+    <Spinner loading={loading} {...props} />
+  ) : (
+    <></>
+  );

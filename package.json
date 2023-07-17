@@ -71,6 +71,7 @@
     "superjson": "^1.12.4",
     "swr": "^2.2.0",
     "typescript": "5.1.6",
+    "uuid": "^9.0.0",
     "zod": "^3.21.4"
   },
   "devDependencies": {
@@ -91,6 +92,7 @@
     "@types/npm": "^7.19.0",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
+    "@types/uuid": "^9.0.2",
     "@typescript-eslint/eslint-plugin": "^5.59.6",
     "@typescript-eslint/parser": "^5.59.6",
     "cross-env": "^7.0.3",

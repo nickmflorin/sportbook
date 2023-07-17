@@ -1,8 +1,9 @@
-import { BareButton, BareButtonProps } from "./BareButton";
-import { PrimaryButton, PrimaryButtonProps } from "./PrimaryButton";
-import { SecondaryButton, SecondaryButtonProps } from "./SecondaryButton";
-import { DangerButton, DangerButtonProps } from "./DangerButton";
 import { type ButtonVariant, ButtonVariants } from "~/components/buttons";
+
+import { BareButton, type BareButtonProps } from "./BareButton";
+import { DangerButton, type DangerButtonProps } from "./DangerButton";
+import { PrimaryButton, type PrimaryButtonProps } from "./PrimaryButton";
+import { SecondaryButton, type SecondaryButtonProps } from "./SecondaryButton";
 
 export type SolidButtonPolymorphicProps<V extends ButtonVariant> = {
   bare: BareButtonProps;

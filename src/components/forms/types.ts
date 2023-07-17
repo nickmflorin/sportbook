@@ -30,6 +30,7 @@ export type FormInstance<I extends BaseFormValues = DefaultFormValues, O extends
   UseFormReturnType<I, (v: I) => O>,
   "getInputProps" | "onSubmit"
 > & {
+  readonly getInitialValues: () => I;
   /* The @mantine/form package types the errors for each field as "any" - for now, we will assume they are either a
      single string or an array of strings, and make an assertion as such.  We may need to expand this type in the
      future. */

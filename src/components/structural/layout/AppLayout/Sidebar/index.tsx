@@ -1,6 +1,7 @@
 "use client";
-import { createLeadingPathRegex } from "~/lib/util/paths";
 import { icons } from "~/lib/ui";
+import { createLeadingPathRegex } from "~/lib/util/paths";
+
 import { SidebarItem, type SidebarItemConfig } from "./SidebarItem";
 
 const SidebarItems: SidebarItemConfig[] = [

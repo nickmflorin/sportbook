@@ -1,9 +1,10 @@
-import { BaseSolidButton, type BaseSolidButtonProps } from "./BaseSolidButton";
-import { ButtonVariants } from "../types";
-
 import classNames from "classnames";
 
 import { getColorClassName, type Color } from "~/lib/ui";
+
+import { ButtonVariants } from "../types";
+
+import { BaseSolidButton, type BaseSolidButtonProps } from "./BaseSolidButton";
 
 export type BareButtonProps = Omit<BaseSolidButtonProps<typeof ButtonVariants.BARE>, "variant"> & {
   readonly color?: Color;

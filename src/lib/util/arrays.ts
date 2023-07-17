@@ -49,3 +49,33 @@ export const findDuplicates = <T extends ArrayPrimitive>(arr: T[], compare?: (a:
   const count = countInArray(arr, compare);
   return count.filter((c: ArrayCount<T>) => c.count > 1).map((c: ArrayCount<T>) => c.value);
 };
+
+/**
+ * Replaces the provided 'value' in the array, {@link T[]}, if the 'value' exists in the array.  Returns the potentially
+ * updated array with an indication of whether or not the value was replaced.
+ *
+ * @template {T} Element The type of the elements inside of the array.
+ *
+ * @param {T[]} arr The array for which the value should be appended to or replaced in.
+ *
+ * @param {T | ((v: P) => T)} value
+ *   The value that should be inserted into the array in place of a potentially existing value.  If the value being
+ *   inserted into the array {@link T[]}, depends on the potentially existing value in the array, {@link T}, this
+ *    parameter can be provided as a callback.
+ *
+ * @param {(v: T) => boolean} predicate Indicates whether or not the value exists in the array.
+ *
+ * @returns {T[]}
+ */
+export const replaceInArray = <T extends Record<string, unknown> | string | number, P extends T>(
+  arr: T[],
+  value: T | ((v: P) => T),
+  predicate: ((v: T) => v is P) | ((v: T) => boolean),
+): [boolean, T[]] => {
+  const ind = arr.findIndex((v: T) => predicate(v) === true);
+  if (ind !== -1) {
+    const currentV = arr[ind] as P;
+    return [true, [...arr.slice(0, ind), typeof value === "function" ? value(currentV) : value, ...arr.slice(ind + 1)]];
+  }
+  return [false, arr];
+};

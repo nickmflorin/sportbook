@@ -1,8 +1,9 @@
-import { BareAlternateButton, BareAlternateButtonProps } from "./BareAlternateButton";
-import { PrimaryAlternateButton, PrimaryAlternateButtonProps } from "./PrimaryAlternateButton";
-import { SecondaryAlternateButton, SecondaryAlternateButtonProps } from "./SecondaryAlternateButton";
-import { DangerAlternateButton, DangerAlternateButtonProps } from "./DangerAlternateButton";
 import { type ButtonVariant, ButtonVariants } from "~/components/buttons";
+
+import { BareAlternateButton, type BareAlternateButtonProps } from "./BareAlternateButton";
+import { DangerAlternateButton, type DangerAlternateButtonProps } from "./DangerAlternateButton";
+import { PrimaryAlternateButton, type PrimaryAlternateButtonProps } from "./PrimaryAlternateButton";
+import { SecondaryAlternateButton, type SecondaryAlternateButtonProps } from "./SecondaryAlternateButton";
 
 export type AlternateButtonPolymorphicProps<V extends ButtonVariant> = {
   bare: BareAlternateButtonProps;

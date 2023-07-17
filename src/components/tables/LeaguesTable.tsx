@@ -4,7 +4,14 @@ import { Text, DateTimeText } from "~/components/typography";
 
 import { DataTable, type DataTableProps, type Column } from "./DataTable";
 
-type LeagueTableLeagueFields = "name" | "description" | "leagueStart" | "leagueEnd" | "leagueType" | "competitionLevel";
+type LeagueTableLeagueFields =
+  | "id"
+  | "name"
+  | "description"
+  | "leagueStart"
+  | "leagueEnd"
+  | "leagueType"
+  | "competitionLevel";
 export type LeagueDatum = Pick<League, LeagueTableLeagueFields>;
 
 export enum LeaguesTableColumn {

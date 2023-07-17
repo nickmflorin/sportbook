@@ -3,9 +3,10 @@ import Link, { type LinkProps } from "next/link";
 import { usePathname } from "next/navigation";
 
 import classNames from "classnames";
-import { Icon } from "~/components/display/icons";
-import { icons } from "~/lib/ui";
+
+import { type icons } from "~/lib/ui";
 import { type PathActive, pathIsActive } from "~/lib/util/paths";
+import { Icon } from "~/components/display/icons";
 
 export type SidebarItemConfig = {
   readonly icon: icons.IconProp;

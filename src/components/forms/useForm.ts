@@ -14,12 +14,17 @@ export type UseFormParams<I extends BaseFormValues = DefaultFormValues, O extend
   UseFormInput<I, (input: I) => O>,
   "initialValues" | "transformValues"
 > & {
-  initialValues?: I;
+  initialValues: I;
+  form?: FormInstance<I, O>;
 };
 
-export const useForm = <I extends BaseFormValues = DefaultFormValues, O extends BaseFormValues = I>(
-  input: UseFormParams<I, O>,
-): FormInstance<I, O> => {
+export const useForm = <I extends BaseFormValues = DefaultFormValues, O extends BaseFormValues = I>({
+  form,
+  ...input
+}: UseFormParams<I, O>): FormInstance<I, O> => {
+  if (form) {
+    return form;
+  }
   const _original = rootUseForm<I, (v: I) => O>(input);
 
   const _getFieldErrors = <F extends FormKeys<I>>(path: F) => {
@@ -33,6 +38,7 @@ export const useForm = <I extends BaseFormValues = DefaultFormValues, O extends 
 
   return {
     ..._original,
+    getInitialValues: () => input.initialValues,
     getFieldErrors: <F extends FormKeys<I>>(...paths: F[]) =>
       paths.reduce((prev: FieldError[], path: F) => [...prev, ..._getFieldErrors(path)], []),
     /* Modify the original getInputProps such that the error is not included in the arguments passed to the input

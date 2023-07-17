@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { experimental_useFormStatus as useFormStatus } from "react-dom";
 
 import { logger } from "~/internal/logger";
 import { type ComponentProps } from "~/lib/ui";
@@ -17,8 +18,8 @@ export type ButtonFooterProps = ComponentProps & {
   readonly disabled?: boolean;
   readonly submitDisabled?: boolean;
   readonly cancelDisabled?: boolean;
-  readonly onSubmit?: () => void;
-  readonly onCancel?: () => void;
+  readonly onSubmit?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  readonly onCancel?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 const buttonVisibility = (
@@ -43,18 +44,27 @@ export const ButtonFooter = ({
   className,
   ...props
 }: ButtonFooterProps) => {
+  /* This hook will indicate a pending status when the component is inside of a Form and the Form's action is
+     submitting.  As such, in cases where we are using the form's action prop and this component is inside of that form,
+     we do not need to explicitly provide the 'submitting' prop to this component. */
+  const { pending } = useFormStatus();
+
   const visibility = buttonVisibility({ submitButtonType, ...props });
   if (!(visibility.submit || visibility.cancel)) {
     logger.error("The button footer is not configured to show a submit or cancel button.");
     return <></>;
   }
+
+  const submitting = [props.submitting, pending].includes(true);
+
   return (
     <div style={style} className={classNames("button-footer", `button-footer--${orientation}`, className)}>
       <ShowHide show={visibility.cancel}>
         <SolidButton.Secondary
           className="button-footer__button"
-          onClick={props.onCancel}
-          disabled={props.disabled || props.submitting || props.cancelDisabled}
+          onClick={e => props.onCancel?.(e)}
+          locked={submitting}
+          disabled={props.disabled || props.cancelDisabled}
         >
           {cancelText}
         </SolidButton.Secondary>
@@ -63,8 +73,9 @@ export const ButtonFooter = ({
         <SolidButton.Primary
           className="button-footer__button"
           type={submitButtonType}
-          onClick={() => props.onSubmit?.()}
-          disabled={props.disabled || props.submitting || props.submitDisabled}
+          loading={submitting}
+          onClick={e => props.onSubmit?.(e)}
+          disabled={props.disabled || props.submitDisabled}
         >
           {submitText}
         </SolidButton.Primary>

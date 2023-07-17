@@ -1,5 +1,6 @@
-import { BaseAlternateButton, type BaseAlternateButtonProps } from "./BaseAlternateButton";
 import { ButtonVariants } from "../types";
+
+import { BaseAlternateButton, type BaseAlternateButtonProps } from "./BaseAlternateButton";
 
 export type SecondaryAlternateButtonProps = Omit<BaseAlternateButtonProps<typeof ButtonVariants.SECONDARY>, "variant">;
 

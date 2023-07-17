@@ -1,14 +1,15 @@
 import { useMemo } from "react";
-import classNames from "classnames";
 
 import { LoadingOverlay } from "@mantine/core";
+import classNames from "classnames";
 import { DataTable as MantineDataTable, type DataTableProps as MantineDataTableProps } from "mantine-datatable";
-import { ClassName } from "~/lib/ui";
-import { ResponseFeedback, type ResponseFeedbackProps } from "~/components/feedback";
-import { EditTableRowButton } from "~/components/buttons";
-import { DataTableActionMenu, type DataTableAction } from "./DataTableActionMenu";
 
-import { DataTableSize, DataTableSizes } from "./types";
+import { type ClassName } from "~/lib/ui";
+import { EditTableRowButton } from "~/components/buttons";
+import { ResponseFeedback, type ResponseFeedbackProps } from "~/components/feedback";
+
+import { DataTableActionMenu, type DataTableAction } from "./DataTableActionMenu";
+import { type DataTableSize, DataTableSizes } from "./types";
 
 export type Column<T = unknown> = Exclude<MantineDataTableProps<T>["columns"], undefined>[number];
 
