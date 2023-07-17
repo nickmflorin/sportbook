@@ -18,13 +18,10 @@ button {
   @extend %button-link-base;
 
   @include partials.disabled;
-
-  outline-offset: -1 * partials.$button-outline-width;
-
   @include partials.with-selectors((partials.$button-locked-class, partials.$button-loading-class)) {
     pointer-events: none;
   }
-
+  outline-offset: -1 * partials.$button-outline-width;
   &--corner-style-square {
     border-radius: 0px !important;
   }
@@ -41,16 +38,10 @@ button {
     justify-content: center;
     position: relative;
     text-align: inherit;
+    vertical-align: middle;
     width: 100%;
 
     > .button__sub-content {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-
-      /* The button-text should fill up the entire horizontal space unless affixes are present on the left and/or
-         right. */
-      flex-grow: 100;
       text-align: inherit;
       vertical-align: middle;
 

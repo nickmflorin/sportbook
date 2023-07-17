@@ -18,13 +18,17 @@
     align-items: center;
     border: 1px solid transparent;
     border-radius: 8px;
+    color: partials.get-color("gray", 8);
 
-    &:hover {
-      background-color: partials.get-color("gray", 2);
+    @include partials.hovered {
+      &:not(.active) {
+        background-color: partials.get-color("gray", 2);
+      }
     }
 
     &.active {
-      background-color: partials.get-color("blue", 2);
+      background-color: partials.get-color("blue", 12);
+      color: partials.get-color("white");
     }
   }
 }

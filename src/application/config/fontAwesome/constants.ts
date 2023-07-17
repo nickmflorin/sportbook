@@ -100,6 +100,8 @@ export const IconNames = enumeratedLiterals([
   "medal",
   "circle-half-stroke",
   "people-arrows",
+  "house-chimney",
+  "table-tennis-paddle-ball",
 ] as const);
 
 /* When an Icon is added to the registry, the name must be added to the appropriate IconCode key in this object type. */
@@ -126,5 +128,7 @@ export const Icons = {
     IconNames.CIRCLE_HALF_STROKE,
     IconNames.PEOPLE_ARROWS,
     IconNames.MEDAL,
+    IconNames.HOUSE_CHIMNEY,
+    IconNames.TABLE_TENNIS_PADDLE_BALL,
   ] as const,
 } as const;

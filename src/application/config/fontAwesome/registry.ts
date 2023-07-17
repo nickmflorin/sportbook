@@ -23,6 +23,8 @@ import {
   faPeopleArrows,
   faCircleHalfStroke,
   faMedal,
+  faHouseChimney,
+  faTableTennisPaddleBall,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const ICON_REGISTRY = [
@@ -47,4 +49,6 @@ export const ICON_REGISTRY = [
   faPeopleArrows,
   faCircleHalfStroke,
   faMedal,
+  faHouseChimney,
+  faTableTennisPaddleBall,
 ] as const;

@@ -1,11 +1,11 @@
 import { icons } from "~/lib/ui";
 
-import { BareActionButton, type BareActionButtonProps } from "./BareActionButton";
+import { ActionButton, type ActionButtonPolymorphicProps } from "./ActionButton";
 
-export type CloseButtonProps = Omit<BareActionButtonProps, "icon">;
+export type CloseButtonProps = Omit<ActionButtonPolymorphicProps<"bare">, "icon">;
 
 export const CloseButton = (props: CloseButtonProps) => (
-  <BareActionButton
+  <ActionButton.Bare
     {...props}
     icon={icons.IconNames.XMARK}
     color="gray.7"

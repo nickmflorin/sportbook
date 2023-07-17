@@ -1,15 +1,13 @@
 "use client";
-import { IconJumpRope, IconBrandAsana, IconChessQueen } from "@tabler/icons-react";
-
 import { createLeadingPathRegex } from "~/lib/util/paths";
-
+import { icons } from "~/lib/ui";
 import { SidebarItem, type SidebarItemConfig } from "./SidebarItem";
 
 const SidebarItems: SidebarItemConfig[] = [
-  { href: "/dashboard", icon: IconJumpRope, active: createLeadingPathRegex("/dashboard") },
-  { href: "/leagues", icon: IconJumpRope, active: createLeadingPathRegex("/leagues") },
-  { href: "/teams", icon: IconBrandAsana, active: createLeadingPathRegex("/teams") },
-  { href: "/games", icon: IconChessQueen, active: createLeadingPathRegex("/games") },
+  { href: "/dashboard", icon: icons.IconNames.HOUSE_CHIMNEY, active: createLeadingPathRegex("/dashboard") },
+  { href: "/leagues", icon: icons.IconNames.SITEMAP, active: createLeadingPathRegex("/leagues") },
+  { href: "/teams", icon: icons.IconNames.PEOPLE_GROUP, active: createLeadingPathRegex("/teams") },
+  { href: "/games", icon: icons.IconNames.TABLE_TENNIS_PADDLE_BALL, active: createLeadingPathRegex("/games") },
 ];
 
 export const Sidebar = (): JSX.Element => (

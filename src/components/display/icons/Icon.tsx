@@ -7,31 +7,6 @@ import { type Optional } from "utility-types";
 import { getColorClassName, icons } from "~/lib/ui";
 import { SizeAxes, SizeContains } from "~/lib/ui/types";
 
-export const useIconProps = ({
-  size = icons.IconSizes.MD,
-  axis = SizeAxes.VERTICAL,
-  contain = SizeContains.FIT,
-  color = "gray.7",
-  hoveredColor = "gray.8",
-  focusedColor = "gray.8",
-  ...props
-}: Pick<
-  icons.IconComponentProps,
-  "axis" | "size" | "contain" | "color" | "focusedColor" | "hoveredColor" | "className" | "style"
->) => ({
-  ...props,
-  className: classNames(
-    "icon",
-    `icon--contain-${contain}`,
-    `icon--size-${size}`,
-    `icon--axis-${axis}`,
-    getColorClassName("color", color, { hovered: hoveredColor, focused: focusedColor }),
-    props.className,
-    `icon--size-${size}`,
-    props.className,
-  ),
-});
-
 export type SpinnerProps = Omit<icons.IconComponentProps, "spin" | "icon" | "contain">;
 
 export const Spinner = ({ color = "blue.6", loading, ...props }: SpinnerProps): JSX.Element =>
@@ -60,7 +35,7 @@ function _IconComponent({
   size = icons.IconSizes.MD,
   axis = SizeAxes.VERTICAL,
   contain = SizeContains.FIT,
-  color = "gray.7",
+  color,
   ...props
 }: icons.IconComponentProps & { readonly ref?: ForwardedRef<SVGSVGElement> }) {
   if (loading === true) {
@@ -74,10 +49,11 @@ function _IconComponent({
         `icon--contain-${contain}`,
         `icon--size-${size}`,
         `icon--axis-${axis}`,
-        getColorClassName("color", color, {
-          hovered: hoveredColor === undefined ? focusedColor : hoveredColor,
-          focused: focusedColor === undefined ? hoveredColor : undefined,
-        }),
+        color &&
+          getColorClassName("color", color, {
+            hovered: hoveredColor === undefined ? focusedColor : hoveredColor,
+            focused: focusedColor === undefined ? hoveredColor : undefined,
+          }),
         `icon--size-${size}`,
         props.className,
       )}

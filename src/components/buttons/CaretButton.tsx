@@ -1,13 +1,13 @@
 import { icons } from "~/lib/ui";
 
-import { BareActionButton, type BareActionButtonProps } from "./BareActionButton";
+import { ActionButton, type ActionButtonPolymorphicProps } from "./ActionButton";
 
-export interface CaretButtonProps extends Omit<BareActionButtonProps, "icon"> {
+export interface CaretButtonProps extends Omit<ActionButtonPolymorphicProps<"bare">, "icon"> {
   readonly open: boolean;
 }
 
 export const CaretButton = ({ open, ...props }: CaretButtonProps) => (
-  <BareActionButton
+  <ActionButton.Bare
     {...props}
     icon={open ? icons.IconNames.CARET_DOWN : icons.IconNames.CARET_UP}
     color="gray.7"

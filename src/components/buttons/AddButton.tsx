@@ -1,11 +1,11 @@
 import { icons } from "~/lib/ui";
 
-import { BareActionButton, type BareActionButtonProps } from "./BareActionButton";
+import { ActionButton, type ActionButtonPolymorphicProps } from "./ActionButton";
 
-export type AddButtonProps = Omit<BareActionButtonProps, "icon">;
+export type AddButtonProps = Omit<ActionButtonPolymorphicProps<"bare">, "icon">;
 
 export const AddButton = (props: AddButtonProps) => (
-  <BareActionButton
+  <ActionButton.Bare
     {...props}
     icon={icons.IconNames.CIRCLE_PLUS}
     color="green.7"

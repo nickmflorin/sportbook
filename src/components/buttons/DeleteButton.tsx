@@ -1,11 +1,11 @@
 import { icons } from "~/lib/ui";
 
-import { BareActionButton, type BareActionButtonProps } from "./BareActionButton";
+import { ActionButton, type ActionButtonPolymorphicProps } from "./ActionButton";
 
-export type DeleteButtonProps = Omit<BareActionButtonProps, "icon">;
+export type DeleteButtonProps = Omit<ActionButtonPolymorphicProps<"bare">, "icon">;
 
 export const DeleteButton = (props: DeleteButtonProps) => (
-  <BareActionButton
+  <ActionButton.Bare
     {...props}
     icon={icons.IconNames.TRASH_CAN}
     color="red.7"
