@@ -4,7 +4,7 @@ import classNames from "classnames";
 
 import { Loading, type LoadingProps } from "./Loading";
 
-const _ScreenLoading = (props: LoadingProps): JSX.Element => (
+const _ScreenLoading = (props: Omit<LoadingProps, "loading">): JSX.Element => (
   <Loading loading={true} className={classNames("loading--screen", props.className)} />
 );
 

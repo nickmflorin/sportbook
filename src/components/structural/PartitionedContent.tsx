@@ -54,7 +54,7 @@ export const PartitionedContent = ({
         actions={actions}
       />,
       <div key="1" className="partitioned-content__content">
-        <Loading loading={loading}>{children}</Loading>
+        <Loading loading={loading === true}>{children}</Loading>
       </div>,
       <React.Fragment key="2">
         <div className="partitioned-content__footer">

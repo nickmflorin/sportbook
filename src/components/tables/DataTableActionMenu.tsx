@@ -4,7 +4,7 @@ import { Menu, Flex, type MenuProps } from "@mantine/core";
 
 import { type icons, type Color } from "~/lib/ui";
 import { EllipsisButton } from "~/components/buttons";
-import { Icon, IconOrSpinner } from "~/components/display/icons";
+import { Icon } from "~/components/display/icons";
 
 type DataTableActionItem = {
   readonly setLoading: (v: boolean) => void;
@@ -104,7 +104,7 @@ const DataTableActionMenuItem = ({
   if (isVisible) {
     return (
       <Menu.Item
-        icon={<IconOrSpinner color={iconColor} icon={icon} loading={isLoading} />}
+        icon={<Icon color={iconColor} icon={icon} loading={isLoading} />}
         h="28px"
         onClick={e => {
           e.stopPropagation();
