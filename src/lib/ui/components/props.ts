@@ -16,8 +16,8 @@ export type Spacing = EnumeratedLiteralType<typeof Spacings>;
 export const Alignments = enumeratedLiterals(["left", "center", "right"] as const);
 export type Alignment = EnumeratedLiteralType<typeof Alignments>;
 
-export const Orientations = enumeratedLiterals(["horizontal", "vertical"] as const);
-export type Orientation = EnumeratedLiteralType<typeof Orientations>;
+export const FlexDirections = enumeratedLiterals(["row", "column"] as const);
+export type FlexDirection = EnumeratedLiteralType<typeof FlexDirections>;
 
 export const FontWeights = enumeratedLiterals(["light", "regular", "medium", "semibold", "bold"] as const);
 export type FontWeight = EnumeratedLiteralType<typeof FontWeights>;

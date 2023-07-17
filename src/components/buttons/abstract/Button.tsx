@@ -1,3 +1,4 @@
+import Link, { type LinkProps } from "next/link";
 import React, { type ForwardedRef, useMemo } from "react";
 
 import classNames from "classnames";
@@ -12,10 +13,18 @@ import {
   ButtonSizes,
 } from "~/components/buttons";
 
-type _ClickableProps<V extends ButtonType = ButtonType> = ComponentProps & {
+export type ButtonProps<V extends ButtonType = ButtonType> = ComponentProps & {
+  /**
+   * The {@link ForwardedRef} that can be optionally passed through to the underlying {@link HTMLButtonElement}.
+   *
+   * It is important that this prop is exposed on the button element that is wrapped around "next/link"'s {@link Link}
+   * component, and is necessary for them to work together properly.
+   */
+  readonly ref?: ForwardedRef<HTMLButtonElement>;
   readonly children: string | JSX.Element;
   readonly buttonType: V;
   readonly size?: ButtonSize;
+  readonly href?: LinkProps["href"];
   /**
    * Sets the element in a "locked" state, which is a state in which the non-visual characteristics of the "disabled"
    * state should be used, but the element should not be styled as if it is disabled.
@@ -27,20 +36,10 @@ type _ClickableProps<V extends ButtonType = ButtonType> = ComponentProps & {
   readonly locked?: boolean;
   readonly loading?: boolean;
   readonly cornerStyle?: ButtonCornerStyle;
-};
-
-export type ButtonProps<V extends ButtonType = ButtonType> = _ClickableProps<V> & {
-  /**
-   * The {@link ForwardedRef} that can be optionally passed through to the underlying {@link HTMLButtonElement}.
-   *
-   * It is important that this prop is exposed on the button element that is wrapped around "next/link"'s {@link Link}
-   * component, and is necessary for them to work together properly.
-   */
-  readonly ref?: ForwardedRef<HTMLButtonElement>;
 } & Pick<HTMLElementProps<"button">, "onClick" | "onFocus" | "onBlur" | "disabled" | "type">;
 
 export const getButtonClassName = <V extends ButtonType = ButtonType>(
-  props: Required<Omit<_ClickableProps<V>, "children">, "size" | "buttonType" | "cornerStyle"> & {
+  props: Required<Omit<ButtonProps<V>, "children">, "size" | "buttonType" | "cornerStyle"> & {
     readonly disabled?: boolean;
   },
 ) =>
@@ -57,7 +56,7 @@ export const getButtonClassName = <V extends ButtonType = ButtonType>(
     props.className,
   );
 
-export const Button = <V extends ButtonType = ButtonType>({
+const _Button = <V extends ButtonType = ButtonType>({
   onClick,
   disabled,
   locked,
@@ -67,7 +66,7 @@ export const Button = <V extends ButtonType = ButtonType>({
   buttonType,
   children,
   ...props
-}: Omit<ButtonProps<V>, "to">): JSX.Element => {
+}: Omit<ButtonProps<V>, "href">): JSX.Element => {
   /* The onClick should be overridden to prevent click behavior when the element is disabled just in case the "disabled"
      class is being used and the SASS style does not remove pointer event from the element. */
   const _onClick = useMemo(
@@ -91,3 +90,12 @@ export const Button = <V extends ButtonType = ButtonType>({
     </button>
   );
 };
+
+export const Button = <V extends ButtonType = ButtonType>({ href, ...props }: ButtonProps<V>): JSX.Element =>
+  href !== undefined ? (
+    <Link href={href} className="link">
+      <_Button {...props} />
+    </Link>
+  ) : (
+    <_Button {...props} />
+  );

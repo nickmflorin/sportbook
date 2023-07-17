@@ -1,7 +1,7 @@
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
-import { Actions, type Action } from "~/components/structural/Actions";
+import { Actions, type Action } from "~/components/structural";
 import { Text } from "~/components/typography";
 
 export interface TileProps extends ComponentProps {

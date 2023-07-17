@@ -55,7 +55,7 @@ p {
 
 @mixin with-fonts($type) {
   @include partials.with-font-sizes($type) using ($size, $data) {
-    .font-size-#{$size} {
+    &.font-size-#{$size} {
       font-size: partials.mapget($data, font-size);
       line-height: partials.mapget($data, line-height);
       font-weight: partials.mapget($data, font-weight);
@@ -172,6 +172,19 @@ h6 {
 
   &--transform-caps {
     text-transform: uppercase;
+  }
+
+  &.truncate,
+  &.clamp {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  &.clamp {
+    -webkit-line-clamp: 2; // This is the default - it can be overridden via props.
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
   }
 
   @include partials.with-alignment() using ($alignment) {

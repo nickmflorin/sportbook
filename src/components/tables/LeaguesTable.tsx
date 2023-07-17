@@ -1,5 +1,9 @@
+import { Text as MantineText } from "@mantine/core";
+
 import { type League } from "~/prisma";
+import { AlternateButton } from "~/components/buttons";
 import { LeagueCompetitionLevelBadge, LeagueTypeBadge } from "~/components/display/badges";
+import { Flex } from "~/components/structural";
 import { Text, DateTimeText } from "~/components/typography";
 
 import { DataTable, type DataTableProps, type Column } from "./DataTable";
@@ -12,7 +16,7 @@ type LeagueTableLeagueFields =
   | "leagueEnd"
   | "leagueType"
   | "competitionLevel";
-export type LeagueDatum = Pick<League, LeagueTableLeagueFields>;
+type LeagueDatum = Pick<League, LeagueTableLeagueFields>;
 
 export enum LeaguesTableColumn {
   NAME,
@@ -27,37 +31,51 @@ const LeaguesTableColumns: { [key in LeaguesTableColumn]: Column<LeagueDatum> } 
   [LeaguesTableColumn.NAME]: {
     title: "Name",
     accessor: "name",
-    render: (league: LeagueDatum) => (
-      <>
-        <Text>{league.name}</Text>
-        {league.description && (
-          <Text size="xs" color="gray.6">
-            {league.description}
-          </Text>
-        )}
-      </>
-    ),
+    textAlignment: "left",
+    width: 350,
+    render: (league: LeagueDatum) => {
+      const lines = (league.description || "")
+        .split("\n")
+        .filter(l => l.trim() !== "")
+        .join(" ");
+      return (
+        <Flex direction="column" align="left" gap="sm">
+          <AlternateButton.Secondary href={`/leagues/${league.id}`} size="sm">
+            {league.name}
+          </AlternateButton.Secondary>
+          {lines.length !== 0 && (
+            <MantineText lineClamp={3} size="xs" color="gray.5">
+              {lines}
+            </MantineText>
+          )}
+        </Flex>
+      );
+    },
   },
   [LeaguesTableColumn.START]: {
     title: "Starts",
     accessor: "leagueStart",
+    width: 150,
     render: ({ leagueStart }) => (leagueStart ? <DateTimeText value={leagueStart} /> : <></>),
   },
   [LeaguesTableColumn.END]: {
     title: "Ends",
     accessor: "leagueEnd",
+    width: 150,
     render: ({ leagueEnd }) => (leagueEnd ? <DateTimeText value={leagueEnd} /> : <></>),
   },
-  [LeaguesTableColumn.IS_PUBLIC]: { accessor: "isPublic", title: "Public" },
+  [LeaguesTableColumn.IS_PUBLIC]: { accessor: "isPublic", title: "Public", width: 100 },
   [LeaguesTableColumn.LEAGUE_TYPE]: {
     textAlignment: "center",
     accessor: "leagueType",
+    width: 120,
     title: "Type",
     render: (c: LeagueDatum) => <LeagueTypeBadge size="xs" value={c.leagueType} />,
   },
   [LeaguesTableColumn.COMPETITION_LEVEL]: {
     textAlignment: "center",
     accessor: "competitionLevel",
+    width: 180,
     title: "Competition Level",
     render: (c: LeagueDatum) => <LeagueCompetitionLevelBadge size="xs" value={c.competitionLevel} />,
   },

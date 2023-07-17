@@ -20,26 +20,11 @@
   font-weight: partials.get-font-weight($family: partials.$button-font-family, $weight: "semibold");
   padding: partials.get-button-padding("alternate");
 
-  /* Do not default the size of the button or anchor - this will prevent SASS from overriding the size of the button in
-     classes or elements that use the button.  Only size the button and/or anchor if the class exists on the element
-     (which happens when the `size` prop is provided). */
   @each $size in partials.$button-size-names {
     &.button--#{$size} {
       font-size: partials.get-button-font-size("alternate", $size: $size);
       height: partials.get-button-size("alternate", $size: $size);
       line-height: partials.get-button-size("alternate", $size: $size);
-    }
-  }
-
-  &.button--alternate--primary {
-    font-weight: partials.get-font-weight($family: partials.$button-font-family, $weight: "regular");
-    text-decoration: underline;
-
-    /* We use this hidden psuedo-element to establish the width of the text the button or anchor contains when it is
-       bold, such that when the text changes to bold on hover or focus - the width is already consistent with what it
-       would otherwise be when bold and the overall width of the button and/or anchor does not change. */
-    .button__text::before {
-      font-weight: partials.get-font-weight($family: partials.$button-font-family, $weight: "medium");
     }
   }
 }
@@ -51,9 +36,6 @@
     &.button--action--#{$variant} {
       padding: partials.get-button-padding("action", $variant);
 
-      /* Do not default the size of the button - this will prevent SASS from overriding the size of the button in
-         classes or elements that use the button.  Only size the button and/or anchor if the class exists on the element
-         (which happens when the `size` prop is provided). */
       @each $size in partials.$button-size-names {
         &.button--#{$size} {
           height: partials.get-button-size("action", $variant: $variant, $size: $size);

@@ -22,6 +22,7 @@ button {
     pointer-events: none;
   }
   outline-offset: -1 * partials.$button-outline-width;
+  max-width: fit-content;
   &--corner-style-square {
     border-radius: 0px !important;
   }
@@ -44,26 +45,6 @@ button {
     > .button__sub-content {
       text-align: inherit;
       vertical-align: middle;
-
-      &--string {
-        /* We use this hidden psuedo-element to establish the width of the text the button contains, such that in the
-           event that characteristics of the text that effect its width are altered - the width is already consistent
-           with what it would otherwise be before it was altered and the overall width of the button and/or anchor does
-           not change. */
-        font-size: inherit;
-        line-height: inherit;
-        text-align: inherit;
-        text-transform: inherit;
-
-        &::before {
-          content: attr(title);
-          display: block;
-          height: 0;
-          overflow: hidden;
-          text-decoration: none;
-          visibility: hidden;
-        }
-      }
     }
 
     > .button__icon-or-spinner-wrapper {

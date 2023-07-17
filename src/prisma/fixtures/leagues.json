@@ -7,7 +7,8 @@
       "leagueType": "ORGANIZED",
       "isPublic": false,
       "leagueStart": "2023-07-05T18:00:00Z",
-      "competitionLevel": "COMPETITIVE"
+      "competitionLevel": "COMPETITIVE",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\nSuspendisse commodo mattis nisl, vel fermentum ipsum efficitur sit amet.\n\nSed vitae dui non lacus semper sollicitudin.\n\nNulla facilisi."
     },
     {
       "name": "League 2",
@@ -26,7 +27,8 @@
       "leagueType": "PICKUP",
       "isPublic": false,
       "leagueEnd": "2023-09-10T18:30:00Z",
-      "competitionLevel": "COMPETITIVE"
+      "competitionLevel": "COMPETITIVE",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\nSuspendisse commodo mattis nisl, vel fermentum ipsum efficitur sit amet.\n\nSed vitae dui non lacus semper sollicitudin.\n\nNulla facilisi."
     },
     {
       "name": "League 4",
@@ -46,7 +48,8 @@
       "isPublic": true,
       "leagueStart": "2023-07-25T17:30:00Z",
       "leagueEnd": "2023-09-20T19:00:00Z",
-      "competitionLevel": "SOCIAL"
+      "competitionLevel": "SOCIAL",
+      "description": "Lorem ipsum dolor sit amet.\n\nSed vitae dui non lacus semper sollicitudin.\n\nNulla facilisi."
     },
     {
       "name": "League 6",
@@ -85,7 +88,8 @@
       "isPublic": true,
       "leagueStart": "2023-08-15T16:30:00Z",
       "leagueEnd": "2023-10-10T18:00:00Z",
-      "competitionLevel": "SOCIAL_COMPETITIVE"
+      "competitionLevel": "SOCIAL_COMPETITIVE",
+      "description": "Lorem ipsum dolor sit amet."
     },
     {
       "name": "League 10",
@@ -103,7 +107,8 @@
       "isPublic": false,
       "leagueStart": "2023-08-25T17:00:00Z",
       "leagueEnd": "2023-10-20T18:30:00Z",
-      "competitionLevel": "SOCIAL"
+      "competitionLevel": "SOCIAL",
+      "description": "Lorem ipsum dolor sit amet.\n\nSed vitae dui non lacus semper sollicitudin.\n\nNulla facilisi."
     },
     {
       "name": "League 12",
@@ -121,7 +126,8 @@
       "updatedAt": "2023-06-28T21:00:00Z",
       "leagueType": "ORGANIZED",
       "isPublic": false,
-      "competitionLevel": "SOCIAL_COMPETITIVE"
+      "competitionLevel": "SOCIAL_COMPETITIVE",
+      "description": "Lorem ipsum dolor sit amet."
     },
     {
       "name": "League 14",
@@ -131,7 +137,8 @@
       "isPublic": true,
       "leagueStart": "2023-09-10T19:30:00Z",
       "leagueEnd": "2023-11-05T22:00:00Z",
-      "competitionLevel": "COMPETITIVE"
+      "competitionLevel": "COMPETITIVE",
+      "description": "Lorem ipsum dolor sit amet.\n\nSed vitae dui non lacus semper sollicitudin.\n\nNulla facilisi."
     },
     {
       "name": "League 15",
@@ -149,7 +156,8 @@
       "updatedAt": "2023-06-29T14:15:00Z",
       "leagueType": "PICKUP",
       "isPublic": true,
-      "competitionLevel": "SOCIAL"
+      "competitionLevel": "SOCIAL",
+      "description": "Lorem ipsum dolor sit amet."
     },
     {
       "name": "League 17",
@@ -159,7 +167,8 @@
       "isPublic": false,
       "leagueStart": "2023-09-25T17:45:00Z",
       "leagueEnd": "2023-11-20T19:15:00Z",
-      "competitionLevel": "COMPETITIVE"
+      "competitionLevel": "COMPETITIVE",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\nSuspendisse commodo mattis nisl, vel fermentum ipsum efficitur sit amet.\n\nSed vitae dui non lacus semper sollicitudin.\n\nNulla facilisi."
     },
     {
       "name": "League 18",
@@ -168,7 +177,8 @@
       "leagueType": "ORGANIZED",
       "isPublic": true,
       "leagueEnd": "2023-11-25T20:30:00Z",
-      "competitionLevel": "SOCIAL_COMPETITIVE"
+      "competitionLevel": "SOCIAL_COMPETITIVE",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\nSuspendisse commodo mattis nisl, vel fermentum ipsum efficitur sit amet.\n\nSed vitae dui non lacus semper sollicitudin.\n\nNulla facilisi."
     },
     {
       "name": "League 19",

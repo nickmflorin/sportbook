@@ -4,7 +4,7 @@ import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
 import { enumeratedLiterals, type EnumeratedLiteralType } from "~/lib/util/literals";
-import { Actions, type Action } from "~/components/structural/Actions";
+import { Actions, type Action } from "~/components/structural";
 import { Label, Text } from "~/components/typography";
 
 import { type FormInstance, type BaseFormValues, type FieldError, type FormKeys } from "../../types";

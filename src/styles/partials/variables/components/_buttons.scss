@@ -66,10 +66,10 @@ $button-outline-width: 1px;
 $button-border-radius: 4px;
 
 /*
-When an Icon and/or Spinner are in the Button (or Anchor), the size of the Icon or Spinner needs to be just a hair
-smaller than the line-height of the accompanying text (per designers).  To do this, the height of the element inside of
-the Button that wraps the Icon or Spinner needs to still consume 100% of the available height (i.e. size = "fill"), but
-needs to have inner padding to shrink the size of the Icon or Spinner it contains.
+When an Icon and/or Spinner are in the Button, the size of the Icon or Spinner needs to be just a hair smaller than the
+line-height of the accompanying text. To do this, the height of the element inside of the Button that wraps the Icon or
+Spinner needs to still consume 100% of the available height (i.e. size = "fill"), but needs to have inner padding to
+shrink the size of the Icon or Spinner it contains.
 */
 $button-icon-padding: 2px;
 
@@ -159,9 +159,9 @@ $button-solid-sizes: (
 
 $button-alternate-sizes: (
   "xs": 12px,
-  "sm": 14px,
-  "md": 16px,
-  "lg": 18px,
+  "sm": 13px,
+  "md": 14px,
+  "lg": 16px,
 );
 
 $button-action-sizes: ();

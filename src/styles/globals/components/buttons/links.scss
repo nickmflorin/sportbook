@@ -10,3 +10,11 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+.link {
+  @extend %button-link-base;
+  color: inherit;
+  text-decoration: none;
+
+  max-width: fit-content;
+}

@@ -1,19 +1,19 @@
 @use "partials";
 
-@mixin horizontal-orientation() {
+@mixin row-direction() {
   flex-direction: row;
   @include partials.with-alignment() using ($alignment) {
-    &.flex--align-#{$alignment} {
+    &.flex--text-align-#{$alignment} {
       text-align: $alignment;
       justify-content: $alignment;
     }
   }
 }
 
-@mixin vertical-orientation() {
+@mixin column-direction() {
   flex-direction: column;
   @include partials.with-alignment() using ($alignment) {
-    &.flex--align-#{$alignment} {
+    &.flex--text-align-#{$alignment} {
       text-align: $alignment;
       align-items: $alignment;
     }
@@ -23,16 +23,16 @@
 .flex {
   display: flex;
 
-  @include partials.without-selectors((vertical, horizontal), $prefix: ".flex--orientation-") {
-    @include horizontal-orientation();
+  @include partials.without-selectors((row, column), $prefix: ".flex--direction-") {
+    @include row-direction();
   }
 
-  &--orientation-vertical {
-    @include vertical-orientation();
+  &--direction-column {
+    @include column-direction();
   }
 
-  &--orientation-horizontal {
-    @include horizontal-orientation();
+  &--direction-row {
+    @include row-direction();
   }
 
   @include partials.with-spacing() using ($size, $spacing) {

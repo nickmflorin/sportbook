@@ -4,8 +4,7 @@ import { experimental_useFormStatus as useFormStatus } from "react-dom";
 import { logger } from "~/internal/logger";
 import { type ComponentProps } from "~/lib/ui";
 import { SolidButton } from "~/components/buttons";
-
-import { ShowHide } from "../util";
+import { ShowHide } from "~/components/util";
 
 type ButtonFooterOrientation = "right-justified" | "full-width";
 
