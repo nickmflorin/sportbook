@@ -29,7 +29,7 @@ export const Label = ({
     style={style}
     className={classNames(
       "label",
-      getColorClassName("color", { color }),
+      getColorClassName("color", color),
       `font-size-${size}`,
       `font-weight-${fontWeight}`,
       className,

@@ -32,8 +32,8 @@ export const Badge = ({
     {...props}
     className={classNames(
       "badge",
-      getColorClassName("color", { color }),
-      getColorClassName("backgroundColor", { color: backgroundColor }),
+      getColorClassName("color", color),
+      getColorClassName("backgroundColor", backgroundColor),
       `badge--size-${size}`,
       `font-weight-${fontWeight}`,
       props.className,

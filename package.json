@@ -28,7 +28,7 @@
     "test": "jest --watchAll  --silent=false",
     "test:ci": "jest --ci",
     "pretsc": "npm run setup-env",
-    "tsc": "tsc --project ./tsconfig.json --explainFiles > explanations.txt",
+    "tsc": "tsc --project ./tsconfig.json",
     "pretsc:watch": "npm run setup-env",
     "tsc:watch": "tsc -w"
   },

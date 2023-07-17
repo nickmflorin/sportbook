@@ -29,7 +29,7 @@ export const Text = ({
     style={style}
     className={classNames(
       "body",
-      getColorClassName("color", { color }),
+      getColorClassName("color", color),
       `font-size-${size}`,
       fontWeight && `font-weight-${fontWeight}`,
       className,

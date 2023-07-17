@@ -34,5 +34,5 @@ export const Title = ({ order = 3, fontWeight, color = "heading", children, ...p
   ensuresDefinedValue(factories[order])({
     ...props,
     children,
-    className: classNames("title", getColorClassName("color", { color }), fontWeight && `font-weight-${fontWeight}`),
+    className: classNames("title", getColorClassName("color", color), fontWeight && `font-weight-${fontWeight}`),
   });
