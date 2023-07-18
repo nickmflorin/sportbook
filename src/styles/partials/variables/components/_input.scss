@@ -8,10 +8,9 @@
 @use "../typography" as typography;
 
 $input-color: colors.get-color("gray", $shade: 8);
-$input-font-family: typography.$font-family-roboto;
+$input-font-family: typography.$font-family-inter;
 $input-font-size: typography.get-font-size("body", $size: "sm");
 $input-font-weight: typography.get-font-weight(
-  $type: "body",
   $weight: "regular",
 );
 $input-bg-color: colors.get-color("white");
@@ -21,15 +20,16 @@ $input-focused-border-color: colors.get-color("blue", $shade: 8);
 $input-border-radius: radius.get-radius("sm");
 $input-disabled-bg-color: #efefef;
 
-$input-height: 32px;
-$input-padding: 6px 8px;
+$input-height: 36px;
+$input-padding: 6px 12px;
 
 // The line height of the text input text should fill up the remaining space after the padding is accounted for.
 $input-line-height: $input-height - 2 * list.nth($input-padding, 1);
 
 $input-icon-color: colors.get-color("gray", $shade: 6);
 
-$input-border: 1px solid $input-border-color;
+$input-border-width: 1px;
+$input-border: $input-border-width solid $input-border-color;
 $input-placeholder-color: color.change(#606873, $alpha: 0.6);
 $input-caret-color: colors.get-color("gray", $shade: 8);
 

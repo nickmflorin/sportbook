@@ -45,6 +45,10 @@ Wrong Usage:
   &::placeholder {
     color: partials.$input-placeholder-color;
   }
+
+  ::placeholder {
+    color: partials.$input-placeholder-color;
+  }
 }
 
 /*

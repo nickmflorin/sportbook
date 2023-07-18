@@ -19,43 +19,46 @@
   align-items: center;
   // We need to explicitly set the background color to white (instead of not specifying a background color) such that
   // auto fill styling applied by Google Chrome (and likely others) does not change the background.
-  background-color: partials.$input-bg-color;
-  outline: partials.$input-border;
-  border-radius: partials.$input-border-radius;
   height: partials.$input-height;
 
-  > input.mantine-Select-input {
-    @extend %native-input-base;
-    @include partials.input-properties;
-    border: none;
-    outline: none;
-
-    // We need to explicitly set the background color to white (instead of not specifying a background color) such that
-    // auto fill styling applied by Google Chrome (and likely others) does not change the background.
-    background-color: partials.$input-bg-color;
+  > div[role="combobox"] {
+    width: 100%;
     height: 100%;
-    padding: partials.$input-padding;
 
-    > .icon {
-      color: partials.$input-icon-color;
-    }
+    > .mantine-Input-wrapper.mantine-Select-wrapper {
+      height: 100%;
 
-    @include partials.disabled {
-      background-color: partials.$input-disabled-bg-color;
-    }
+      > input.mantine-Select-input.mantine-Input-input {
+        @extend %native-input-base;
+        border-radius: partials.$input-border-radius;
+        border: partials.$input-border;
 
-    @include partials.focused {
-      outline-color: partials.$input-focused-border-color;
-    }
+        // We need to explicitly set the background color to white (instead of not specifying a background color) such that
+        // auto fill styling applied by Google Chrome (and likely others) does not change the background.
+        background-color: partials.$input-bg-color;
+        color: partials.$input-color;
+        padding: partials.$input-padding;
+        height: 100%;
+        min-height: 0;
 
-    @include partials.focused-within {
-      outline-color: partials.$input-focused-border-color;
+        > .icon {
+          color: partials.$input-icon-color;
+        }
+
+        @include partials.disabled {
+          background-color: partials.$input-disabled-bg-color;
+        }
+
+        @include partials.focused {
+          outline-color: partials.$input-focused-border-color;
+        }
+
+        @include partials.focused-within {
+          outline-color: partials.$input-focused-border-color;
+        }
+      }
     }
   }
-
-  // > .icon {
-  //   margin-right: partials.get-spacing("md");
-  // }
 
   .select__option {
     @include select-option-structure;

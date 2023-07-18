@@ -52,6 +52,7 @@ export type SelectProps<
   readonly style?: Style;
   readonly placeholder?: string;
   readonly disabled?: boolean;
+  readonly clearable?: boolean;
   readonly mode: M;
   readonly loading?: boolean;
   readonly data: O[];
