@@ -1,5 +1,3 @@
-import { Text as MantineText } from "@mantine/core";
-
 import { type League } from "~/prisma";
 import { AlternateButton } from "~/components/buttons";
 import { LeagueCompetitionLevelBadge, LeagueTypeBadge } from "~/components/display/badges";
@@ -44,9 +42,9 @@ const LeaguesTableColumns: { [key in LeaguesTableColumn]: Column<LeagueDatum> } 
             {league.name}
           </AlternateButton.Secondary>
           {lines.length !== 0 && (
-            <MantineText lineClamp={3} size="xs" color="gray.5">
+            <Text lineClamp={3} size="xs" color="gray.5">
               {lines}
-            </MantineText>
+            </Text>
           )}
         </Flex>
       );

@@ -47,11 +47,13 @@ export const LeaguesTableView = ({
         className={className}
         defaultSearch={searchParams.get("query") || undefined}
         onSearch={(q: string) => {
-          if (q.length !== 0) {
-            router.push(`/leagues?query=${q}`);
-          } else {
-            router.push("/leagues");
-          }
+          startTransition(() => {
+            if (q.length !== 0) {
+              router.push(`/leagues?query=${q}`);
+            } else {
+              router.push("/leagues");
+            }
+          });
         }}
         actions={[
           ...(actions || []),
@@ -60,7 +62,7 @@ export const LeaguesTableView = ({
           </SolidButton.Primary>,
         ]}
       >
-        <LeaguesTable {...props} data={data} />
+        <LeaguesTable {...props} data={data} loading={isPending} />
       </TableView>
       <CreateLeagueDrawer
         form={form}

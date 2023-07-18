@@ -12,18 +12,14 @@
 }
 
 .loading {
-  align-items: center;
-  -webkit-box-align: center;
-  -webkit-box-pack: center;
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
+  @include partials.flex-c;
   height: 100%;
   width: 100%;
   left: 0;
   position: absolute;
   top: 0;
   z-index: 1000;
+  overflow: hidden;
 
   > .spinner {
     margin: auto;
@@ -33,5 +29,9 @@
 
   &--screen {
     @include app-loading;
+  }
+
+  &--overlay {
+    background: rgba(255, 255, 255, 0.75);
   }
 }

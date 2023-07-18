@@ -30,6 +30,9 @@ $page-header-margin-bottom: "lg";
 
   > .page__content {
     max-height: calc(100% - partials.get-spacing($page-header-margin-bottom) - $page-header-height);
+    height: calc(100% - partials.get-spacing($page-header-margin-bottom) - $page-header-height);
+    min-height: calc(100% - partials.get-spacing($page-header-margin-bottom) - $page-header-height);
     overflow: hidden;
+    position: relative;
   }
 }

@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 
-import { LoadingOverlay } from "@mantine/core";
 import classNames from "classnames";
 import { DataTable as MantineDataTable, type DataTableProps as MantineDataTableProps } from "mantine-datatable";
 
 import { type ClassName } from "~/lib/ui";
 import { EditTableRowButton } from "~/components/buttons";
 import { ResponseFeedback, type ResponseFeedbackProps } from "~/components/feedback";
+import { Loading } from "~/components/loading";
 
 import { DataTableActionMenu, type DataTableAction } from "./DataTableActionMenu";
 import { type DataTableSize, DataTableSizes } from "./types";
@@ -42,9 +42,10 @@ export const ActionMenuColumn = <T extends Record<string, unknown>>({
    dictate whether or not an error is present or whether or not there is search criteria applied will still render the
    correct form of LocalFeedback. */
 export type DataTableProps<T> = Pick<MantineDataTableProps<T>, "columns" | "sx"> &
-  Omit<ResponseFeedbackProps, "isEmpty" | "overlay"> & {
+  Omit<ResponseFeedbackProps, "isEmpty" | "overlay" | "fetching"> & {
     readonly size?: DataTableSize;
     readonly data: T[];
+    readonly loading?: boolean;
     readonly className?: ClassName;
     readonly onRowEdit?: (t: T) => void;
     readonly actionMenu?: (t: T) => DataTableAction[];
@@ -60,6 +61,7 @@ export const DataTable = <T extends Record<string, unknown>>({
   columns,
   data,
   className,
+  loading,
   onRowEdit,
   actionMenu,
   ...props
@@ -88,8 +90,7 @@ export const DataTable = <T extends Record<string, unknown>>({
     withBorder: false,
     height: "100%",
     className: classNames("table", `table--size-${size}`, className),
-    // TODO: Replace with a custom LoadingOverlay.
-    customLoader: <LoadingOverlay visible={true} />,
+    customLoader: <Loading overlay={true} loading={true} />,
     /* Here, we use the ResponseFeedback to show alerts that pertain to an empty state, an error state and a no results
        state (i.e. filters are applied and there is no data, but there is data without filters applied). */
     emptyState: (
@@ -103,6 +104,7 @@ export const DataTable = <T extends Record<string, unknown>>({
       />
     ),
     ...props,
+    fetching: loading,
     records: data,
     columns: _columns,
   } as MantineDataTableProps<T>;
