@@ -6,7 +6,12 @@ import "~/styles/globals/index.scss";
 /* eslint-disable-next-line import/order */
 import { AppConfig } from "~/components/config/AppConfig";
 
-const inter = Inter({ subsets: ["latin"] });
+const InterFont = Inter({
+  weight: ["400", "500", "600", "700"],
+  style: ["normal"],
+  display: "swap",
+  subsets: ["latin"],
+});
 
 export const metadata = {
   title: "Sportbook",
@@ -15,7 +20,7 @@ export const metadata = {
 
 const RootLayout = ({ children }: { children: ReactNode }) => (
   <html lang="en">
-    <body className={inter.className}>
+    <body className={InterFont.className}>
       <AppConfig>{children}</AppConfig>
     </body>
   </html>
