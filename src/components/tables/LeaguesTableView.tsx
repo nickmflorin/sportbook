@@ -1,6 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 
 import { randomId, useDisclosure } from "@mantine/hooks";
 
@@ -31,9 +32,11 @@ export const LeaguesTableView = ({
   actions = [],
   ...props
 }: LeaguesTableViewProps): JSX.Element => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [createLeagueDrawerOpen, { open: openLeagueDrawer, close: closeLeaguesDrawer }] = useDisclosure(false);
-  const [leagues, setLeagues] = useState<League[]>(data);
   const form = hooks.useLeagueForm();
+  const [isPending, startTransition] = useTransition();
 
   return (
     <>
@@ -42,6 +45,14 @@ export const LeaguesTableView = ({
         description={description}
         style={style}
         className={className}
+        defaultSearch={searchParams.get("query") || undefined}
+        onSearch={(q: string) => {
+          if (q.length !== 0) {
+            router.push(`/leagues?query=${q}`);
+          } else {
+            router.push("/leagues");
+          }
+        }}
         actions={[
           ...(actions || []),
           <SolidButton.Primary key={randomId()} onClick={() => openLeagueDrawer()}>
@@ -49,15 +60,17 @@ export const LeaguesTableView = ({
           </SolidButton.Primary>,
         ]}
       >
-        <LeaguesTable {...props} data={leagues} />
+        <LeaguesTable {...props} data={data} />
       </TableView>
       <CreateLeagueDrawer
         form={form}
         open={createLeagueDrawerOpen}
         action={async leagueData => {
-          const result = await createLeague(leagueData);
+          await createLeague(leagueData);
           form.reset();
-          setLeagues((leagues: League[]) => [...leagues, result]);
+          startTransition(() => {
+            router.refresh();
+          });
         }}
         onClose={() => closeLeaguesDrawer()}
         onCancel={() => closeLeaguesDrawer()}
