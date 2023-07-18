@@ -2,8 +2,9 @@ import React, { useMemo } from "react";
 
 import classNames from "classnames";
 
-import { type ComponentProps } from "~/lib/ui";
+import { type ComponentProps, icons } from "~/lib/ui";
 import { ActionButton, type ActionButtonProps, type ButtonVariant } from "~/components/buttons";
+import { Icon } from "~/components/display/icons";
 
 export type RenderAction = {
   readonly render: () => JSX.Element;
@@ -18,18 +19,20 @@ export type IconAction<V extends ButtonVariant = ButtonVariant> = V extends Butt
     }
   : never;
 
-export type Action = JSX.Element | IconAction | RenderAction | undefined | null;
+export type Action = JSX.Element | IconAction | RenderAction | icons.IconProp | undefined | null;
 
 const isRenderAction = (action: Exclude<Action, undefined | null>): action is RenderAction =>
-  (action as RenderAction).render !== undefined;
+  !isIcon(action) && (action as RenderAction).render !== undefined;
 
 const isIconAction = (action: Exclude<Action, undefined | null>): action is IconAction =>
-  (action as IconAction).icon !== undefined;
+  !isIcon(action) && (action as IconAction).icon !== undefined;
+
+const isIcon = (action: Exclude<Action, undefined | null>): action is icons.IconProp => icons.isIconProp(action);
 
 export const actionIsVisible = (a: Action) =>
   a !== null && a !== undefined && ((!isRenderAction(a) && !isIconAction(a)) || a.visible !== false);
 
-export const filterVisibleActions = (actions: Action[]) =>
+export const filterVisibleActions = (actions: Action[]): Exclude<Action, null | undefined>[] =>
   actions.filter((a): a is Exclude<Action, null | undefined> => actionIsVisible(a));
 
 export interface ActionsProps extends ComponentProps {
@@ -49,9 +52,16 @@ export interface ActionsProps extends ComponentProps {
 export const Actions = ({ children = [], actions, ...props }: ActionsProps): JSX.Element => {
   const visibleActions = useMemo<JSX.Element[]>(
     () =>
-      filterVisibleActions(actions || (Array.isArray(children) ? children : [children])).map(a =>
-        isRenderAction(a) ? a.render() : isIconAction(a) ? <ActionButton {...a} /> : a,
-      ),
+      filterVisibleActions(actions || (Array.isArray(children) ? children : [children])).map((a, i) => {
+        if (isRenderAction(a)) {
+          return <React.Fragment key={i}>{a.render()}</React.Fragment>;
+        } else if (isIconAction(a)) {
+          return <ActionButton key={i} {...a} />;
+        } else if (isIcon(a)) {
+          return <Icon key={i} icon={a} />;
+        }
+        return a;
+      }),
     [actions, children],
   );
 

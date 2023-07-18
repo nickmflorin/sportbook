@@ -3,7 +3,6 @@ import classNames from "classnames";
 import {
   type ComponentProps,
   type TypographySize,
-  TypographySizes,
   type FontWeight,
   type Color,
   type Style,
@@ -21,9 +20,8 @@ export interface TextProps extends ComponentProps {
 
 export const Text = ({
   children,
-  color = "body",
-  size = TypographySizes.MD,
-  // Let the weight default in SASS baed on the size.
+  color,
+  size,
   fontWeight,
   style,
   lineClamp,
@@ -35,7 +33,7 @@ export const Text = ({
     className={classNames(
       "body",
       getColorClassName("color", color),
-      `font-size-${size}`,
+      size && `font-size-${size}`,
       fontWeight && `font-weight-${fontWeight}`,
       { truncate: truncate, clamp: lineClamp !== undefined },
       className,

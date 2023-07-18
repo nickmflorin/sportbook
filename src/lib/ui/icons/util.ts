@@ -4,16 +4,15 @@ import classNames from "classnames";
 
 import { ensuresDefinedValue } from "~/lib/util";
 
-import * as typeguards from "./typeguards";
 import * as types from "./types";
 
 /**
  * Returns the internal icon `code` for the provided icon, {@link types.Icon}, or icon type, {@link types.IconType}.
  */
 export const getIconCode = (i: types.Icon | types.IconType): types.IconCode => {
-  if (typeguards.isIconPrefix(i)) {
+  if (types.isIconPrefix(i)) {
     return types.IconCodeMap[i];
-  } else if (typeguards.isIconCode(i)) {
+  } else if (types.isIconCode(i)) {
     return i;
   }
   return getIconCode(i.type);
@@ -23,9 +22,9 @@ export const getIconCode = (i: types.Icon | types.IconType): types.IconCode => {
  * Returns the Font Awesome `prefix` for the provided icon, {@link types.Icon}, or icon type, {@link types.IconType}.
  */
 export const getIconPrefix = (i: types.Icon | types.IconType): types.IconPrefix => {
-  if (typeguards.isIconPrefix(i)) {
+  if (types.isIconPrefix(i)) {
     return i;
-  } else if (typeguards.isIconCode(i)) {
+  } else if (types.isIconCode(i)) {
     return ensuresDefinedValue(types.IconPrefixMap[i]);
   }
   return getIconPrefix(i.type);
@@ -52,13 +51,13 @@ export const getIconName = (v: types.Icon): types.IconName => v.name;
  *
  * @returns {types.IconCode[]}
  */
-export const getIconCodes = <N extends types.IconName = types.IconName>(name: N): types.GetIconCode<N>[] =>
+export const getIconCodes = <N extends types.IconName = types.IconName>(name: N): types.IconCode[] =>
   Object.keys(types.Icons).reduce(
-    (curr: types.GetIconCode<N>[], k: string): types.GetIconCode<N>[] =>
+    (curr: types.IconCode[], k: string): types.IconCode[] =>
       (types.Icons[k as keyof typeof types.Icons] as readonly types.IconName[]).includes(name)
-        ? ([...curr, k] as types.GetIconCode<N>[])
+        ? ([...curr, k] as types.IconCode[])
         : curr,
-    [] as types.GetIconCode<N>[],
+    [] as types.IconCode[],
   );
 
 /**
@@ -89,14 +88,15 @@ export function getIcons(name?: types.IconName): types.Icon[] {
  *
  * @returns {types.Icon<T, N>}
  */
-export const getIcon = <N extends types.IconName>(name: N): types.IconForName<N> => {
+export const getIcon = <N extends types.IconName>(name: N): types.Icon => {
   const icons = getIcons(name);
   if (icons.length === 0) {
     throw new Error(`An icon does not exist for the provided name '${name}'.`);
   } else if (icons.length !== 1) {
     throw new Error(`Multiple icons exist for the provided name '${name}'.`);
   }
-  return icons[0] as types.IconForName<N>;
+  types.assertIsIcon(icons[0]);
+  return icons[0];
 };
 
 /**
@@ -115,7 +115,7 @@ export const getIcon = <N extends types.IconName>(name: N): types.IconForName<N>
  * @returns {[types.IconPrefix, types.IconName]}
  */
 export const getNativeIcon = (name: types.IconName | types.Icon): [types.IconPrefix, types.IconName] => {
-  if (typeguards.isIconName(name)) {
+  if (types.isIconName(name)) {
     const availableCodes = getIconCodes(name);
     if (availableCodes.length === 0) {
       throw new Error(

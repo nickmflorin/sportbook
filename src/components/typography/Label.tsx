@@ -5,7 +5,6 @@ import {
   type TypographySize,
   TypographySizes,
   type FontWeight,
-  FontWeights,
   type Color,
   getColorClassName,
 } from "~/lib/ui";
@@ -17,21 +16,14 @@ export interface LabelProps extends ComponentProps {
   readonly fontWeight?: FontWeight;
 }
 
-export const Label = ({
-  children,
-  color = "body",
-  size = TypographySizes.MD,
-  fontWeight = FontWeights.REGULAR,
-  style,
-  className,
-}: LabelProps): JSX.Element => (
+export const Label = ({ children, color, size, fontWeight, style, className }: LabelProps): JSX.Element => (
   <label
     style={style}
     className={classNames(
       "label",
       getColorClassName("color", color),
-      `font-size-${size}`,
-      `font-weight-${fontWeight}`,
+      size && `font-size-${size}`,
+      fontWeight && `font-weight-${fontWeight}`,
       className,
     )}
   >

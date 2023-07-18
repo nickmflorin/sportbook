@@ -1,7 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 
 import { randomId, useDisclosure } from "@mantine/hooks";
 

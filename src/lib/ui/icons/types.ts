@@ -2,15 +2,17 @@ import type React from "react";
 import { type ReactElement } from "react";
 
 import { type FontAwesomeIconProps } from "@fortawesome/react-fontawesome";
+import { z } from "zod";
 
 import {
-  type IconCodeMap,
-  type IconNames,
-  type IconPrefixMap,
-  type Icons,
+  IconNames,
+  IconCodes,
+  Icons,
+  IconPrefixes,
   type IconCode,
   type IconPrefix,
 } from "~/application/config/fontAwesome/constants";
+import * as core from "~/lib/core";
 import { type ComponentProps, type Color } from "~/lib/ui";
 import { type SizeAxis, type SizeContain } from "~/lib/ui/types";
 import { enumeratedLiterals, type EnumeratedLiteralType } from "~/lib/util/literals";
@@ -19,16 +21,13 @@ export * from "~/application/config/fontAwesome/constants";
 
 export type IconLibrary = typeof Icons;
 
-type IconNameReverseMap<N extends IconName> = keyof {
-  [key in keyof IconLibrary as N extends IconLibrary[key][number] ? key : never]: IconLibrary[key][number];
-};
-
-export type GetIconPrefix<C extends IconCode> = C extends IconCode ? (typeof IconPrefixMap)[C] : never;
-
-export type GetIconCode<T extends IconName> = IconNameReverseMap<T>;
-export type GetIconCodeFromPrefix<T extends IconPrefix> = T extends IconPrefix ? (typeof IconCodeMap)[T] : never;
-
 export type IconType = IconPrefix | IconCode;
+
+export const IconCodeSchema = z.enum([...IconCodes.__ALL__]);
+export const isIconCode = (value: unknown): value is IconCode => IconCodeSchema.safeParse(value).success;
+
+export const IconPrefixSchema = z.enum([...IconPrefixes.__ALL__]);
+export const isIconPrefix = (value: unknown): value is IconPrefix => IconPrefixSchema.safeParse(value).success;
 
 /**
  * Represents the prefix, {@link IconPrefix}, or the code, {@link IconCode}, for a given Icon name, {@link IconName}.
@@ -52,26 +51,34 @@ export type IconType = IconPrefix | IconCode;
  * @see IconCode
  */
 export type IconName = EnumeratedLiteralType<typeof IconNames>;
-export type GetIconName<C extends IconCode> = C extends IconCode ? IconLibrary[C][number] : never;
 
-export type IconForName<N extends IconName = IconName, C extends GetIconCode<N> = GetIconCode<N>> = N extends IconName
-  ? { type: C; name: N }
-  : never;
+export const IconNameSchema = z.enum([...IconNames.__ALL__]);
+export const isIconName = (name: unknown): name is IconName => IconNameSchema.safeParse(name).success;
 
-export type IconForCode<C extends IconCode = IconCode, N extends GetIconName<C> = GetIconName<C>> = C extends IconCode
-  ? { type: C; name: N }
-  : never;
+export const IconSolidSchema = z.object({
+  type: z.literal(IconCodes.SOLID),
+  name: z.enum([...Icons[IconCodes.SOLID]]),
+});
+export const IconRegularSchema = z.object({
+  type: z.literal(IconCodes.REGULAR),
+  name: z.enum([...Icons[IconCodes.REGULAR]]),
+});
+
+export const IconSchema = z.union([IconSolidSchema, IconRegularSchema]);
 
 /**
  * Represents the information that is used to render an icon in the application.
  */
-export type Icon<T extends IconCode = IconCode, N extends IconName = IconName> = T extends IconCode
-  ? N extends GetIconName<T>
-    ? IconForCode<T, N>
-    : T extends GetIconCode<N>
-    ? IconForName<N, T>
-    : never
-  : never;
+export type Icon = z.infer<typeof IconSchema>;
+export const isIcon = (icon: unknown): icon is Icon => IconSchema.safeParse(icon).success;
+
+export type IconAssertion = (icon: unknown) => asserts icon is Icon;
+
+export const assertIsIcon: IconAssertion = (icon: unknown) => {
+  if (!isIcon(icon)) {
+    throw new Error(`The value '${JSON.stringify(icon)}' is not a valid icon!`);
+  }
+};
 
 /**
  * The element, {@link React.ReactElement}, that corresponds to the {@link JSX.Element} that is rendered by the
@@ -97,6 +104,9 @@ export type IconElement = ReactElement<IconComponentProps, React.FunctionCompone
  */
 export type BasicIconProp = IconName | Icon;
 
+export const BasicIconPropSchema = z.union([IconNameSchema, IconSchema]);
+export const isBasicIconProp = (value: unknown): value is BasicIconProp => BasicIconPropSchema.safeParse(value).success;
+
 /**
  * The way that an "Icon" should be defined in the props for components in the application.
  *
@@ -109,6 +119,19 @@ export type BasicIconProp = IconName | Icon;
  *    <Button icon={<Icon className={"specific-icon"} /> } />
  */
 export type IconProp = BasicIconProp | IconElement;
+
+/**
+ * A typeguard that returns whether or not the provided icon prop, {@link IconProp}, is a valid JSX.Element
+ * corresponding to the <Icon /> component, {@link IconElement}.
+ *
+ * It is very important that the <Icon /> component sets the `displayName` to "Icon" - otherwise, we cannot safely check
+ * if a provided element is in fact a rendered Icon element, {@link IconElement} or another element.
+ */
+export const isIconElement = (value: IconProp): value is IconElement =>
+  core.isSpecificReactElement(value, { name: "Icon" });
+
+export const isIconProp = (value: unknown): value is IconProp =>
+  core.isJSXElement(value) ? isIconElement(value as IconProp) : isBasicIconProp(value);
 
 export const IconSizes = enumeratedLiterals(["xxs", "xs", "sm", "md", "lg", "xl", "fill"] as const);
 export type IconSize = EnumeratedLiteralType<typeof IconSizes>;
