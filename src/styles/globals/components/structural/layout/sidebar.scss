@@ -17,7 +17,7 @@
     justify-content: center;
     align-items: center;
     border: 1px solid transparent;
-    border-radius: 8px;
+    border-radius: partials.get-radius("md");
     color: partials.get-color("gray", 8);
 
     @include partials.hovered {

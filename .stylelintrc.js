@@ -24,9 +24,7 @@ const STYLELINT_RULES = {
   "length-zero-no-unit": null,
   "max-nesting-depth": null,
   "no-invalid-double-slash-comments": true,
-  /* This rule is updated in order to allow class selector notation for nested classes using double underscores (__)
-     (i.e. button__content). */
-  "selector-class-pattern": "^((_)$|(([a-z][a-z0-9]*)(((-|__)|[a-z0-9]+))*$))",
+  "selector-class-pattern": null,
   "selector-max-compound-selectors": null,
   "selector-max-id": null,
 };

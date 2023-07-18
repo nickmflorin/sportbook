@@ -1,0 +1,74 @@
+@use "partials";
+
+@use "./base";
+
+@mixin select-option-structure {
+  @include partials.select-option-properties;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  > .icon {
+    margin-right: partials.get-spacing("md");
+  }
+}
+
+.select {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  // We need to explicitly set the background color to white (instead of not specifying a background color) such that
+  // auto fill styling applied by Google Chrome (and likely others) does not change the background.
+  background-color: partials.$input-bg-color;
+  outline: partials.$input-border;
+  border-radius: partials.$input-border-radius;
+  height: partials.$input-height;
+
+  > input.mantine-Select-input {
+    @extend %native-input-base;
+    @include partials.input-properties;
+    border: none;
+    outline: none;
+
+    // We need to explicitly set the background color to white (instead of not specifying a background color) such that
+    // auto fill styling applied by Google Chrome (and likely others) does not change the background.
+    background-color: partials.$input-bg-color;
+    height: 100%;
+    padding: partials.$input-padding;
+
+    > .icon {
+      color: partials.$input-icon-color;
+    }
+
+    @include partials.disabled {
+      background-color: partials.$input-disabled-bg-color;
+    }
+
+    @include partials.focused {
+      outline-color: partials.$input-focused-border-color;
+    }
+
+    @include partials.focused-within {
+      outline-color: partials.$input-focused-border-color;
+    }
+  }
+
+  // > .icon {
+  //   margin-right: partials.get-spacing("md");
+  // }
+
+  .select__option {
+    @include select-option-structure;
+  }
+
+  .select-option-createable {
+    /*  Note: Right now, we cannot add the custom hover and focus background color behavior to the creatable option at
+        the bottom of the select.  This is because Mantine does not use the optionComponent prop for this option, and
+        thus we cannot provide the custom .select__option class to the wrapping option element.  This means that the
+        hover and focus background colors will apply to the inner section of the creatable option - but not the outer
+        section.
+
+        Eventually, we will use our own select and this issue will be alleviated. */
+    @include select-option-structure;
+  }
+}

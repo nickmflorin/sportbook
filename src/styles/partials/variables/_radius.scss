@@ -1,0 +1,26 @@
+@use "sass:map";
+@use "throw";
+@use "../functions" as fn;
+
+$radius-sizes: ("xs", "sm", "md", "lg", "xl");
+
+$radius-xs: 2px;
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 20px;
+
+$radius: (
+  xs: $radius-xs,
+  sm: $radius-sm,
+  md: $radius-md,
+  lg: $radius-lg,
+  xl: $radius-xl,
+);
+
+@function get-radius($size) {
+  @if not map.has-key($radius, $size) {
+    @return throw.error("The provided size #{$size} is invalid.", $size: $size, $source: "get-radius()");
+  }
+  @return fn.mapget($radius, $size);
+}

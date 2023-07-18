@@ -26,6 +26,7 @@ import {
   faHouseChimney,
   faTableTennisPaddleBall,
   faEllipsis,
+  faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const ICON_REGISTRY = [
@@ -54,4 +55,5 @@ export const ICON_REGISTRY = [
   faTableTennisPaddleBall,
   faPenToSquare,
   faEllipsis,
+  faMagnifyingGlass,
 ] as const;

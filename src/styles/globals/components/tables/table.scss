@@ -9,7 +9,7 @@ $table-size-properties: (
       padding: 4px 6px,
       font: (
         type: "body",
-        family: "avenir",
+        family: partials.$font-family-inter,
         size: "md",
         weight: "semibold",
         line-height: 18px,
@@ -30,7 +30,7 @@ $table-size-properties: (
       padding: 6px 8px,
       font: (
         type: "body",
-        family: "avenir",
+        family: partials.$font-family-inter,
         size: "md",
         weight: "semibold",
         line-height: 18px,
@@ -51,7 +51,7 @@ $table-size-properties: (
       padding: 8px 10px,
       font: (
         type: "body",
-        family: "avenir",
+        family: partials.$font-family-inter,
         size: "lg",
         weight: "semibold",
         line-height: 18px,
@@ -128,6 +128,7 @@ $table-size-properties: (
       }
       @include table-th {
         @include th-size($size);
+        border-bottom: none !important;
       }
       @include table-td {
         @include td-size($size);

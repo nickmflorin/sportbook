@@ -60,13 +60,6 @@ p {
       line-height: partials.mapget($data, line-height);
       font-weight: partials.mapget($data, font-weight);
       @content ($data);
-
-      // Allow the font-weight to be overridden for each size.
-      @include partials.with-font-weights($type) using ($weight, $value) {
-        &.font-weight-#{$weight} {
-          font-weight: $value;
-        }
-      }
     }
   }
 }
@@ -76,6 +69,14 @@ p {
   // the component is provided with the appropriate props, and allows us to override the properties in SASS elsewhere
   // in cases where the component is not provided with those props.
   @extend %typography-base;
+
+  // Allow the font-weight to be overridden for each size.
+  @include partials.with-font-weights() using ($weight, $value) {
+    &.font-weight-#{$weight} {
+      font-weight: $value;
+    }
+  }
+
   @include with-fonts("label") using ($data) {
     $font-size: partials.mapget($data, font-size);
     $line-height: partials.mapget($data, line-height);
@@ -109,6 +110,13 @@ h5,
 h6 {
   @extend %typography-base;
   @include with-fonts("heading");
+
+  // Allow the font-weight to be overridden for each size.
+  @include partials.with-font-weights() using ($weight, $value) {
+    &.font-weight-#{$weight} {
+      font-weight: $value;
+    }
+  }
 
   width: 100%;
 
@@ -149,6 +157,14 @@ h6 {
   // the component is provided with the appropriate props, and allows us to override the properties in SASS elsewhere
   // in cases where the component is not provided with those props.
   @extend %typography-base;
+
+  // Allow the font-weight to be overridden for each size.
+  @include partials.with-font-weights() using ($weight, $value) {
+    &.font-weight-#{$weight} {
+      font-weight: $value;
+    }
+  }
+
   @include with-fonts("body") using ($data) {
     $font-size: partials.mapget($data, font-size);
     $line-height: partials.mapget($data, line-height);

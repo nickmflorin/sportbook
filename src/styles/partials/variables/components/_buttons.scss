@@ -8,6 +8,7 @@
 @use "../../mixins" as mixins;
 
 @use "../colors" as colors;
+@use "../radius" as radius;
 @use "../typography" as typography;
 @use "./icons" as icons;
 
@@ -63,7 +64,7 @@ Buttons  need to leverage an outline instead of a border, because an outline is 
 words, the border will contribute size to the overall Button, while the outline will not.
 */
 $button-outline-width: 1px;
-$button-border-radius: 4px;
+$button-border-radius: radius.get-radius("sm");
 
 /*
 When an Icon and/or Spinner are in the Button, the size of the Icon or Spinner needs to be just a hair smaller than the
@@ -207,7 +208,6 @@ $button-sizes: (
 /* ------------------------------------------------------- Fonts --------------------------------------------------- */
 $button-font-family: typography.$font-family-avenir;
 $button-font-weight: typography.get-font-weight(
-  $family: $button-font-family,
   $weight: "semibold",
 );
 

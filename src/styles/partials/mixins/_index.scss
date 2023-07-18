@@ -4,6 +4,7 @@
 @use "sass:selector";
 
 @forward "./selectors";
+@forward "./element-properties";
 
 @use "../functions" as fn;
 @use "./selectors" as selectors;
@@ -13,16 +14,6 @@ $hovered-selectors: (":hover");
 $focused-selectors: (":focus");
 $focused-within-selectors: (":focus-within");
 $visited-selectors: (":visited");
-
-@mixin transition($value) {
-  /* stylelint-disable-next-line property-no-vendor-prefix */
-  -webkit-transition: $value;
-  /* stylelint-disable-next-line property-no-vendor-prefix */
-  -moz-transition: $value;
-  /* stylelint-disable-next-line property-no-vendor-prefix */
-  -o-transition: $value;
-  transition: $value;
-}
 
 @mixin flex-c {
   display: flex;

@@ -3,7 +3,7 @@
 .badge {
   text-decoration: none;
   display: inline-flex;
-  border-radius: 8px;
+  border-radius: partials.get-radius("md");
   -webkit-tap-highlight-color: transparent;
   box-sizing: border-box;
   align-items: center;
@@ -36,7 +36,7 @@
       font-weight: partials.mapget($data, font-weight);
 
       // Allow the font-weight to be overridden for each size.
-      @include partials.with-font-weights("body") using ($weight, $value) {
+      @include partials.with-font-weights() using ($weight, $value) {
         &.font-weight-#{$weight} {
           font-weight: $value;
         }

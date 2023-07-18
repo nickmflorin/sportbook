@@ -7,7 +7,7 @@
 @use "partials";
 
 @mixin solid-type() {
-  font-weight: partials.get-font-weight($family: partials.$button-font-family, $weight: "semibold");
+  font-weight: partials.get-font-weight($weight: "semibold");
 
   @each $size in partials.$button-size-names {
     &.button--#{$size} {
@@ -17,7 +17,7 @@
 }
 
 @mixin alternate-type {
-  font-weight: partials.get-font-weight($family: partials.$button-font-family, $weight: "semibold");
+  font-weight: partials.get-font-weight($weight: "semibold");
   padding: partials.get-button-padding("alternate");
 
   @each $size in partials.$button-size-names {

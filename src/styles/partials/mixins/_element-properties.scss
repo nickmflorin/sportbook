@@ -1,0 +1,36 @@
+@use "sass:map";
+@use "sass:meta";
+
+@use "../functions" as fn;
+
+@mixin border($c, $w: 1px) {
+  border: $w solid $c;
+  border-color: $c;
+  border-width: $w;
+}
+
+@mixin outline($c, $w: 1px) {
+  outline: $w solid $c;
+  outline-color: $c;
+  outline-width: $w;
+}
+
+@mixin transition($value) {
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-transition: $value;
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -moz-transition: $value;
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -o-transition: $value;
+  transition: $value;
+}
+
+@mixin mapped-properties($map, $strict: false) {
+  @each $k in map.keys($map) {
+    @if fn.mapget($map, $k) {
+      #{meta.inspect($k)}: meta.inspect(fn.mapget($map, $k));
+    } @else if $strict {
+      @error "The property #{$k} is nullish!";
+    }
+  }
+}
