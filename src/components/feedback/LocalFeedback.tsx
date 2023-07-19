@@ -61,7 +61,6 @@ interface _LocalFeedbackProps extends FeedbackUiProps {
   readonly message: string | JSX.Element;
   readonly level?: FeedbackLevel;
   readonly subtle?: true;
-  readonly overlay?: boolean;
   readonly orientation?: "vertical" | "horizontal";
   readonly icon?: React.ComponentType<TablerIconsProps>;
 }
@@ -91,7 +90,6 @@ const _LocalFeedback = ({
   message,
   icon,
   subtle,
-  overlay,
   ...props
 }: _LocalFeedbackProps): JSX.Element => {
   const theme = useMantineTheme();

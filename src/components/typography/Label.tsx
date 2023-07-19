@@ -1,13 +1,6 @@
 import classNames from "classnames";
 
-import {
-  type ComponentProps,
-  type TypographySize,
-  TypographySizes,
-  type FontWeight,
-  type Color,
-  getColorClassName,
-} from "~/lib/ui";
+import { type ComponentProps, type TypographySize, type FontWeight, type Color, getColorClassName } from "~/lib/ui";
 
 export interface LabelProps extends ComponentProps {
   readonly children: string;

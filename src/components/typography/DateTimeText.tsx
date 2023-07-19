@@ -1,8 +1,8 @@
 import classNames from "classnames";
 
+import { FlexDirections, TypographySizes } from "~/lib/ui";
 import { Flex, type FlexProps } from "~/components/structural";
 import { Text, type TextProps } from "~/components/typography";
-import { FlexDirections, TypographySizes } from "~/lib/ui";
 
 export interface DateTimeTextProps extends Omit<FlexProps, "children"> {
   readonly value: Date | null;
@@ -27,7 +27,7 @@ export const DateTimeText = ({
 }: DateTimeTextProps): JSX.Element =>
   value ? (
     <Flex {...props} direction={direction} className={classNames("date-time-text", props.className)}>
-      <Text color={dateColor} size={size === undefined ? dateSize : size} truncate={!includeTime}>
+      <Text color={dateColor} size={dateSize === undefined ? size : dateSize} truncate={!includeTime}>
         {`${value.toLocaleDateString(undefined, {
           year: "numeric",
           month: "short",
@@ -36,7 +36,7 @@ export const DateTimeText = ({
         })}`}
       </Text>
       {includeTime && (
-        <Text size={size} color={timeColor} truncate={true}>
+        <Text size={timeSize === undefined ? timeSize : size} color={timeColor} truncate={true}>
           {value.toLocaleTimeString(undefined, {
             hour: "2-digit",
             minute: "2-digit",
