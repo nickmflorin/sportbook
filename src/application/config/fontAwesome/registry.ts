@@ -2,7 +2,7 @@
 This file contains the icons that are used in the application.  When additional icons are required, they should be
 imported in this file and added to the `IconRegistry` array.
 */
-import { faCircleQuestion, faTrashAlt, faPenToSquare } from "@fortawesome/free-regular-svg-icons";
+import { faCircleQuestion, faTrashAlt, faPenToSquare, faImage } from "@fortawesome/free-regular-svg-icons";
 import {
   faArrowDown,
   faArrowUp,
@@ -56,4 +56,5 @@ export const ICON_REGISTRY = [
   faPenToSquare,
   faEllipsis,
   faMagnifyingGlass,
+  faImage,
 ] as const;

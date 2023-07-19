@@ -1,7 +1,7 @@
 import { type NextRequest } from "next/server";
 
 import { AppResponse } from "~/lib/api";
-import { getAuthUserFromRequest } from "~/lib/integrations/clerk";
+import { getAuthUserFromRequest } from "~/lib/auth";
 import { prisma } from "~/prisma/client";
 
 export async function GET(request: NextRequest) {

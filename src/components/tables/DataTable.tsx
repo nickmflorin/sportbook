@@ -5,7 +5,7 @@ import { DataTable as MantineDataTable, type DataTableProps as MantineDataTableP
 
 import { type ClassName } from "~/lib/ui";
 import { EditTableRowButton } from "~/components/buttons";
-import { ResponseFeedback, type ResponseFeedbackProps } from "~/components/feedback";
+import { ResponseFeedback, type ResponseFeedbackProps } from "~/components/feedback/ResponseFeedback";
 import { Loading } from "~/components/loading";
 
 import { DataTableActionMenu, type DataTableAction } from "./DataTableActionMenu";

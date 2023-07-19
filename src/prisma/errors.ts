@@ -7,3 +7,6 @@ export enum PrismaErrorCode {
 
 export const isPrismaDoesNotExistError = (error: unknown) =>
   error instanceof Prisma.PrismaClientKnownRequestError && error.code === PrismaErrorCode.DOES_NOT_EXIST;
+
+export const isPrismaInvalidIdError = (error: unknown) =>
+  error instanceof Prisma.PrismaClientKnownRequestError && error.code === PrismaErrorCode.INVALID_ID;

@@ -2,8 +2,9 @@ import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
 import { CloseButton } from "~/components/buttons";
+import { Loading } from "~/components/loading";
 import { ButtonFooter, type ButtonFooterProps } from "~/components/structural/ButtonFooter";
-import { PartitionedContent, type PartitionedContentProps } from "~/components/structural/PartitionedContent";
+import { Header, type HeaderProps } from "~/components/structural/Header";
 
 import { Field, FieldConditions, FieldGroup } from "./fields/Field";
 import { NativeForm, type NativeFormProps } from "./NativeForm";
@@ -13,13 +14,12 @@ import { useForm } from "./useForm";
 export { type NativeFormProps } from "./NativeForm";
 export * from "./types";
 
-export type FormProps<I extends BaseFormValues, O extends BaseFormValues = I> = Omit<
-  PartitionedContentProps,
-  "container" | "footer"
-> &
+export type FormProps<I extends BaseFormValues, O extends BaseFormValues = I> = ComponentProps &
+  Pick<HeaderProps, "title" | "description" | "actions" | "titleProps" | "descriptionProps"> &
   Omit<NativeFormProps, keyof ComponentProps | "action" | "onSubmit" | "submitButtonType"> &
-  Omit<ButtonFooterProps, "onSubmit"> & {
+  Omit<ButtonFooterProps, "onSubmit" | keyof ComponentProps> & {
     readonly form: FormInstance<I, O>;
+    readonly loading?: boolean;
     readonly onSubmit?: (data: O) => void;
     readonly action?: (data: O) => void;
     readonly onClose?: () => void;
@@ -75,27 +75,21 @@ export const Form = <I extends BaseFormValues, O extends BaseFormValues = I>({
   }
 
   return (
-    <PartitionedContent
-      style={style}
-      loading={loading}
-      actions={actions}
-      title={title}
-      titleProps={titleProps}
-      description={description}
-      descriptionProps={descriptionProps}
-      className={classNames("form", className)}
-      footer={<ButtonFooter {...props} submitDisabled={props.submitDisabled || loading} />}
-      container={params => (
-        <NativeForm {...params} action={_action} onSubmit={_onSubmit}>
-          <>
-            {onClose && <CloseButton className="form__close-button" onClick={onClose} />}
-            {params.children}
-          </>
-        </NativeForm>
-      )}
-    >
-      {children}
-    </PartitionedContent>
+    <NativeForm style={style} className={classNames("form", className)} action={_action} onSubmit={_onSubmit}>
+      {onClose && <CloseButton className="form__close-button" onClick={onClose} />}
+      <Header
+        className="form__header"
+        title={title}
+        description={description}
+        actions={actions}
+        titleProps={titleProps}
+        descriptionProps={descriptionProps}
+      />
+      <div className="form__content">
+        <Loading loading={loading === true}>{children}</Loading>
+      </div>
+      <ButtonFooter {...props} submitDisabled={props.submitDisabled || loading} />
+    </NativeForm>
   );
 };
 

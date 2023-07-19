@@ -1,23 +1,3 @@
-/**
- * Defines whether or not Prettier formatting rules should be enforced and auto-fixed as a part of the ESLint routine.
- *
- * This application is equipped with the Prettier formatting tool/package, which means that Prettier can be run outside
- * the context of ESLint (i.e. npx prettier -c . - which runs "prettier" checks on the codebase).  However, it is
- * sometimes useful for Prettier to be run as a part of ESLint.  To run Prettier as a part of ESLint, the ESLint
- * configuration must include:
- *
- * 1. "eslint-config-prettier": An ESLint configuration that turns off formatting-related rules that might conflict with
- *                              Prettier.
- * 2. "eslint-plugin-prettier": An ESLint plugin that contain implementations for additional Prettier-related rules that
- *                              ESLint will check for.  The plugin uses Prettier under the hood and will raise ESLint
- *                              errors when your code differs from Prettier's expected output.
- *
- * Including the "eslint-plugin-prettier" plugin and "eslint-config-prettier" can, at times, slow down your IDE
- * considerably - especially if "source.fixAll.eslint" (VSCode setting) is enabled.  For this reason, we will (for now)
- * allow the inclusion of Prettier in the ESLint routine to be toggled via this parameter.
- */
-const INCLUDE_PRETTIER = true;
-
 /** @type {(options?: { typescriptSupport: boolean }) => string[] } */
 const getExtensions = options => {
   /* "prettier" must always be last, and "next/core-web-vitals" must always be first. */
@@ -25,10 +5,7 @@ const getExtensions = options => {
   if (options?.typescriptSupport === true) {
     baseExtensions = [...baseExtensions, "plugin:@typescript-eslint/recommended"];
   }
-  if (INCLUDE_PRETTIER) {
-    return [...baseExtensions, "prettier"];
-  }
-  return baseExtensions;
+  return [...baseExtensions, "prettier"];
 };
 
 const FIRST_INTERNAL_MODULE_GROUP = ["prisma", "application", "lib", "internal", "tests"];
@@ -89,7 +66,8 @@ const IMPORT_ORDER_CONFIG = {
 
 /* Rules that apply to all files in the project, regardless of file type. */
 /** @type {import("eslint").Linter.Config["rules"]} */
-let BASE_RULES = {
+const BASE_RULES = {
+  "prettier/prettier": "error",
   curly: "error",
   "import/order": ["error", IMPORT_ORDER_CONFIG],
   "no-restricted-imports": [
@@ -130,9 +108,6 @@ let BASE_RULES = {
   quotes: [1, "double"],
   semi: [1, "always"],
 };
-if (INCLUDE_PRETTIER) {
-  BASE_RULES = { ...BASE_RULES, "prettier/prettier": "error" };
-}
 
 /* Rules that apply to '.ts' or '.tsx' files. */
 /** @type {import("eslint").Linter.Config["rules"]} */
@@ -164,7 +139,7 @@ const TS_BASE_RULES = {
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
   extends: getExtensions(),
-  plugins: INCLUDE_PRETTIER ? ["prettier"] : [],
+  plugins: ["prettier"],
   rules: BASE_RULES,
   ignorePatterns: [
     "next-env.d.ts",

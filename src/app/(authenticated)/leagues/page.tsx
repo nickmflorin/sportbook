@@ -1,6 +1,4 @@
-import { redirect } from "next/navigation";
-
-import { getAuthUser } from "~/lib/integrations/clerk";
+import { getAuthUser } from "~/lib/auth";
 import { Sport } from "~/prisma";
 import { Page } from "~/components/structural/layout";
 
@@ -13,10 +11,7 @@ interface LeaguesProps {
 export const dynamic = "force-dynamic";
 
 export default async function Leagues({ searchParams }: LeaguesProps) {
-  const user = await getAuthUser();
-  if (!user) {
-    return redirect("/login");
-  }
+  const user = await getAuthUser({ strict: true });
   return (
     <Page title="Leagues">
       {Object.values(Sport).map((sport, i) => (

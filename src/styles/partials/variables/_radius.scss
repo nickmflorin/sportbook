@@ -24,3 +24,9 @@ $radius: (
   }
   @return fn.mapget($radius, $size);
 }
+
+@mixin with-radius() {
+  @each $size in $radius-sizes {
+    @content ($size, fn.mapget($radius, $size));
+  }
+}

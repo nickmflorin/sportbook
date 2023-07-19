@@ -1,10 +1,12 @@
+import { type ReactNode } from "react";
+
 import classNames from "classnames";
 
 import { type ComponentProps, type HTMLElementProps } from "~/lib/ui";
 
 export type NativeFormProps = ComponentProps &
   Pick<HTMLElementProps<"form">, "action" | "onSubmit"> & {
-    readonly children: JSX.Element | JSX.Element[];
+    readonly children: ReactNode;
   };
 
 export const NativeForm = ({ children, ...props }: NativeFormProps): JSX.Element => (

@@ -1,7 +1,9 @@
 import { type User as ClerkUser, type EmailAddress } from "@clerk/clerk-sdk-node";
 import { auth, getAuth } from "@clerk/nextjs/server";
 
+import { NotAuthenticatedError } from "~/application/errors";
 import { throwIfClient } from "~/lib/server";
+import { type User } from "~/prisma";
 import { prisma } from "~/prisma/client";
 
 export const getClerkEmailAddress = (u: ClerkUser): EmailAddress | null => {
@@ -29,11 +31,16 @@ export const getAuthUserFromRequest = async (...args: Parameters<typeof getAuth>
   return await prisma.user.findUniqueOrThrow({ where: { clerkId: userId } });
 };
 
-export const getAuthUser = async () => {
+export async function getAuthUser(options: { strict: true }): Promise<User>;
+export async function getAuthUser(options?: { strict?: false }): Promise<User | null>;
+export async function getAuthUser(options?: { strict?: boolean }) {
   throwIfClient();
   const { userId } = auth();
   if (!userId) {
+    if (options?.strict === true) {
+      throw new NotAuthenticatedError();
+    }
     return null;
   }
   return await prisma.user.findUniqueOrThrow({ where: { clerkId: userId } });
-};
+}

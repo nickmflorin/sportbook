@@ -7,6 +7,9 @@ import { enumeratedLiterals, type EnumeratedLiteralType } from "~/lib/util/liter
 
 import { type ColorPropName } from "./colors";
 
+export const BorderRadiusSizes = enumeratedLiterals(["xs", "sm", "md", "lg", "xl"] as const);
+export type BorderRadiusSize = EnumeratedLiteralType<typeof BorderRadiusSizes>;
+
 export const TypographySizes = enumeratedLiterals(["xxs", "xs", "sm", "md", "lg", "xl"] as const);
 export type TypographySize = EnumeratedLiteralType<typeof TypographySizes>;
 

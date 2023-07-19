@@ -12,26 +12,17 @@ $page-header-margin-bottom: "lg";
 
   > .page__header {
     margin-bottom: partials.get-spacing($page-header-margin-bottom);
-    /* For now, we assume there is no description in the page__header, which allows us to say that it should have a
-       constant height of 30px - which is important for scroll behavior of nested elements inside of the
-       page__content element. */
-    height: $page-header-height;
 
-    > .header__titles {
-      height: $page-header-height;
-
-      > .title {
-        // Set the line-height to a constant to prevent height shifts of the page__header when the order of the <h*>
-        // tag is altered.
-        line-height: $page-header-height;
+    > .header {
+      > .header__titles {
+        > .title {
+          line-height: 30px;
+        }
       }
     }
   }
 
   > .page__content {
-    max-height: calc(100% - partials.get-spacing($page-header-margin-bottom) - $page-header-height);
-    height: calc(100% - partials.get-spacing($page-header-margin-bottom) - $page-header-height);
-    min-height: calc(100% - partials.get-spacing($page-header-margin-bottom) - $page-header-height);
     overflow: hidden;
     position: relative;
   }

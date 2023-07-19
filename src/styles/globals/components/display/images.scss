@@ -1,0 +1,27 @@
+@use "partials";
+
+.model-image {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  position: relative;
+
+  @include partials.with-radius using ($size, $value) {
+    &--border-radius-#{$size} {
+      clip-path: inset(0px round $value);
+    }
+  }
+
+  > .model-image__fallback {
+    @include partials.flex-c;
+    height: 100%;
+    width: 100%;
+    background-color: partials.get-color("gray", $shade: 2);
+
+    > .body {
+      font-weight: partials.get-font-weight($weight: "medium");
+      font-size: partials.get-font-size($type: "body", $size: "xl");
+      color: partials.get-color("gray", $shade: 9);
+    }
+  }
+}

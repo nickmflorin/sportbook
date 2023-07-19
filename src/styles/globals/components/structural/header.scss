@@ -3,25 +3,34 @@
 .header {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
   width: 100%;
 
-  &__titles {
+  > .header__titles {
     display: flex;
     flex-direction: column;
     gap: 2px;
+    height: 100%;
+    max-width: 800px;
 
     > .header__title {
       color: partials.get-font-color("heading", $shade: 8);
     }
+  }
 
-    > .header__subtitle {
-      color: partials.get-color("gray", $shade: 6);
-    }
+  > .model-image {
+    margin-right: partials.get-spacing("lg");
   }
 
   > .actions {
     flex-grow: 100;
+  }
+
+  &--with-image {
+    align-items: flex-start;
+
+    > .header__titles {
+      padding-top: partials.get-spacing("xs");
+    }
   }
 }

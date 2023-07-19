@@ -1,0 +1,7 @@
+@use "partials";
+
+.descriptions {
+  display: flex;
+  flex-direction: column;
+  gap: partials.get-spacing("xs");
+}

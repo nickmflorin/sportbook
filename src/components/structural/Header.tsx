@@ -1,13 +1,16 @@
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
-import { Title, Text, type TitleProps, type TextProps } from "~/components/typography";
+import { ModelImage, type ModelImageProps } from "~/components/display/images";
+import { Title, type TitleProps, type TextProps, Description } from "~/components/typography";
 
-import { Actions, type Action, filterVisibleActions } from "./Actions";
+import { Actions, type Action } from "./Actions";
 
-export interface HeaderProps extends ComponentProps {
+export interface HeaderProps extends ComponentProps, Pick<ModelImageProps, "fallbackInitials"> {
   readonly title?: string | JSX.Element;
-  readonly description?: string;
+  readonly imageSrc?: ModelImageProps["src"];
+  readonly imageSize?: ModelImageProps["size"];
+  readonly description?: Description;
   readonly actions?: Action[];
   readonly titleProps?: Omit<TitleProps, "children">;
   readonly descriptionProps?: Omit<TextProps, "children">;
@@ -19,34 +22,28 @@ export const Header = ({
   actions = [],
   titleProps,
   descriptionProps,
+  imageSrc,
+  fallbackInitials,
+  imageSize = 120,
   ...props
-}: HeaderProps): JSX.Element => {
-  if (!description && !title && filterVisibleActions(actions).length === 0) {
-    return <></>;
-  }
-  return (
-    <div {...props} className={classNames("header", props.className)}>
-      {(description || title) && (
-        <div className="header__titles">
-          {typeof title === "string" ? (
-            <Title order={5} {...titleProps} className={classNames("header__title", titleProps?.className)}>
-              {title}
-            </Title>
-          ) : (
-            title
-          )}
-          {description && (
-            <Text
-              size="sm"
-              {...descriptionProps}
-              className={classNames("header__subtitle", descriptionProps?.className)}
-            >
-              {description}
-            </Text>
-          )}
-        </div>
+}: HeaderProps): JSX.Element => (
+  <div
+    {...props}
+    className={classNames("header", { "header--with-image": imageSrc || fallbackInitials }, props.className)}
+  >
+    {(imageSrc || fallbackInitials) && (
+      <ModelImage src={imageSrc} fallbackInitials={fallbackInitials} size={imageSize} />
+    )}
+    <div className="header__titles">
+      {typeof title === "string" ? (
+        <Title order={5} {...titleProps} className={classNames("header__title", titleProps?.className)}>
+          {title}
+        </Title>
+      ) : (
+        title
       )}
-      <Actions actions={actions} />
+      <Description className="header__descriptions" description={description} {...descriptionProps} />
     </div>
-  );
-};
+    <Actions actions={actions} />
+  </div>
+);

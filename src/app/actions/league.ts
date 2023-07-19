@@ -1,7 +1,7 @@
 "use server";
 import { type z } from "zod";
 
-import { getAuthUser } from "~/lib/integrations/clerk";
+import { getAuthUser } from "~/lib/auth";
 import { Prisma, type LeagueSchema } from "~/prisma";
 import { prisma } from "~/prisma/client";
 

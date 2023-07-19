@@ -1,13 +1,6 @@
 import classNames from "classnames";
 
-import {
-  type ComponentProps,
-  type TypographySize,
-  type FontWeight,
-  type Color,
-  type Style,
-  getColorClassName,
-} from "~/lib/ui";
+import { type ComponentProps, type TypographySize, type FontWeight, type Color, getColorClassName } from "~/lib/ui";
 
 export interface TextProps extends ComponentProps {
   readonly children: string;
@@ -29,7 +22,7 @@ export const Text = ({
   truncate = false,
 }: TextProps): JSX.Element => (
   <div
-    style={lineClamp ? { ...style, ["-webkit-line-clamp" as keyof Style]: lineClamp } : style}
+    style={lineClamp ? { ...style, lineClamp } : style}
     className={classNames(
       "body",
       getColorClassName("color", color),
