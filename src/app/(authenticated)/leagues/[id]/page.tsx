@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { logger } from "~/internal/logger";
+import { logger } from "~/application/logger";
 import { getAuthUser } from "~/lib/auth";
 import { isPrismaDoesNotExistError, isPrismaInvalidIdError, type League } from "~/prisma";
 import { prisma } from "~/prisma/client";

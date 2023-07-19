@@ -1,4 +1,4 @@
-import { logger } from "~/internal/logger";
+import { logger } from "~/application/logger";
 
 import { configure as configureFontAwesome, configureAsync as configureFontAwesomeAsync } from "./fontAwesome";
 

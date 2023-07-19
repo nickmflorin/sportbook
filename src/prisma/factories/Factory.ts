@@ -2,22 +2,9 @@
 import { type Prisma, type User } from "@prisma/client";
 
 import { generateRandomDate, type RandomLength, randomInt } from "~/lib/util/random";
+import { type ModelForm, type ModelDynamicField, type ModelBaseField, type ModelBase } from "~/prisma";
 
 import { getModel, modelHasField } from "../util";
-
-type ModelValue = Date | string | number | boolean | null;
-type Model = Record<string, ModelValue>;
-
-type BaseFields = {
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
-  readonly createdById: string;
-  readonly updatedById: string;
-};
-
-type BaseField<M extends Model> = keyof BaseFields & keyof M;
-type DynamicField<M extends Model, F extends keyof M> = F & Exclude<keyof M, BaseField<M>>;
-type ModelBase<M extends Record<string, ModelValue>> = { [key in BaseField<M>]: M[key] };
 
 const USER_META_FIELDS = ["createdById", "updatedById"] as const;
 const DATE_META_FIELDS = ["createdAt", "updatedAt"] as const;
@@ -26,12 +13,14 @@ type FieldParams = {
   readonly count: number;
 };
 
-type Field<M extends Model, F extends keyof M> = (params: FieldParams) => M[F];
+type Field<M extends ModelForm, F extends keyof M> = (params: FieldParams) => M[F];
 
-type FactoryFields<M extends Model, F extends keyof M> = { [key in F]: Field<M, F> };
+type FactoryFields<M extends ModelForm, F extends keyof M> = { [key in F]: Field<M, F> };
 
-type PartialModelResult<M extends Model, F extends keyof M = never> = { [key in DynamicField<M, F>]: M[key] };
-type ModelResult<M extends Model, F extends keyof M = never> = { [key in DynamicField<M, F> | BaseField<M>]: M[key] };
+type PartialModelResult<M extends ModelForm, F extends keyof M = never> = { [key in ModelDynamicField<M, F>]: M[key] };
+type ModelResult<M extends ModelForm, F extends keyof M = never> = {
+  [key in ModelDynamicField<M, F> | ModelBaseField<M>]: M[key];
+};
 
 export type FactoryOptions = {
   readonly minDate?: Date;
@@ -50,8 +39,8 @@ export type FactoryCreateOptions = {
 };
 
 export class ModelFactory<
-  M extends Record<string, ModelValue>,
-  F extends Exclude<keyof M, keyof M & BaseField<M>> = Exclude<keyof M, keyof M & BaseField<M>>,
+  M extends ModelForm,
+  F extends Exclude<keyof M, keyof M & ModelBaseField<M>> = Exclude<keyof M, keyof M & ModelBaseField<M>>,
 > {
   private readonly _model: Prisma.DMMF.Model;
   private readonly _options: FactoryOptions | undefined;
@@ -65,11 +54,14 @@ export class ModelFactory<
     this._fields = fields;
   }
 
-  private generate(options: FactoryGenerateOptions): PartialModelResult<M, DynamicField<M, F>> {
-    let data = {} as PartialModelResult<M, DynamicField<M, F>>;
+  private generate(options: FactoryGenerateOptions): PartialModelResult<M, ModelDynamicField<M, F>> {
+    let data = {} as PartialModelResult<M, ModelDynamicField<M, F>>;
     for (const field of Object.keys(this._fields)) {
       const f = field as F;
-      data = { ...data, [f]: this._fields[f]({ count: options.count }) } as PartialModelResult<M, DynamicField<M, F>>;
+      data = { ...data, [f]: this._fields[f]({ count: options.count }) } as PartialModelResult<
+        M,
+        ModelDynamicField<M, F>
+      >;
     }
     return data;
   }

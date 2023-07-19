@@ -1,6 +1,6 @@
 "use client";
 
-import { logger } from "~/internal/logger";
+import { logger } from "~/application/logger";
 import { AlternateButton } from "~/components/buttons";
 import { ErrorView } from "~/components/feedback/views/ErrorView";
 

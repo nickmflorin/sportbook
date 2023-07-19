@@ -8,7 +8,7 @@ const getExtensions = options => {
   return [...baseExtensions, "prettier"];
 };
 
-const FIRST_INTERNAL_MODULE_GROUP = ["prisma", "application", "lib", "internal", "tests"];
+const FIRST_INTERNAL_MODULE_GROUP = ["prisma", "application", "lib", "tests"];
 
 // Components and styles should always be the last absolute imports.
 const SECOND_INTERNAL_MODULE_GROUP = ["components", "styles"];

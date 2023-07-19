@@ -1,6 +1,6 @@
 import { type z } from "zod";
 
-import { logger } from "~/internal/logger";
+import { logger } from "~/application/logger";
 
 import { removeObjAttributes } from "../util";
 

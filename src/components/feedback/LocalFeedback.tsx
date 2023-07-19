@@ -26,10 +26,10 @@ type FeedbackLevelDataDef = {
 
 const FeedbackLevelData: { [key in FeedbackLevel]: (t: MantineTheme) => FeedbackLevelDataDef } = {
   [FeedbackLevel.ERROR]: t => ({
-    iconColor: t.colors.error[4],
+    iconColor: t.colors.red[4],
     textColor: t.colors.gray[7],
-    backgroundColor: t.colors.error[0],
-    borderColor: t.colors.error[5],
+    backgroundColor: t.colors.red[0],
+    borderColor: t.colors.red[5],
     icon: IconExclamationCircle,
   }),
   [FeedbackLevel.INFO]: t => ({
@@ -40,17 +40,17 @@ const FeedbackLevelData: { [key in FeedbackLevel]: (t: MantineTheme) => Feedback
     icon: IconNote,
   }),
   [FeedbackLevel.WARNING]: t => ({
-    iconColor: t.colors.error[4],
+    iconColor: t.colors.red[4],
     textColor: t.colors.gray[7],
-    backgroundColor: t.colors.warning[0],
-    borderColor: t.colors.warning[5],
+    backgroundColor: t.colors.yellow[0],
+    borderColor: t.colors.yellow[5],
     icon: IconAlertTriangle,
   }),
   [FeedbackLevel.SUCCESS]: t => ({
-    iconColor: t.colors.success[4],
+    iconColor: t.colors.green[4],
     textColor: t.colors.gray[7],
-    backgroundColor: t.colors.success[0],
-    borderColor: t.colors.success[5],
+    backgroundColor: t.colors.green[0],
+    borderColor: t.colors.green[5],
     icon: IconCircleCheck,
   }),
 };

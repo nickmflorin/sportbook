@@ -2,7 +2,7 @@ import { type User as ClerkUser } from "@clerk/clerk-sdk-node";
 import { DateTime } from "luxon";
 import { type User, type PrismaClient, type League } from "@prisma/client";
 
-import { logger } from "~/internal/logger";
+import { logger } from "~/application/logger";
 import { getClerkEmailAddress } from "~/lib/auth";
 
 import { isPrismaDoesNotExistError } from "./errors";

@@ -4,7 +4,7 @@ import classNames from "classnames";
 
 import { type ComponentProps, icons } from "~/lib/ui";
 import { ActionButton, type ActionButtonProps, type ButtonVariant } from "~/components/buttons";
-import { Icon } from "~/components/display/icons";
+import { Icon } from "~/components/icons";
 
 export type RenderAction = {
   readonly render: () => JSX.Element;

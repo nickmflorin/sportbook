@@ -10,7 +10,7 @@ import { Loader } from "@mantine/core";
 import classNames from "classnames";
 
 import { type icons, type Color, type ClassName, type Style } from "~/lib/ui";
-import { Icon, AddIcon } from "~/components/display/icons";
+import { Icon, AddIcon } from "~/components/icons";
 import { Text, Label } from "~/components/typography";
 
 import { createSelectOption } from "./SelectOption";

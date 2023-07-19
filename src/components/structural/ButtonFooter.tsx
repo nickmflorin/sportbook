@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { experimental_useFormStatus as useFormStatus } from "react-dom";
 
-import { logger } from "~/internal/logger";
+import { logger } from "~/application/logger";
 import { type ComponentProps } from "~/lib/ui";
 import { SolidButton } from "~/components/buttons";
 import { ShowHide } from "~/components/util";

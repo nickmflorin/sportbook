@@ -60,7 +60,7 @@ NextJS blocks this automatically.
 
 See: https://fontawesome.com/docs/web/use-with/react/use-with#getting-font-awesome-css-to-work
 */
-import { logger } from "~/internal/logger";
+import { logger } from "~/application/logger";
 import { type IconName, type IconPrefix } from "~/lib/ui/icons/types";
 import { getIconCode } from "~/lib/ui/icons/util";
 import { findDuplicates } from "~/lib/util/arrays";

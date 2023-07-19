@@ -2,7 +2,7 @@ import React from "react";
 
 import { type icons, type CSSDirection, CSSDirections } from "~/lib/ui";
 import { type ButtonType, type ButtonTypes } from "~/components/buttons";
-import { Icon } from "~/components/display/icons";
+import { Icon } from "~/components/icons";
 
 import { Button, type ButtonProps } from "./Button";
 

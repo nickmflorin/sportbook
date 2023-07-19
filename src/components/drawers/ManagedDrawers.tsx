@@ -5,7 +5,7 @@ import difference from "lodash.difference";
 import intersection from "lodash.intersection";
 import uniq from "lodash.uniq";
 
-import { logger } from "~/internal/logger";
+import { logger } from "~/application/logger";
 
 import { Drawer, type DrawerProps } from "./Drawer";
 import { DrawerView } from "./DrawerView";

@@ -6,7 +6,7 @@ import classNames from "classnames";
 
 import { type icons } from "~/lib/ui";
 import { type PathActive, pathIsActive } from "~/lib/util/paths";
-import { Icon } from "~/components/display/icons";
+import { Icon } from "~/components/icons";
 
 export type SidebarItemConfig = {
   readonly icon: icons.IconProp;

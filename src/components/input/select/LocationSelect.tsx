@@ -1,9 +1,9 @@
 "use client";
 import { type Optional } from "utility-types";
 
-import { logger } from "~/internal/logger";
-import { useLocations } from "~/lib/api";
+import { logger } from "~/application/logger";
 import { type Location } from "~/prisma";
+import { useLocations } from "~/app/api/hooks";
 
 import { AsyncModelSelect, type AsyncModelSelectProps, type SelectMode } from "./abstract";
 

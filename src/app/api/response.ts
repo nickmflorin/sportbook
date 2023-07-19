@@ -2,9 +2,6 @@ import { NextResponse } from "next/server";
 
 import superjson from "superjson";
 
-export * from "./hooks";
-export * from "./types";
-
 export enum StatusCode {
   HTTP_200_OK = 200,
   HTTP_401_NOT_AUTHORIZED = 401,

@@ -1,5 +1,5 @@
 "use client";
-import { logger } from "~/internal/logger";
+import { logger } from "~/application/logger";
 import { ErrorView } from "~/components/feedback/views/ErrorView";
 
 export default function Error({ error }: { error: Error }) {

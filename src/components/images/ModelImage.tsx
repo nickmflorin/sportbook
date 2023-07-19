@@ -5,7 +5,7 @@ import classNames from "classnames";
 
 import { icons, type ComponentProps, type BorderRadiusSize, BorderRadiusSizes } from "~/lib/ui";
 import { type InitialsString, parseInitials } from "~/lib/util/strings";
-import { Icon } from "~/components/display/icons";
+import { Icon } from "~/components/icons";
 import { Text } from "~/components/typography";
 
 export type ModelImageProps = ComponentProps &

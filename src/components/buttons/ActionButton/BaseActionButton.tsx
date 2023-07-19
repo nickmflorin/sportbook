@@ -2,7 +2,7 @@ import classNames from "classnames";
 
 import { icons } from "~/lib/ui";
 import { ButtonTypes, type ButtonVariant } from "~/components/buttons";
-import { Icon } from "~/components/display/icons";
+import { Icon } from "~/components/icons";
 
 import { Button, type ButtonProps } from "../abstract/Button";
 

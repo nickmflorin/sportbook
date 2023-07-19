@@ -1,10 +1,10 @@
 import { type z } from "zod";
 
-import { logger } from "~/internal/logger";
-import { useLocations } from "~/lib/api";
+import { logger } from "~/application/logger";
 import { type LocationSchema } from "~/prisma";
 import { DeleteButton } from "~/components/buttons";
-import { LocationTile } from "~/components/display/tiles";
+import { LocationTile } from "~/components/tiles";
+import { useLocations } from "~/app/api/hooks";
 
 import { LocationSelect, type LocationSelectProps } from "./select";
 

@@ -1,7 +1,7 @@
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
-import { ModelImage, type ModelImageProps } from "~/components/display/images";
+import { ModelImage, type ModelImageProps } from "~/components/images";
 import { Title, type TitleProps, type TextProps, Description } from "~/components/typography";
 
 import { Actions, type Action } from "./Actions";

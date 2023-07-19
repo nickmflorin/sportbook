@@ -1,6 +1,6 @@
 import { type Required } from "utility-types";
 
-import { type Model } from "~/lib/api";
+import { type Model } from "~/prisma";
 
 import { ModelSelect, type ModelSelectProps } from "./ModelSelect";
 import { type SelectMode } from "./Select";
