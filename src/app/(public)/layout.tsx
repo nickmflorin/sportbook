@@ -1,4 +1,4 @@
-import { AppLayout } from "~/components/structural/layout";
+import { AppLayout } from "~/components/layout";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return <AppLayout>{children}</AppLayout>;

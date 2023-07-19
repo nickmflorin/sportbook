@@ -4,13 +4,16 @@
 @use "sass:string";
 
 @use "throw";
+
 @use "../functions" as fn;
 @use "../mixins" as mixins;
 
 $app-background-color: #fbfbfb;
 $disabled-color: #a1a9b4;
+
 $body-color: #231f20;
 $heading-color: #111827;
+
 $white: #ffffff;
 $black: #000000;
 $transparent: transparent;
@@ -174,6 +177,13 @@ $default-shades: (
   color: get-color($color, $shade);
 }
 
+@mixin with-state-bg-color($states, $args...) {
+  @include mixins.with-state($states, $args...) {
+    background-color: $hovered-bg-color;
+    @content;
+  }
+}
+
 @function get-color-class-name($p, $c, $shade: null) {
   @if $shade {
     @return "#{$p}-#{$c}-#{$shade}";
@@ -212,3 +222,6 @@ $default-shades: (
     }
   }
 }
+
+$hovered-bg-color: get-color("gray", $shade: 1);
+$focused-bg-color: get-color("gray", $shade: 1);

@@ -3,11 +3,14 @@
 @use "sass:meta";
 @use "sass:selector";
 
-@forward "./selectors";
-@forward "./element-properties";
-
 @use "../functions" as fn;
 @use "./selectors" as selectors;
+
+@forward "./selectors";
+@forward "./element-properties";
+@forward "./element-positioning";
+
+$states: ("disabled", "hovered", "focused", "focused-within", "visited");
 
 $disabled-selectors: (":disabled", ".disabled");
 $hovered-selectors: (":hover");
@@ -15,13 +18,60 @@ $focused-selectors: (":focus");
 $focused-within-selectors: (":focus-within");
 $visited-selectors: (":visited");
 
-@mixin flex-c {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  -webkit-box-align: center;
-  -webkit-box-pack: center;
-  justify-content: center;
+$state-selectors: (
+  "disabled": (positive: $disabled-selectors, properties: (
+    cursor: not-allowed !important,
+    // Turning off pointer-events with `pointer-events: none` prevents the disabled cursor from appearing.
+    pointer-events: auto !important,
+  )),
+  "hovered": (positive: $hovered-selectors, negative: $disabled-selectors),
+  "focused": (positive: $focused-selectors, negative: $disabled-selectors),
+  "focused-within": (positive: $focused-within-selectors, negative: $disabled-selectors),
+  "visited": (positive: $visited-selectors, negative: $disabled-selectors)
+);
+
+@mixin with-state($st, $args...) {
+  $st: fn.validate-values(if(meta.type-of($st) == list, $st, ($st, )), $states);
+
+  $positives: ();
+  $initial-negatives: ();
+  $properties: ();
+  @each $s in $st {
+    $state-sel: fn.mapget($state-selectors, $s);
+    @if meta.type-of($state-sel) == map {
+      $positives: list.join($positives, fn.mapget($state-sel, "positive"), comma);
+      @if map.has-key($state-sel, "negative") {
+        $initial-negatives: list.join($initial-negatives, fn.mapget($state-sel, "negative"), comma);
+      }
+      @if map.has-key($state-sel, "properties") {
+        $properties: map.merge($properties, fn.mapget($state-sel, "properties"));
+      }
+    } @else {
+      $positives: list.join($positives, $s, comma);
+    }
+  }
+  $negatives: ();
+  @each $n in $initial-negatives {
+    @if not fn.in-list($n, $positives) and not fn.in-list($n, $negatives) {
+      $negatives: list.append($negatives, $n, comma);
+    }
+  }
+
+  @include selectors.with-selectors($positives, $args...) {
+    @if list.length($negatives) != 0 {
+      @include selectors.without-selectors($disabled-selectors, $args...) {
+        @each $k in map.keys($properties) {
+          #{meta.inspect($k)}: meta.inspect(fn.mapget($properties, $k));
+        }
+        @content;
+      }
+    } @else {
+      @each $k in map.keys($map) {
+        #{meta.inspect($k)}: meta.inspect(fn.mapget($properties, $k));
+      }
+      @content;
+    }
+  }
 }
 
 /// Should be used when defining the properties of an element that it will have when it is focused.

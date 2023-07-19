@@ -1,6 +1,6 @@
 import { getAuthUser } from "~/lib/auth";
 import { Sport } from "~/prisma";
-import { Page } from "~/components/structural/layout";
+import { Page } from "~/components/layout";
 
 import SportLeagues from "./SportLeagues";
 

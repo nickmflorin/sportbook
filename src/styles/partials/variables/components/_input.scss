@@ -84,12 +84,7 @@ $select-option-line-height: $select-option-height - 2 * list.nth($select-option-
     color: $input-icon-color;
   }
 
-  @include mixins.hovered {
-    background-color: colors.get-color("gray", 1);
-    color: colors.get-color("gray", 8);
-  }
-  @include mixins.focused {
-    background-color: colors.get-color("gray", 1);
+  @include colors.with-state-bg-color(("hovered", "focused")) {
     color: colors.get-color("gray", 8);
   }
 
@@ -97,12 +92,7 @@ $select-option-line-height: $select-option-height - 2 * list.nth($select-option-
     background-color: colors.get-color("white");
     color: colors.get-color("gray", 8);
 
-    @include mixins.hovered {
-      background-color: colors.get-color("gray", 1);
-      color: colors.get-color("gray", 8);
-    }
-    @include mixins.focused {
-      background-color: colors.get-color("gray", 1);
+    @include colors.with-state-bg-color(("hovered", "focused")) {
       color: colors.get-color("gray", 8);
     }
   }

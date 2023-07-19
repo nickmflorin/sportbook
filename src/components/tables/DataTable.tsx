@@ -75,11 +75,13 @@ export const DataTable = <T extends Record<string, unknown>>({
      distribute our props over the union types.  The only ways around this are to define the props for this component in
      an extremely complicated manner, or simply coerce the props as shown below. */
   const rootProps: MantineDataTableProps<T> = {
-    highlightOnHover: true,
+    highlightOnHover: false,
     withBorder: false,
     height: "100%",
     className: classNames("table", `table--size-${size}`, className),
     customLoader: <Loading overlay={true} loading={true} />,
+    // TODO: Revisit this later.
+    emptyState: <></>,
     ...props,
     fetching: loading,
     records: data,

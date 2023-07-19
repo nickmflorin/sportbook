@@ -111,10 +111,12 @@ $sass-primitives: (number, string, color, calculation, bool, null);
   );
 }
 
+$invalid: "__INVALID__";
+
 /// Validates the provided value based on whether or not they exist in a provided list or map, where the existence in
 /// the map case is based on the keys of that map.  The name, which represents what the value is, can be provided for
 /// additional context in the thrown error.
-@function validate-value($value, $values, $reference: "value") {
+@function validate-value($value, $values, $reference: "value", $strict: true) {
   $valid: false;
   @if type-of($values) == map {
     $valid: in-list($value, map.keys($values));
@@ -130,17 +132,44 @@ $sass-primitives: (number, string, color, calculation, bool, null);
   @if $valid {
     @return $value;
   }
-
-  $invalids: meta.inspect($values);
+  $valids: meta.inspect($values);
   @if meta.type-of($values) == map {
-    $invalids: meta.inspect(map.keys($values));
+    $valids: meta.inspect(map.keys($values));
   }
-  @return throw.error(
-    "The provided #{$reference} '#{$value}' is invalid, must be one of #{$invalids}.",
-    $source: "validate-value()",
-    $value: $value,
-    $reference: $reference
-  );
+  @if $strict {
+    @return throw.error(
+      "The provided #{$reference} '#{$value}' is invalid, must be one of #{$valids}.",
+      $source: "validate-value()",
+      $value: $value,
+      $reference: $reference
+    );
+  }
+  @return $invalid;
+}
+
+@function validate-values($values, $correct-values, $reference: "value") {
+  $values: validate-type($values, list);
+
+  $invalids: ();
+  @each $v in $values {
+    $v: validate-value($v, $correct-values, $reference: $reference, $strict: false);
+    @if $v == $invalid {
+      $invalids: list.append($invalids, $v, comma);
+    }
+  }
+  @if list.length($invalids) != 0 {
+    $valids: meta.inspect($values);
+    @if meta.type-of($values) == map {
+      $valids: meta.inspect(map.keys($values));
+    }
+    @return throw.error(
+      "The provided values '#{$invalids}' for #{$reference} are invalid, must be one of #{$valids}.",
+      $source: "validate-value()",
+      $values: $values,
+      $reference: $reference
+    );
+  }
+  @return $values;
 }
 
 @function is-sass-primitive($v) {

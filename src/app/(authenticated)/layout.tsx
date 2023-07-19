@@ -1,5 +1,5 @@
 import { icons } from "~/lib/ui";
-import { AppLayout } from "~/components/structural/layout";
+import { AppLayout } from "~/components/layout";
 
 export default function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   return (

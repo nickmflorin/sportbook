@@ -4,7 +4,7 @@ import { logger } from "~/application/logger";
 import { getAuthUser } from "~/lib/auth";
 import { isPrismaDoesNotExistError, isPrismaInvalidIdError, type League } from "~/prisma";
 import { prisma } from "~/prisma/client";
-import { DetailPage } from "~/components/structural/layout";
+import { DetailPage } from "~/components/layout";
 
 interface LeagueProps {
   readonly params: { id: string };

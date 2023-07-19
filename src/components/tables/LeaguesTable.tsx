@@ -95,10 +95,5 @@ export const LeaguesTable = <L extends LeagueDatum = LeagueDatum>({
   ],
   ...props
 }: LeaguesTableProps<L>): JSX.Element => (
-  <DataTable<L>
-    errorMessage="There was an error loading the Leagues."
-    emptyMessage="There are no Leagues."
-    {...props}
-    columns={columns.map(name => LeaguesTableColumns[name])}
-  />
+  <DataTable<L> {...props} columns={columns.map(name => LeaguesTableColumns[name])} />
 );

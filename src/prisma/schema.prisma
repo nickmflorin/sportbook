@@ -8,15 +8,23 @@ datasource db {
   url      = env("MIGRATE_DATABASE_URL")
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+}
+
 model User {
   id                   String                 @id @default(uuid()) @db.Uuid
   clerkId              String                 @unique
-  firstName            String?
-  lastName             String?
+  firstName            String
+  lastName             String
   profileImageUrl      String?
-  // TODO: We may need to make this a required field - the only reason it is optional is because it is optional in
-  // Clerk.
-  emailAddress         String?
+  // Note: The only reason that gender has a default value right now is because we would have to figure out how to
+  // populate the field from Clerk - until we figure out how to do that, it might make more sense to allow the User to
+  // modify the field after they have been created.
+  gender               Gender                @default(value: NON_BINARY)
+  emailAddress         String
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
   org                  Org?                   @relation("orgUsers", fields: [orgId], references: [id])
