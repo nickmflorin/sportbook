@@ -7,12 +7,15 @@ import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
 import { infiniteLoop, infiniteLoopSelection } from "~/lib/util/random";
 
 import { prisma } from "./client";
+import * as factories from "./factories";
 import { data } from "./fixtures";
 
 const MIN_PARTICIPANTS_PER_LEAGUE = 3;
 const MAX_PARTICIPANTS_PER_LEAGUE = 5;
 const MIN_LOCATIONS_PER_LEAGUE = 0;
 const MAX_LOCATIONS_PER_LEAGUE = 3;
+const MAX_TEAMS_PER_LEAGUE = 8;
+const MIN_TEAMS_PER_LEAGUE = 3;
 
 type GetUser = () => User;
 
@@ -100,6 +103,12 @@ async function generateSportLeague(sport: Sport, leagueData: (typeof data.league
       createdById: user.id,
       updatedById: user.id,
       sport,
+      teams: {
+        create: factories.TeamFactory.createMany(
+          { min: MIN_TEAMS_PER_LEAGUE, max: MAX_TEAMS_PER_LEAGUE },
+          { user: ctx.getUser },
+        ),
+      },
     },
   });
   await generateLeagueParticipants(league, ctx);

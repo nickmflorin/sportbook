@@ -1,17 +1,11 @@
-import { Prisma } from "@prisma/client";
+import { type Prisma } from "@prisma/client";
+
+import { modelHasField } from "./util";
 
 type UpdateAction = Extract<Prisma.PrismaAction, `update${string}`>;
 
 const UPDATE_ACTIONS: UpdateAction[] = ["update", "updateMany"];
 const UPDATE_OR_UPSERT_ACTIONS: (UpdateAction | "upsert")[] = [...UPDATE_ACTIONS, "upsert"];
-
-const modelHasField = (name: Prisma.ModelName, field: string) => {
-  const model = Prisma.dmmf.datamodel.models.find(m => m.name === name);
-  if (!model) {
-    throw new TypeError(`Invalid model name '${name}'.`);
-  }
-  return model.fields.find(f => f.name === field) !== undefined;
-};
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 const getUpdateData = (args: any, action: UpdateAction | "upsert") =>

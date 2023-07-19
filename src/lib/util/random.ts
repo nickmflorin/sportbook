@@ -17,16 +17,16 @@ type MinMax = {
   max: number;
 };
 
-type Interval = MinMax | [number, number];
-type Length = Interval | number;
+export type RandomInterval = MinMax | [number, number];
+export type RandomLength = RandomInterval | number;
 
-const lengthIsInterval = (l: Length): l is Interval => typeof l !== "number";
+const lengthIsInterval = (l: RandomLength): l is RandomInterval => typeof l !== "number";
 
-const getLength = (l: Length): number => (lengthIsInterval(l) ? randomInt(l) : l);
+const getLength = (l: RandomLength): number => (lengthIsInterval(l) ? randomInt(l) : l);
 
 export function randomInt(min: number, max: number): number;
-export function randomInt(params: Interval): number;
-export function randomInt(min: number | Interval, max?: number) {
+export function randomInt(params: RandomInterval): number;
+export function randomInt(min: number | RandomInterval, max?: number) {
   if (typeof min === "number") {
     if (typeof max !== "number") {
       throw new TypeError("The max value was either not provided or is not valid.");
@@ -38,15 +38,17 @@ export function randomInt(min: number | Interval, max?: number) {
   return Math.floor(Math.random() * (Math.floor(min.max) - Math.ceil(min.min) + 1) + Math.ceil(min.min));
 }
 
-type RandomDateParams = { min?: Date | DateTime; max?: Date | DateTime; nullFrequency?: number };
+type GenerateRandomDateParams = { min?: Date | DateTime; max?: Date | DateTime; nullFrequency?: number };
 
 const _toDateTime = (value: Date | DateTime) => (value instanceof Date ? DateTime.fromJSDate(value) : value);
 
-type RandomDateRT<P extends RandomDateParams> = P extends { nullFrequency: number } ? Date | null : Date;
+type GenerateRandomDateRT<P extends GenerateRandomDateParams> = P extends { nullFrequency: number }
+  ? Date | null
+  : Date;
 
-export const randomDate = <P extends RandomDateParams>(params?: P): RandomDateRT<P> => {
+export const generateRandomDate = <P extends GenerateRandomDateParams>(params?: P): GenerateRandomDateRT<P> => {
   if (_isRandomlyNull(params?.nullFrequency)) {
-    return null as RandomDateRT<P>;
+    return null as GenerateRandomDateRT<P>;
   }
   const max: DateTime = params?.max === undefined ? DateTime.now() : _toDateTime(params.max);
   const min: DateTime = params?.min === undefined ? max.minus({ months: 36 }) : _toDateTime(params.min);
@@ -96,7 +98,7 @@ type RandomSelectionArrayOpts<T, V extends string | number> = {
    * array should lie in.  The returned array will meet this length criteria as long as there are sufficient elements in
    * the array to select from.
    */
-  length: Length;
+  length: RandomLength;
   /**
    * If provided, elements will be randomly selected and added to the array as long as they do not represent duplicates
    * of elements already in the array, where a duplicate is determined based on an equality check of this function's
