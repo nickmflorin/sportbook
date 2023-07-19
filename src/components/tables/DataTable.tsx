@@ -5,7 +5,6 @@ import { DataTable as MantineDataTable, type DataTableProps as MantineDataTableP
 
 import { type ClassName } from "~/lib/ui";
 import { EditTableRowButton } from "~/components/buttons";
-import { ResponseFeedback, type ResponseFeedbackProps } from "~/components/feedback/ResponseFeedback";
 import { Loading } from "~/components/loading";
 
 import { DataTableActionMenu, type DataTableAction } from "./DataTableActionMenu";
@@ -37,26 +36,16 @@ export const ActionMenuColumn = <T extends Record<string, unknown>>({
   render: (rowData: T) => <DataTableActionMenu actions={actionMenu(rowData)} />,
 });
 
-/* In the case of a DataTable, the feedback component will only be shown if no records exist.  As such, we simply set
-   isEmpty to true, since that will always be the case in the context in which this is used.  The other props that
-   dictate whether or not an error is present or whether or not there is search criteria applied will still render the
-   correct form of LocalFeedback. */
-export type DataTableProps<T> = Pick<MantineDataTableProps<T>, "columns" | "sx"> &
-  Omit<ResponseFeedbackProps, "isEmpty" | "overlay" | "fetching"> & {
-    readonly size?: DataTableSize;
-    readonly data: T[];
-    readonly loading?: boolean;
-    readonly className?: ClassName;
-    readonly onRowEdit?: (t: T) => void;
-    readonly actionMenu?: (t: T) => DataTableAction[];
-  };
+export type DataTableProps<T> = Pick<MantineDataTableProps<T>, "columns" | "sx"> & {
+  readonly size?: DataTableSize;
+  readonly data: T[];
+  readonly loading?: boolean;
+  readonly className?: ClassName;
+  readonly onRowEdit?: (t: T) => void;
+  readonly actionMenu?: (t: T) => DataTableAction[];
+};
 
 export const DataTable = <T extends Record<string, unknown>>({
-  error,
-  errorMessage,
-  emptyMessage,
-  noResultsMessage,
-  isFiltered,
   size = DataTableSizes.SM,
   columns,
   data,
@@ -91,18 +80,6 @@ export const DataTable = <T extends Record<string, unknown>>({
     height: "100%",
     className: classNames("table", `table--size-${size}`, className),
     customLoader: <Loading overlay={true} loading={true} />,
-    /* Here, we use the ResponseFeedback to show alerts that pertain to an empty state, an error state and a no results
-       state (i.e. filters are applied and there is no data, but there is data without filters applied). */
-    emptyState: (
-      <ResponseFeedback
-        isEmpty={true}
-        error={error}
-        isFiltered={isFiltered}
-        noResultsMessage={noResultsMessage}
-        errorMessage={errorMessage}
-        emptyMessage={emptyMessage}
-      />
-    ),
     ...props,
     fetching: loading,
     records: data,

@@ -1,6 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 
+import withBundleAnalyzer from "@next/bundle-analyzer";
 import StylelintPlugin from "stylelint-webpack-plugin";
 
 /* Avoids the error: "ReferenceError: __dirname is not defined in ES module scope", which occurs if you refer to the
@@ -42,4 +43,6 @@ const config = {
   ],
 };
 
-export default config;
+export default withBundleAnalyzer(config, {
+  enabled: process.env.NODE_ENV === "development" && process.env.ANALYZE_BUNDLE === "true",
+});
