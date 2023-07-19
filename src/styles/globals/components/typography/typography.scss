@@ -200,7 +200,7 @@ h6 {
   &.clamp {
     -webkit-line-clamp: 2; // This is the default - it can be overridden via props.
     -webkit-box-orient: vertical;
-    display: -webkit-box;
+    display: block;
   }
 
   @include partials.with-alignment() using ($alignment) {
