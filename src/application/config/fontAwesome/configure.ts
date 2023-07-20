@@ -264,19 +264,3 @@ export const configure = (__options__?: FAConfigurationOptions) => {
   logger.info(`Adding ${registry.length} icons to the FontAwesome global library...`);
   library.add(...registry);
 };
-
-/**
- * Asynchronously configures the application with FontAwesome.
- *
- * All icons in the registry (i.e. the icons that we use in the application) are first validated to ensure type-safe
- * usage and are subsequently loaded into the FontAwesome global library.
- *
- * The asynchronous configuration method (`configureAsync`) should be favored over the synchronous configuration method
- * (`configure`) when performing the configuration dynamically in an effort to reduce the bundle size sent to the
- * browser on the initial page load.
- */
-export const configureAsync = async (): Promise<void> => {
-  const { ICON_REGISTRY } = await import("./registry");
-  const { library, config } = await import("@fortawesome/fontawesome-svg-core");
-  return configure({ registry: ICON_REGISTRY.slice() as NaiveFAIconDefinition[], library, config });
-};
