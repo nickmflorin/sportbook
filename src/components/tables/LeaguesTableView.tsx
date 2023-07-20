@@ -1,5 +1,4 @@
 "use client";
-import dynamic from "next/dynamic";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useTransition } from "react";
 
@@ -7,15 +6,12 @@ import { randomId, useDisclosure } from "@mantine/hooks";
 
 import { type League } from "~/prisma/model";
 import { SolidButton } from "~/components/buttons";
+import { CreateLeagueDrawer } from "~/components/drawers/CreateLeagueDrawer";
 import { hooks } from "~/components/forms";
 import { createLeague } from "~/app/actions/league";
 
 import { LeaguesTable, type LeaguesTableProps } from "./LeaguesTable";
 import { TableView, type TableViewProps } from "./TableView";
-
-const CreateLeagueDrawer = dynamic(() =>
-  import("~/components/drawers/CreateLeagueDrawer").then(mod => mod.CreateLeagueDrawer),
-);
 
 export interface LeaguesTableViewProps
   extends Omit<LeaguesTableProps<League>, "style" | "className" | "sx" | "data">,

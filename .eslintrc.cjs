@@ -1,13 +1,3 @@
-/** @type {(options?: { typescriptSupport: boolean }) => string[] } */
-const getExtensions = options => {
-  /* "prettier" must always be last, and "next/core-web-vitals" must always be first. */
-  let baseExtensions = ["next/core-web-vitals"];
-  if (options?.typescriptSupport === true) {
-    baseExtensions = [...baseExtensions, "plugin:@typescript-eslint/recommended"];
-  }
-  return [...baseExtensions, "prettier"];
-};
-
 const FIRST_INTERNAL_MODULE_GROUP = ["prisma", "application", "lib", "tests"];
 
 // Components and styles should always be the last absolute imports.
@@ -138,7 +128,7 @@ const TS_BASE_RULES = {
 
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
-  extends: getExtensions(),
+  extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended", "prettier"],
   plugins: ["prettier"],
   rules: BASE_RULES,
   ignorePatterns: [
@@ -153,12 +143,10 @@ module.exports = {
   overrides: [
     {
       files: ["**/*.ts", "**/*.tsx"],
-      extends: getExtensions({ typescriptSupport: true }),
       rules: TS_BASE_RULES,
     },
     {
       files: ["**/*.test.ts", "**/*.test.tsx", "**/tests/utils/*"],
-      extends: getExtensions({ typescriptSupport: true }),
       rules: {
         ...TS_BASE_RULES,
         // In tests, we need to use var-requires quite often when mocking.
@@ -167,7 +155,6 @@ module.exports = {
     },
     {
       files: ["**/*.md"],
-      extends: getExtensions(),
       rules: {
         ...BASE_RULES,
         // This rule allows the formatter to automatically wrap text in markdown files at line 100.
