@@ -32,6 +32,14 @@
 @mixin action-type {
   aspect-ratio: 1;
 
+  // Use a layer so that the color can be more easily overridden in SASS elsewhere.
+  @layer {
+    color: partials.get-color("gray", $shade: 6);
+    @include partials.with-state(("hovered", "focused")) {
+      color: partials.get-color("gray", $shade: 7);
+    }
+  }
+
   @each $variant in partials.$button-variants {
     &.button--action--#{$variant} {
       padding: partials.get-button-padding("action", $variant);
@@ -44,6 +52,7 @@
       }
     }
   }
+
   &.button--action--bare {
     @include partials.button-hovered-colors("color");
     @include partials.button-focused-colors("color");

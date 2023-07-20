@@ -83,7 +83,7 @@ const _Button = <V extends ButtonType = ButtonType>({
       type="button"
       {...props}
       className={getButtonClassName({ ...props, disabled, locked, loading, cornerStyle, buttonType, size })}
-      onClick={_onClick}
+      onClick={onClick !== undefined ? _onClick : undefined}
       disabled={disabled}
     >
       {children}

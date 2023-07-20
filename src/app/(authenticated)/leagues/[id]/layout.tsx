@@ -28,7 +28,12 @@ export default async function LeagueLayout({ games, teams, params: { id } }: Lea
     }
   }
   return (
-    <DetailPage title={league.name} fallbackInitials={league.name} description={[league.description]}>
+    <DetailPage
+      title={league.name}
+      fallbackInitials={league.name}
+      description={[league.description]}
+      backHref="/leagues"
+    >
       <Flex direction="row">
         {games}
         {teams}
