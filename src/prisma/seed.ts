@@ -11,8 +11,8 @@ import { safeEnumValue } from "./enums";
 import * as factories from "./factories";
 import { data } from "./fixtures";
 
-const MIN_PARTICIPANTS_PER_LEAGUE = 3;
-const MAX_PARTICIPANTS_PER_LEAGUE = 5;
+const MIN_PARTICIPANTS_PER_LEAGUE = 10;
+const MAX_PARTICIPANTS_PER_LEAGUE = 25;
 const MIN_LOCATIONS_PER_LEAGUE = 0;
 const MAX_LOCATIONS_PER_LEAGUE = 3;
 const MAX_TEAMS_PER_LEAGUE = 8;
