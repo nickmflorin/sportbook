@@ -4,6 +4,8 @@
 @forward "./spacing";
 @forward "./typography";
 
+@use "./colors" as colors;
+
 $alignments: (left, center, right);
 
 @mixin with-alignment {
@@ -11,3 +13,8 @@ $alignments: (left, center, right);
     @content ($alignment);
   }
 }
+
+$app-header-height: 60px;
+$app-sidebar-width: 60px;
+
+$layout-border: 1px solid colors.get-color("gray", 4);

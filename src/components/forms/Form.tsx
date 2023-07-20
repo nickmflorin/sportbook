@@ -4,7 +4,7 @@ import { type ComponentProps } from "~/lib/ui";
 import { CloseButton } from "~/components/buttons";
 import { Loading } from "~/components/loading";
 import { ButtonFooter, type ButtonFooterProps } from "~/components/structural/ButtonFooter";
-import { Header, type HeaderProps } from "~/components/structural/Header";
+import { Header, type HeaderProps } from "~/components/views/Header";
 
 import { Field, FieldConditions, FieldGroup } from "./fields/Field";
 import { NativeForm, type NativeFormProps } from "./NativeForm";

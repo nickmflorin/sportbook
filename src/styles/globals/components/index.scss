@@ -1,11 +1,13 @@
+@use "./badges";
 @use "./buttons";
-@use "./display";
 @use "./drawers";
-@use "./feedback";
 @use "./forms";
+@use "./icons";
+@use "./images";
 @use "./layout";
 @use "./loading";
 @use "./input";
 @use "./structural";
 @use "./tables";
 @use "./typography";
+@use "./views";

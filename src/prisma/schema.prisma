@@ -184,6 +184,8 @@ model Team {
   players     TeamOnPlayers[] @relation("players")
   homeGames   Game[]          @relation("homeGames")
   awayGames   Game[]          @relation("awayGames")
+
+  @@unique([name, leagueId])
 }
 
 model Game {

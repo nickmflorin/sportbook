@@ -43,7 +43,7 @@ const getClerkUserValidatedFields = (u: ClerkUser): ClerkValidatedFields => {
     ...REQUIRED_CLERK_FIELDS.map((f: Exclude<RequiredClerkField, "emailAddress">) => ({ field: f, value: u[f] })),
   ];
   const missingFields = clerkFields.filter(check => check.value === null).map(check => check.field);
-  if (missingFields.length === 0) {
+  if (missingFields.length !== 0) {
     const missingFieldsString = missingFields.join(", ");
     /* TODO: We might have to log here instead, and simply assume empty strings for the values.  Throwing an error here
        may introduce problems if the fields were ever optional and then subsequently changed to being required in

@@ -5,7 +5,7 @@ import classNames from "classnames";
 
 import { icons } from "~/lib/ui";
 import { ActionButton } from "~/components/buttons";
-import { Header, type HeaderProps } from "~/components/structural/Header";
+import { Header, type HeaderProps } from "~/components/views/Header";
 
 export interface PageProps extends Omit<HeaderProps, "titleProps"> {
   readonly children: ReactNode;

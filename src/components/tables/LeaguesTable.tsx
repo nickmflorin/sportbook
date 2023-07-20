@@ -1,4 +1,4 @@
-import { type League } from "~/prisma/model";
+import { type League, type LeagueWithParticipation } from "~/prisma/model";
 import { LeagueCompetitionLevelBadge, LeagueTypeBadge } from "~/components/badges";
 import { AlternateButton } from "~/components/buttons";
 import { Flex } from "~/components/structural";
@@ -13,8 +13,16 @@ type LeagueTableLeagueFields =
   | "leagueStart"
   | "leagueEnd"
   | "leagueType"
+  | "numParticipants"
+  | "teams"
   | "competitionLevel";
-type LeagueDatum = Pick<League, LeagueTableLeagueFields>;
+
+type OriginalLeagueFields = keyof League & LeagueTableLeagueFields;
+type OptionalLeagueFields = Exclude<LeagueTableLeagueFields, OriginalLeagueFields> & keyof LeagueWithParticipation;
+
+type LeagueDatum = { [key in OriginalLeagueFields]: League[key] } & {
+  [key in OptionalLeagueFields]?: LeagueWithParticipation[key];
+};
 
 export enum LeaguesTableColumn {
   NAME,
@@ -23,6 +31,8 @@ export enum LeaguesTableColumn {
   LEAGUE_TYPE,
   COMPETITION_LEVEL,
   IS_PUBLIC,
+  NUM_PARTICIPANTS,
+  NUM_TEAMS,
 }
 
 const LeaguesTableColumns: { [key in LeaguesTableColumn]: Column<LeagueDatum> } = {
@@ -49,6 +59,18 @@ const LeaguesTableColumns: { [key in LeaguesTableColumn]: Column<LeagueDatum> } 
         </Flex>
       );
     },
+  },
+  [LeaguesTableColumn.NUM_PARTICIPANTS]: {
+    title: "# Players",
+    accessor: "numParticipants",
+    width: 150,
+    render: ({ numParticipants }) => (numParticipants !== undefined ? `${numParticipants} Players` : <></>),
+  },
+  [LeaguesTableColumn.NUM_TEAMS]: {
+    title: "# Teams",
+    accessor: "numTeams",
+    width: 150,
+    render: ({ teams }) => (teams !== undefined ? `${teams.length} Teams` : <></>),
   },
   [LeaguesTableColumn.START]: {
     title: "Starts",
@@ -92,6 +114,8 @@ export const LeaguesTable = <L extends LeagueDatum = LeagueDatum>({
     LeaguesTableColumn.START,
     LeaguesTableColumn.END,
     LeaguesTableColumn.IS_PUBLIC,
+    LeaguesTableColumn.NUM_TEAMS,
+    LeaguesTableColumn.NUM_PARTICIPANTS,
   ],
   ...props
 }: LeaguesTableProps<L>): JSX.Element => (

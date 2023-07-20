@@ -1,7 +1,7 @@
 import { TextInput } from "@mantine/core";
 import classNames from "classnames";
 
-import { Header, type HeaderProps } from "~/components/structural/Header";
+import { Header, type HeaderProps } from "~/components/views/Header";
 
 export interface TableViewHeaderProps extends HeaderProps {
   readonly defaultSearch?: string;

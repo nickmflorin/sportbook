@@ -6,6 +6,9 @@ import { prisma, isPrismaDoesNotExistError, isPrismaInvalidIdError } from "~/pri
 import { type League } from "~/prisma/model";
 import { DetailPage } from "~/components/layout";
 import { Flex } from "~/components/structural";
+import { Block } from "~/components/views/blocks/Block";
+
+import css from "./LeagueLayout.module.scss";
 
 interface LeagueLayoutProps {
   readonly params: { id: string };
@@ -34,10 +37,12 @@ export default async function LeagueLayout({ games, teams, params: { id } }: Lea
       description={[league.description]}
       backHref="/leagues"
     >
-      <Flex direction="row">
-        {games}
-        {teams}
-      </Flex>
+      <div className={css["league-layout-page"]}>
+        <div className={css["league-layout-page-row"]}>
+          <Block style={{ flex: 1 }}>{games}</Block>
+          <Block style={{ flex: 1 }}>{teams}</Block>
+        </div>
+      </div>
     </DetailPage>
   );
 }

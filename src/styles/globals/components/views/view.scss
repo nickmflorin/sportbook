@@ -1,0 +1,24 @@
+@use "partials";
+
+.view {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: partials.get-spacing("md");
+  position: relative;
+
+  > .view__content {
+    flex-grow: 100;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  &--content-scrollable {
+    height: 100%;
+
+    > .view__content {
+      overflow-y: scroll;
+    }
+  }
+}

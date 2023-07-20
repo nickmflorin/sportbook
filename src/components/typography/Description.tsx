@@ -22,22 +22,23 @@ export type DescriptionExplicitProps = BaseDescriptionProps & {
 
 export type DescriptionProps = DescriptionChildProps | DescriptionExplicitProps;
 
-export const Description = ({
-  className,
-  style,
-  description: _description,
-  children,
-  ...props
-}: DescriptionProps): JSX.Element => {
+export const getFilteredDescriptions = (
+  props: Pick<DescriptionProps, "children" | "description">,
+): Exclude<SingleDescription, null | undefined>[] => {
   let description: SingleDescription[];
-  if (_description) {
-    description = Array.isArray(_description) ? _description : [_description];
+  if (props.description) {
+    description = Array.isArray(props.description) ? props.description : [props.description];
   } else {
-    description = [children];
+    description = [props.children];
   }
-  const filtered = description.filter(
-    (d): d is Exclude<SingleDescription, null | undefined> => d !== null && d !== undefined,
-  );
+  return description.filter((d): d is Exclude<SingleDescription, null | undefined> => d !== null && d !== undefined);
+};
+
+export const descriptionIsVisible = (props: Pick<DescriptionProps, "children" | "description">) =>
+  getFilteredDescriptions(props).length !== 0;
+
+export const Description = ({ className, style, description, children, ...props }: DescriptionProps): JSX.Element => {
+  const filtered = getFilteredDescriptions({ description, children });
   if (filtered.length === 0) {
     return <></>;
   }

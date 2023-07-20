@@ -3,7 +3,7 @@ import { type z } from "zod";
 import { logger } from "~/application/logger";
 import { type LocationSchema } from "~/prisma/model";
 import { DeleteButton } from "~/components/buttons";
-import { LocationTile } from "~/components/tiles";
+import { LocationTile } from "~/components/views/tiles";
 import { useLocations } from "~/app/api/hooks";
 
 import { LocationSelect, type LocationSelectProps } from "./select";

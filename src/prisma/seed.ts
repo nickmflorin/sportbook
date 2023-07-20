@@ -1,5 +1,6 @@
 /* eslint-disable no-console -- This script runs outside of the logger context. */
 import clerk from "@clerk/clerk-sdk-node";
+import chunk from "lodash.chunk";
 import { type User, Sport, LeagueCompetitionLevel, LeagueType, type League, type Location } from "@prisma/client";
 
 import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
@@ -15,9 +16,54 @@ const MIN_PARTICIPANTS_PER_LEAGUE = 10;
 const MAX_PARTICIPANTS_PER_LEAGUE = 25;
 const MIN_LOCATIONS_PER_LEAGUE = 0;
 const MAX_LOCATIONS_PER_LEAGUE = 3;
-const MAX_TEAMS_PER_LEAGUE = 8;
-const MIN_TEAMS_PER_LEAGUE = 3;
-const NUM_FAKE_USERS = 20;
+
+// The number of non-Clerk users that should be generated in the database.
+const NUM_FAKE_USERS = 100;
+
+/* The number of teams per league depends on the number of participants available for that league and the number of
+   players per team.  The more participants in a league, and the fewer players per team, the more teams that can be
+   created.  So, we try to optimize the number of teams per league first based on lowering the number of players per
+   team until we have the desired number of teams per league.  If that does not work, we then try lowering the number
+   of teams per league. */
+const MIN_USERS_PER_TEAM = 4;
+const MAX_USERS_PER_TEAM = 10;
+
+const MAX_TEAMS_PER_LEAGUE = 6;
+const MIN_TEAMS_PER_LEAGUE = 4;
+
+const chunkPlayersPerTeam = (league: League, participants: User[]): User[][] => {
+  if (participants.length === 0) {
+    console.warn(`Cannot bucket players for team in league '${league.name}' because there are no league participants.`);
+    return [];
+  }
+  const chunkPlayers = (minTeamsPerLeague: number): User[][] | null => {
+    for (let i = MAX_USERS_PER_TEAM; i >= MIN_USERS_PER_TEAM; i--) {
+      const chunked = chunk(participants, i);
+      const nTeams = chunked.length;
+      if (nTeams >= minTeamsPerLeague) {
+        return chunked;
+      }
+    }
+    return null;
+  };
+  for (let i = MAX_TEAMS_PER_LEAGUE; i >= MIN_TEAMS_PER_LEAGUE; i--) {
+    const c = chunkPlayers(i);
+    if (c) {
+      if (i !== MAX_TEAMS_PER_LEAGUE) {
+        console.warn(
+          `There were not enough participants for league '${league.name}' to create the desired number of teams, ` +
+            `'${MAX_TEAMS_PER_LEAGUE}'.  Instead, '${c.length}' teams were created.`,
+        );
+      }
+      return c;
+    }
+  }
+  console.warn(
+    `There were not enough participants for league '${league.name}' to create the minimum number of teams, ` +
+      `'${MIN_TEAMS_PER_LEAGUE}'. No teams were created.`,
+  );
+  return [];
+};
 
 type GetUser = () => User;
 
@@ -63,9 +109,39 @@ async function generateLeagueParticipants(league: League, ctx: SeedContext) {
     duplicationKey: (u: User) => u.id,
     length: { min: MIN_PARTICIPANTS_PER_LEAGUE, max: MAX_PARTICIPANTS_PER_LEAGUE },
   });
-  return await prisma.leagueOnParticipants.createMany({
+  await prisma.leagueOnParticipants.createMany({
     data: users.map(u => ({ leagueId: league.id, participantId: u.id, assignedById: u.id })),
   });
+  /* The users in the randomly iterated loop array will be the same as the participants for the league.  These users
+     will then be used to create the teams in the league. */
+  return users;
+}
+
+async function generateLeagueTeam(
+  players: User[],
+  league: League,
+  ctx: SeedContext & { readonly getParticipant: GetUser },
+) {
+  const data = factories.TeamFactory.create({ user: ctx.getParticipant });
+  const team = await prisma.team.create({ data: { ...data, leagueId: league.id } });
+  await prisma.teamOnPlayers.createMany({
+    data: players.map(p => ({ teamId: team.id, userId: p.id, assignedById: p.id })),
+  });
+  return team;
+}
+
+async function generateLeagueTeams(
+  league: League,
+  { participants, ...ctx }: SeedContext & { participants: User[]; readonly getParticipant: GetUser },
+) {
+  const chunks = chunkPlayersPerTeam(league, participants);
+  if (chunks.length === 0) {
+    console.error(`There were not enough players to create any teams for league '${league.name}'.`);
+    return [];
+  }
+  const result = await Promise.all(chunks.map(players => generateLeagueTeam(players, league, ctx)));
+  console.info(`Generated ${result.length} teams for league '${league.name}' in the database.`);
+  return result;
 }
 
 async function generateLeagueLocations(league: League, ctx: SeedContext) {
@@ -73,12 +149,14 @@ async function generateLeagueLocations(league: League, ctx: SeedContext) {
     duplicationKey: (loc: Location) => loc.id,
     length: { min: MIN_LOCATIONS_PER_LEAGUE, max: MAX_LOCATIONS_PER_LEAGUE },
   });
-  return await prisma.leagueOnLocations.createMany({
+  await prisma.leagueOnLocations.createMany({
     data: locations.map(loc => {
       const u = ctx.getUser();
       return { leagueId: league.id, locationId: loc.id, assignedById: u.id };
     }),
   });
+  console.info(`Generated ${locations.length} locations for league '${league.name}' in the database.`);
+  return locations;
 }
 
 async function generateSportLeague(sport: Sport, leagueData: (typeof data.leagues)[number], ctx: SeedContext) {
@@ -95,16 +173,12 @@ async function generateSportLeague(sport: Sport, leagueData: (typeof data.league
       createdById: user.id,
       updatedById: user.id,
       sport,
-      teams: {
-        create: factories.TeamFactory.createMany(
-          { min: MIN_TEAMS_PER_LEAGUE, max: MAX_TEAMS_PER_LEAGUE },
-          { user: ctx.getUser },
-        ),
-      },
     },
   });
-  await generateLeagueParticipants(league, ctx);
   await generateLeagueLocations(league, ctx);
+  const participants = await generateLeagueParticipants(league, ctx);
+  const getParticipant = infiniteLoop<User>(participants);
+  await generateLeagueTeams(league, { ...ctx, participants, getParticipant });
 }
 
 async function generateSportLeagues(sport: Sport, ctx: SeedContext) {

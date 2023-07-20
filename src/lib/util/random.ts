@@ -115,7 +115,7 @@ type RandomSelectionArrayOpts<T, V extends string | number> = {
 
 /**
  * Creates an array of randomly selected elements, {@link T[]}, by making random selections from the provided array,
- * {@link T[]}.
+ * {@link T[]}, either until the maximum length is reached or until there are no more unique elements to select from.
  *
  * Options: @see {RandomSelectionArrayOpts}
  *
@@ -136,6 +136,7 @@ export const randomSelectionArray = <T, V extends string | number>(
   let arr: T[] = [];
   for (let i = 0; i < getLength(options.length); i++) {
     if (options.duplicationKey) {
+      // If the selection is null, it means that there are no more unique elements to select from.
       const selection = randomSelectionWithoutDuplication(data, arr, options.duplicationKey);
       if (!selection) {
         return arr;

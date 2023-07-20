@@ -1,0 +1,13 @@
+@use "partials";
+
+.league-layout-page {
+  display: flex;
+  flex-direction: column;
+  gap: partials.get-spacing("md");
+}
+
+.league-layout-page-row {
+  display: flex;
+  flex-direction: row;
+  gap: partials.get-spacing("md");
+}

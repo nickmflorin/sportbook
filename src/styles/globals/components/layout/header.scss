@@ -5,7 +5,7 @@
   height: partials.$app-header-height;
   display: flex;
   padding: partials.$spacing-md;
-  border-bottom: 1px solid partials.get-color("gray", 4);
+  border-bottom: partials.$layout-border;
 
   &__left,
   &__right {
@@ -24,6 +24,6 @@
   &__right {
     flex-grow: 100;
     justify-content: right;
-    gap: partials.$spacing-md;
+    gap: partials.get-spacing("md");
   }
 }
