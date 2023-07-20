@@ -1,7 +1,7 @@
 import { type z } from "zod";
 
 import { logger } from "~/application/logger";
-import { type LocationSchema } from "~/prisma";
+import { type LocationSchema } from "~/prisma/model";
 import { DeleteButton } from "~/components/buttons";
 import { LocationTile } from "~/components/tiles";
 import { useLocations } from "~/app/api/hooks";

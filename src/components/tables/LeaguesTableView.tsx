@@ -5,7 +5,7 @@ import { useTransition } from "react";
 
 import { randomId, useDisclosure } from "@mantine/hooks";
 
-import { type League } from "~/prisma";
+import { type League } from "~/prisma/model";
 import { SolidButton } from "~/components/buttons";
 import { hooks } from "~/components/forms";
 import { createLeague } from "~/app/actions/league";

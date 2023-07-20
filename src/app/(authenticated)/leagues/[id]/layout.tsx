@@ -2,8 +2,8 @@ import { notFound } from "next/navigation";
 import { type ReactNode } from "react";
 
 import { getAuthUser } from "~/lib/auth";
-import { isPrismaDoesNotExistError, isPrismaInvalidIdError, type League } from "~/prisma";
-import { prisma } from "~/prisma/client";
+import { prisma, isPrismaDoesNotExistError, isPrismaInvalidIdError } from "~/prisma/client";
+import { type League } from "~/prisma/model";
 import { DetailPage } from "~/components/layout";
 import { Flex } from "~/components/structural";
 

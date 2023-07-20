@@ -4,7 +4,7 @@ import { TextInput } from "@mantine/core";
 import { zodResolver } from "@mantine/form";
 import { type z } from "zod";
 
-import { LocationSchema } from "~/prisma";
+import { LocationSchema } from "~/prisma/model";
 
 import { Form, type FormProps } from "./Form";
 

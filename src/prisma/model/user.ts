@@ -1,7 +1,7 @@
 import { type UserResource } from "@clerk/types/dist/user";
+import { type User } from "@prisma/client";
 
 import { logger } from "~/application/logger";
-import { type User } from "~/prisma";
 
 export type BaseUser = Pick<User, "firstName" | "lastName" | "emailAddress"> | UserResource;
 

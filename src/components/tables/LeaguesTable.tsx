@@ -1,4 +1,4 @@
-import { type League } from "~/prisma";
+import { type League } from "~/prisma/model";
 import { LeagueCompetitionLevelBadge, LeagueTypeBadge } from "~/components/badges";
 import { AlternateButton } from "~/components/buttons";
 import { Flex } from "~/components/structural";

@@ -1,5 +1,5 @@
 import { getAuthUser } from "~/lib/auth";
-import { Sport } from "~/prisma";
+import { Sport } from "~/prisma/model";
 import { Page } from "~/components/layout";
 
 import SportLeagues from "./SportLeagues";

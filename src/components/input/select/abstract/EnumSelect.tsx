@@ -1,4 +1,4 @@
-import { type PrismaEnum, type PrismaEnumValue, type EnumModel, type EnumData } from "~/prisma";
+import { type PrismaEnum, type PrismaEnumValue, type EnumModel, type EnumData } from "~/prisma/model";
 
 import { Select, type SelectProps, type SelectMode } from "./Select";
 

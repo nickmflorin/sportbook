@@ -1,8 +1,8 @@
 import { v4 as uuid } from "uuid";
 import { type User, Gender } from "@prisma/client";
 
-import { safeEnumValue } from "../enums";
 import { data } from "../fixtures";
+import { safeEnumValue } from "../model";
 
 import { ModelFactory } from "./Factory";
 

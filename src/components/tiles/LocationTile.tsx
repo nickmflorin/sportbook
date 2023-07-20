@@ -1,4 +1,4 @@
-import { type Location } from "~/prisma";
+import { type Location } from "~/prisma/model";
 
 import { ModelTile, type ModelTileProps } from "./ModelTile";
 

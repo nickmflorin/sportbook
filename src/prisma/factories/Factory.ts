@@ -8,9 +8,8 @@ import {
   randomSelection,
   sequentialSelection,
 } from "~/lib/util/random";
-import { type ModelForm } from "~/prisma";
 
-import { getModel, modelHasField } from "../util";
+import { type ModelForm, getModel, modelHasField } from "../model";
 
 export type NoJsonData = Record<never, never>;
 

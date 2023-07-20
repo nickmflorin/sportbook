@@ -24,7 +24,7 @@ import { env } from "~/env.mjs";
 
 import { userModelExtension } from "./extensions";
 import { ModelMetaDataMiddleware } from "./middleware";
-import { getDatabaseUrl, type DatabaseParams } from "./util/urls";
+import { getDatabaseUrl, type DatabaseParams } from "./urls";
 
 export * from "./errors";
 

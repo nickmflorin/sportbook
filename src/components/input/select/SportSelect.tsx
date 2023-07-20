@@ -1,4 +1,4 @@
-import { type Sport, Sports } from "~/prisma";
+import { type Sport, Sports } from "~/prisma/model";
 
 import { EnumSelect, type EnumSelectProps } from "./abstract";
 

@@ -1,6 +1,6 @@
 import { type Prisma } from "@prisma/client";
 
-import { modelHasField } from "./util";
+import { modelHasField } from "../model";
 
 type UpdateAction = Extract<Prisma.PrismaAction, `update${string}`>;
 

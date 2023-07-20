@@ -2,8 +2,8 @@
 import { type z } from "zod";
 
 import { getAuthUser } from "~/lib/auth";
-import { Prisma, type LeagueSchema } from "~/prisma";
 import { prisma } from "~/prisma/client";
+import { Prisma, type LeagueSchema } from "~/prisma/model";
 
 import { ActionError, ActionErrorCodes } from "./errors";
 

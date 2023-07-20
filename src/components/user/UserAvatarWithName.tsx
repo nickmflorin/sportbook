@@ -2,7 +2,7 @@
 import { type UserResource } from "@clerk/types/dist/user";
 import { Flex, type FlexProps } from "@mantine/core";
 
-import { type User } from "~/prisma";
+import { type User } from "~/prisma/model";
 
 import { UserAvatar } from "./UserAvatar";
 import { UserFullNameText, type UserFullNameTextProps } from "./UserFullNameText";

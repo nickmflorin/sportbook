@@ -3,7 +3,7 @@ import { type SuperJSONResult } from "superjson/dist/types";
 import useRootSWR, { type SWRResponse } from "swr";
 import { type SWRConfiguration } from "swr/_internal";
 
-import { type Sport, type Location } from "~/prisma";
+import { type Sport, type Location } from "~/prisma/model";
 
 type FetchResponseBody = { data: SuperJSONResult };
 

@@ -1,4 +1,4 @@
-import { type LeagueCompetitionLevel, LeagueCompetitionLevels } from "~/prisma";
+import { type LeagueCompetitionLevel, LeagueCompetitionLevels } from "~/prisma/model";
 
 import { EnumSelect, type EnumSelectProps } from "./abstract";
 

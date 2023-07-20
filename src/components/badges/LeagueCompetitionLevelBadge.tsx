@@ -1,4 +1,4 @@
-import { type LeagueCompetitionLevel, LeagueCompetitionLevels, type League } from "~/prisma";
+import { type LeagueCompetitionLevel, LeagueCompetitionLevels, type League } from "~/prisma/model";
 
 import { Badge, type BadgeProps } from "./Badge";
 

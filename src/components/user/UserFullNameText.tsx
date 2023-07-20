@@ -2,7 +2,7 @@
 import { Text, type TextProps, packSx } from "@mantine/core";
 import { type PolymorphicComponentProps } from "@mantine/utils";
 
-import { type BaseUser, parseUserDisplayName } from "~/lib/user";
+import { type BaseUser, parseUserDisplayName } from "~/prisma/model/user";
 
 export type UserFullNameTextProps<U extends BaseUser> = Omit<
   PolymorphicComponentProps<"div", TextProps>,

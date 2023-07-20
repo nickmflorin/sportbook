@@ -1,4 +1,4 @@
-import { type Model } from "~/prisma";
+import { type Model } from "~/prisma/model";
 
 import { Select, type SelectProps, type SelectMode } from "./Select";
 

@@ -9,12 +9,6 @@ export type ModelStringField<
   keyof M &
   string;
 
-// export type ModelStringField<M extends Record<string, unknown>> = keyof M & string;
-
-/*   [key in keyof M as M[key] extends string | null | undefined ? key : never]: M[key];
-   } &
-     string; */
-
 const getModelStringFieldValue = <
   M extends Record<string, unknown>,
   S extends ModelStringField<M, string> = ModelStringField<M, string>,

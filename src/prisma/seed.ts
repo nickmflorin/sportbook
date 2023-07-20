@@ -7,9 +7,9 @@ import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
 import { infiniteLoop, infiniteLoopSelection } from "~/lib/util/random";
 
 import { prisma } from "./client";
-import { safeEnumValue } from "./enums";
 import * as factories from "./factories";
 import { data } from "./fixtures";
+import { safeEnumValue } from "./model";
 
 const MIN_PARTICIPANTS_PER_LEAGUE = 10;
 const MAX_PARTICIPANTS_PER_LEAGUE = 25;
