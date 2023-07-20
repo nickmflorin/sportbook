@@ -7,6 +7,7 @@ import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
 import { infiniteLoop, infiniteLoopSelection } from "~/lib/util/random";
 
 import { prisma } from "./client";
+import { safeEnumValue } from "./enums";
 import * as factories from "./factories";
 import { data } from "./fixtures";
 
@@ -16,6 +17,7 @@ const MIN_LOCATIONS_PER_LEAGUE = 0;
 const MAX_LOCATIONS_PER_LEAGUE = 3;
 const MAX_TEAMS_PER_LEAGUE = 8;
 const MIN_TEAMS_PER_LEAGUE = 3;
+const NUM_FAKE_USERS = 20;
 
 type GetUser = () => User;
 
@@ -39,16 +41,6 @@ async function collectClerkPages<T>(fetch: (params: { limit: number; offset: num
   } while (nResultsAdded > 0);
   return results;
 }
-
-const safeEnumValue = <E extends Record<string, string>>(value: string, prismaEnum: E): E[keyof E] => {
-  const v = value.toUpperCase();
-  if (prismaEnum[v] === undefined) {
-    throw new TypeError(
-      `Invalid enum value '${value}' detected for enum, must be one of ${Object.values(prismaEnum).join(", ")}'`,
-    );
-  }
-  return v as E[keyof E];
-};
 
 /* -------------------------------------------------- Seeding ------------------------------------------------ */
 async function generateLocations(ctx: Omit<SeedContext, "getLocation">) {
@@ -149,7 +141,7 @@ async function main() {
   /* TODO: We need to figure out how to sync user data with clerk data at certain times.  We cannot do this from the
      middleware script because we cannot run Prisma in the browser. */
   const users = await Promise.all(clerkUsers.map(u => prisma.user.createFromClerk(u)));
-  console.info(`Generated ${users.length} users in the database.`);
+  console.info(`Generated ${users.length} clerk users in the database.`);
 
   const organizations = await collectClerkPages(p => clerk.organizations.getOrganizationList(p));
   console.info(`Found ${organizations.length} organizations in Clerk.`);
@@ -165,7 +157,22 @@ async function main() {
   }
   console.info(`\nSuccessfully generated ${organizations.length} organizations with associated data in database.`);
 
-  const getUser = infiniteLoop<User>(users);
+  /* At least right now, we cannot generate enough User models from Clerk for development purposes.  So, we generate
+     a series of fake User(s) to fill in the gaps.  In development, these User(s) cannot be used to login, but are only
+     there to reference models that would be viewed when logged into a real User's account.
+
+     Note: The clerkId for the fake users is set to a dummy string value - this ID will not correspond to an actual
+     User in Clerk (which is why these fake User(s) cannot be used to login to the app). */
+  const fakeUsers = await Promise.all(
+    factories.UserFactory.createMany(NUM_FAKE_USERS, {}).map(userData =>
+      prisma.user.create({
+        data: userData,
+      }),
+    ),
+  );
+  console.info(`Generated ${fakeUsers.length} fake users in the database.`);
+
+  const getUser = infiniteLoop<User>([...users, ...fakeUsers]);
   const locations = await generateLocations({ getUser });
   console.info(`\nSuccessfully generated ${locations.length} locations with associated data in database.`);
 

@@ -20,3 +20,13 @@ export type EnumData<
 export type EnumModelConfig<E extends PrismaEnum> = {
   [key in PrismaEnumValue<E>]: Omit<EnumData<E, key>, "value">;
 };
+
+export const safeEnumValue = <E extends Record<string, string>>(value: string, prismaEnum: E): E[keyof E] => {
+  const v = value.toUpperCase();
+  if (prismaEnum[v] === undefined) {
+    throw new TypeError(
+      `Invalid enum value '${value}' detected for enum, must be one of ${Object.values(prismaEnum).join(", ")}'`,
+    );
+  }
+  return v as E[keyof E];
+};

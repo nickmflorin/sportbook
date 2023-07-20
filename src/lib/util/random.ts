@@ -4,7 +4,7 @@ const _isRandomlyNull = (nullChance = 0): boolean => {
   if (nullChance > 100 || nullChance < 0) {
     throw new TypeError("Null frequency must be between 0 and 100.");
   }
-  return randomInt({ min: 0, max: 100 }) <= nullChance;
+  return randomInt({ min: 0, max: 100 }) < nullChance;
 };
 
 export const randomlyNull =
@@ -47,7 +47,7 @@ type GenerateRandomDateRT<P extends GenerateRandomDateParams> = P extends { null
   : Date;
 
 export const generateRandomDate = <P extends GenerateRandomDateParams>(params?: P): GenerateRandomDateRT<P> => {
-  if (_isRandomlyNull(params?.nullFrequency)) {
+  if (params?.nullFrequency !== undefined && _isRandomlyNull(params?.nullFrequency)) {
     return null as GenerateRandomDateRT<P>;
   }
   const max: DateTime = params?.max === undefined ? DateTime.now() : _toDateTime(params.max);
@@ -60,9 +60,12 @@ export const generateRandomDate = <P extends GenerateRandomDateParams>(params?: 
 };
 
 export const randomSelection = <T>(data: T[]): T => {
+  if (data.length === 0) {
+    throw new Error("No data exists at the first index because the provided data is empty.");
+  }
   const ind = randomInt(0, data.length - 1);
   const datum = data[ind];
-  if (!datum) {
+  if (datum === undefined) {
     throw new Error(`Data unexpectedly returned undefined value at index ${ind}!`);
   }
   return datum;
@@ -143,6 +146,15 @@ export const randomSelectionArray = <T, V extends string | number>(
     }
   }
   return arr;
+};
+
+export const sequentialSelection = <T>(data: T[], count = 0): T => {
+  if (data.length === 0) {
+    throw new Error("No data exists at the first index because the provided data is empty.");
+  } else if (data.length > count) {
+    return data[count] as T;
+  }
+  return data[data.length % count] as T;
 };
 
 export function infiniteLoop<T>(data: T[], step = 1): () => T {
