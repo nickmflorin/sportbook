@@ -10,7 +10,7 @@ $page-header-margin-bottom: "lg";
   display: flex;
   flex-direction: column;
 
-  > .page__back-button {
+   .page__back-button {
     margin-bottom: partials.get-spacing("md");
   }
 
