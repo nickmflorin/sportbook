@@ -15,7 +15,7 @@ export type ModelImageProps = ComponentProps &
     readonly src?: ImageProps["src"] | null;
     readonly alt?: string;
     readonly borderRadius?: BorderRadiusSize;
-    readonly size: ImageProps["height"] & ImageProps["width"];
+    readonly size?: Exclude<ImageProps["height"] & ImageProps["width"], undefined>;
   };
 
 export const ModelImage = ({

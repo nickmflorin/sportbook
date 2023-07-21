@@ -4,8 +4,11 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: partials.get-spacing("md");
   position: relative;
+
+  @layer {
+    gap: partials.get-spacing("md");
+  }
 
   > .view__content {
     flex-grow: 100;
@@ -20,5 +23,18 @@
     > .view__content {
       overflow-y: scroll;
     }
+  }
+
+  &--bordered {
+    border: partials.$layout-border;
+    border-radius: partials.get-radius("sm");
+    padding: partials.get-spacing("sm") partials.get-spacing("md");
+  }
+}
+
+
+.tiles-view {
+  > .tile {
+    gap: partials.get-spacing("md");
   }
 }

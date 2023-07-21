@@ -18,7 +18,7 @@ are not reloaded:
 See: https://www.prisma.io/docs/guides/performance-and-optimization/connection-management
      #prevent-hot-reloading-from-creating-new-instances-of-prismaclient
 */
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient as RootPrismaClient, FileUploadEntity, FileType } from "@prisma/client";
 
 import { env } from "~/env.mjs";
 
@@ -29,37 +29,99 @@ import { getDatabaseUrl, type DatabaseParams } from "./urls";
 export * from "./errors";
 
 /**
- * Initializes and returns the {@link PrismaClient} based on configuration values stored as ENV variables.
+ * Initializes and returns both the extended and unextended forms of the {@link PrismaClient} based on configuration
+ * values stored as ENV variables.
  *
- * @returns {PrismaClient}
+ * @returns {{ xprisma: PrismaClientWithExtensions, prisma: PrismaClient }}
  */
 export const initializePrismaClient = (params?: DatabaseParams) => {
   const url = getDatabaseUrl(params);
-  const _prisma = new PrismaClient({
+  const prisma = new RootPrismaClient({
     log: env.DATABASE_LOG_LEVEL,
     datasources: { db: { url } },
   });
-  _prisma.$use(ModelMetaDataMiddleware);
-  return _prisma.$extends({
-    model: {
-      user: userModelExtension(_prisma),
-    },
-  });
+  prisma.$use(ModelMetaDataMiddleware);
+  return {
+    prisma,
+    xprisma: prisma.$extends({
+      model: {
+        user: userModelExtension(prisma),
+      },
+      result: {
+        team: {
+          getImage: {
+            needs: { id: true },
+            compute(team) {
+              return async () => {
+                const image = (
+                  await prisma.fileUpload.findMany({
+                    where: { entityId: team.id, entityType: FileUploadEntity.TEAM, fileType: FileType.IMAGE },
+                    orderBy: { createdAt: "desc" },
+                    take: 1,
+                  })
+                )[0];
+                return image === undefined ? null : image;
+              };
+            },
+          },
+        },
+        league: {
+          getImage: {
+            needs: { id: true },
+            compute(league) {
+              return async () => {
+                const image = (
+                  await prisma.fileUpload.findMany({
+                    where: { entityId: league.id, entityType: FileUploadEntity.LEAGUE, fileType: FileType.IMAGE },
+                    orderBy: { createdAt: "desc" },
+                    take: 1,
+                  })
+                )[0];
+                return image === undefined ? null : image;
+              };
+            },
+          },
+        },
+        location: {
+          getImage: {
+            needs: { id: true },
+            compute(location) {
+              return async () => {
+                const image = (
+                  await prisma.fileUpload.findMany({
+                    where: { entityId: location.id, entityType: FileUploadEntity.LOCATION, fileType: FileType.IMAGE },
+                    orderBy: { createdAt: "desc" },
+                    take: 1,
+                  })
+                )[0];
+                return image === undefined ? null : image;
+              };
+            },
+          },
+        },
+      },
+    }),
+  };
 };
 
-export type ClientType = ReturnType<typeof initializePrismaClient>;
+export type PrismaClientWithExtensions = ReturnType<typeof initializePrismaClient>["xprisma"];
+export type PrismaClient = ReturnType<typeof initializePrismaClient>["prisma"];
 
-export let prisma: ClientType;
+export let prisma: PrismaClient;
+export let xprisma: PrismaClientWithExtensions;
 
-const globalPrisma = global as unknown as { prisma: ClientType };
+const globalPrisma = global as unknown as { prisma: PrismaClient; xprisma: PrismaClientWithExtensions };
 
 if (typeof window === "undefined") {
   if (process.env.NODE_ENV === "production") {
-    prisma = initializePrismaClient();
+    ({ prisma, xprisma } = initializePrismaClient());
   } else {
-    if (!globalPrisma.prisma) {
-      globalPrisma.prisma = initializePrismaClient();
+    if (!globalPrisma.prisma || !globalPrisma.xprisma) {
+      const { prisma: _prisma, xprisma: _xprisma } = initializePrismaClient();
+      globalPrisma.prisma = _prisma;
+      globalPrisma.xprisma = _xprisma;
     }
     prisma = globalPrisma.prisma;
+    xprisma = globalPrisma.xprisma;
   }
 }

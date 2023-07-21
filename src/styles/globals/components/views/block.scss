@@ -1,7 +1,0 @@
-@use "partials";
-
-.block {
-  border: partials.$layout-border;
-  border-radius: partials.get-radius("sm");
-  padding: partials.get-spacing("sm") partials.get-spacing("md");
-}

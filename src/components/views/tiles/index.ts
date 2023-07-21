@@ -1,3 +1,4 @@
-export * from "./Tile";
+export * from "./GameTile";
 export * from "./LocationTile";
-export * from "./ModelTile";
+export * from "./Tile";
+export * from "./TeamTile";

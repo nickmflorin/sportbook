@@ -31,6 +31,7 @@ model User {
   teams                TeamOnPlayers[]        @relation("teams")
   participatingLeagues LeagueOnParticipants[] @relation("participatingLeagues")
   createdLocations     Location[]             @relation("createdLocations")
+  uploadedFiles        FileUpload[]           @relation("uploadedFiles")
 }
 
 model Org {
@@ -46,6 +47,28 @@ model Org {
   state     String?
   zip       String?
   users     User[]   @relation("orgUsers")
+}
+
+enum FileUploadEntity {
+  LOCATION
+  LEAGUE
+  TEAM
+}
+
+enum FileType {
+  IMAGE
+}
+
+// TODO: Use middleware to prevent mutation of existing FileUpload models (i.e. make it a readonly field).
+model FileUpload {
+  id          String           @id @default(uuid()) @db.Uuid
+  createdAt   DateTime         @default(now())
+  createdById String           @db.Uuid
+  createdBy   User             @relation("uploadedFiles", fields: [createdById], references: [id])
+  fileUrl     String
+  fileType    FileType
+  entityType  FileUploadEntity
+  entityId    String           @db.Uuid
 }
 
 enum Sport {
@@ -201,19 +224,19 @@ model Team {
 }
 
 model Game {
-  id          String   @id @default(uuid()) @db.Uuid
-  createdById String   @db.Uuid
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  updatedById String   @db.Uuid
-  league      League   @relation("leagueGames", fields: [leagueId], references: [id])
-  leagueId    String   @db.Uuid
+  id          String    @id @default(uuid()) @db.Uuid
+  createdById String    @db.Uuid
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  updatedById String    @db.Uuid
+  league      League    @relation("leagueGames", fields: [leagueId], references: [id])
+  leagueId    String    @db.Uuid
   // What to do about PickUp games where there is no home or away team?
-  homeTeam    Team     @relation("homeGames", fields: [homeTeamId], references: [id])
-  homeTeamId  String   @db.Uuid
-  awayTeam    Team     @relation("awayGames", fields: [awayTeamId], references: [id])
-  awayTeamId  String   @db.Uuid
+  homeTeam    Team      @relation("homeGames", fields: [homeTeamId], references: [id])
+  homeTeamId  String    @db.Uuid
+  awayTeam    Team      @relation("awayGames", fields: [awayTeamId], references: [id])
+  awayTeamId  String    @db.Uuid
   dateTime    DateTime
-  location    Location?  @relation("games", fields: [locationId], references: [id])
+  location    Location? @relation("games", fields: [locationId], references: [id])
   locationId  String?   @db.Uuid
 }

@@ -8,30 +8,46 @@
   border-radius: partials.get-radius("sm");
   padding: 4px 6px;
 
-  > .tile__content {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 100;
-
-    > .tile__title {
-      @include partials.font($type: "body", $weight: "medium", $size: "sm", $family: "avenir");
+  > .tile__header {
+    > .model-image {
+      margin-right: partials.get-spacing("md");
+      height: 60px;
+      width: 60px;
     }
 
-    > .tile__descriptions {
+    > .tile__info {
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      margin-top: partials.get-spacing("xs");
+      flex-grow: 100;
 
-      > .tile__description {
-        @include partials.font($type: "body", $weight: "regular", $size: "xs");
-
-        color: partials.get-color("gray", 5);
+      > .tile__title {
+        @include partials.font($type: "body", $weight: "medium", $size: "sm", $family: "avenir");
       }
+
+      > .tile__descriptions {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        margin-top: partials.get-spacing("xs");
+
+        > .tile__description {
+          @include partials.font($type: "body", $weight: "regular", $size: "xs");
+
+          color: partials.get-color("gray", 5);
+        }
+      }
+    }
+
+    > .actions {
+      margin-left: partials.get-spacing("md");
     }
   }
 
-  > .actions {
-    margin-left: partials.get-spacing("md");
+  &.tile--with-image {
+    > .tile__header {
+      > .tile__info {
+        padding-top: partials.get-spacing("xs");
+      }
+    }
   }
 }

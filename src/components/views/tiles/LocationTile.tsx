@@ -1,11 +1,13 @@
 import { type Location } from "~/prisma/model";
 
-import { ModelTile, type ModelTileProps } from "./ModelTile";
+import { Tile, type TileProps } from "./Tile";
 
 type Loc = Pick<Location, "name" | "primaryStreetAddress" | "description">;
 
-export type LocationTileProps = Omit<ModelTileProps<Loc>, "title" | "description">;
+export type LocationTileProps = Omit<TileProps, "title" | "description"> & {
+  readonly location: Loc;
+};
 
-export const LocationTile = (props: LocationTileProps): JSX.Element => (
-  <ModelTile {...props} description={(l: Loc) => l.description || l.primaryStreetAddress} title="name" />
+export const LocationTile = ({ location, ...props }: LocationTileProps): JSX.Element => (
+  <Tile {...props} description={[location.description, location.primaryStreetAddress]} title={location.name} />
 );
