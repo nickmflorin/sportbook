@@ -1,8 +1,15 @@
+import dynamic from "next/dynamic";
+
 import { logger } from "~/application/logger";
 import { prisma } from "~/prisma/client";
 import { type Sport, type LeagueWithParticipation } from "~/prisma/model";
-import { LeaguesTableView } from "~/components/tables/LeaguesTableView";
+import { Loading } from "~/components/loading";
 import { DataTableSizes } from "~/components/tables/types";
+
+const LeaguesTableView = dynamic(() => import("~/components/tables/LeaguesTableView"), {
+  ssr: false,
+  loading: () => <Loading loading={true} />,
+});
 
 export interface LeagueSportsProps {
   readonly sport: Sport;

@@ -76,3 +76,5 @@ export const LeaguesTableView = ({
     </>
   );
 };
+
+export default LeaguesTableView;

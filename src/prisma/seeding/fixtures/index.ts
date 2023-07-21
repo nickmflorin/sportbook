@@ -1,9 +1,9 @@
-import leagues from "./leagues.json";
 import locations from "./locations.json";
+import sentences from "./sentences.json";
 import users from "./users.json";
 
-export const data = {
-  leagues: leagues.leagues,
+export const fixtures = {
   locations: locations.locations,
   users: users.users,
+  sentences: sentences.sentences,
 };

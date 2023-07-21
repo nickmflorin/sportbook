@@ -20,10 +20,7 @@ model User {
   firstName            String
   lastName             String
   profileImageUrl      String?
-  // Note: The only reason that gender has a default value right now is because we would have to figure out how to
-  // populate the field from Clerk - until we figure out how to do that, it might make more sense to allow the User to
-  // modify the field after they have been created.
-  gender               Gender                @default(value: NON_BINARY)
+  gender               Gender                 @default(value: NON_BINARY)
   emailAddress         String
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
@@ -73,6 +70,7 @@ model Location {
   city                   String
   state                  String
   leagues                LeagueOnLocations[] @relation("leagues")
+  games                  Game[]              @relation("games")
 }
 
 // Registration leagues have finite registration windows and finite start/end times.
@@ -149,17 +147,31 @@ model League {
   leagueGames      Game[]                 @relation("leagueGames")
   locations        LeagueOnLocations[]    @relation("locations")
   teams            Team[]                 @relation("leagueTeams")
+  teamPlayers      TeamOnPlayers[]        @relation("leagueTeamPlayers")
+}
+
+enum TeamPlayerRole {
+  CAPTAIN
+  CO_CAPTAIN
+  PLAYER
 }
 
 model TeamOnPlayers {
-  team         Team     @relation("players", fields: [teamId], references: [id])
-  teamId       String   @db.Uuid
-  user         User     @relation("teams", fields: [userId], references: [id])
-  userId       String   @db.Uuid
-  assignedAt   DateTime @default(now())
+  team         Team           @relation("players", fields: [teamId], references: [id])
+  teamId       String         @db.Uuid
+  user         User           @relation("teams", fields: [userId], references: [id])
+  userId       String         @db.Uuid
+  role         TeamPlayerRole @default(value: PLAYER)
+  // This field is added primarily to ensure that a player is only on one team per league.  However, it begs the
+  // question: should we just determine the participants in a league by looking at the teams in the league?  We may need
+  // to initialize a league with an empty team... and what about participants that are not players (i.e. refs, admins)?
+  league       League         @relation("leagueTeamPlayers", fields: [leagueId], references: [id])
+  leagueId     String         @db.Uuid
+  assignedAt   DateTime       @default(now())
   assignedById String
 
   @@id([teamId, userId])
+  @@unique([teamId, userId, leagueId])
 }
 
 enum Color {
@@ -202,5 +214,6 @@ model Game {
   awayTeam    Team     @relation("awayGames", fields: [awayTeamId], references: [id])
   awayTeamId  String   @db.Uuid
   dateTime    DateTime
-  location    String
+  location    Location?  @relation("games", fields: [locationId], references: [id])
+  locationId  String?   @db.Uuid
 }

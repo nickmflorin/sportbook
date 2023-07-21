@@ -59,7 +59,7 @@ export const generateRandomDate = <P extends GenerateRandomDateParams>(params?: 
   return min.plus({ seconds: Math.floor(diff) }).toJSDate();
 };
 
-export const randomSelection = <T>(data: T[]): T => {
+export const selectAtRandom = <T>(data: T[]): T => {
   if (data.length === 0) {
     throw new Error("No data exists at the first index because the provided data is empty.");
   }
@@ -74,7 +74,7 @@ export const randomSelection = <T>(data: T[]): T => {
 const isDuplicated = <T, V extends string | number>(prev: T[], value: T, duplicationKey: (v: T) => V): boolean =>
   prev.some(p => duplicationKey(value) === duplicationKey(p));
 
-export const randomSelectionWithoutDuplication = <T, V extends string | number>(
+export const selectAtRandomWithoutDuplication = <T, V extends string | number>(
   data: T[],
   prev: T[],
   duplicationKey: (v: T) => V,
@@ -129,7 +129,7 @@ type RandomSelectionArrayOpts<T, V extends string | number> = {
  * const data = [1, 2, 3, 4, 5];
  * randomSelectionArray(data, { length: 3 }); // [1, 3, 5]
  */
-export const randomSelectionArray = <T, V extends string | number>(
+export const selectArrayAtRandom = <T, V extends string | number>(
   data: T[],
   options: RandomSelectionArrayOpts<T, V>,
 ): T[] => {
@@ -137,19 +137,19 @@ export const randomSelectionArray = <T, V extends string | number>(
   for (let i = 0; i < getLength(options.length); i++) {
     if (options.duplicationKey) {
       // If the selection is null, it means that there are no more unique elements to select from.
-      const selection = randomSelectionWithoutDuplication(data, arr, options.duplicationKey);
+      const selection = selectAtRandomWithoutDuplication(data, arr, options.duplicationKey);
       if (!selection) {
         return arr;
       }
       arr = [...arr, selection];
     } else {
-      arr = [...arr, randomSelection(data)];
+      arr = [...arr, selectAtRandom(data)];
     }
   }
   return arr;
 };
 
-export const sequentialSelection = <T>(data: T[], count = 0): T => {
+export const selectSequentially = <T>(data: T[], count = 0): T => {
   if (data.length === 0) {
     throw new Error("No data exists at the first index because the provided data is empty.");
   } else if (data.length > count) {
