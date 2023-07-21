@@ -8,8 +8,8 @@ import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
 import { prisma } from "./client";
 import { infiniteLoop, infiniteLoopSelection, randomInt, selectAtRandom, fixtures, factories } from "./seeding";
 
-const MIN_PARTICIPANTS_PER_LEAGUE = 10;
-const MAX_PARTICIPANTS_PER_LEAGUE = 25;
+const MIN_PARTICIPANTS_PER_LEAGUE = 50;
+const MAX_PARTICIPANTS_PER_LEAGUE = 100;
 const MIN_LOCATIONS_PER_LEAGUE = 0;
 const MAX_LOCATIONS_PER_LEAGUE = 3;
 const MIN_LEAGUES_PER_SPORT = 3;
@@ -110,11 +110,12 @@ async function generateLeagueParticipants(league: League, ctx: SeedContext) {
     duplicationKey: (u: User) => u.id,
     length: { min: MIN_PARTICIPANTS_PER_LEAGUE, max: MAX_PARTICIPANTS_PER_LEAGUE },
   });
-  await prisma.leagueOnParticipants.createMany({
+  const result = await prisma.leagueOnParticipants.createMany({
     data: users.map(u => ({ leagueId: league.id, participantId: u.id, assignedById: u.id })),
   });
   /* The users in the randomly iterated loop array will be the same as the participants for the league.  These users
      will then be used to create the teams in the league. */
+  console.log(`Generated ${result.count} participants for league '${league.name}' in the database.`);
   return users;
 }
 
