@@ -1,4 +1,4 @@
-import { type Prisma, type PrismaClient } from "@prisma/client";
+import { type Prisma, type PrismaClient, type FileUploadEntity } from "@prisma/client";
 
 export type Model = {
   readonly id: string;
@@ -10,3 +10,14 @@ export type Model = {
 export type PrismaModelType<M extends Prisma.ModelName> = Lowercase<M> extends keyof PrismaClient
   ? Awaited<ReturnType<PrismaClient[Lowercase<M>]["findUniqueOrThrow"]>>
   : never;
+
+type ToTitleCase<S extends string> = S extends `${infer L extends string}${infer R extends string}`
+  ? `${Uppercase<L>}${Lowercase<R>}`
+  : S;
+
+type FileUploadEntityMap = { [key in FileUploadEntity]: ToTitleCase<key> };
+type FileUploadModelName = FileUploadEntityMap[keyof FileUploadEntityMap];
+
+export type ModelWithFileUrl<N extends FileUploadModelName, M extends PrismaModelType<N> = PrismaModelType<N>> = M & {
+  readonly fileUrl: string | null;
+};

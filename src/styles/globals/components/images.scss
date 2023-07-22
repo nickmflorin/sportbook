@@ -6,6 +6,14 @@
   justify-content: center;
   position: relative;
 
+  @layer {
+    height: 100%;
+    width: auto;
+    aspect-ratio: 1;
+    // The default case for the model image is that the path is clipped so the image appears as a circle.
+    clip-path: inset(0px round 1000px);
+  }
+
   @include partials.with-radius using ($size, $value) {
     &--border-radius-#{$size} {
       clip-path: inset(0px round $value);
@@ -15,7 +23,8 @@
   > .model-image__fallback {
     @include partials.flex-c;
     height: 100%;
-    width: 100%;
+    width: auto;
+    aspect-ratio: 1;
     background-color: partials.get-color("gray", $shade: 2);
 
     > .body {

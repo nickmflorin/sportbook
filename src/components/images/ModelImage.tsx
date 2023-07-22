@@ -24,14 +24,14 @@ export const ModelImage = ({
   alt = "",
   src,
   size,
-  borderRadius = BorderRadiusSizes.MD,
+  borderRadius,
   className,
   style,
   ...props
 }: ModelImageProps) => (
   <div
     style={{ ...style, height: size, width: size }}
-    className={classNames("model-image", `model-image--border-radius-${borderRadius}`, className)}
+    className={classNames("model-image", borderRadius && `model-image--border-radius-${borderRadius}`, className)}
   >
     {src !== undefined && src !== null ? (
       <Image {...props} height={size} width={size} src={src} alt={alt} />

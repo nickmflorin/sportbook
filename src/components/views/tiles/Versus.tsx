@@ -1,9 +1,26 @@
-import { type Team } from "~/prisma/model";
+import classNames from "classnames";
 
-type TeamWithImage = Team & {
-  readonly fileUrl: string | null;
-};
+import { type ComponentProps } from "~/lib/ui";
+import { type ModelWithFileUrl } from "~/prisma/model";
+import { ModelImage } from "~/components/images";
+import { Text } from "~/components/typography";
 
-export interface VersusProps {
-  readonly homeTeam: TeamWithImage;
+import css from "./Versus.module.scss";
+
+export interface VersusProps extends ComponentProps {
+  readonly homeTeam: ModelWithFileUrl<"Team">;
+  readonly awayTeam: ModelWithFileUrl<"Team">;
 }
+
+export const Versus = ({ homeTeam, awayTeam, ...props }: VersusProps): JSX.Element => (
+  <div {...props} className={classNames(css["versus"], props.className)}>
+    <div className={css["versus__team"]}>
+      <ModelImage src={homeTeam.fileUrl} fallbackInitials={homeTeam.name} />
+      <Text>{homeTeam.name}</Text>
+    </div>
+    <div className={css["versus__team"]}>
+      <ModelImage src={awayTeam.fileUrl} fallbackInitials={awayTeam.name} />
+      <Text>{awayTeam.name}</Text>
+    </div>
+  </div>
+);

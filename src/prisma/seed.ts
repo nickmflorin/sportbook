@@ -13,12 +13,15 @@ import {
   LeagueCompetitionLevel,
   Gender,
   Color,
+  type Prisma,
 } from "@prisma/client";
 
 import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
 
+import { ensuresDefinedValue } from "~/lib/util";
+
 import { prisma, xprisma } from "./client";
-import { safeEnumValue } from "./model";
+import { safeEnumValue, modelHasField, type PrismaModelType, getModel } from "./model";
 import {
   infiniteLoop,
   infiniteLoopSelection,
@@ -29,6 +32,7 @@ import {
   selectAtRandomFrequency,
   generateRandomDate,
   selectSequentially,
+  selectArrayAtRandom,
 } from "./seeding";
 
 const MIN_PARTICIPANTS_PER_LEAGUE = 50;
@@ -54,6 +58,42 @@ const MIN_TEAMS_PER_LEAGUE = 4;
 
 const MIN_NUM_GAMES_PER_LEAGUE = 10;
 const MAX_NUM_GAMES_PER_LEAGUE = 30;
+
+const USER_META_FIELDS = ["createdById", "updatedById"] as const;
+const DATE_META_FIELDS = ["createdAt", "updatedAt", "assignedAt"] as const;
+
+type ModelBaseFields = {
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
+  readonly assignedAt: Date;
+  readonly createdById: string;
+  readonly updatedById: string;
+};
+
+type ModelBaseField<M extends Prisma.ModelName> = keyof ModelBaseFields & keyof PrismaModelType<M>;
+type ModelBase<M extends Prisma.ModelName> = { [key in ModelBaseField<M>]: PrismaModelType<M>[key] };
+
+type DynamicGetUser = (options?: { recycle: boolean }) => User;
+
+const getModelMeta = <M extends Prisma.ModelName>(name: M, { getUser }: { getUser: DynamicGetUser }): ModelBase<M> => {
+  const model = getModel(name);
+
+  let data = {} as ModelBase<M>;
+  for (const field of USER_META_FIELDS) {
+    if (modelHasField(model, field)) {
+      data = { ...data, [field]: getUser({ recycle: true }).id } as ModelBase<M>;
+    }
+  }
+  for (const field of DATE_META_FIELDS) {
+    if (modelHasField(model, field)) {
+      data = {
+        ...data,
+        [field]: generateRandomDate(),
+      } as ModelBase<M>;
+    }
+  }
+  return data;
+};
 
 const chunkPlayersPerTeam = (league: League, participants: User[]): User[][] => {
   if (participants.length === 0) {
@@ -143,20 +183,16 @@ async function generateLeagueParticipants(league: League, ctx: SeedContext) {
 }
 
 async function generateLeagueTeam(
+  name: string,
   players: User[],
   league: League,
   ctx: SeedContext & { readonly getParticipant: GetUser },
 ) {
-  const user = ctx.getParticipant();
   const team = await prisma.team.create({
     data: {
+      ...getModelMeta("Team", { getUser: ctx.getParticipant }),
+      name,
       leagueId: league.id,
-      createdAt: generateRandomDate(),
-      updatedAt: generateRandomDate(),
-      createdById: user.id,
-      updatedById: user.id,
-      // TODO: Address potential for unique constraint failure here.
-      name: `Team ${fixtures.randomName()}`,
       color: selectAtRandom(Object.values(Color)),
     },
   });
@@ -175,7 +211,14 @@ async function generateLeagueTeams(
     console.error(`There were not enough players to create any teams for league '${league.name}'.`);
     return [];
   }
-  const result = await Promise.all(chunks.map(players => generateLeagueTeam(players, league, ctx)));
+  // If there are not enough team names to generate a unique name for each team in the league, an error will be thrown.
+  const teamNames = selectArrayAtRandom(fixtures.json.teamNames, {
+    length: chunks.length,
+    duplicationKey: v => v.trim(),
+  });
+  const result = await Promise.all(
+    chunks.map((players, i) => generateLeagueTeam(ensuresDefinedValue(teamNames[i]), players, league, ctx)),
+  );
   console.info(`Generated ${result.length} teams for league '${league.name}' in the database.`);
   return result;
 }
@@ -200,17 +243,13 @@ async function generateLeagueGames(
       { value: GameStatus.FINAL, frequency: 0.6 },
       { value: GameStatus.POSTPONED, frequency: 0.1 },
     ]);
-    const user = ctx.getParticipant();
     promises = [
       ...promises,
       prisma.game.create({
         data: {
+          ...getModelMeta("Game", { getUser: ctx.getParticipant }),
           status,
-          createdAt: generateRandomDate(),
-          updatedAt: generateRandomDate(),
           dateTime: generateRandomDate(),
-          createdById: user.id,
-          updatedById: user.id,
           leagueId: league.id,
           homeTeamId: homeTeam.id,
           awayTeamId: selectAnotherTeam(homeTeam).id,
@@ -239,14 +278,10 @@ async function generateLeagueLocations(league: League, ctx: SeedContext) {
 }
 
 async function generateSportLeague(sport: Sport, ctx: SeedContext) {
-  const user = ctx.getUser();
   const league = await prisma.league.create({
     data: {
-      createdAt: generateRandomDate(),
-      updatedAt: generateRandomDate(),
-      createdById: user.id,
-      updatedById: user.id,
-      name: `League ${fixtures.randomName()}`,
+      ...getModelMeta("League", { getUser: ctx.getUser }),
+      name: fixtures.randomLeagueName(),
       sport,
       description: fixtures.randomSentence(),
       leagueStart: generateRandomDate(),

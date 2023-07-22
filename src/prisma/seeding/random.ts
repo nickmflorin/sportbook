@@ -26,6 +26,9 @@ const lengthIsInterval = (l: RandomLength): l is RandomInterval => typeof l !== 
 
 export const getLength = (l: RandomLength): number => (lengthIsInterval(l) ? randomInt(l) : l);
 
+export const getRequiredLength = (l: RandomLength): number =>
+  lengthIsInterval(l) ? (Array.isArray(l) ? l[0] : l.min) : l;
+
 export const mapOverLength = <T>(l: RandomLength, func: (i: number) => T): T[] =>
   Array(getLength(l))
     .fill(0)
@@ -119,6 +122,7 @@ export const selectAtRandomWithoutDuplication = <T, V extends string | number>(
     if (!datum) {
       throw new Error(`Data unexpectedly returned undefined value at index ${ind}!`);
     } else if (isDuplicated(prev, datum, duplicationKey)) {
+      // If the selected value is a duplicate, simply remove that value from the selection population and try again.
       population = [...population.slice(0, ind), ...population.slice(ind + 1)];
     } else {
       return datum;
@@ -143,11 +147,21 @@ type RandomSelectionArrayOpts<T, V extends string | number> = {
    * elements to select that ensure uniqueness in the array.
    */
   duplicationKey?: (v: T) => V;
+  /**
+   * Whether or not an error should be thrown when there are no more unique elements to select from and making a
+   * selection from the array would require introducing a duplicate value.  If not provided, or provided as 'false',
+   * the array will be prematurely returned with the elements that were selected up to that point, ensuring that there
+   * are no duplicates but also not generating an array that meets the length requirement.
+   *
+   * Only applicable when 'duplicationKey' is provided.
+   */
+  throwWhenNoUniqueElements?: boolean;
 };
 
 /**
  * Creates an array of randomly selected elements, {@link T[]}, by making random selections from the provided array,
- * {@link T[]}, either until the maximum length is reached or until there are no more unique elements to select from.
+ * {@link T[]}, either until the maximum length is reached or until there are no more unique elements to select from
+ * (in the case that the `duplicationKey` is provided).
  *
  * Options: @see {RandomSelectionArrayOpts}
  *
@@ -171,6 +185,18 @@ export const selectArrayAtRandom = <T, V extends string | number>(
       // If the selection is null, it means that there are no more unique elements to select from.
       const selection = selectAtRandomWithoutDuplication(data, arr, options.duplicationKey);
       if (!selection) {
+        /* Since the length of the array may have been randomly generated, we only want to throw an error in the case
+           that no more unique elements can be constructed AND the number of already selected unique elements does not
+           meet the minimum threshold.  If the length is provided as just a single number (i.e. no min/max or range)
+           the required length will be equal to that length. */
+        const requiredLength = getRequiredLength(options.length);
+        if (arr.length < requiredLength && options.throwWhenNoUniqueElements) {
+          throw new Error(
+            `The minimum length of the randomly generated array is '${requiredLength}', but after selecting ` +
+              `'${arr.length}' unique elements, no more unique elements remained in the array.  Either the minimum ` +
+              "length of the array should be less, or the provided array should be longer.",
+          );
+        }
         return arr;
       }
       arr = [...arr, selection];
