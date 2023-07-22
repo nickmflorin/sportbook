@@ -7,14 +7,14 @@
   },
   "eslint.run": "onSave",
   "eslint.lintTask.enable": true,
-  // "eslint.codeActionsOnSave.mode": "problems",
   "editor.trimAutoWhitespace": true,
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
   "[scss]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll.stylelint": true
+      "source.fixAll.stylelint": true,
+      "source.fixAll.eslint": true,
     }
   },
   "files.trimTrailingWhitespace": true,

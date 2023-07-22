@@ -190,17 +190,12 @@ h6 {
     text-transform: uppercase;
   }
 
-  &.truncate,
-  &.clamp {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+  &.truncate {
+    @include partials.truncate();
   }
 
   &.clamp {
-    -webkit-line-clamp: 2; // This is the default - it can be overridden via props.
-    -webkit-box-orient: vertical;
-    display: block;
+    @include partials.clamp(2);
   }
 
   @include partials.with-alignment() using ($alignment) {

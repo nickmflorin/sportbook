@@ -9,6 +9,6 @@ export type ScoreTileProps = Omit<TileProps, "title" | "description"> & {
 
 export const ScoreTile = ({ game, ...props }: ScoreTileProps): JSX.Element => (
   <Tile {...props}>
-    <GameScore style={{ height: 70 }} game={game} />
+    <GameScore game={game} />
   </Tile>
 );
