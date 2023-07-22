@@ -8,38 +8,4 @@
   // Right now, the only way to get the scores on the right to all line up is to use a fixed width.  Eventually, we will
   // need to explore alternate layout solutions, such as an HTML table.
   width: 240px;
-
-  > .game-score__team {
-    display: flex;
-    flex-direction: row;
-    gap: partials.get-spacing("md");
-    height: 70px;
-
-    > .model-image {
-      font-size: partials.get-font-size("body", "sm");
-    }
-
-    > .game-score__team__name {
-      @include partials.font($type: "body", $weight: "medium", $size: "md");
-      color: partials.get-color("gray", $shade: 8);
-      flex-grow: 100;
-      @include partials.clamp(1);
-    }
-
-    > .game-score__team__score {
-      @include partials.font($type: "body", $weight: "medium", $size: "md");
-      color: partials.get-color("gray", $shade: 8);
-      text-align: right;
-    }
-
-    &.game-score__team-loser {
-      > .game-score__team__name {
-        color: partials.get-color("gray", $shade: 6);
-      }
-
-      > .game-score__team__score {
-        color: partials.get-color("gray", $shade: 6);
-      }
-    }
-  }
 }

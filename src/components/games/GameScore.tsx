@@ -2,8 +2,8 @@ import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
 import { type GameWithResult } from "~/prisma/model";
-import { ModelImage } from "~/components/images";
-import { Text } from "~/components/typography";
+
+import { TeamScore } from "./TeamScore";
 
 export interface GameScoreProps extends ComponentProps {
   readonly game: GameWithResult;
@@ -11,29 +11,19 @@ export interface GameScoreProps extends ComponentProps {
 
 export const GameScore = ({ game, ...props }: GameScoreProps): JSX.Element => (
   <div {...props} className={classNames("game-score", props.className)}>
-    <div
-      className={classNames(
-        "game-score__team",
-        /* Note: We will have to revisit the determination of whether or not a team won or lost - it will obviously be
-           more complicated than this. */
-        { "game-score__team-loser": game.result.homeScore < game.result.awayScore },
-      )}
-    >
-      <ModelImage src={game.homeTeam.fileUrl} fallbackInitials={game.homeTeam.name} />
-      <Text className="game-score__team__name">{game.homeTeam.name}</Text>
-      <Text className="game-score__team__score">{game.result.homeScore}</Text>
-    </div>
-    <div
-      className={classNames(
-        "game-score__team",
-        /* Note: We will have to revisit the determination of whether or not a team won or lost - it will obviously be
-           more complicated than this. */
-        { "game-score__team-loser": game.result.awayScore < game.result.homeScore },
-      )}
-    >
-      <ModelImage src={game.awayTeam.fileUrl} fallbackInitials={game.awayTeam.name} />
-      <Text className="game-score__team__name">{game.awayTeam.name}</Text>
-      <Text className="game-score__team__score">{game.result.awayScore}</Text>
-    </div>
+    <TeamScore
+      score={game.result.homeScore}
+      team={game.homeTeam}
+      /* Note: We will have to revisit the determination of whether or not a team won or lost - it will obviously be
+         more complicated than this. */
+      isLoser={game.result.homeScore < game.result.awayScore}
+    />
+    <TeamScore
+      score={game.result.awayScore}
+      team={game.awayTeam}
+      /* Note: We will have to revisit the determination of whether or not a team won or lost - it will obviously be
+         more complicated than this. */
+      isLoser={game.result.awayScore < game.result.homeScore}
+    />
   </div>
 );

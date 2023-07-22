@@ -1,6 +1,6 @@
 import { type GameWithResult } from "~/prisma/model";
+import { GameScore } from "~/components/games/GameScore";
 
-import { GameScore } from "./GameScore";
 import { Tile, type TileProps } from "./Tile";
 
 export type ScoreTileProps = Omit<TileProps, "title" | "description"> & {
