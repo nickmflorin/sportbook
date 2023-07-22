@@ -10,11 +10,11 @@ import css from "./LeagueLayout.module.scss";
 
 interface LeagueLayoutProps {
   readonly params: { id: string };
-  readonly games: ReactNode;
+  readonly scores: ReactNode;
   readonly teams: ReactNode;
 }
 
-export default async function LeagueLayout({ games, teams, params: { id } }: LeagueLayoutProps) {
+export default async function LeagueLayout({ scores, teams, params: { id } }: LeagueLayoutProps) {
   const user = await getAuthUser({ strict: true });
   let league: League;
   let fileUpload: FileUpload | null;
@@ -42,7 +42,7 @@ export default async function LeagueLayout({ games, teams, params: { id } }: Lea
       <div className={css["league-layout-page"]}>
         <div className={css["league-layout-page-row"]}>
           <div style={{ flex: 1 }}>{teams}</div>
-          <div style={{ flex: 1 }}>{games}</div>
+          <div style={{ flex: 1 }}>{scores}</div>
         </div>
       </div>
     </DetailPage>

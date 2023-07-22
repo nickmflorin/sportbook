@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { type ComponentProps, type TypographySize, type FontWeight, type Color, getColorClassName } from "~/lib/ui";
 
 export interface TextProps extends ComponentProps {
-  readonly children: string;
+  readonly children: string | number | undefined | null | false;
   readonly color?: Color;
   readonly size?: TypographySize;
   readonly truncate?: boolean;

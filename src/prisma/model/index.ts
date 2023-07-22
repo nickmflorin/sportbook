@@ -1,5 +1,6 @@
 export * from "./enums";
-export * from "./league";
+export * from "./games";
+export * from "./leagues";
 export * from "./schemas";
 export * from "./types";
 export * from "./util";

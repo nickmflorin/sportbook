@@ -3,7 +3,7 @@ import React from "react";
 
 import classNames from "classnames";
 
-import { icons, type ComponentProps, type BorderRadiusSize, BorderRadiusSizes } from "~/lib/ui";
+import { icons, type ComponentProps, type BorderRadiusSize } from "~/lib/ui";
 import { type InitialsString, parseInitials } from "~/lib/util/strings";
 import { Icon } from "~/components/icons";
 import { Text } from "~/components/typography";

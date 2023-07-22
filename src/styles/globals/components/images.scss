@@ -14,6 +14,10 @@
     clip-path: inset(0px round 1000px);
   }
 
+  @layer {
+    font-size: partials.get-font-size($type: "body", $size: "xl");
+  }
+
   @include partials.with-radius using ($size, $value) {
     &--border-radius-#{$size} {
       clip-path: inset(0px round $value);
@@ -29,8 +33,8 @@
 
     > .body {
       font-weight: partials.get-font-weight($weight: "medium");
-      font-size: partials.get-font-size($type: "body", $size: "xl");
       color: partials.get-color("gray", $shade: 9);
+      font-size: inherit;
     }
   }
 }

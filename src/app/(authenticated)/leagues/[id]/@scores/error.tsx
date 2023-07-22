@@ -8,7 +8,7 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
   logger.error(error);
   return (
     <ErrorView
-      description="There was an error loading the games."
+      description="There was an error loading the scores."
       link={<AlternateButton.Primary onClick={() => reset()}>Try Again</AlternateButton.Primary>}
     />
   );

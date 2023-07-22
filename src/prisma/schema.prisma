@@ -223,23 +223,31 @@ model Team {
   @@unique([name, leagueId])
 }
 
+enum GameVisitationType {
+  HOME
+  AWAY
+}
+
 model GameResult {
-  id          String   @id @default(uuid()) @db.Uuid
-  createdById String   @db.Uuid
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  updatedById String   @db.Uuid
-  game        Game     @relation(fields: [gameId], references: [id])
-  gameId      String   @unique @db.Uuid
-  homeScore   Int
-  awayScore   Int
+  id                       String              @id @default(uuid()) @db.Uuid
+  createdById              String              @db.Uuid
+  createdAt                DateTime            @default(now())
+  updatedAt                DateTime            @updatedAt
+  updatedById              String              @db.Uuid
+  game                     Game                @relation(fields: [gameId], references: [id])
+  gameId                   String              @unique @db.Uuid
+  forfeitingTeamVisitation GameVisitationType?
+  homeScore                Int
+  awayScore                Int
 }
 
 enum GameStatus {
   PROPOSED
   CANCELLED
   POSTPONED
-  FINAL // The game is not cancelled or postponed, and is not a proposal anymore.
+  // The game is not cancelled or postponed, but is not a proposal anymore.  It is either ready to be played or has been
+  // played, the determination of which is made based on whether or not the Game has a result.
+  FINAL
 }
 
 model Game {

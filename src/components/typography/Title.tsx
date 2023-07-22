@@ -7,7 +7,7 @@ type TitleOrder = 1 | 2 | 3 | 4 | 5 | 6;
 
 type Factories = {
   [key in TitleOrder]: (props: {
-    readonly children: string;
+    readonly children: string | number | undefined | null | false;
     readonly className?: string;
     readonly style?: Style;
   }) => JSX.Element;
@@ -23,7 +23,7 @@ const factories: Factories = {
 };
 
 export interface TitleProps extends ComponentProps {
-  readonly children: string;
+  readonly children: string | number | undefined | null | false;
   readonly order?: TitleOrder;
   readonly color?: Color;
   // Let the weight default in SASS baed on the size.

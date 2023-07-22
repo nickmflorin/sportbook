@@ -8,11 +8,13 @@ import {
   type League,
   type Location,
   type Team,
+  type Game,
   GameStatus,
   LeagueType,
   LeagueCompetitionLevel,
   Gender,
   Color,
+  GameVisitationType,
   type Prisma,
 } from "@prisma/client";
 
@@ -228,14 +230,15 @@ async function generateLeagueGames(
   teams: Team[],
   ctx: SeedContext & { readonly getParticipant: GetUser },
 ) {
-  const numGames = randomInt({ min: MIN_NUM_GAMES_PER_LEAGUE, max: MAX_NUM_GAMES_PER_LEAGUE });
   if (teams.length < 2) {
     console.error(`There are not enough teams to create any games for league '${league.name}'.`);
     return [];
   }
   const selectAnotherTeam = (homeTeam: Team): Team => selectAtRandom(teams.filter(t => t.id !== homeTeam.id));
-  let promises: ReturnType<typeof prisma.game.create>[] = [];
-  for (let i = 0; i < numGames; i++) {
+
+  const createGame = async () => {
+    let cancellationReason: Game["cancellationReason"] = null;
+
     const homeTeam = selectAtRandom(teams);
     const status = selectAtRandomFrequency([
       { value: GameStatus.CANCELLED, frequency: 0.05 },
@@ -243,21 +246,50 @@ async function generateLeagueGames(
       { value: GameStatus.FINAL, frequency: 0.6 },
       { value: GameStatus.POSTPONED, frequency: 0.1 },
     ]);
-    promises = [
-      ...promises,
-      prisma.game.create({
-        data: {
-          ...getModelMeta("Game", { getUser: ctx.getParticipant }),
-          status,
-          dateTime: generateRandomDate(),
-          leagueId: league.id,
-          homeTeamId: homeTeam.id,
-          awayTeamId: selectAnotherTeam(homeTeam).id,
-        },
-      }),
-    ];
-  }
-  const games = await Promise.all(promises);
+    if (status === GameStatus.CANCELLED) {
+      cancellationReason = selectAtRandom([
+        "Not enough players that wanted to play.",
+        "Anticipating bad weather!",
+        "There is a holiday that day and we will wait until people are back in town.",
+        null,
+      ]);
+    }
+    const game = await prisma.game.create({
+      data: {
+        ...getModelMeta("Game", { getUser: ctx.getParticipant }),
+        status,
+        cancellationReason,
+        dateTime: generateRandomDate(),
+        leagueId: league.id,
+        homeTeamId: homeTeam.id,
+        awayTeamId: selectAnotherTeam(homeTeam).id,
+      },
+    });
+    if (status === GameStatus.FINAL) {
+      const hasBeenPlayed = selectAtRandomFrequency([
+        { value: true, frequency: 0.7 },
+        { value: false, frequency: 0.3 },
+      ]);
+      if (hasBeenPlayed) {
+        await prisma.gameResult.create({
+          data: {
+            ...getModelMeta("GameResult", { getUser: ctx.getParticipant }),
+            gameId: game.id,
+            homeScore: randomInt({ min: 0, max: 10 }),
+            awayScore: randomInt({ min: 0, max: 10 }),
+            forfeitingTeamVisitation: selectAtRandomFrequency([
+              { value: GameVisitationType.HOME, frequency: 0.05 },
+              { value: GameVisitationType.AWAY, frequency: 0.05 },
+              { value: null, frequency: 0.9 },
+            ]),
+          },
+        });
+      }
+    }
+  };
+  const games = await Promise.all(
+    mapOverLength({ min: MIN_NUM_GAMES_PER_LEAGUE, max: MAX_NUM_GAMES_PER_LEAGUE }, () => createGame()),
+  );
   console.info(`Generated ${games.length} games for league '${league.name}' in the database.`);
   return games;
 }

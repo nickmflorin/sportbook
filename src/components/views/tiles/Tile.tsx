@@ -12,6 +12,6 @@ export interface TileProps extends ComponentProps, HeaderProps {
 export const Tile = ({ children, style, className, ...props }: TileProps): JSX.Element => (
   <div style={style} className={classNames("tile", className)}>
     <Header {...props} className="tile__header" />
-    <div className="tile__content">{children}</div>s
+    <div className="tile__content">{children}</div>
   </div>
 );

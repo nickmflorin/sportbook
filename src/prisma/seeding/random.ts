@@ -83,7 +83,7 @@ export const selectAtRandom = <T>(data: T[]): T => {
 
 type FrequencyDatum<T> = { value: T; frequency: number };
 
-export const selectAtRandomFrequency = <T extends string>(data: FrequencyDatum<T>[]): T => {
+export const selectAtRandomFrequency = <T>(data: FrequencyDatum<T>[]): T => {
   const total = data.reduce((prev, { frequency }) => (prev += frequency), 0.0);
   const normalized = data.map(d => ({ ...d, frequency: d.frequency / total }));
   const control = randomInt({ min: 0, max: 100 }) / 100.0;

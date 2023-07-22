@@ -18,6 +18,11 @@ type ToTitleCase<S extends string> = S extends `${infer L extends string}${infer
 type FileUploadEntityMap = { [key in FileUploadEntity]: ToTitleCase<key> };
 type FileUploadModelName = FileUploadEntityMap[keyof FileUploadEntityMap];
 
-export type ModelWithFileUrl<N extends FileUploadModelName, M extends PrismaModelType<N> = PrismaModelType<N>> = M & {
-  readonly fileUrl: string | null;
-};
+export type ModelWithFileUrl<N extends FileUploadModelName | PrismaModelType<FileUploadModelName>> =
+  N extends FileUploadModelName
+    ? PrismaModelType<N> & {
+        readonly fileUrl: string | null;
+      }
+    : N extends PrismaModelType<FileUploadModelName>
+    ? N & { readonly fileUrl: string | null }
+    : never;
