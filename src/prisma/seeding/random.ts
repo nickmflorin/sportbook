@@ -1,16 +1,18 @@
 import { DateTime } from "luxon";
 
-const _isRandomlyNull = (nullChance = 0): boolean => {
-  if (nullChance > 100 || nullChance < 0) {
-    throw new TypeError("Null frequency must be between 0 and 100.");
+import { ensuresDefinedValue } from "~/lib/util";
+
+const evaluateFrequency = (frequency = 0): boolean => {
+  if (frequency > 1.0 || frequency < 0) {
+    throw new TypeError("The frequency must be between 0 and 1.");
   }
-  return randomInt({ min: 0, max: 100 }) < nullChance;
+  return randomInt({ min: 0, max: 100 }) / 100.0 < frequency;
 };
 
 export const randomlyNull =
   <T>(func: () => T, nullChance: number): (() => T | null) =>
   (): T | null =>
-    _isRandomlyNull(nullChance) ? null : func();
+    evaluateFrequency(nullChance) ? null : func();
 
 type MinMax = {
   min: number;
@@ -22,7 +24,12 @@ export type RandomLength = RandomInterval | number;
 
 const lengthIsInterval = (l: RandomLength): l is RandomInterval => typeof l !== "number";
 
-const getLength = (l: RandomLength): number => (lengthIsInterval(l) ? randomInt(l) : l);
+export const getLength = (l: RandomLength): number => (lengthIsInterval(l) ? randomInt(l) : l);
+
+export const mapOverLength = <T>(l: RandomLength, func: (i: number) => T): T[] =>
+  Array(getLength(l))
+    .fill(0)
+    .map((_, i) => func(i));
 
 export function randomInt(min: number, max: number): number;
 export function randomInt(params: RandomInterval): number;
@@ -47,7 +54,7 @@ type GenerateRandomDateRT<P extends GenerateRandomDateParams> = P extends { null
   : Date;
 
 export const generateRandomDate = <P extends GenerateRandomDateParams>(params?: P): GenerateRandomDateRT<P> => {
-  if (params?.nullFrequency !== undefined && _isRandomlyNull(params?.nullFrequency)) {
+  if (params?.nullFrequency !== undefined && evaluateFrequency(params?.nullFrequency)) {
     return null as GenerateRandomDateRT<P>;
   }
   const max: DateTime = params?.max === undefined ? DateTime.now() : _toDateTime(params.max);
@@ -69,6 +76,31 @@ export const selectAtRandom = <T>(data: T[]): T => {
     throw new Error(`Data unexpectedly returned undefined value at index ${ind}!`);
   }
   return datum;
+};
+
+type FrequencyDatum<T> = { value: T; frequency: number };
+
+export const selectAtRandomFrequency = <T extends string>(data: FrequencyDatum<T>[]): T => {
+  const total = data.reduce((prev, { frequency }) => (prev += frequency), 0.0);
+  const normalized = data.map(d => ({ ...d, frequency: d.frequency / total }));
+  const control = randomInt({ min: 0, max: 100 }) / 100.0;
+
+  let result = data[0];
+  if (result === undefined) {
+    throw new Error("No data exists at the first index because the provided data is empty.");
+  }
+  for (let i = 1; i < data.length; i++) {
+    const previous = ensuresDefinedValue(normalized[i - 1]);
+    const current = ensuresDefinedValue(normalized[i]);
+    if (previous.frequency < control && control < current.frequency) {
+      result = data[i];
+      break;
+    }
+  }
+  if (!result) {
+    throw new Error(`Unexpected Condition: No result was found for frequency ${control}!`);
+  }
+  return result?.value;
 };
 
 const isDuplicated = <T, V extends string | number>(prev: T[], value: T, duplicationKey: (v: T) => V): boolean =>
@@ -152,10 +184,22 @@ export const selectArrayAtRandom = <T, V extends string | number>(
 export const selectSequentially = <T>(data: T[], count = 0): T => {
   if (data.length === 0) {
     throw new Error("No data exists at the first index because the provided data is empty.");
-  } else if (data.length > count) {
-    return data[count] as T;
+  } else if (count >= data.length) {
+    const datum = data[count % data.length];
+    if (datum === undefined) {
+      throw new Error(
+        `Data unexpectedly does not have value at index '${
+          count % data.length
+        }', original index was '${count}' and data length was '${data.length}'.`,
+      );
+    }
+    return datum;
   }
-  return data[data.length % count] as T;
+  const datum = data[count];
+  if (datum === undefined) {
+    throw new Error(`Data unexpectedly does not have value at index '${count}', data length was '${data.length}'.`);
+  }
+  return datum;
 };
 
 export function infiniteLoop<T>(data: T[], step = 1): () => T {

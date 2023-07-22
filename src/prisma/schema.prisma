@@ -223,20 +223,41 @@ model Team {
   @@unique([name, leagueId])
 }
 
+model GameResult {
+  id          String   @id @default(uuid()) @db.Uuid
+  createdById String   @db.Uuid
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  updatedById String   @db.Uuid
+  game        Game     @relation(fields: [gameId], references: [id])
+  gameId      String   @unique @db.Uuid
+  homeScore   Int
+  awayScore   Int
+}
+
+enum GameStatus {
+  PROPOSED
+  CANCELLED
+  POSTPONED
+  FINAL // The game is not cancelled or postponed, and is not a proposal anymore.
+}
+
 model Game {
-  id          String    @id @default(uuid()) @db.Uuid
-  createdById String    @db.Uuid
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  updatedById String    @db.Uuid
-  league      League    @relation("leagueGames", fields: [leagueId], references: [id])
-  leagueId    String    @db.Uuid
-  // What to do about PickUp games where there is no home or away team?
-  homeTeam    Team      @relation("homeGames", fields: [homeTeamId], references: [id])
-  homeTeamId  String    @db.Uuid
-  awayTeam    Team      @relation("awayGames", fields: [awayTeamId], references: [id])
-  awayTeamId  String    @db.Uuid
-  dateTime    DateTime
-  location    Location? @relation("games", fields: [locationId], references: [id])
-  locationId  String?   @db.Uuid
+  id                 String      @id @default(uuid()) @db.Uuid
+  createdById        String      @db.Uuid
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  updatedById        String      @db.Uuid
+  league             League      @relation("leagueGames", fields: [leagueId], references: [id])
+  leagueId           String      @db.Uuid
+  homeTeam           Team        @relation("homeGames", fields: [homeTeamId], references: [id])
+  homeTeamId         String      @db.Uuid
+  awayTeam           Team        @relation("awayGames", fields: [awayTeamId], references: [id])
+  awayTeamId         String      @db.Uuid
+  dateTime           DateTime
+  location           Location?   @relation("games", fields: [locationId], references: [id])
+  locationId         String?     @db.Uuid
+  result             GameResult?
+  cancellationReason String?
+  status             GameStatus  @default(value: FINAL)
 }

@@ -1,12 +1,35 @@
 /* eslint-disable no-console -- This script runs outside of the logger context. */
 import clerk from "@clerk/clerk-sdk-node";
 import chunk from "lodash.chunk";
-import { type User, Sport, type League, type Location, type Team } from "@prisma/client";
+import { v4 as uuid } from "uuid";
+import {
+  type User,
+  Sport,
+  type League,
+  type Location,
+  type Team,
+  GameStatus,
+  LeagueType,
+  LeagueCompetitionLevel,
+  Gender,
+  Color,
+} from "@prisma/client";
 
 import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
 
-import { prisma } from "./client";
-import { infiniteLoop, infiniteLoopSelection, randomInt, selectAtRandom, fixtures, factories } from "./seeding";
+import { prisma, xprisma } from "./client";
+import { safeEnumValue } from "./model";
+import {
+  infiniteLoop,
+  infiniteLoopSelection,
+  randomInt,
+  mapOverLength,
+  selectAtRandom,
+  fixtures,
+  selectAtRandomFrequency,
+  generateRandomDate,
+  selectSequentially,
+} from "./seeding";
 
 const MIN_PARTICIPANTS_PER_LEAGUE = 50;
 const MAX_PARTICIPANTS_PER_LEAGUE = 100;
@@ -92,7 +115,7 @@ async function collectClerkPages<T>(fetch: (params: { limit: number; offset: num
 /* -------------------------------------------------- Seeding ------------------------------------------------ */
 async function generateLocations(ctx: Omit<SeedContext, "getLocation">) {
   return await Promise.all(
-    fixtures.locations.map(locData => {
+    fixtures.json.locations.map(locData => {
       const user = ctx.getUser();
       return prisma.location.create({
         data: {
@@ -124,8 +147,19 @@ async function generateLeagueTeam(
   league: League,
   ctx: SeedContext & { readonly getParticipant: GetUser },
 ) {
-  const data = factories.TeamFactory.create({ user: ctx.getParticipant });
-  const team = await prisma.team.create({ data: { ...data, leagueId: league.id } });
+  const user = ctx.getParticipant();
+  const team = await prisma.team.create({
+    data: {
+      leagueId: league.id,
+      createdAt: generateRandomDate(),
+      updatedAt: generateRandomDate(),
+      createdById: user.id,
+      updatedById: user.id,
+      // TODO: Address potential for unique constraint failure here.
+      name: `Team ${fixtures.randomName()}`,
+      color: selectAtRandom(Object.values(Color)),
+    },
+  });
   await prisma.teamOnPlayers.createMany({
     data: players.map(p => ({ teamId: team.id, userId: p.id, assignedById: p.id, leagueId: league.id })),
   });
@@ -160,11 +194,23 @@ async function generateLeagueGames(
   let promises: ReturnType<typeof prisma.game.create>[] = [];
   for (let i = 0; i < numGames; i++) {
     const homeTeam = selectAtRandom(teams);
+    const status = selectAtRandomFrequency([
+      { value: GameStatus.CANCELLED, frequency: 0.05 },
+      { value: GameStatus.PROPOSED, frequency: 0.25 },
+      { value: GameStatus.FINAL, frequency: 0.6 },
+      { value: GameStatus.POSTPONED, frequency: 0.1 },
+    ]);
+    const user = ctx.getParticipant();
     promises = [
       ...promises,
       prisma.game.create({
         data: {
-          ...factories.GameFactory.create({ user: ctx.getParticipant }),
+          status,
+          createdAt: generateRandomDate(),
+          updatedAt: generateRandomDate(),
+          dateTime: generateRandomDate(),
+          createdById: user.id,
+          updatedById: user.id,
           leagueId: league.id,
           homeTeamId: homeTeam.id,
           awayTeamId: selectAnotherTeam(homeTeam).id,
@@ -192,27 +238,22 @@ async function generateLeagueLocations(league: League, ctx: SeedContext) {
   return locations;
 }
 
-async function generateSportLeague(
-  sport: Sport,
-  leagueDatum: Pick<
-    League,
-    | "name"
-    | "isPublic"
-    | "leagueType"
-    | "leagueStart"
-    | "leagueEnd"
-    | "competitionLevel"
-    | "createdAt"
-    | "updatedAt"
-    | "createdById"
-    | "updatedById"
-  >,
-  ctx: SeedContext,
-) {
+async function generateSportLeague(sport: Sport, ctx: SeedContext) {
+  const user = ctx.getUser();
   const league = await prisma.league.create({
     data: {
-      ...leagueDatum,
+      createdAt: generateRandomDate(),
+      updatedAt: generateRandomDate(),
+      createdById: user.id,
+      updatedById: user.id,
+      name: `League ${fixtures.randomName()}`,
       sport,
+      description: fixtures.randomSentence(),
+      leagueStart: generateRandomDate(),
+      leagueEnd: generateRandomDate(),
+      competitionLevel: selectAtRandom(Object.values(LeagueCompetitionLevel)),
+      leagueType: selectAtRandom(Object.values(LeagueType)),
+      isPublic: true,
     },
   });
   await generateLeagueLocations(league, ctx);
@@ -223,11 +264,9 @@ async function generateSportLeague(
 }
 
 async function generateSportLeagues(sport: Sport, ctx: SeedContext) {
-  const leagueData = factories.LeagueFactory.createMany(
-    { min: MIN_LEAGUES_PER_SPORT, max: MAX_LEAGUES_PER_SPORT },
-    { user: ctx.getUser },
+  const leagues = await Promise.all(
+    mapOverLength({ min: MIN_LEAGUES_PER_SPORT, max: MAX_LEAGUES_PER_SPORT }, () => generateSportLeague(sport, ctx)),
   );
-  const leagues = await Promise.all(leagueData.map(datum => generateSportLeague(sport, datum, ctx)));
   console.info(`Generated ${leagues.length} leagues for sport '${sport}' in the database.`);
   return leagues;
 }
@@ -261,7 +300,7 @@ async function main() {
 
   /* TODO: We need to figure out how to sync user data with clerk data at certain times.  We cannot do this from the
      middleware script because we cannot run Prisma in the browser. */
-  const users = await Promise.all(clerkUsers.map(u => prisma.user.createFromClerk(u)));
+  const users = await Promise.all(clerkUsers.map(u => xprisma.user.createFromClerk(u)));
   console.info(`Generated ${users.length} clerk users in the database.`);
 
   const organizations = await collectClerkPages(p => clerk.organizations.getOrganizationList(p));
@@ -278,20 +317,26 @@ async function main() {
   }
   console.info(`\nSuccessfully generated ${organizations.length} organizations with associated data in database.`);
 
+  let fakeUsers: User[] = [];
   /* At least right now, we cannot generate enough User models from Clerk for development purposes.  So, we generate
      a series of fake User(s) to fill in the gaps.  In development, these User(s) cannot be used to login, but are only
      there to reference models that would be viewed when logged into a real User's account.
 
      Note: The clerkId for the fake users is set to a dummy string value - this ID will not correspond to an actual
      User in Clerk (which is why these fake User(s) cannot be used to login to the app). */
-  const fakeUsers = await Promise.all(
-    factories.UserFactory.createMany(NUM_FAKE_USERS, {}).map(userData =>
-      prisma.user.create({
-        data: userData,
+  if (fixtures.json.users.length !== 0) {
+    fakeUsers = await Promise.all(
+      mapOverLength(NUM_FAKE_USERS, i => {
+        const userData = selectSequentially(fixtures.json.users, i);
+        return prisma.user.create({
+          data: { ...userData, clerkId: uuid(), gender: safeEnumValue(userData.gender, Gender) },
+        });
       }),
-    ),
-  );
-  console.info(`Generated ${fakeUsers.length} fake users in the database.`);
+    );
+    console.info(`Generated ${fakeUsers.length} fake users in the database.`);
+  } else {
+    console.warn("Cannot generate fake users as there is no user data to generate them from.");
+  }
 
   const getUser = infiniteLoop<User>([...users, ...fakeUsers]);
   const locations = await generateLocations({ getUser });

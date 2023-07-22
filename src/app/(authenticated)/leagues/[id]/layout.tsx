@@ -41,8 +41,8 @@ export default async function LeagueLayout({ games, teams, params: { id } }: Lea
     >
       <div className={css["league-layout-page"]}>
         <div className={css["league-layout-page-row"]}>
-          <div style={{ flex: 1 }}>{games}</div>
           <div style={{ flex: 1 }}>{teams}</div>
+          <div style={{ flex: 1 }}>{games}</div>
         </div>
       </div>
     </DetailPage>

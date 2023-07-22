@@ -1,3 +1,2 @@
-export * from "./fixtures";
-export * as factories from "./factories";
+export * as fixtures from "./fixtures";
 export * from "./random";
