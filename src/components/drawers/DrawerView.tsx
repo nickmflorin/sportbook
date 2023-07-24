@@ -1,7 +1,7 @@
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
-import { CloseButton } from "~/components/buttons";
+import { CloseButton } from "~/components/buttons/CloseButton";
 
 export interface DrawerViewProps extends ComponentProps {
   readonly children: JSX.Element;

@@ -1,6 +1,6 @@
 import { type League, type LeagueWithParticipation } from "~/prisma/model";
 import { LeagueCompetitionLevelBadge, LeagueTypeBadge } from "~/components/badges";
-import { AlternateButton } from "~/components/buttons";
+import { AlternateButton } from "~/components/buttons/AlternateButton";
 import { Flex } from "~/components/structural";
 import { Text, DateTimeText } from "~/components/typography";
 

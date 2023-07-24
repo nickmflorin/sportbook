@@ -1,7 +1,7 @@
 "use client";
 
 import { logger } from "~/application/logger";
-import { AlternateButton } from "~/components/buttons";
+import { AlternateButton } from "~/components/buttons/AlternateButton";
 import { ErrorView } from "~/components/feedback/views/ErrorView";
 
 export default function Error({ error, reset }: { error: Error; reset: () => void }) {

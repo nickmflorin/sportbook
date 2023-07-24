@@ -11,10 +11,16 @@ a {
   text-decoration: none;
 }
 
+.button-link-wrapper {
+  max-width: fit-content;
+}
+
 .link {
   @extend %button-link-base;
+
   color: inherit;
   text-decoration: none;
 
-  max-width: fit-content;
+  @include partials.disabled;
+  @include button-link-structure("link");
 }

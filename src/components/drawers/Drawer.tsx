@@ -3,7 +3,7 @@ import { type ReactNode } from "react";
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
-import { CloseButton } from "~/components/buttons";
+import { CloseButton } from "~/components/buttons/CloseButton";
 import { Portal } from "~/components/structural/Portal";
 
 export interface DrawerProps extends ComponentProps {

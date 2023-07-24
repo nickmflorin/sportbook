@@ -2,7 +2,7 @@ import classNames from "classnames";
 
 import { type ButtonVariant, ButtonTypes } from "~/components/buttons";
 
-import { ContentButton, type ContentButtonProps } from "../abstract/ContentButton";
+import { ContentButton, type ContentButtonProps } from "../base";
 
 export type BaseSolidButtonProps<V extends ButtonVariant> = Omit<
   ContentButtonProps<typeof ButtonTypes.SOLID>,

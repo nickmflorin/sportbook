@@ -3,7 +3,7 @@ import { type ReactNode } from "react";
 
 import { xprisma, isPrismaDoesNotExistError, isPrismaInvalidIdError } from "~/prisma/client";
 import { type League, type FileUpload } from "~/prisma/model";
-import { DetailPage } from "~/components/layout";
+import { DetailPage } from "~/components/layout/DetailPage";
 import { getAuthUser } from "~/server/auth";
 
 import css from "./LeagueLayout.module.scss";

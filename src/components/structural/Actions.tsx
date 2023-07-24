@@ -3,7 +3,8 @@ import React, { useMemo } from "react";
 import classNames from "classnames";
 
 import { type ComponentProps, icons } from "~/lib/ui";
-import { ActionButton, type ActionButtonProps, type ButtonVariant } from "~/components/buttons";
+import { type ButtonVariant } from "~/components/buttons";
+import { ActionButton, type ActionButtonProps } from "~/components/buttons/ActionButton";
 import { Icon } from "~/components/icons";
 
 export type RenderAction = {

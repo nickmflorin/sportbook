@@ -2,7 +2,7 @@
 import React, { type ReactNode } from "react";
 
 /* FontAwesome's stylesheet must be imported, before any internal components or stylesheets are imported. */
-import "@fortawesome/fontawesome-svg-core/styles.css";
+// import "@fortawesome/fontawesome-svg-core/styles.css";
 
 import css from "./ClientConfig.module.scss";
 import { MantineProvider } from "./MantineProvider";
@@ -30,3 +30,5 @@ export const ClientConfig = (props: ClientConfigProps) => {
     </MantineProvider>
   );
 };
+
+export default ClientConfig;

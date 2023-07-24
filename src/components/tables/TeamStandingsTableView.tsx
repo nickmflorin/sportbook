@@ -1,5 +1,5 @@
 "use client";
-import { type TeamStanding } from "~/prisma/model";
+import { type TeamStanding, type WithFileUrl } from "~/prisma/model";
 
 import { TableView, type TableViewProps } from "./TableView";
 import { TeamStandingsTable, type TeamStandingsTableProps } from "./TeamStandingsTable";
@@ -7,7 +7,7 @@ import { TeamStandingsTable, type TeamStandingsTableProps } from "./TeamStanding
 export interface TeamStandingsTableViewProps
   extends Omit<TeamStandingsTableProps, "style" | "className" | "sx" | "data">,
     Pick<TableViewProps, "title" | "description" | "actions" | "className" | "style"> {
-  readonly data: TeamStanding[];
+  readonly data: WithFileUrl<TeamStanding>[];
 }
 
 export const TeamStandingsTableView = ({

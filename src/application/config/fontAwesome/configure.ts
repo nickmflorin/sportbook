@@ -235,7 +235,10 @@ export const configure = (__options__?: FAConfigurationOptions) => {
     /* When configuring FontAwesome on the server, we need to provide the config and library to the method - but can
        leave out the registry. */
     if (__options__.registry === undefined) {
-      logger.info("Icon registry was not provided during configuration, importing directly...");
+      logger.info(
+        { isServer: typeof window === "undefined" },
+        "Icon registry was not provided during configuration, importing directly...",
+      );
       /* eslint-disable-next-line @typescript-eslint/no-var-requires */
       registry = require("./registry").ICON_REGISTRY;
     } else {
@@ -243,24 +246,31 @@ export const configure = (__options__?: FAConfigurationOptions) => {
     }
   } else {
     logger.info(
-      "Icon registry and @fortawesome library & config were all not provided during " +
-        "configuration, importing directly...",
+      { isServer: typeof window === "undefined" },
+      "Icon registry and @fortawesome library & config were all not provided during configuration, importing " +
+        "directly...",
     );
     /* eslint-disable-next-line @typescript-eslint/no-var-requires */
-    library = require("@fortawesome/fontawesome-svg-core").library;
-    /* eslint-disable-next-line @typescript-eslint/no-var-requires */
-    config = require("@fortawesome/fontawesome-svg-core").config;
+    ({ library, config } = require("@fortawesome/fontawesome-svg-core"));
     /* eslint-disable-next-line @typescript-eslint/no-var-requires */
     registry = require("./registry").ICON_REGISTRY;
   }
 
   config.autoAddCss = false;
-  logger.info("Validating FontAwesome icon registry...");
+  logger.info(
+    typeof window === "undefined"
+      ? "Validating FontAwesome icon registry on server..."
+      : "Validating FontAwesome icon registry on client...",
+  );
   validateRegistry(registry);
 
   /* Add the validated, registered icons to the global Font Awesome library.  At this point, it is guaranteed that the
      type bindings related to Icons are correct, because they stem from constant definitions that were validated
      above. */
-  logger.info(`Adding ${registry.length} icons to the FontAwesome global library...`);
+  logger.info(
+    typeof window === "undefined"
+      ? `Adding ${registry.length} icons to the FontAwesome global library on server...`
+      : `Adding ${registry.length} icons to the FontAwesome global library on client...`,
+  );
   library.add(...registry);
 };

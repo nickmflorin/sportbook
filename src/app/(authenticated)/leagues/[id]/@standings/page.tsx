@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import uniq from "lodash.uniq";
 
 import { prisma, isPrismaInvalidIdError, isPrismaDoesNotExistError } from "~/prisma/client";
-import { type Team, type League, FileUploadEntity } from "~/prisma/model";
+import { type Team, type League, FileUploadEntity, type WithFileUrl, type TeamStanding } from "~/prisma/model";
 import { Loading } from "~/components/loading";
 import { getAuthUser } from "~/server/auth";
 import { getLeagueStandings } from "~/server/leagues";
@@ -47,9 +47,11 @@ export default async function LeagueStandings({ params: { id } }: LeagueStanding
     take: 1,
   });
 
-  const standingsWithImages = standings.map(standing => ({
-    ...standing,
-    fileUrl: imageUploads.find(i => i.entityId === standing.id)?.fileUrl || null,
-  }));
+  const standingsWithImages: WithFileUrl<TeamStanding>[] = standings.map(
+    (standing): WithFileUrl<TeamStanding> => ({
+      ...standing,
+      fileUrl: imageUploads.find(i => i.entityId === standing.id)?.fileUrl || null,
+    }),
+  );
   return <TeamStandingsTableView data={standingsWithImages} title="Standings" />;
 }

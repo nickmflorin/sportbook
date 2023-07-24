@@ -34,7 +34,10 @@
     > .body {
       font-weight: partials.get-font-weight($weight: "medium");
       color: partials.get-color("gray", $shade: 9);
-      font-size: inherit;
+
+      @layer {
+        font-size: inherit;
+      }
     }
   }
 }

@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { logger } from "~/application/logger";
 import { prisma } from "~/prisma/client";
 import { type LeagueWithParticipation } from "~/prisma/model";
-import { Page } from "~/components/layout";
+import { Page } from "~/components/layout/Page";
 import { Loading } from "~/components/loading";
 import { DataTableSizes } from "~/components/tables/types";
 import { getAuthUser } from "~/server/auth";

@@ -6,7 +6,7 @@ import classNames from "classnames";
 import { icons, type ComponentProps, type BorderRadiusSize } from "~/lib/ui";
 import { type InitialsString, parseInitials } from "~/lib/util/strings";
 import { Icon } from "~/components/icons";
-import { Text } from "~/components/typography";
+import { Text, type TextProps } from "~/components/typography";
 
 export type ModelImageProps = ComponentProps &
   Omit<ImageProps, "src" | "alt" | "height" | "width"> & {
@@ -16,6 +16,7 @@ export type ModelImageProps = ComponentProps &
     readonly alt?: string;
     readonly borderRadius?: BorderRadiusSize;
     readonly size?: Exclude<ImageProps["height"] & ImageProps["width"], undefined>;
+    readonly fontSize?: TextProps["size"];
   };
 
 export const ModelImage = ({
@@ -27,6 +28,7 @@ export const ModelImage = ({
   borderRadius,
   className,
   style,
+  fontSize,
   ...props
 }: ModelImageProps) => (
   <div
@@ -37,7 +39,11 @@ export const ModelImage = ({
       <Image {...props} height={size} width={size} src={src} alt={alt} />
     ) : (
       <div className="model-image__fallback">
-        {fallbackInitials ? <Text>{parseInitials(fallbackInitials)}</Text> : <Icon icon={fallbackIcon} />}
+        {fallbackInitials ? (
+          <Text size={fontSize}>{parseInitials(fallbackInitials)}</Text>
+        ) : (
+          <Icon icon={fallbackIcon} />
+        )}
       </div>
     )}
   </div>

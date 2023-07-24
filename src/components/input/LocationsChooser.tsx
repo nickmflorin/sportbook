@@ -2,7 +2,7 @@ import { type z } from "zod";
 
 import { logger } from "~/application/logger";
 import { type LocationSchema } from "~/prisma/model";
-import { DeleteButton } from "~/components/buttons";
+import { DeleteButton } from "~/components/buttons/DeleteButton";
 import { LocationTile } from "~/components/views/tiles";
 import { useLocations } from "~/app/api/hooks";
 
@@ -52,10 +52,14 @@ export const LocationsChooser = ({
               return <></>;
             }
             return (
-              <LocationTile key={i} model={model} actions={[<DeleteButton key="0" onClick={() => onDelete(loc)} />]} />
+              <LocationTile
+                key={i}
+                location={model}
+                actions={[<DeleteButton key="0" onClick={() => onDelete(loc)} />]}
+              />
             );
           }
-          return <LocationTile key={i} model={loc} />;
+          return <LocationTile key={i} location={loc} />;
         })}
       </div>
       <LocationSelect

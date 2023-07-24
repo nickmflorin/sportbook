@@ -64,13 +64,13 @@ export type PrismaCreateArgs<M extends Prisma.ModelName> = Lowercase<M> extends 
 type FileUploadEntityMap = { [key in FileUploadEntity]: ToTitleCase<key> };
 type FileUploadModelName = FileUploadEntityMap[keyof FileUploadEntityMap];
 
+export type WithFileUrl<T> = T & { readonly fileUrl: string | null };
+
 export type ModelWithFileUrl<N extends FileUploadModelName | PrismaModelType<FileUploadModelName>> =
   N extends FileUploadModelName
-    ? PrismaModelType<N> & {
-        readonly fileUrl: string | null;
-      }
+    ? WithFileUrl<PrismaModelType<N>>
     : N extends PrismaModelType<FileUploadModelName>
-    ? N & { readonly fileUrl: string | null }
+    ? WithFileUrl<N>
     : never;
 
 export type LeagueWithParticipation = League & {

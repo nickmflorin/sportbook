@@ -3,7 +3,7 @@ import React, { useImperativeHandle, useState, useRef } from "react";
 import { Menu, Flex, type MenuProps } from "@mantine/core";
 
 import { type icons, type Color } from "~/lib/ui";
-import { EllipsisButton } from "~/components/buttons";
+import { EllipsisButton } from "~/components/buttons/EllipsisButton";
 import { Icon } from "~/components/icons";
 
 type DataTableActionItem = {

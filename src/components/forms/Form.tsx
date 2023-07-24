@@ -1,7 +1,7 @@
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
-import { CloseButton } from "~/components/buttons";
+import { CloseButton } from "~/components/buttons/CloseButton";
 import { Loading } from "~/components/loading";
 import { ButtonFooter, type ButtonFooterProps } from "~/components/structural/ButtonFooter";
 import { Header, type HeaderProps } from "~/components/views/Header";

@@ -1,3 +1,4 @@
+"use client";
 import React, { forwardRef, type ForwardedRef } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

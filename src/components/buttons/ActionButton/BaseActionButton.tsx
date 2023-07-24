@@ -4,10 +4,10 @@ import { icons } from "~/lib/ui";
 import { ButtonTypes, type ButtonVariant } from "~/components/buttons";
 import { Icon } from "~/components/icons";
 
-import { Button, type ButtonProps } from "../abstract/Button";
+import { BaseButton, type BaseButtonProps } from "../base";
 
 export type BaseActionButtonProps<V extends ButtonVariant = ButtonVariant> = Omit<
-  ButtonProps,
+  BaseButtonProps,
   "children" | "buttonType"
 > & {
   readonly icon: icons.IconProp;
@@ -19,11 +19,11 @@ export const BaseActionButton = <V extends ButtonVariant = ButtonVariant>({
   variant,
   ...props
 }: BaseActionButtonProps<V>) => (
-  <Button
+  <BaseButton
     {...props}
     buttonType={ButtonTypes.ACTION}
     className={classNames(`button--action--${variant}`, props.className)}
   >
     <Icon icon={icon} loading={props.loading} size={icons.IconSizes.FILL} />
-  </Button>
+  </BaseButton>
 );

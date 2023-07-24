@@ -2,7 +2,7 @@
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
-import { AlternateButton, type AlternateButtonProps } from "~/components/buttons";
+import { AlternateButton, type AlternateButtonProps } from "~/components/buttons/AlternateButton";
 import { Title, Text } from "~/components/typography";
 
 type LinkObj = {

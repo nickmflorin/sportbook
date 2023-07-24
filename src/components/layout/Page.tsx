@@ -4,7 +4,7 @@ import { type ReactNode } from "react";
 import classNames from "classnames";
 
 import { icons } from "~/lib/ui";
-import { ActionButton } from "~/components/buttons";
+import { ActionButton } from "~/components/buttons/ActionButton";
 import { Header, type HeaderProps } from "~/components/views/Header";
 
 export interface PageProps extends Omit<HeaderProps, "titleProps"> {
