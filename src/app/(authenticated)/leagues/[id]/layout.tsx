@@ -1,10 +1,10 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { type ReactNode } from "react";
 
-import { getAuthUser } from "~/lib/auth";
 import { xprisma, isPrismaDoesNotExistError, isPrismaInvalidIdError } from "~/prisma/client";
 import { type League, type FileUpload } from "~/prisma/model";
 import { DetailPage } from "~/components/layout";
+import { getAuthUser } from "~/server/auth";
 
 import css from "./LeagueLayout.module.scss";
 
@@ -12,10 +12,11 @@ interface LeagueLayoutProps {
   readonly params: { id: string };
   readonly scores: ReactNode;
   readonly teams: ReactNode;
+  readonly standings: ReactNode;
 }
 
-export default async function LeagueLayout({ scores, teams, params: { id } }: LeagueLayoutProps) {
-  const user = await getAuthUser({ strict: true });
+export default async function LeagueLayout({ scores, standings, teams, params: { id } }: LeagueLayoutProps) {
+  const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
   let league: League;
   let fileUpload: FileUpload | null;
   let getImage: () => Promise<FileUpload | null>;
@@ -43,6 +44,7 @@ export default async function LeagueLayout({ scores, teams, params: { id } }: Le
         <div className={css["league-layout-page-row"]}>
           <div style={{ flex: 1 }}>{teams}</div>
           <div style={{ flex: 1 }}>{scores}</div>
+          <div style={{ flex: 1 }}>{standings}</div>
         </div>
       </div>
     </DetailPage>

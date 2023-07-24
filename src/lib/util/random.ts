@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 
-import { ensuresDefinedValue } from "~/lib/util";
+import { ensuresDefinedValue } from "./typeguards";
 
 const evaluateFrequency = (frequency = 0): boolean => {
   if (frequency > 1.0 || frequency < 0) {

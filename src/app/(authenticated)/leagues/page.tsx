@@ -1,12 +1,13 @@
 import dynamicImport from "next/dynamic";
+import { redirect } from "next/navigation";
 
 import { logger } from "~/application/logger";
-import { getAuthUser } from "~/lib/auth";
 import { prisma } from "~/prisma/client";
 import { type LeagueWithParticipation } from "~/prisma/model";
 import { Page } from "~/components/layout";
 import { Loading } from "~/components/loading";
 import { DataTableSizes } from "~/components/tables/types";
+import { getAuthUser } from "~/server/auth";
 
 const LeaguesTableView = dynamicImport(() => import("~/components/tables/LeaguesTableView"), {
   ssr: false,
@@ -20,7 +21,7 @@ interface LeaguesProps {
 export const dynamic = "force-dynamic";
 
 export default async function Leagues({ searchParams: { query } }: LeaguesProps) {
-  const user = await getAuthUser({ strict: true });
+  const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
 
   const leagues = await prisma.league.findMany({
     include: { teams: { select: { id: true } } },

@@ -1,4 +1,4 @@
-import { selectAtRandom } from "../random";
+import { selectAtRandom } from "~/lib/util/random";
 
 import leagueNames from "./league-names.json";
 import locations from "./locations.json";

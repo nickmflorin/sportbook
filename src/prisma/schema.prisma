@@ -75,6 +75,31 @@ enum Sport {
   HOCKEY
 }
 
+enum HockeyLeagueStandingsMethod {
+  RECORD
+  POINTS
+}
+
+enum HockeyLeagueStandingTieBreaker {
+  GOALS_FOR
+  GOALS_AGAINST
+  GOAL_DIFFERENTIAL
+  HEAD_TO_HEAD_MATCHUP
+}
+
+model HockeyLeagueConfig {
+  id              String                           @id @default(uuid()) @db.Uuid
+  createdById     String                           @db.Uuid
+  createdAt       DateTime                         @default(now())
+  updatedAt       DateTime                         @updatedAt
+  updatedById     String                           @db.Uuid
+  standingsMethod HockeyLeagueStandingsMethod      @default(value: POINTS)
+  // We will have to incorporate a solution for cases where the two teams have the same standing after tie breakers.
+  tieBreakers     HockeyLeagueStandingTieBreaker[] @default(value: [HEAD_TO_HEAD_MATCHUP, GOAL_DIFFERENTIAL])
+  league          League                           @relation(fields: [leagueId], references: [id])
+  leagueId        String                           @unique @db.Uuid
+}
+
 // It may (in the future) not make sense to have this be an M2M.
 model Location {
   id                     String              @id @default(uuid()) @db.Uuid
@@ -151,26 +176,30 @@ enum LeagueCompetitionLevel {
 }
 
 model League {
-  id               String                 @id @default(uuid()) @db.Uuid
-  name             String
-  description      String?
-  createdById      String                 @db.Uuid
-  createdAt        DateTime               @default(now())
-  updatedAt        DateTime               @updatedAt
-  updatedById      String                 @db.Uuid
-  registration     LeagueRegistration?
-  leagueStart      DateTime?
-  leagueEnd        DateTime?
-  leagueType       LeagueType             @default(value: PICKUP)
-  competitionLevel LeagueCompetitionLevel @default(value: SOCIAL)
-  isPublic         Boolean                @default(true)
-  participants     LeagueOnParticipants[] @relation("participants")
-  sport            Sport
-  requirements     LeagueRequirements?
-  leagueGames      Game[]                 @relation("leagueGames")
-  locations        LeagueOnLocations[]    @relation("locations")
-  teams            Team[]                 @relation("leagueTeams")
-  teamPlayers      TeamOnPlayers[]        @relation("leagueTeamPlayers")
+  id                   String                 @id @default(uuid()) @db.Uuid
+  name                 String
+  description          String?
+  createdById          String                 @db.Uuid
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  updatedById          String                 @db.Uuid
+  registration         LeagueRegistration?
+  leagueStart          DateTime?
+  leagueEnd            DateTime?
+  leagueType           LeagueType             @default(value: PICKUP)
+  competitionLevel     LeagueCompetitionLevel @default(value: SOCIAL)
+  isPublic             Boolean                @default(true)
+  participants         LeagueOnParticipants[] @relation("participants")
+  sport                Sport
+  requirements         LeagueRequirements?
+  // Per sport configurations have to be optional because their presence will depend on the sport the league is
+  // configured for.  However, they should be constructed such that they have no required fields, so in cases that the
+  // config is missing for a League a default configuration can be used.
+  hockeyConfig         HockeyLeagueConfig?    // Only applicable when 'sport' is HOCKEY.
+  leagueGames          Game[]                 @relation("leagueGames")
+  locations            LeagueOnLocations[]    @relation("locations")
+  teams                Team[]                 @relation("leagueTeams")
+  teamPlayers          TeamOnPlayers[]        @relation("leagueTeamPlayers")
 }
 
 enum TeamPlayerRole {

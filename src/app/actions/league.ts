@@ -1,9 +1,9 @@
 "use server";
 import { type z } from "zod";
 
-import { getAuthUser } from "~/lib/auth";
 import { prisma } from "~/prisma/client";
 import { Prisma, type LeagueSchema } from "~/prisma/model";
+import { getAuthUser } from "~/server/auth";
 
 import { ActionError, ActionErrorCodes } from "./errors";
 

@@ -15,27 +15,26 @@ import {
   Gender,
   Color,
   GameVisitationType,
-  type Prisma,
 } from "@prisma/client";
 
 import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
 
 import { ensuresDefinedValue } from "~/lib/util";
-
-import { prisma, xprisma } from "./client";
-import { safeEnumValue, modelHasField, type PrismaModelType, getModel } from "./model";
 import {
   infiniteLoop,
   infiniteLoopSelection,
   randomInt,
   mapOverLength,
   selectAtRandom,
-  fixtures,
   selectAtRandomFrequency,
   generateRandomDate,
   selectSequentially,
   selectArrayAtRandom,
-} from "./seeding";
+} from "~/lib/util/random";
+
+import { prisma, xprisma } from "./client";
+import { safeEnumValue, getModelMeta } from "./model";
+import { fixtures } from "./seeding";
 
 const MIN_PARTICIPANTS_PER_LEAGUE = 50;
 const MAX_PARTICIPANTS_PER_LEAGUE = 100;
@@ -60,42 +59,6 @@ const MIN_TEAMS_PER_LEAGUE = 4;
 
 const MIN_NUM_GAMES_PER_LEAGUE = 10;
 const MAX_NUM_GAMES_PER_LEAGUE = 30;
-
-const USER_META_FIELDS = ["createdById", "updatedById"] as const;
-const DATE_META_FIELDS = ["createdAt", "updatedAt", "assignedAt"] as const;
-
-type ModelBaseFields = {
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
-  readonly assignedAt: Date;
-  readonly createdById: string;
-  readonly updatedById: string;
-};
-
-type ModelBaseField<M extends Prisma.ModelName> = keyof ModelBaseFields & keyof PrismaModelType<M>;
-type ModelBase<M extends Prisma.ModelName> = { [key in ModelBaseField<M>]: PrismaModelType<M>[key] };
-
-type DynamicGetUser = (options?: { recycle: boolean }) => User;
-
-const getModelMeta = <M extends Prisma.ModelName>(name: M, { getUser }: { getUser: DynamicGetUser }): ModelBase<M> => {
-  const model = getModel(name);
-
-  let data = {} as ModelBase<M>;
-  for (const field of USER_META_FIELDS) {
-    if (modelHasField(model, field)) {
-      data = { ...data, [field]: getUser({ recycle: true }).id } as ModelBase<M>;
-    }
-  }
-  for (const field of DATE_META_FIELDS) {
-    if (modelHasField(model, field)) {
-      data = {
-        ...data,
-        [field]: generateRandomDate(),
-      } as ModelBase<M>;
-    }
-  }
-  return data;
-};
 
 const chunkPlayersPerTeam = (league: League, participants: User[]): User[][] => {
   if (participants.length === 0) {

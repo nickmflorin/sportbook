@@ -44,3 +44,9 @@ export type Noop = () => void;
  */
 /* eslint-disable-next-line @typescript-eslint/no-empty-function */
 export const Noop = () => {};
+
+type _ReplaceUndefinedWithNull<T> = T extends undefined ? Exclude<T, undefined> | null : T;
+
+export type Equals<A, B> = A extends B ? (B extends A ? true : false) : false;
+
+export type EqualsWhenDefined<A, B> = Equals<_ReplaceUndefinedWithNull<A>, _ReplaceUndefinedWithNull<B>>;

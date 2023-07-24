@@ -1,8 +1,8 @@
 import { type NextRequest } from "next/server";
 
-import { getAuthUserFromRequest } from "~/lib/auth";
 import { prisma } from "~/prisma/client";
 import { AppResponse } from "~/app/api/response";
+import { getAuthUserFromRequest } from "~/server/auth";
 
 export async function GET(request: NextRequest) {
   const user = await getAuthUserFromRequest(request);
