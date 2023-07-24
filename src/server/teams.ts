@@ -110,9 +110,9 @@ const _generateTeamStats = <G extends MinimumViableStatGame>(team: Team | Team["
         total: newStats[TeamStatMetric.POINTS].total + GameResultPoints[resultType],
       },
       [TeamStatMetric.GAMES_PLAYED]: {
-        ...newStats[TeamStatMetric.POINTS],
-        [getGameLocation(team, game)]: newStats[TeamStatMetric.POINTS][getGameLocation(team, game)] + 1,
-        total: newStats[TeamStatMetric.POINTS].total + 1,
+        ...newStats[TeamStatMetric.GAMES_PLAYED],
+        [getGameLocation(team, game)]: newStats[TeamStatMetric.GAMES_PLAYED][getGameLocation(team, game)] + 1,
+        total: newStats[TeamStatMetric.GAMES_PLAYED].total + 1,
       },
     };
   }, INITIAL_TEAM_STATS);

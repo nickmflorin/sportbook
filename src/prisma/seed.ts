@@ -7,14 +7,10 @@ import {
   Sport,
   type League,
   type Location,
-  type Team,
-  type Game,
-  GameStatus,
   LeagueType,
   LeagueCompetitionLevel,
   Gender,
   Color,
-  GameVisitationType,
 } from "@prisma/client";
 
 import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
@@ -23,10 +19,8 @@ import { ensuresDefinedValue } from "~/lib/util";
 import {
   infiniteLoop,
   infiniteLoopSelection,
-  randomInt,
   mapOverLength,
   selectAtRandom,
-  selectAtRandomFrequency,
   generateRandomDate,
   selectSequentially,
   selectArrayAtRandom,
@@ -34,7 +28,7 @@ import {
 
 import { prisma, xprisma } from "./client";
 import { safeEnumValue, getModelMeta } from "./model";
-import { fixtures } from "./seeding";
+import { fixtures, generateLeagueGames, type SeedContext, type GetUser } from "./seeding";
 
 const MIN_PARTICIPANTS_PER_LEAGUE = 50;
 const MAX_PARTICIPANTS_PER_LEAGUE = 100;
@@ -56,9 +50,6 @@ const MAX_USERS_PER_TEAM = 10;
 
 const MAX_TEAMS_PER_LEAGUE = 6;
 const MIN_TEAMS_PER_LEAGUE = 4;
-
-const MIN_NUM_GAMES_PER_LEAGUE = 10;
-const MAX_NUM_GAMES_PER_LEAGUE = 30;
 
 const chunkPlayersPerTeam = (league: League, participants: User[]): User[][] => {
   if (participants.length === 0) {
@@ -92,15 +83,6 @@ const chunkPlayersPerTeam = (league: League, participants: User[]): User[][] => 
       `'${MIN_TEAMS_PER_LEAGUE}'. No teams were created.`,
   );
   return [];
-};
-
-type GetUser = () => User;
-
-type GetLocation = () => Location;
-
-type SeedContext = {
-  readonly getUser: GetUser;
-  readonly getLocation: GetLocation;
 };
 
 async function collectClerkPages<T>(fetch: (params: { limit: number; offset: number }) => Promise<T[]>): Promise<T[]> {
@@ -186,75 +168,6 @@ async function generateLeagueTeams(
   );
   console.info(`Generated ${result.length} teams for league '${league.name}' in the database.`);
   return result;
-}
-
-async function generateLeagueGames(
-  league: League,
-  teams: Team[],
-  ctx: SeedContext & { readonly getParticipant: GetUser },
-) {
-  if (teams.length < 2) {
-    console.error(`There are not enough teams to create any games for league '${league.name}'.`);
-    return [];
-  }
-  const selectAnotherTeam = (homeTeam: Team): Team => selectAtRandom(teams.filter(t => t.id !== homeTeam.id));
-
-  const createGame = async () => {
-    let cancellationReason: Game["cancellationReason"] = null;
-
-    const homeTeam = selectAtRandom(teams);
-    const status = selectAtRandomFrequency([
-      { value: GameStatus.CANCELLED, frequency: 0.05 },
-      { value: GameStatus.PROPOSED, frequency: 0.25 },
-      { value: GameStatus.FINAL, frequency: 0.6 },
-      { value: GameStatus.POSTPONED, frequency: 0.1 },
-    ]);
-    if (status === GameStatus.CANCELLED) {
-      cancellationReason = selectAtRandom([
-        "Not enough players that wanted to play.",
-        "Anticipating bad weather!",
-        "There is a holiday that day and we will wait until people are back in town.",
-        null,
-      ]);
-    }
-    const game = await prisma.game.create({
-      data: {
-        ...getModelMeta("Game", { getUser: ctx.getParticipant }),
-        status,
-        cancellationReason,
-        dateTime: generateRandomDate(),
-        leagueId: league.id,
-        homeTeamId: homeTeam.id,
-        awayTeamId: selectAnotherTeam(homeTeam).id,
-      },
-    });
-    if (status === GameStatus.FINAL) {
-      const hasBeenPlayed = selectAtRandomFrequency([
-        { value: true, frequency: 0.7 },
-        { value: false, frequency: 0.3 },
-      ]);
-      if (hasBeenPlayed) {
-        await prisma.gameResult.create({
-          data: {
-            ...getModelMeta("GameResult", { getUser: ctx.getParticipant }),
-            gameId: game.id,
-            homeScore: randomInt({ min: 0, max: 10 }),
-            awayScore: randomInt({ min: 0, max: 10 }),
-            forfeitingTeamVisitation: selectAtRandomFrequency([
-              { value: GameVisitationType.HOME, frequency: 0.05 },
-              { value: GameVisitationType.AWAY, frequency: 0.05 },
-              { value: null, frequency: 0.9 },
-            ]),
-          },
-        });
-      }
-    }
-  };
-  const games = await Promise.all(
-    mapOverLength({ min: MIN_NUM_GAMES_PER_LEAGUE, max: MAX_NUM_GAMES_PER_LEAGUE }, () => createGame()),
-  );
-  console.info(`Generated ${games.length} games for league '${league.name}' in the database.`);
-  return games;
 }
 
 async function generateLeagueLocations(league: League, ctx: SeedContext) {

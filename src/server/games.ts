@@ -37,7 +37,7 @@ export const gameWasLost = (team: Team | Team["id"], game: MinimumViableStatGame
 
 export const gameWasTied = (team: Team | Team["id"], game: MinimumViableStatGame): boolean =>
   (game.homeTeamId === _getTeamId(team, game) && game.result.homeScore === game.result.awayScore) ||
-  (game.awayTeamId === _getTeamId(team, game) && game.result.awayScore < game.result.homeScore);
+  (game.awayTeamId === _getTeamId(team, game) && game.result.awayScore === game.result.homeScore);
 
 export const getGameResultType = (team: Team | Team["id"], game: MinimumViableStatGame): GameResultType => {
   if (gameWasWon(team, game)) {
@@ -47,5 +47,6 @@ export const getGameResultType = (team: Team | Team["id"], game: MinimumViableSt
   } else if (gameWasTied(team, game)) {
     return GameResultType.TIE;
   }
-  throw new Error("Unexpected Condition: Game was never lost, tied or won.");
+  const teamId = typeof team === "string" ? team : team.id;
+  throw new Error(`Unexpected Condition: Game '${game.id}' was never lost, tied or won, by team '${teamId}'.`);
 };
