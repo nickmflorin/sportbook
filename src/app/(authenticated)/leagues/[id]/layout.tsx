@@ -1,21 +1,21 @@
 import { notFound, redirect } from "next/navigation";
 import { type ReactNode } from "react";
 
+import { icons } from "~/lib/ui";
 import { xprisma, isPrismaDoesNotExistError, isPrismaInvalidIdError } from "~/prisma/client";
 import { type League, type FileUpload } from "~/prisma/model";
 import { DetailPage } from "~/components/layout/DetailPage";
+import { Flex } from "~/components/structural/Flex";
 import { getAuthUser } from "~/server/auth";
-
-import css from "./LeagueLayout.module.scss";
 
 interface LeagueLayoutProps {
   readonly params: { id: string };
   readonly scores: ReactNode;
   readonly teams: ReactNode;
-  readonly standings: ReactNode;
+  readonly children: ReactNode;
 }
 
-export default async function LeagueLayout({ scores, standings, teams, params: { id } }: LeagueLayoutProps) {
+export default async function LeagueLayout({ scores, children, teams, params: { id } }: LeagueLayoutProps) {
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
   let league: League;
   let fileUpload: FileUpload | null;
@@ -35,18 +35,34 @@ export default async function LeagueLayout({ scores, standings, teams, params: {
   return (
     <DetailPage
       title={league.name}
-      imageSrc={fileUpload === null ? null : fileUpload.fileUrl}
-      fallbackInitials={league.name}
       description={[league.description]}
+      headerProps={{
+        imageProps: { src: fileUpload === null ? null : fileUpload.fileUrl, fallbackInitials: league.name },
+      }}
       backHref="/leagues"
+      tabs={[
+        {
+          label: "standings",
+          href: "/standings",
+          icon: icons.IconNames.HOUSE_CHIMNEY,
+          active: { leadingPath: "/leagues/:id/standings" },
+        },
+        {
+          href: "/players",
+          icon: icons.IconNames.SITEMAP,
+          label: "Players",
+          active: { leadingPath: "/leagues/:id/players" },
+        },
+      ]}
+      staticViewWidth={420}
+      staticViews={
+        <Flex direction="column" gap="md" style={{ width: "100%", height: "100%" }}>
+          {teams}
+          {scores}
+        </Flex>
+      }
     >
-      <div className={css["league-layout-page"]}>
-        <div className={css["league-layout-page-row"]}>
-          <div style={{ flex: 1 }}>{teams}</div>
-          <div style={{ flex: 1 }}>{scores}</div>
-          <div style={{ flex: 1 }}>{standings}</div>
-        </div>
-      </div>
+      {children}
     </DetailPage>
   );
 }

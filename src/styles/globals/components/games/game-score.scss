@@ -4,8 +4,4 @@
   display: flex;
   flex-direction: column;
   gap: partials.get-spacing("md");
-
-  // Right now, the only way to get the scores on the right to all line up is to use a fixed width.  Eventually, we will
-  // need to explore alternate layout solutions, such as an HTML table.
-  width: 240px;
 }

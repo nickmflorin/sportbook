@@ -1,5 +1,5 @@
 import { type GameWithResult } from "~/prisma/model";
-import { GameScore } from "~/components/games/GameScore";
+import { GameScore } from "~/components/views/GameScore";
 
 import { Tile, type TileProps } from "./Tile";
 

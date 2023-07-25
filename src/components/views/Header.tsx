@@ -6,24 +6,25 @@ import { Title, type TitleProps, type TextProps, Description, descriptionIsVisib
 
 import { Actions, type Action, filterVisibleActions } from "../structural/Actions";
 
-export interface HeaderProps extends ComponentProps, Pick<ModelImageProps, "fallbackInitials"> {
+export interface HeaderProps extends ComponentProps {
   readonly title?: string | JSX.Element;
-  readonly imageSrc?: ModelImageProps["src"];
-  readonly imageSize?: ModelImageProps["size"];
+  readonly imageProps?: ModelImageProps;
   readonly description?: Description;
   readonly actions?: Action[];
   readonly titleProps?: Omit<TitleProps, "children">;
   readonly descriptionProps?: Omit<TextProps, "children">;
 }
 
+const headerHasImage = (props: Pick<HeaderProps, "imageProps">): boolean =>
+  [props.imageProps?.src !== undefined, props.imageProps?.fallbackInitials !== undefined].includes(true);
+
 export const headerIsVisible = (
-  props: Pick<HeaderProps, "title" | "description" | "imageSrc" | "fallbackInitials" | "actions">,
+  props: Pick<HeaderProps, "title" | "description" | "imageProps" | "actions">,
 ): boolean =>
   [
+    headerHasImage(props),
     props.title !== undefined && (typeof props.title !== "string" || props.title.trim() !== ""),
     descriptionIsVisible({ description: props.description }),
-    props.imageSrc !== undefined,
-    props.fallbackInitials !== undefined,
     props.actions && filterVisibleActions(props.actions).length !== 0,
   ].includes(true);
 
@@ -33,19 +34,15 @@ export const Header = ({
   actions = [],
   titleProps,
   descriptionProps,
-  imageSrc,
-  fallbackInitials,
-  imageSize = 120,
+  imageProps,
   ...props
 }: HeaderProps): JSX.Element =>
-  headerIsVisible({ title, description, actions, imageSrc, fallbackInitials }) ? (
+  headerIsVisible({ title, description, actions, imageProps }) ? (
     <div
       {...props}
-      className={classNames("header", { "header--with-image": imageSrc || fallbackInitials }, props.className)}
+      className={classNames("header", { "header--with-image": headerHasImage({ imageProps }) }, props.className)}
     >
-      {(imageSrc || fallbackInitials) && (
-        <ModelImage src={imageSrc} fallbackInitials={fallbackInitials} size={imageSize} />
-      )}
+      {headerHasImage({ imageProps }) && <ModelImage {...imageProps} />}
       <div className="header__titles">
         {typeof title === "string" ? (
           <Title order={5} {...titleProps} className={classNames("header__title", titleProps?.className)}>

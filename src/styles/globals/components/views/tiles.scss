@@ -43,6 +43,11 @@
     }
   }
 
+  > .tile__content {
+    width: 100%;
+    max-width: 100%;
+  }
+
   &.tile--with-image {
     > .tile__header {
       > .tile__info {

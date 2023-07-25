@@ -1,5 +1,9 @@
+import { z } from "zod";
+
 export const UUID_PATH_PARAM_REGEX_STRING = "([0-9a-zA-z-]+)";
 export const PATH_END_REGEX_STRING = "(?:\\/)?(\\?([^\\/]+)?(\\/)?)?$";
+
+export const isUuid = (value: unknown): value is string => z.string().uuid().safeParse(value).success;
 
 /**
  * Creates a regular expression that can be used to match a path with or without one or multiple UUID path parameters

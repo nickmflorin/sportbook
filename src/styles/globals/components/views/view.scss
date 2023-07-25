@@ -34,7 +34,7 @@
 
 
 .tiles-view {
-  > .tile {
+  > .view__content {
     gap: partials.get-spacing("md");
   }
 }

@@ -8,26 +8,78 @@ $page-header-margin-bottom: "lg";
   width: 100%;
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 
-   .page__back-button {
-    margin-bottom: partials.get-spacing("md");
-  }
+  > .page__main {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 100;
 
-  > .page__header {
-    margin-bottom: partials.get-spacing($page-header-margin-bottom);
+    > .page__header {
+      margin-bottom: partials.get-spacing($page-header-margin-bottom);
+      display: flex;
+      flex-direction: column;
+      gap: partials.get-spacing("md");
 
-    > .header {
-      > .header__titles {
-        > .title {
-          line-height: 30px;
+      > .header {
+        > .header__titles {
+          > .title {
+            line-height: 30px;
+          }
         }
+      }
+    }
+
+    > .page__content {
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: row;
+
+      > .page__content__main {
+        max-height: 100%;
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 100;
+      }
+
+      > .page__content__static-views {
+        display: flex;
+        flex-direction: column;
+        max-width: 600px;
+        max-height: 100%;
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+        border-left: partials.$layout-border;
+        // Apply margin between the page__main element and the page__static-views element.  When the padding is applied
+        // in conjunction, the border-left will be centered between the two.
+        margin-left: partials.get-spacing("md");
+        padding-left: partials.get-spacing("md");
+        gap: partials.get-spacing("md");
       }
     }
   }
 
-  > .page__content {
-    overflow: hidden;
+  > .page__static-views {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    max-height: 100%;
     position: relative;
+    overflow: hidden;
+    height: 100%;
+    border-left: partials.$layout-border;
+    // Apply margin between the page__main element and the page__static-views element.  When the padding is applied
+    // in conjunction, the border-left will be centered between the two.
+    margin-left: partials.get-spacing("md");
+    padding-left: partials.get-spacing("md");
+    gap: partials.get-spacing("md");
   }
 }

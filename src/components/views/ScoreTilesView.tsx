@@ -7,7 +7,7 @@ import { type WithViewProps } from "./View";
 export type ScoreTilesViewProps = WithViewProps<Omit<TilesViewDataProps<GameWithResult>, "renderItem">>;
 
 export const ScoreTilesView = ({ data, ...props }: ScoreTilesViewProps): JSX.Element => (
-  <TilesView {...props} data={data} renderItem={game => <ScoreTile game={game} />} />
+  <TilesView {...props} data={data} renderTile={(game, params) => <ScoreTile {...params} game={game} />} />
 );
 
 export default ScoreTilesView;
