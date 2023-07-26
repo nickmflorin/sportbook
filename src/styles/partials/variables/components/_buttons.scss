@@ -206,9 +206,14 @@ $button-sizes: (
 }
 
 /* ------------------------------------------------------- Fonts --------------------------------------------------- */
-$button-font-family: typography.$font-family-avenir;
+$button-font-family: typography.$font-family-inter;
+
+// The button font-weight here is used as the default - the font-weight will usually depend on the variant.
 $button-font-weight: typography.get-font-weight(
   $weight: "semibold",
+);
+$link-font-weight: typography.get-font-weight(
+  $weight: "medium",
 );
 
 $button-solid-font-sizes: (

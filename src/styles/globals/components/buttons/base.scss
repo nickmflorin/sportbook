@@ -11,7 +11,7 @@
 
   /* When providing a border, we need to use the outline property - not the border property.  This
      is because a border will contribute to the size of the button, whereas an outline will not. */
-  border: none !important;
+  border: none;
   border-radius: partials.$button-border-radius;
   box-shadow: none !important;
   box-sizing: border-box;

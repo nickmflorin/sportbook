@@ -23,6 +23,6 @@ a {
 
   @include partials.disabled;
   @include button-link-structure("link");
-
+  font-weight: partials.$link-font-weight;
   line-height: 1;
 }

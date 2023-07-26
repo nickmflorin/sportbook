@@ -1,4 +1,6 @@
+"use client";
 import { type LinkProps } from "next/link";
+import { usePathname } from "next/navigation";
 
 import classNames from "classnames";
 
@@ -18,10 +20,13 @@ export interface TabsProps extends ComponentProps {
   readonly tabs: TabItem[];
 }
 
-export const Tabs = ({ tabs, ...props }: TabsProps) => (
-  <div className={classNames("tabs", props.className)}>
-    {tabs.map((tab, i) => (
-      <TabLink key={i} label={tab.label} icon={tab.icon} isActive={true} href={tab.href} />
-    ))}
-  </div>
-);
+export const Tabs = ({ tabs, ...props }: TabsProps) => {
+  const pathname = usePathname();
+  return (
+    <div className={classNames("tabs", props.className)}>
+      {tabs.map(({ active, ...tab }, i) => (
+        <TabLink key={i} {...tab} isActive={pathIsActive(active, pathname)} />
+      ))}
+    </div>
+  );
+};
