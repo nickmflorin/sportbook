@@ -26,10 +26,17 @@ $icon-sizes: (
   @return fn.mapget($icon-sizes, $size);
 }
 
+@mixin with-icon-and-svg {
+  @content;
+  > svg {
+    @content;
+  }
+}
+
 @mixin icon-contain($contain: $default-icon-size-contain) {
   $contain: fn.validate-value($contain, ("square", "fit"));
 
-  @if $contain == "square" {
+  @include with-icon-and-svg {
     aspect-ratio: 1;
   }
 }
@@ -48,9 +55,20 @@ $icon-sizes: (
   @if $axis == "vertical" {
     width: auto;
     height: fn.mapget($icon-sizes, $size);
+
+    > svg {
+      height: 100%;
+      width: auto;
+    }
+
   } @else {
     width: fn.mapget($icon-sizes, $size);
     height: auto;
+
+    > svg {
+      width: 100%;
+      height: auto;
+    }
   }
 
   @if $contain {

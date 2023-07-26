@@ -28,9 +28,7 @@
 @mixin icon-size-classes($axis) {
   @each $size in map.keys(partials.$icon-sizes) {
     &.icon--size-#{$size} {
-      > svg {
-        @include partials.icon-sizing($size, $axis);
-      }
+      @include partials.icon-sizing($size, $axis);
     }
   }
 }
@@ -51,21 +49,15 @@
   }
 
   &--contain-square:not(&--contain-fit) {
-    > svg {
-      @include partials.icon-contain("square");
-    }
+    @include partials.icon-contain("square");
   }
 
   &--contain-fit:not(&--contain-square) {
-    > svg {
-      @include partials.icon-contain("fit");
-    }
+    @include partials.icon-contain("fit");
   }
 
   &:not(&--contain-fit, &--contain-square) {
-    > svg {
-      @include partials.icon-contain(partials.$default-icon-size-contain);
-    }
+    @include partials.icon-contain(partials.$default-icon-size-contain);
   }
 
   &--axis-vertical:not(&--axis-horizontal) {

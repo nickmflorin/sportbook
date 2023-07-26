@@ -18,7 +18,7 @@ export const SidebarItem = ({ href, active, icon }: SidebarItemConfig): JSX.Elem
   const pathname = usePathname();
   return (
     <Link className={classNames("sidebar-item", { active: pathIsActive(active, pathname) })} href={href}>
-      <Icon icon={icon} />
+      <Icon icon={icon} size="lg" />
     </Link>
   );
 };

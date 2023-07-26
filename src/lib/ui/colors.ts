@@ -93,6 +93,14 @@ const isColor = (p: _ColorStateColors | Color | null): p is Color =>
   (typeof p === "string" && !ColorStates.contains(p)) ||
   Array.isArray(p);
 
+export function getHoveredColorClassName(propName: ColorPropName, color?: Color | null): string {
+  return getColorClassName(propName, color, ColorStates.HOVERED);
+}
+
+export function getFocusedColorClassName(propName: ColorPropName, color?: Color | null): string {
+  return getColorClassName(propName, color, ColorStates.FOCUSED);
+}
+
 export function getColorClassName(prop: ColorPropName, color?: Color | null): string;
 export function getColorClassName(prop: ColorPropName, color?: Color | null, state?: ColorState): string;
 export function getColorClassName(prop: ColorPropName, color?: Color | null, state?: _ColorStateColors): string;
@@ -113,14 +121,14 @@ export function getColorClassName(
       } else {
         return classNames(
           getColorClassName(propName, [name, sh]),
-          getColorClassName(propName, arg2.focused, ColorStates.FOCUSED),
-          getColorClassName(propName, arg2.hovered, ColorStates.HOVERED),
+          getHoveredColorClassName(propName, arg2.hovered),
+          getFocusedColorClassName(propName, arg2.focused),
         );
       }
     }
     return classNames(
-      getColorClassName(propName, arg1.focused, ColorStates.FOCUSED),
-      getColorClassName(propName, arg1.hovered, ColorStates.HOVERED),
+      getHoveredColorClassName(propName, arg1.hovered),
+      getFocusedColorClassName(propName, arg1.focused),
     );
   }
   return "";

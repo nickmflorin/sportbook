@@ -4,7 +4,7 @@ export * from "./strings";
 
 export type NonNull<V> = V extends infer T | null ? T : V;
 
-export type ExtractValues<T> = keyof T extends string ? T[keyof T] : never;
+export type ExtractValues<T> = T[keyof T];
 
 export type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 export type Immutable<T> = { readonly [P in keyof T]: T[P] };
