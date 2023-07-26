@@ -1,7 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { type ReactNode } from "react";
 
-import { icons } from "~/lib/ui";
 import { xprisma, isPrismaDoesNotExistError, isPrismaInvalidIdError } from "~/prisma/client";
 import { type League, type FileUpload } from "~/prisma/model";
 import { DetailPage } from "~/components/layout/DetailPage";
@@ -44,12 +43,12 @@ export default async function LeagueLayout({ scores, children, teams, params: { 
         {
           label: "standings",
           href: "/standings",
-          icon: icons.IconNames.HOUSE_CHIMNEY,
+          icon: { name: "house-chimney" },
           active: { leadingPath: "/leagues/:id/standings" },
         },
         {
           href: "/players",
-          icon: icons.IconNames.SITEMAP,
+          icon: { name: "sitemap" },
           label: "Players",
           active: { leadingPath: "/leagues/:id/players" },
         },

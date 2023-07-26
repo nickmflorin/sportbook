@@ -3,7 +3,7 @@ import React, { type ReactNode } from "react";
 
 import classNames from "classnames";
 
-import { icons, type ComponentProps } from "~/lib/ui";
+import { type ComponentProps } from "~/lib/ui";
 import { ActionButton } from "~/components/buttons/ActionButton";
 import { Header, type HeaderProps } from "~/components/views/Header";
 
@@ -33,9 +33,7 @@ export const Page = ({
   <div style={style} className={classNames("page", className)}>
     <div className="page__main">
       <div className="page__header">
-        {backHref && (
-          <ActionButton.Bare className="page__back-button" href={backHref} icon={icons.IconNames.ARROW_LEFT} />
-        )}
+        {backHref && <ActionButton.Bare className="page__back-button" href={backHref} icon={{ name: "arrow-left" }} />}
         {header || <Header {...props} titleProps={{ order: 4 }} />}
         {subHeader}
       </div>

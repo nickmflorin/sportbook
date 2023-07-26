@@ -2,13 +2,14 @@ import { type LinkProps } from "next/link";
 
 import classNames from "classnames";
 
-import { type icons, type ComponentProps } from "~/lib/ui";
+import { type ComponentProps } from "~/lib/ui";
 import { type PathActive, pathIsActive } from "~/lib/util/paths";
 import { TabLink } from "~/components/buttons/TabLink";
+import { type IconProp } from "~/components/icons";
 
 export type TabItem = {
   readonly label: string;
-  readonly icon?: icons.IconProp;
+  readonly icon?: IconProp;
   readonly href: LinkProps["href"];
   readonly active: PathActive;
 };

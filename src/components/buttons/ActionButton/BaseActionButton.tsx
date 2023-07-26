@@ -1,8 +1,8 @@
 import classNames from "classnames";
 
-import { icons } from "~/lib/ui";
 import { ButtonTypes, type ButtonVariant } from "~/components/buttons";
-import { Icon } from "~/components/icons";
+import { IconSizes, type IconProp } from "~/components/icons";
+import { Icon } from "~/components/icons/Icon";
 
 import { BaseButton, type BaseButtonProps } from "../base";
 
@@ -10,7 +10,7 @@ export type BaseActionButtonProps<V extends ButtonVariant = ButtonVariant> = Omi
   BaseButtonProps,
   "children" | "buttonType"
 > & {
-  readonly icon: icons.IconProp;
+  readonly icon: IconProp;
   readonly variant: V;
 };
 
@@ -24,6 +24,6 @@ export const BaseActionButton = <V extends ButtonVariant = ButtonVariant>({
     buttonType={ButtonTypes.ACTION}
     className={classNames(`button--action--${variant}`, props.className)}
   >
-    <Icon icon={icon} loading={props.loading} size={icons.IconSizes.FILL} />
+    <Icon icon={icon} loading={props.loading} size={IconSizes.FILL} />
   </BaseButton>
 );

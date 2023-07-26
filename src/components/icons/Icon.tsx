@@ -1,82 +1,143 @@
-"use client";
-import React, { forwardRef, type ForwardedRef } from "react";
+import React from "react";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 import { type Optional } from "utility-types";
 
-import { getColorClassName, icons } from "~/lib/ui";
+import { getColorClassName } from "~/lib/ui";
 import { SizeAxes, SizeContains } from "~/lib/ui/types";
 
-export type SpinnerProps = Omit<icons.IconComponentProps, "spin" | "icon" | "contain" | "loading"> & {
+import {
+  IconSizes,
+  type IconComponentProps,
+  type IconProps,
+  type IconElement,
+  isIconElement,
+  type IconDefinitionParams,
+  type EmbeddedIconComponentProps,
+  type BasicIconProp,
+  type BasicIconComponentProps,
+  type IconProp,
+  isBasicIconComponentProps,
+  type GetNativeIconClassNameParams,
+  getNativeIconClassName,
+} from "./types";
+
+export type SpinnerProps = Omit<
+  IconComponentProps,
+  | keyof IconDefinitionParams
+  | "spin"
+  | "icon"
+  | "contain"
+  | "loading"
+  | "spinnerColor"
+  | "hoveredColor"
+  | "focusedColor"
+> & {
   readonly loading: boolean;
 };
 
 export const Spinner = ({ color = "blue.6", loading, ...props }: SpinnerProps): JSX.Element =>
   loading === true ? (
-    <_IconComponent
+    <IconComponent
       {...props}
       color={color}
       className={classNames("spinner", props.className)}
       spin={true}
       loading={false}
-      icon={icons.IconNames.CIRCLE_NOTCH}
+      name="circle-notch"
       contain={SizeContains.SQUARE}
     />
   ) : (
     <></>
   );
 
-function _IconComponent({
-  ref,
+const IconComponent = ({
   loading = false,
   spinnerColor = "blue",
   hoveredColor,
   focusedColor,
-  icon,
   spin,
-  size = icons.IconSizes.MD,
+  size = IconSizes.MD,
   axis = SizeAxes.VERTICAL,
   contain = SizeContains.FIT,
   color,
-  ...props
-}: icons.IconComponentProps & { readonly ref?: ForwardedRef<SVGSVGElement> }) {
-  if (loading === true) {
-    return <Spinner {...props} loading={true} color={spinnerColor} size={size} />;
+  icon,
+  name,
+  iconStyle,
+  family,
+  className,
+  style,
+}: IconComponentProps) => {
+  if (loading === true || (loading === false && !icon && !name)) {
+    return <Spinner className={className} style={style} loading={true} color={spinnerColor} size={size} />;
+  } else if (icon !== undefined || name !== undefined) {
+    /* The "@fortawesome/react-fontawesome" package's <FontAwesomeIcon /> component does not work properly with the
+       FontAwesome Icon Kit.  We use the Icon Kit because it dynamically loads just the icons that we need from a CDN -
+       which is much faster and easier to maintain.  However, it does not work with React - only CSS classes.  Since
+       the <FontAwesomeIcon /> component simply renders an SVG element, we can mimic its behavior by rendering an SVG
+       inside of an <i> element, where the <i> element is given the Font Awesome class names that are defined in the
+       content loaded from the CDN (these class names are generated via 'getNativeIconClassName' below). */
+    return (
+      <i
+        style={style}
+        className={classNames(
+          getNativeIconClassName({ icon, name, iconStyle, family } as GetNativeIconClassNameParams),
+          { "fa-spin": spin },
+          "icon",
+          `icon--contain-${contain}`,
+          `icon--size-${size}`,
+          `icon--axis-${axis}`,
+          color &&
+            getColorClassName("color", color, {
+              hovered: hoveredColor === undefined ? focusedColor : hoveredColor,
+              focused: focusedColor === undefined ? hoveredColor : undefined,
+            }),
+          `icon--size-${size}`,
+          className,
+        )}
+      />
+    );
+  } else {
+    return <></>;
   }
-  return (
-    <FontAwesomeIcon
-      {...props}
-      className={classNames(
-        "icon",
-        `icon--contain-${contain}`,
-        `icon--size-${size}`,
-        `icon--axis-${axis}`,
-        color &&
-          getColorClassName("color", color, {
-            hovered: hoveredColor === undefined ? focusedColor : hoveredColor,
-            focused: focusedColor === undefined ? hoveredColor : undefined,
-          }),
-        `icon--size-${size}`,
-        props.className,
-      )}
-      spin={spin}
-      ref={ref}
-      icon={icons.getNativeIcon(icon)}
-    />
-  );
-}
+};
 
-const IconComponent = forwardRef((props: icons.IconComponentProps, ref: ForwardedRef<SVGSVGElement>) => (
-  <_IconComponent {...props} ref={ref} />
-)) as typeof _IconComponent;
+/**
+ * Merges the provided props, {@link Omit<IconProps, "icon">}, into a previously created icon element,
+ * {@link IconElement}, such that an icon element can be altered in place by components who accept an `icon` as a
+ * prop, {@link IconProp}.
+ */
+export const mergeIconElementWithProps = (
+  element: IconElement,
+  { axis, size, style, className, ...props }: Omit<IconProps, "icon" | keyof IconDefinitionParams>,
+): IconElement => {
+  const mergedProps: Omit<IconProps, "icon" | keyof IconDefinitionParams> = {
+    ...props,
+    axis: axis === undefined ? element.props.axis : axis,
+    size: size === undefined ? element.props.size : size,
+    style: { ...element.props.style, ...style },
+    className: classNames(element.props.className, className),
+  };
+  /* We only have to force coerce the return type here because the `type` of the element is not defined generically with
+     the cloneElement - but since we are cloning an element that we already ensured is of type IconElement, this
+     coercion is safe. */
+  return React.cloneElement<IconProps>(element, mergedProps) as IconElement;
+};
 
-const _Icon = forwardRef(function Icon({ icon, ...props }: icons.IconProps, ref: ForwardedRef<SVGSVGElement>) {
-  if (icons.isIconElement(icon)) {
-    return icons.mergeIconElementWithProps(icon, props);
+const _Icon = (props: IconProps): JSX.Element => {
+  if (isBasicIconComponentProps<IconProps, IconProp>(props)) {
+    const { icon, ...rest } = props;
+    if (isIconElement(icon)) {
+      return mergeIconElementWithProps(icon, props);
+    }
+    return <IconComponent icon={icon} {...rest} />;
   }
-  return <IconComponent {...props} ref={ref} icon={icon} />;
-});
+  return <IconComponent {...props} />;
+};
+
+type OptionalIconProps =
+  | Optional<EmbeddedIconComponentProps, "name">
+  | Optional<BasicIconComponentProps<BasicIconProp | IconElement>, "icon">;
 
 /**
  * Renders a FontAwesome icon based on the provided `icon` prop.
@@ -111,11 +172,11 @@ const _Icon = forwardRef(function Icon({ icon, ...props }: icons.IconProps, ref:
  * ReactDOM.render(finalIcon, document.getElementById("#root"));
  * "<svg class="icon--previous icon--button">...</svg>"
  */
-export const Icon = ({ icon, loading, ...props }: Optional<icons.IconProps, "icon">): JSX.Element =>
-  icon !== undefined ? (
-    <_Icon {...props} loading={loading} icon={icon} />
-  ) : loading !== undefined ? (
-    <Spinner loading={loading} {...props} />
-  ) : (
-    <></>
-  );
+export const Icon = ({ loading, ...props }: OptionalIconProps): JSX.Element => {
+  if (props.icon !== undefined || props.name !== undefined) {
+    return <_Icon loading={loading} {...(props as IconProps)} />;
+  } else if (loading !== undefined) {
+    return <Spinner loading={loading} {...props} />;
+  }
+  return <></>;
+};

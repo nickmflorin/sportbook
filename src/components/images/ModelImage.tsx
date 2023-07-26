@@ -3,14 +3,15 @@ import React from "react";
 
 import classNames from "classnames";
 
-import { icons, type ComponentProps, type BorderRadiusSize } from "~/lib/ui";
+import { type ComponentProps, type BorderRadiusSize } from "~/lib/ui";
 import { type InitialsString, parseInitials } from "~/lib/util/strings";
-import { Icon } from "~/components/icons";
+import { type IconProp } from "~/components/icons";
+import { Icon } from "~/components/icons/Icon";
 import { Text, type TextProps } from "~/components/typography";
 
 export type ModelImageProps = ComponentProps &
   Omit<ImageProps, "src" | "alt" | "height" | "width"> & {
-    readonly fallbackIcon?: icons.IconProp;
+    readonly fallbackIcon?: IconProp;
     readonly fallbackInitials?: InitialsString;
     readonly src?: ImageProps["src"] | null;
     readonly alt?: string;
@@ -20,7 +21,7 @@ export type ModelImageProps = ComponentProps &
   };
 
 export const ModelImage = ({
-  fallbackIcon = icons.IconNames.IMAGE,
+  fallbackIcon = { name: "image" },
   fallbackInitials,
   alt = "",
   src,

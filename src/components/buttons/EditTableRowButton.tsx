@@ -1,5 +1,3 @@
-import { icons } from "~/lib/ui";
-
 import { ActionButton, type ActionButtonPolymorphicProps } from "./ActionButton";
 
 export type EditTableRowButtonProps = Omit<
@@ -10,7 +8,7 @@ export type EditTableRowButtonProps = Omit<
 export const EditTableRowButton = (props: EditTableRowButtonProps) => (
   <ActionButton.Bare
     {...props}
-    icon={icons.IconNames.PEN_TO_SQUARE}
+    icon={{ name: "pen-to-square" }}
     color="blue.12"
     hoveredColor="blue.14"
     focusedColor="blue.14"

@@ -4,7 +4,7 @@ import React, { type ForwardedRef, useMemo } from "react";
 import classNames from "classnames";
 import { type Required } from "utility-types";
 
-import { type icons, type CSSDirection, CSSDirections, type ComponentProps, type HTMLElementProps } from "~/lib/ui";
+import { type CSSDirection, CSSDirections, type ComponentProps, type HTMLElementProps } from "~/lib/ui";
 import {
   type ButtonTypes,
   type ButtonType,
@@ -13,7 +13,8 @@ import {
   ButtonCornerStyles,
   ButtonSizes,
 } from "~/components/buttons";
-import { Icon } from "~/components/icons";
+import { type IconProp } from "~/components/icons";
+import { Icon } from "~/components/icons/Icon";
 
 export type BaseLinkProps = ComponentProps & {
   readonly children: string | JSX.Element;
@@ -129,7 +130,7 @@ type ButtonContentProps = {
   readonly component: "button";
   readonly children: string | JSX.Element;
   readonly loading?: boolean;
-  readonly icon?: icons.IconProp;
+  readonly icon?: IconProp;
   readonly iconLocation?: Loc;
 };
 
@@ -137,7 +138,7 @@ type LinkContentProps = {
   readonly component: "link";
   readonly loading?: never;
   readonly children: string | JSX.Element;
-  readonly icon?: icons.IconProp;
+  readonly icon?: IconProp;
   readonly iconLocation?: Loc;
 };
 

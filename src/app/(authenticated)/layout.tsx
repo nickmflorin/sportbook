@@ -1,4 +1,4 @@
-import { icons } from "~/lib/ui";
+import { Icon } from "~/components/icons/Icon";
 import { AppLayout } from "~/components/layout/AppLayout";
 
 export default function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
@@ -6,14 +6,18 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
     <AppLayout
       authenticated={true}
       sidebar={[
-        { href: "/dashboard", icon: icons.IconNames.HOUSE_CHIMNEY, active: { leadingPath: "/dashboard" } },
+        { href: "/dashboard", icon: <Icon name="house-chimney" />, active: { leadingPath: "/dashboard" } },
         {
           href: "/leagues",
-          icon: icons.IconNames.SITEMAP,
-          active: [{ leadingPath: "/leagues" }, { leadingPath: "/leagues/:id" }],
+          icon: <Icon name="sitemap" />,
+          active: [
+            { leadingPath: "/leagues" },
+            { leadingPath: "/leagues/:id" },
+            { leadingPath: "/leagues/:id/standings" },
+          ],
         },
-        { href: "/teams", icon: icons.IconNames.PEOPLE_GROUP, active: { leadingPath: "/teams" } },
-        { href: "/games", icon: icons.IconNames.TABLE_TENNIS_PADDLE_BALL, active: { leadingPath: "/games" } },
+        { href: "/teams", icon: <Icon name="people-group" />, active: { leadingPath: "/teams" } },
+        { href: "/games", icon: <Icon name="table-tennis-paddle-ball" />, active: { leadingPath: "/games" } },
       ]}
     >
       {children}

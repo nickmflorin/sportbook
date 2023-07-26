@@ -1,4 +1,3 @@
-"use client";
 import { type Optional } from "utility-types";
 
 import { logger } from "~/application/logger";

@@ -2,9 +2,10 @@ import React, { useImperativeHandle, useState, useRef } from "react";
 
 import { Menu, Flex, type MenuProps } from "@mantine/core";
 
-import { type icons, type Color } from "~/lib/ui";
+import { type Color } from "~/lib/ui";
 import { EllipsisButton } from "~/components/buttons/EllipsisButton";
-import { Icon } from "~/components/icons";
+import { type IconProp } from "~/components/icons";
+import { Icon } from "~/components/icons/Icon";
 
 type DataTableActionItem = {
   readonly setLoading: (v: boolean) => void;
@@ -51,9 +52,9 @@ export type DataTableAction = {
    */
   readonly iconColor?: Color;
   /**
-   * The optional icon, {@link icons.IconProp}, that should be rendered in the {@link DataTableActionMenuItem}.
+   * The optional icon, {@link IconProp}, that should be rendered in the {@link DataTableActionMenuItem}.
    */
-  readonly icon?: icons.IconProp;
+  readonly icon?: IconProp;
   /**
    * The text content of the {@link DataTableActionMenuItem}.
    */

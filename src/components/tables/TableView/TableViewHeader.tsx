@@ -1,6 +1,6 @@
-import { TextInput } from "@mantine/core";
 import classNames from "classnames";
 
+import { TextInput } from "~/components/input/TextInput";
 import { Header, type HeaderProps } from "~/components/views/Header";
 
 export interface TableViewHeaderProps extends HeaderProps {

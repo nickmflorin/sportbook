@@ -6,11 +6,11 @@ import {
   type SelectProps as _RootSingleSelectProps,
   type MultiSelectProps as _RootMultiSelectProps,
 } from "@mantine/core";
-import { Loader } from "@mantine/core";
 import classNames from "classnames";
 
-import { type icons, type Color, type ClassName, type Style } from "~/lib/ui";
-import { Icon, AddIcon } from "~/components/icons";
+import { type Color, type ClassName, type Style } from "~/lib/ui";
+import { type BasicIconProp } from "~/components/icons";
+import { Spinner, Icon } from "~/components/icons/Icon";
 import { Text, Label } from "~/components/typography";
 
 import { createSelectOption } from "./SelectOption";
@@ -19,7 +19,7 @@ export type BaseSelectOption<T, V> = T & {
   readonly value?: V;
   readonly label?: string;
   readonly iconColor?: Color | undefined;
-  readonly icon?: icons.BasicIconProp | undefined;
+  readonly icon?: BasicIconProp | undefined;
 };
 
 type _SelectChangeHandlerValue<V extends string | null, M extends SelectMode> = M extends "multiple"
@@ -113,13 +113,13 @@ export const useSelectProps = <
     },
     getCreateLabel: (query: string) => (
       <div className="select-option-createable">
-        <AddIcon />
+        <Icon name="plus-circle" />
         <Label>{getCreateLabel?.(query) || "Create"}</Label>
       </div>
     ),
     className: classNames("select", props.className),
     // TODO: Use FontAwesome spinner and style in SASS.
-    rightSection: loading ? <Loader size="xs" color="gray.6" /> : undefined,
+    rightSection: loading ? <Spinner loading={true} size="xs" color="gray.6" /> : undefined,
     disabled: props.disabled || loading,
     styles: { rightSection: { display: "flex !important" } },
     data: _data,

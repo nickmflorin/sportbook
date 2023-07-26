@@ -3,20 +3,21 @@ import React, { useState } from "react";
 import classNames from "classnames";
 import { type Required } from "utility-types";
 
-import { type ComponentProps, type icons } from "~/lib/ui";
+import { type ComponentProps } from "~/lib/ui";
+import { type IconProp } from "~/components/icons";
 
 type MenuSelectionMode = "single" | "multiple";
 
 type ValuedMenuItem<V extends string | null, M extends Record<string, unknown>> = {
   readonly label: string;
-  readonly icon?: icons.IconProp;
+  readonly icon?: IconProp;
   readonly value: Exclude<V, null>;
   readonly datum: M;
 };
 
 type ValuelessMenuItem<M extends Record<string, unknown>> = {
   readonly label: string;
-  readonly icon?: icons.IconProp;
+  readonly icon?: IconProp;
   readonly datum: M;
 };
 

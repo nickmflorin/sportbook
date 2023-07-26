@@ -4,11 +4,20 @@
 @use "partials";
 
 %icon-svg-base {
-  fill: currentcolor;
   max-height: 100%;
   max-width: 100%;
-  padding: 0;
   vertical-align: 0;
+  // For when the icon is a spinner and indicating loading state.
+  animation-duration: 1s;
+  padding: 0;
+  align-items: center;
+  -webkit-box-align: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+}
+
+%svg-base {
+  fill: currentcolor;
 
   path {
     color: inherit;
@@ -19,33 +28,44 @@
 @mixin icon-size-classes($axis) {
   @each $size in map.keys(partials.$icon-sizes) {
     &.icon--size-#{$size} {
-      @include partials.icon-sizing($size, $axis);
+      > svg {
+        @include partials.icon-sizing($size, $axis);
+      }
     }
   }
 }
 
 .icon {
   @extend %icon-svg-base;
+  display: flex;
+  flex-direction: column;
 
-  // For when the icon is a spinner and indicating loading state.
-  animation-duration: 1s;
-  padding: 0;
-  vertical-align: 0;
-  align-items: center;
-  -webkit-box-align: center;
-  -webkit-box-pack: center;
-  justify-content: center;
+  @layer {
+    color: partials.get-color("gray", $shade: 7);
+  }
+
+  > svg {
+    @extend %icon-svg-base;
+    @extend %svg-base;
+    color: inherit;
+  }
 
   &--contain-square:not(&--contain-fit) {
-    @include partials.icon-contain("square");
+    > svg {
+      @include partials.icon-contain("square");
+    }
   }
 
   &--contain-fit:not(&--contain-square) {
-    @include partials.icon-contain("fit");
+    > svg {
+      @include partials.icon-contain("fit");
+    }
   }
 
   &:not(&--contain-fit, &--contain-square) {
-    @include partials.icon-contain(partials.$default-icon-size-contain);
+    > svg {
+      @include partials.icon-contain(partials.$default-icon-size-contain);
+    }
   }
 
   &--axis-vertical:not(&--axis-horizontal) {

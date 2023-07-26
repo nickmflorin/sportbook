@@ -4,12 +4,12 @@ import { usePathname } from "next/navigation";
 
 import classNames from "classnames";
 
-import { type icons } from "~/lib/ui";
 import { type PathActive, pathIsActive } from "~/lib/util/paths";
-import { Icon } from "~/components/icons";
+import { type IconProp } from "~/components/icons";
+import { Icon } from "~/components/icons/Icon";
 
 export type SidebarItemConfig = {
-  readonly icon: icons.IconProp;
+  readonly icon: IconProp;
   readonly href: LinkProps["href"];
   readonly active: PathActive;
 };

@@ -1,0 +1,13 @@
+@use "partials";
+
+.tabs {
+  display: flex;
+  flex-direction: row;
+  gap: partials.get-spacing("lg");
+
+  > .tab-link {
+    .icon {
+      color: partials.get-color("blue", $shade: 12);
+    }
+  }
+}

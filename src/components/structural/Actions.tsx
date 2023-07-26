@@ -2,10 +2,11 @@ import React, { useMemo } from "react";
 
 import classNames from "classnames";
 
-import { type ComponentProps, icons } from "~/lib/ui";
+import { type ComponentProps } from "~/lib/ui";
 import { type ButtonVariant } from "~/components/buttons";
 import { ActionButton, type ActionButtonProps } from "~/components/buttons/ActionButton";
-import { Icon } from "~/components/icons";
+import { type IconProp, isIconProp } from "~/components/icons";
+import { Icon } from "~/components/icons/Icon";
 
 export type RenderAction = {
   readonly render: () => JSX.Element;
@@ -20,7 +21,7 @@ export type IconAction<V extends ButtonVariant = ButtonVariant> = V extends Butt
     }
   : never;
 
-export type Action = JSX.Element | IconAction | RenderAction | icons.IconProp | undefined | null;
+export type Action = JSX.Element | IconAction | RenderAction | IconProp | undefined | null;
 
 const isRenderAction = (action: Exclude<Action, undefined | null>): action is RenderAction =>
   !isIcon(action) && (action as RenderAction).render !== undefined;
@@ -28,7 +29,7 @@ const isRenderAction = (action: Exclude<Action, undefined | null>): action is Re
 const isIconAction = (action: Exclude<Action, undefined | null>): action is IconAction =>
   !isIcon(action) && (action as IconAction).icon !== undefined;
 
-const isIcon = (action: Exclude<Action, undefined | null>): action is icons.IconProp => icons.isIconProp(action);
+const isIcon = (action: Exclude<Action, undefined | null>): action is IconProp => isIconProp(action);
 
 export const actionIsVisible = (a: Action) =>
   a !== null && a !== undefined && ((!isRenderAction(a) && !isIconAction(a)) || a.visible !== false);

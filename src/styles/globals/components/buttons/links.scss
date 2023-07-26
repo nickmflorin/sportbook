@@ -23,4 +23,6 @@ a {
 
   @include partials.disabled;
   @include button-link-structure("link");
+
+  line-height: 1;
 }

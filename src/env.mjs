@@ -110,6 +110,7 @@ export const env = createEnv({
     DATABASE_HOST: testRestricted(z.string().optional()),
     DATABASE_PORT: testRestricted(z.coerce.number().int().positive().optional()),
     DATABASE_LOG_LEVEL: PrismaLogLevelSchema.optional(),
+    FONT_AWESOME_KIT_TOKEN: z.string(),
   },
   /* ----------------------------------- Client Environment Variables ------------------------------------ */
   client: {
@@ -149,6 +150,7 @@ export const env = createEnv({
     PRETTY_LOGGING: process.env.PRETTY_LOGGING,
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
     APP_NAME_FORMAL: process.env.APP_NAME_FORMAL,
+    FONT_AWESOME_KIT_TOKEN: process.env.FONT_AWESOME_KIT_TOKEN,
     /* ----------------------------------- Client Environment Variables ------------------------------------ */
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     NEXT_PUBLIC_LOG_LEVEL: process.env.NEXT_PUBLIC_LOG_LEVEL,

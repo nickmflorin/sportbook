@@ -2,13 +2,14 @@ import React, { type ReactNode } from "react";
 
 import classNames from "classnames";
 
-import { type ComponentProps, type icons } from "~/lib/ui";
-import { Spinner, type SpinnerProps } from "~/components/icons";
+import { type ComponentProps } from "~/lib/ui";
+import { type IconSizes } from "~/components/icons";
+import { Spinner, type SpinnerProps } from "~/components/icons/Icon";
 import { ShowHide } from "~/components/util";
 
 type BaseLoadingProps = ComponentProps &
   Pick<SpinnerProps, "color" | "size" | "loading"> & {
-    readonly size?: Exclude<SpinnerProps["size"], typeof icons.IconSizes.FILL>;
+    readonly size?: Exclude<SpinnerProps["size"], typeof IconSizes.FILL>;
   };
 
 type LoadingChildProps = BaseLoadingProps & {
