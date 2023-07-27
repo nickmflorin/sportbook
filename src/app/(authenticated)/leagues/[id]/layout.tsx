@@ -42,6 +42,7 @@ export default async function LeagueLayout({ scores, children, teams, params: { 
         image: { url: fileUpload === null ? null : fileUpload.fileUrl, initials: league.name },
       }}
       backHref="/leagues"
+      backText="All Leagues"
       tabs={[
         {
           label: "Standings",

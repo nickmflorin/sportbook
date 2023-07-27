@@ -4,7 +4,7 @@ import React, { type ReactNode } from "react";
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
-import { ActionButton } from "~/components/buttons/ActionButton";
+import { BackButton } from "~/components/buttons/BackButton";
 import { Header, type HeaderProps } from "~/components/views/Header";
 
 export interface PageProps extends Pick<HeaderProps, "title" | "description">, ComponentProps {
@@ -13,6 +13,7 @@ export interface PageProps extends Pick<HeaderProps, "title" | "description">, C
   readonly headerProps?: Omit<HeaderProps, "title" | "description">;
   readonly subHeader?: JSX.Element;
   readonly backHref?: LinkProps["href"];
+  readonly backText?: string;
   readonly staticViews?: ReactNode | ReactNode[];
   readonly staticViewWidth?: number;
   readonly staticContentViews?: ReactNode | ReactNode[];
@@ -31,11 +32,12 @@ export const Page = ({
   headerProps,
   title,
   description,
+  backText,
 }: PageProps): JSX.Element => (
   <div style={style} className={classNames("page", className)}>
     <div className="page__main">
       <div className="page__header">
-        {backHref && <ActionButton.Bare className="page__back-button" href={backHref} icon={{ name: "arrow-left" }} />}
+        {backHref && <BackButton href={backHref}>{backText}</BackButton>}
         {header || <Header {...headerProps} titleProps={{ order: 4 }} title={title} description={description} />}
         {subHeader}
       </div>

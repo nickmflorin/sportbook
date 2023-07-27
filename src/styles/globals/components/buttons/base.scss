@@ -54,10 +54,7 @@
       @include partials.flex-c;
 
       height: 100%;
-      padding-bottom: partials.$button-icon-padding;
-      // When an icon or loading indicator is in the button, we want the height to slightly smaller than the line height
-      // of the accompanying text - so we subtract a little height from the wrapper.
-      padding-top: partials.$button-icon-padding;
+
       // The aspect-ratio should be 1 inherently, based on the size specifications of the Spinner component when an icon
       // is being used.
       width: fit-content;

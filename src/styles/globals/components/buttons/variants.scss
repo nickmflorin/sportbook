@@ -14,17 +14,40 @@
       @include partials.button-solid-size($size);
     }
   }
+
+  > .button__content {
+    > .button__icon-wrapper {
+      padding-bottom: partials.$button-icon-padding;
+      // When an icon or loading indicator is in the button, we want the height to slightly smaller than the line height
+      // of the accompanying text - so we subtract a little height from the wrapper.
+      padding-top: partials.$button-icon-padding;
+    }
+  }
 }
 
 @mixin alternate-type {
-  font-weight: partials.get-font-weight($weight: "semibold");
+  font-weight: partials.get-font-weight($weight: "medium");
   padding: partials.get-button-padding("alternate");
+
+  // Allow the font-weight to be overridden.
+  @include partials.with-font-weights() using ($weight, $value) {
+    &.font-weight-#{$weight} {
+      font-weight: $value;
+    }
+  }
 
   @each $size in partials.$button-size-names {
     &.button--#{$size} {
       font-size: partials.get-button-font-size("alternate", $size: $size);
       height: partials.get-button-size("alternate", $size: $size);
       line-height: partials.get-button-size("alternate", $size: $size);
+
+      // Allow the font-size to be overridden for each size.
+      @include partials.with-font-sizes("body") using ($size, $data) {
+        &.font-size-#{$size} {
+          font-size: partials.mapget($data, font-size);
+        }
+      }
     }
   }
 }
