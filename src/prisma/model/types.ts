@@ -6,6 +6,8 @@ import {
   type Team,
   type GameResult,
   type Game,
+  type Player,
+  type User,
 } from "@prisma/client";
 
 import { type Equals } from "~/lib/util/types";
@@ -117,4 +119,8 @@ export type TeamStats = Record<TeamStatMetric, TeamStatDimension>;
 
 export type TeamStanding<T extends Team = Team> = TeamWithStats<T> & {
   readonly leagueRank: number;
+};
+
+export type PlayerWithUser = Player & {
+  readonly user: User;
 };

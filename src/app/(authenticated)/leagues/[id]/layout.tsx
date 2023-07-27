@@ -45,12 +45,12 @@ export default async function LeagueLayout({ scores, children, teams, params: { 
       tabs={[
         {
           label: "Standings",
-          href: "/standings",
+          href: `/leagues/${id}/standings`,
           icon: { name: "ranking-star" },
           active: { leadingPath: "/leagues/:id/standings" },
         },
         {
-          href: "/players",
+          href: `/leagues/${id}/players`,
           icon: { name: "people-pulling" },
           label: "Players",
           active: { leadingPath: "/leagues/:id/players" },
