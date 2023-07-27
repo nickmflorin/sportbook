@@ -1,8 +1,5 @@
 import { type TeamStanding, type WithFileUrl } from "~/prisma/model";
-import { Flex } from "~/components/structural";
-import { Text } from "~/components/typography";
-
-import { ModelImage } from "../images";
+import { TeamAvatar } from "~/components/images/TeamAvatar";
 
 import { DataTable, type DataTableProps, type Column } from "./DataTable";
 
@@ -27,12 +24,7 @@ const TeamStandingsTableColumns: { [key in TeamStandingsTableColumn]: Column<Wit
     title: "Team",
     accessor: "name",
     textAlignment: "left",
-    render: (standing: WithFileUrl<TeamStanding>) => (
-      <Flex direction="row" gap="md">
-        <ModelImage fallbackInitials={standing.name} src={standing.fileUrl} fontSize="sm" size={40} />
-        <Text>{standing.name}</Text>
-      </Flex>
-    ),
+    render: (standing: WithFileUrl<TeamStanding>) => <TeamAvatar displayName team={standing} />,
   },
   [TeamStandingsTableColumn.WINS]: {
     title: "Wins",

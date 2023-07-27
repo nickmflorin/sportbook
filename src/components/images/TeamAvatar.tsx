@@ -12,11 +12,11 @@ export interface TeamAvatarProps<T extends BaseTeam> extends Omit<AvatarProps, "
 export const TeamAvatar = <T extends BaseTeam>({
   team,
   displayName,
-  imageUrl,
+  url,
   ...props
 }: TeamAvatarProps<T>): JSX.Element => (
   <Avatar
-    imageUrl={imageUrl || (team as Pick<ModelWithFileUrl<Team>, "name" | "fileUrl">).fileUrl}
+    url={url || (team as Pick<ModelWithFileUrl<Team>, "name" | "fileUrl">).fileUrl}
     initials={team.name}
     displayName={displayName === true ? team.name : undefined}
     {...props}

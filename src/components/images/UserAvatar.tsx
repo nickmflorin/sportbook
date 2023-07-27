@@ -15,7 +15,7 @@ export interface UserAvatarProps<U extends BaseUser>
 
 export const UserAvatar = <U extends BaseUser>({ user, displayName, ...props }: UserAvatarProps<U>): JSX.Element => (
   <Avatar
-    imageUrl={user.profileImageUrl}
+    url={user.profileImageUrl}
     initials={parseUserDisplayName(user, { fallback: "" })}
     displayName={displayName === true ? parseUserDisplayName(user) : undefined}
     {...props}

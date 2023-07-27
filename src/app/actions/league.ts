@@ -2,7 +2,7 @@
 import { type z } from "zod";
 
 import { prisma } from "~/prisma/client";
-import { Prisma, type LeagueSchema } from "~/prisma/model";
+import { Prisma, type LeagueSchema, LeagueStaffRole } from "~/prisma/model";
 import { getAuthUser } from "~/server/auth";
 
 import { ActionError, ActionErrorCodes } from "./errors";
@@ -15,9 +15,13 @@ export const createLeague = async ({ locations, ...data }: z.output<typeof Leagu
         const league = await tx.league.create({
           data: { createdById: user.id, updatedById: user.id, ...data },
         });
-        // By default, add the user who created the League to the League.
-        await tx.leagueOnParticipants.create({
-          data: { leagueId: league.id, participantId: user.id, assignedById: user.id },
+        // By default, make the user who created the League an Admin.  We will need to revisit this later.
+        await tx.leagueStaff.create({
+          data: {
+            userId: user.id,
+            leagueId: league.id,
+            roles: [LeagueStaffRole.ADMIN],
+          },
         });
         // If the new League is associated with locations, some may already exist in the database and some may not.
         const newLocations = await Promise.all(

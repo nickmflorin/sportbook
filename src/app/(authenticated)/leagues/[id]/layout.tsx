@@ -39,7 +39,7 @@ export default async function LeagueLayout({ scores, children, teams, params: { 
       title={league.name}
       description={[league.description]}
       headerProps={{
-        imageProps: { src: fileUpload === null ? null : fileUpload.fileUrl, fallbackInitials: league.name },
+        image: { url: fileUpload === null ? null : fileUpload.fileUrl, initials: league.name },
       }}
       backHref="/leagues"
       tabs={[

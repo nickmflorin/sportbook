@@ -1,4 +1,5 @@
 import { enumeratedLiterals, type EnumeratedLiteralType } from "~/lib/util/literals";
+import { type InitialsString } from "~/lib/util/strings";
 
 export const SizeAxes = enumeratedLiterals(["horizontal", "vertical"] as const);
 
@@ -17,3 +18,9 @@ export type SizeContain = EnumeratedLiteralType<typeof SizeContains>;
 
 export const SpinnerSizes = enumeratedLiterals(["small", "medium", "large", "fill"] as const);
 export type SpinnerSize = EnumeratedLiteralType<typeof SpinnerSizes>;
+
+export type ImageProp = {
+  readonly url?: string | null;
+  readonly initials?: InitialsString | null;
+  readonly size: number | `${number}`;
+};

@@ -8,13 +8,9 @@ type Tm = Pick<Team, "name" | "color"> & {
 
 export type TeamTileProps = Omit<TileProps, "title" | "description" | "imageProps"> & {
   readonly team: Tm;
-  readonly imageProps?: Omit<TileProps["imageProps"], "src" | "fallbackInitials">;
+  readonly image?: Omit<TileProps["image"], "url" | "initials">;
 };
 
 export const TeamTile = ({ team, ...props }: TeamTileProps): JSX.Element => (
-  <Tile
-    {...props}
-    title={team.name}
-    imageProps={{ ...props.imageProps, src: team.fileUrl, fallbackInitials: team.name }}
-  />
+  <Tile {...props} title={team.name} image={{ ...props.image, url: team.fileUrl, initials: team.name }} />
 );

@@ -170,12 +170,6 @@ export const mergeIconElementWithProps = (
 ): IconElement => {
   const mergedProps: Omit<IconProps, "icon" | keyof IconDefinitionParams> = {
     ...props,
-    color: color === undefined ? element.props.color : color,
-    hoveredColor: hoveredColor === undefined ? element.props.hoveredColor : hoveredColor,
-    focusedColor: focusedColor === undefined ? element.props.focusedColor : focusedColor,
-    contain: contain === undefined ? element.props.contain : contain,
-    axis: axis === undefined ? element.props.axis : axis,
-    size: size === undefined ? element.props.size : size,
     style: { ...element.props.style, ...style },
     className: classNames(
       updateIconClassName(element.props.className, { axis, size, contain, color, focusedColor, hoveredColor }),

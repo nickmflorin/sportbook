@@ -28,13 +28,15 @@ export const Page = ({
   subHeader,
   backHref,
   staticViewWidth,
-  ...props
+  headerProps,
+  title,
+  description,
 }: PageProps): JSX.Element => (
   <div style={style} className={classNames("page", className)}>
     <div className="page__main">
       <div className="page__header">
         {backHref && <ActionButton.Bare className="page__back-button" href={backHref} icon={{ name: "arrow-left" }} />}
-        {header || <Header {...props} titleProps={{ order: 4 }} />}
+        {header || <Header {...headerProps} titleProps={{ order: 4 }} title={title} description={description} />}
         {subHeader}
       </div>
       <div className="page__content">

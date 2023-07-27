@@ -13,11 +13,12 @@ const PlayersTableView = dynamic(() => import("~/components/tables/PlayersTableV
   loading: () => <Loading loading={true} />,
 });
 
-interface LeagueStandingsProps {
+interface LeaguePlayersProps {
   readonly params: { id: string };
+  readonly searchParams: { query?: string };
 }
 
-export default async function LeagueStandings({ params: { id } }: LeagueStandingsProps) {
+export default async function LeaguePlayers({ params: { id }, searchParams: { query } }: LeaguePlayersProps) {
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
   let league: League;
   try {
@@ -34,8 +35,20 @@ export default async function LeagueStandings({ params: { id } }: LeagueStanding
       throw e;
     }
   }
+
   const players = await prisma.player.findMany({
-    where: { team: { leagueId: league.id } },
+    where: {
+      team: {
+        leagueId: league.id,
+        OR:
+          query !== undefined && query.length !== 0
+            ? [
+                { name: { contains: query, mode: "insensitive" } },
+                // { description: { contains: query, mode: "insensitive" } },
+              ]
+            : undefined,
+      },
+    },
     include: { user: true, team: true },
   });
 
@@ -53,5 +66,5 @@ export default async function LeagueStandings({ params: { id } }: LeagueStanding
     },
   }));
 
-  return <PlayersTableView data={playersWithTeamImage} title="Players" />;
+  return <PlayersTableView data={playersWithTeamImage} title="Players" league={league} />;
 }

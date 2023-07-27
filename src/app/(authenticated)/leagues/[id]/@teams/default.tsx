@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 
 import { prisma } from "~/prisma/client";
 import { FileUploadEntity } from "~/prisma/model";
-import { ModelImage } from "~/components/images";
+import { TeamAvatar } from "~/components/images/TeamAvatar";
 import { Loading } from "~/components/loading";
 import { Flex } from "~/components/structural/Flex";
 import { Text } from "~/components/typography";
@@ -36,12 +36,7 @@ export default async function LeagueTeams({ params: { id } }: LeagueTeamsProps) 
       contentScrollable={true}
       data={teamsWithImage}
       title={`Teams (${teamsWithImage.length})`}
-      renderTileContent={datum => (
-        <Flex direction="row" gap="md">
-          <ModelImage size={35} fontSize="xs" src={datum.fileUrl} fallbackInitials={datum.name} />
-          <Text size="md">{datum.name}</Text>
-        </Flex>
-      )}
+      renderTileContent={datum => <TeamAvatar size={35} fontSize="xs" team={datum} displayName />}
     />
   );
 }

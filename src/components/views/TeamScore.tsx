@@ -2,7 +2,7 @@ import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
 import { type ModelWithFileUrl } from "~/prisma/model";
-import { ModelImage } from "~/components/images";
+import { TeamAvatar } from "~/components/images/TeamAvatar";
 import { Text } from "~/components/typography";
 
 export interface TeamScoreProps extends ComponentProps {
@@ -13,7 +13,7 @@ export interface TeamScoreProps extends ComponentProps {
 
 export const TeamScore = ({ team, score, isLoser, ...props }: TeamScoreProps): JSX.Element => (
   <div {...props} className={classNames("team-score", { "team-score--loser": isLoser }, props.className)}>
-    <ModelImage src={team.fileUrl} fallbackInitials={team.name} />
+    <TeamAvatar team={team} />
     <Text className="team-score__name">{team.name}</Text>
     <Text className="team-score__score">{score}</Text>
   </div>

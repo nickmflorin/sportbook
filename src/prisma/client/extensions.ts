@@ -1,6 +1,6 @@
 import { type EmailAddress, type User as ClerkUser } from "@clerk/clerk-sdk-node";
 import { DateTime } from "luxon";
-import { type User, type PrismaClient, type League } from "@prisma/client";
+import { type User, type PrismaClient } from "@prisma/client";
 
 import { logger } from "~/application/logger";
 import { getClerkEmailAddress } from "~/lib/clerk";
@@ -106,22 +106,5 @@ export const userModelExtension = (prisma: PrismaClient) => ({
       return this.upsertFromClerk(u);
     }
     return user;
-  },
-  async addToLeague({
-    user,
-    league,
-    assignedBy,
-  }: {
-    user: string | User;
-    league: string | League;
-    assignedBy: string | User;
-  }) {
-    const _leagueId = typeof league === "string" ? league : league.id;
-    const _userId = typeof user === "string" ? user : user.id;
-    const _assignedById = typeof assignedBy === "string" ? assignedBy : assignedBy.id;
-
-    return await prisma.leagueOnParticipants.create({
-      data: { leagueId: _leagueId, participantId: _userId, assignedById: _assignedById },
-    });
   },
 });

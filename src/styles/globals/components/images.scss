@@ -11,6 +11,7 @@
   > .body {
     font-size: partials.get-font-size($type: "body", $size: "sm");
     color: partials.get-color("gray", $shade: 8);
+    @include partials.truncate();
   }
 }
 
