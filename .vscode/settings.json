@@ -2,8 +2,10 @@
   "editor.tabSize": 2,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.rulers": [120],
+  "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": true,
+    "source.fixAll.stylelint": true
   },
   "eslint.run": "onSave",
   "eslint.lintTask.enable": true,
@@ -14,7 +16,7 @@
   "[scss]": {
     "editor.codeActionsOnSave": {
       "source.fixAll.stylelint": true,
-      "source.fixAll.eslint": true,
+      "source.fixAll.eslint": true
     }
   },
   "files.trimTrailingWhitespace": true,
@@ -26,12 +28,6 @@
   "eslint.runtime": "/Users/nickflorin/.nvm/versions/node/v20.0.0/bin/node",
   "eslint.validate": ["typescript", "typescriptreact", "javascript"],
   "eslint.format.enable": true,
-  "prettier.useTabs": true,
-  "prettier.jsxSingleQuote": true,
-  "prettier.bracketSameLine": true,
-  "prettier.printWidth": 100,
-  "prettier.trailingComma": "all",
-  "prettier.proseWrap": "always",
   // These 3 are turned off so that they do not conflict with stylelint.
   "css.validate": false,
   "less.validate": false,

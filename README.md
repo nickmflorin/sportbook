@@ -158,17 +158,7 @@ If on MacOSX, you will need to install [homebrew], which is a MacOSX package man
 
 ### Step 1.3: Environment
 
-#### 1.3.a: Dependencies
-
-When setting up the environment for the first time, you must do a fresh install of the dependencies:
-
-```bash
-$ npm install
-```
-
-This will install the project dependencies in the `package.json` file.
-
-#### 1.3.b ENV File
+#### 1.3.a ENV File
 
 When running the application locally, there will likely be additional keys that you need to add to your environment
 without committing them to source control. There are two files that are used to define environment variables that the
@@ -189,6 +179,35 @@ For this step, it is best to reach out to a team member for the additional keys 
 `.env.development.local` or `.env.local` file.
 
 For more information regarding the environment variables, refer to section 2.5.
+
+#### 1.3.b: Dependencies
+
+When setting up the environment for the first time, you must do a fresh install of the dependencies.
+
+Before installing the dependencies, you will need to be given an environment variable, `FONT_AWESOME_AUTH_TOKEN`, that
+is required to install certain dependencies. Currently, this application uses a "pro" license for
+[FontAwesome][fontawesome] to support the icons in the application. There are [FontAwesome][fontawesome]-related
+packages in the `package.json` file that require an authenticated, "pro" license key to be in the environment when
+installing the packages.
+
+**Note**: This authentication token is only required if the [FontAwesome][fontawesome]-related packages have not already
+been installed to your `./node_modules` folder - which will likely only ever be when setting up the environment for the
+first time or after deleting the `./node_modules` folder manually.
+
+Consult a team member for the `FONT_AWESOME_AUTH_TOKEN` environment variable, and add it to your `.env.local` or
+`.env.development.local` file. Once that environment variable is defined, you can do a fresh install of the
+dependencies:
+
+```bash
+$ npm install
+```
+
+This will install the project dependencies in the `package.json` file.
+
+##### FontAwesome Caveat
+
+Currently, this application uses a "pro" license for [FontAwesome][fontawesome] to support the icons in the application.
+There
 
 ### Step 1.4: Database
 
@@ -637,3 +656,4 @@ This command will wipe the current database, run all migrations and _then_ run t
 [jest]: https://jestjs.io/docs/getting-started
 [sass]: https://sass-lang.com/
 [prisma]: https://www.prisma.io/
+[fontawesome]: https://fontawesome.com/docs

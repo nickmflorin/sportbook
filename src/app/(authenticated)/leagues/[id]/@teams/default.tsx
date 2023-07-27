@@ -4,8 +4,6 @@ import { prisma } from "~/prisma/client";
 import { FileUploadEntity } from "~/prisma/model";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
 import { Loading } from "~/components/loading";
-import { Flex } from "~/components/structural/Flex";
-import { Text } from "~/components/typography";
 
 const TeamTilesView = dynamic(() => import("~/components/views/TeamTilesView"), {
   ssr: true,

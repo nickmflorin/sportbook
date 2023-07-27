@@ -37,19 +37,24 @@ export default async function LeaguePlayers({ params: { id }, searchParams: { qu
   }
 
   const players = await prisma.player.findMany({
-    where: {
-      team: {
-        leagueId: league.id,
-        OR:
-          query !== undefined && query.length !== 0
-            ? [
-                { name: { contains: query, mode: "insensitive" } },
-                // { description: { contains: query, mode: "insensitive" } },
-              ]
-            : undefined,
-      },
-    },
     include: { user: true, team: true },
+    where: {
+      team: { leagueId: league.id },
+      OR:
+        query !== undefined && query.length !== 0
+          ? [
+              {
+                user: {
+                  OR: [
+                    { firstName: { contains: query, mode: "insensitive" } },
+                    { lastName: { contains: query, mode: "insensitive" } },
+                  ],
+                },
+              },
+              { team: { OR: [{ name: { contains: query, mode: "insensitive" } }] } },
+            ]
+          : undefined,
+    },
   });
 
   const imageUploads = await prisma.fileUpload.groupBy({
