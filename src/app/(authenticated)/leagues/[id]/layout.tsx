@@ -21,7 +21,10 @@ export default async function LeagueLayout({ scores, children, teams, params: { 
   let getImage: () => Promise<FileUpload | null>;
   try {
     ({ getImage, ...league } = await xprisma.league.findFirstOrThrow({
-      where: { id, participants: { some: { participantId: user.id } } },
+      where: {
+        id,
+        OR: [{ staff: { some: { userId: user.id } } }, { teams: { some: { players: { some: { userId: user.id } } } } }],
+      },
     }));
     fileUpload = await getImage();
   } catch (e) {
@@ -43,7 +46,7 @@ export default async function LeagueLayout({ scores, children, teams, params: { 
         {
           label: "Standings",
           href: "/standings",
-          icon: { name: "house-chimney" },
+          icon: { name: "ranking-star" },
           active: { leadingPath: "/leagues/:id/standings" },
         },
         {

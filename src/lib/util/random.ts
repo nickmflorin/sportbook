@@ -1,4 +1,7 @@
 import { DateTime } from "luxon";
+import { v4 as uuid } from "uuid";
+
+import { logger } from "~/application/logger";
 
 import { ensuresDefinedValue } from "./typeguards";
 
@@ -82,29 +85,117 @@ export const selectAtRandom = <T>(data: T[]): T => {
 };
 
 type FrequencyDatum<T> = { value: T; frequency: number };
+type MultipleFrequencyDatum<T> = { value: T; frequency: number; maxCount?: number };
+type MultipleFrequencyDatumWithId<T> = { id: string; value: T; frequency: number; maxCount?: number };
 
-export const selectAtRandomFrequency = <T>(data: FrequencyDatum<T>[]): T => {
-  const total = data.reduce((prev, { frequency }) => (prev += frequency), 0.0);
-  const normalized = data.map(d => ({ ...d, frequency: d.frequency / total }));
-  const control = randomInt({ min: 0, max: 100 }) / 100.0;
-
-  let result = data[0];
-  if (result === undefined) {
-    throw new Error("No data exists at the first index because the provided data is empty.");
-  }
-  for (let i = 1; i < data.length; i++) {
-    const previous = ensuresDefinedValue(normalized[i - 1]);
-    const current = ensuresDefinedValue(normalized[i]);
-    if (previous.frequency < control && control < current.frequency) {
-      result = data[i];
-      break;
-    }
-  }
-  if (!result) {
-    throw new Error(`Unexpected Condition: No result was found for frequency ${control}!`);
-  }
-  return result?.value;
+type SelectMultipleAtRandomFrequencyOptions = {
+  readonly length: RandomLength;
 };
+
+export function selectAtRandomFrequency<T>(data: FrequencyDatum<T>[]): T;
+export function selectAtRandomFrequency<T>(
+  data: MultipleFrequencyDatum<T>[],
+  options: SelectMultipleAtRandomFrequencyOptions,
+): T[];
+
+/**
+ * Makes selections at random with the provided frequencies, returning either an array of multiple selections (if the
+ * 'length' option is provided) or a single selection (if the 'length' option is not provided).
+ *
+ * @param {FrequencyDatum<T>[] | MultipleFrequencyDatum<T>[]} data
+ *   The data that defines both the values to select from and the frequencies at which those values should be selected.
+ *
+ * @param {SelectMultipleAtRandomFrequencyOptions} options
+ *   If multiple selections are desired, the options that include the 'length' of the resulting array.
+ *
+ * @returns {T | T[]}
+ *
+ * @example
+ * type Fruit = "Apple" | "Banana" | "Strawberry";
+ * const data: Fruit[] = selectAtRandomFrequency([
+ *   { value: "Apple", frequency: 0.5 },
+ *   { value: "Banana": frequency: 0.1, maxCount: 2 },
+ *   { value: "Strawberry", frequency: 0.4 }
+ * ], { length: { min: 10, max: 30 }})
+ *
+ * Note that the frequencies do not need to sum to 1, they will be normalized relative to each other.
+ */
+export function selectAtRandomFrequency<T>(
+  data: FrequencyDatum<T>[] | MultipleFrequencyDatum<T>[],
+  options?: SelectMultipleAtRandomFrequencyOptions,
+) {
+  const _selectAtRandomFrequency = <F extends FrequencyDatum<T>>(frequencies: F[]) => {
+    if (frequencies.length === 0) {
+      throw new Error("A selection cannot be made because no data was provided.");
+    } else if (frequencies.filter(d => d.frequency < 0).length > 0) {
+      throw new Error(
+        `Detected negative numbers in frequency data: ${JSON.stringify(frequencies)}.  Frequencies must be >= 0.`,
+      );
+    }
+    const total = frequencies.reduce((prev, { frequency }) => (prev += frequency), 0.0);
+    const normalized = frequencies.map(d => ({ ...d, frequency: d.frequency / total }));
+    const accumulated = normalized
+      .slice(1)
+      .reduce(
+        (acc: number[], freq: FrequencyDatum<T>): number[] => [
+          ...acc,
+          ensuresDefinedValue(acc[acc.length - 1]) + freq.frequency,
+        ],
+        [ensuresDefinedValue(normalized[0]).frequency],
+      );
+    const cumulative = normalized.map((d, i) => ({ ...d, cumulativeFrequency: ensuresDefinedValue(accumulated[i]) }));
+    const control = randomInt({ min: 0, max: 100 }) / 100.0;
+
+    for (let i = 0; i < cumulative.length; i++) {
+      const current = ensuresDefinedValue(cumulative[i]);
+      // It is important that the comparison include an equality for cases where the control is exactly 1.0.
+      if (control <= current.cumulativeFrequency) {
+        return current;
+      }
+    }
+    throw new Error(
+      `Unexpected Condition: No result was found for frequency value = '${control}'.  Population data ` +
+        `was: \n${JSON.stringify(frequencies)}\nThe cumulative, normalized frequencies are:\n${JSON.stringify(
+          cumulative,
+        )}`,
+    );
+  };
+
+  if (options) {
+    /* In the case that multiple selections are being made, we need to be able to differentiate a given datum from
+       another one, which allows us to determine if the maximum selection count for a given datum has been reached.  We
+       cannot identify a datum based on the value, because the value may not be comparable with a shallow equality and
+       it is possible that multiple datums exist with the same value.  So, each datum needs to be assigned a unique ID
+       at the start - which will allow us to remove datums from the frequency population in the case that its max count
+       was reached. */
+    let runningFrequencies: MultipleFrequencyDatumWithId<T>[] = [...data].map(d => ({ ...d, id: uuid() }));
+    let result: T[] = [];
+    const desiredLength = getLength(options.length);
+
+    while (result.length < desiredLength && runningFrequencies.length !== 0) {
+      const datum = _selectAtRandomFrequency(runningFrequencies);
+      const currentCount = result.filter(d => d === datum.value).length;
+      if (datum.maxCount !== undefined) {
+        if (currentCount > datum.maxCount) {
+          throw new Error("");
+        } else if (currentCount === datum.maxCount) {
+          runningFrequencies = runningFrequencies.filter(d => d.id !== datum.id);
+        } else {
+          result = [...result, datum.value];
+        }
+      }
+    }
+    if (result.length < desiredLength) {
+      logger.warn(
+        `Could not select the desired number of elements, '${desiredLength}', from the provided data.  The maximum ` +
+          "counts of each value in the dataset were reached before the desired length was met.",
+      );
+    }
+    return result;
+  }
+  // No length was provided, only make a single selection.
+  return _selectAtRandomFrequency(data).value;
+}
 
 const isDuplicated = <T, V extends string | number>(prev: T[], value: T, duplicationKey: (v: T) => V): boolean =>
   prev.some(p => duplicationKey(value) === duplicationKey(p));

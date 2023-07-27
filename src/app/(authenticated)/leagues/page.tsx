@@ -27,29 +27,31 @@ export default async function Leagues({ searchParams: { query } }: LeaguesProps)
     include: { teams: { select: { id: true } } },
     orderBy: { createdAt: "desc" }, // Might want to order by the most recent game in the future.
     where: {
-      participants: { some: { participant: { id: user.id } } },
-      OR:
-        query !== undefined && query.length !== 0
-          ? [
-              { name: { contains: query, mode: "insensitive" } },
-              { description: { contains: query, mode: "insensitive" } },
-            ]
-          : undefined,
+      OR: [{ staff: { some: { userId: user.id } } }, { teams: { some: { players: { some: { userId: user.id } } } } }],
+      AND: {
+        OR:
+          query !== undefined && query.length !== 0
+            ? [
+                { name: { contains: query, mode: "insensitive" } },
+                { description: { contains: query, mode: "insensitive" } },
+              ]
+            : undefined,
+      },
     },
   });
-  const numParticipantsPerLeague = await prisma.leagueOnParticipants.groupBy({
-    by: ["leagueId"],
+  const numPlayersPerLeague = await prisma.player.groupBy({
+    by: ["teamId"],
     _count: {
-      participantId: true,
+      userId: true,
     },
     where: {
-      leagueId: {
-        in: leagues.map(l => l.id),
+      teamId: {
+        in: leagues.map(l => l.teams.map(t => t.id)).flat(),
       },
     },
   });
   const leaguesWithParticipantCount: LeagueWithParticipation[] = leagues.map(l => {
-    const g = numParticipantsPerLeague.find(n => n.leagueId === l.id);
+    const g = numPlayersPerLeague.find(n => l.teams.map(t => t.id).includes(n.teamId));
     if (!g) {
       logger.error(
         { name: l.name, id: l.id },
@@ -57,7 +59,7 @@ export default async function Leagues({ searchParams: { query } }: LeaguesProps)
       );
       return { ...l, numParticipants: 0, teams: l.teams.map(t => t.id) };
     }
-    return { ...l, numParticipants: g._count.participantId, teams: l.teams.map(t => t.id) };
+    return { ...l, numParticipants: g._count.userId, teams: l.teams.map(t => t.id) };
   });
 
   return (

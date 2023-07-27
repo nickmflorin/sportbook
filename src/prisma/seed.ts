@@ -1,89 +1,42 @@
 /* eslint-disable no-console -- This script runs outside of the logger context. */
 import clerk from "@clerk/clerk-sdk-node";
-import chunk from "lodash.chunk";
 import { v4 as uuid } from "uuid";
 import {
   type User,
   Sport,
   type League,
   type Location,
+  LeagueStaffRole,
   LeagueType,
   LeagueCompetitionLevel,
   Gender,
-  Color,
 } from "@prisma/client";
 
 import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
 
-import { ensuresDefinedValue } from "~/lib/util";
 import {
   infiniteLoop,
   infiniteLoopSelection,
   mapOverLength,
   selectAtRandom,
+  selectArrayAtRandom,
   generateRandomDate,
   selectSequentially,
-  selectArrayAtRandom,
 } from "~/lib/util/random";
 
 import { prisma, xprisma } from "./client";
 import { safeEnumValue, getModelMeta } from "./model";
-import { fixtures, generateLeagueGames, type SeedContext, type GetUser } from "./seeding";
+import { fixtures, generateLeagueGames, type SeedContext, generateLeagueTeams } from "./seeding";
 
-const MIN_PARTICIPANTS_PER_LEAGUE = 50;
-const MAX_PARTICIPANTS_PER_LEAGUE = 100;
 const MIN_LOCATIONS_PER_LEAGUE = 0;
 const MAX_LOCATIONS_PER_LEAGUE = 3;
 const MIN_LEAGUES_PER_SPORT = 3;
 const MAX_LEAGUES_PER_SPORT = 12;
+const MIN_STAFF_PER_LEAGUE = 4;
+const MAX_STAFF_PER_LEAGUE = 10;
 
 // The number of non-Clerk users that should be generated in the database.
 const NUM_FAKE_USERS = 100;
-
-/* The number of teams per league depends on the number of participants available for that league and the number of
-   players per team.  The more participants in a league, and the fewer players per team, the more teams that can be
-   created.  So, we try to optimize the number of teams per league first based on lowering the number of players per
-   team until we have the desired number of teams per league.  If that does not work, we then try lowering the number
-   of teams per league. */
-const MIN_USERS_PER_TEAM = 4;
-const MAX_USERS_PER_TEAM = 10;
-
-const MAX_TEAMS_PER_LEAGUE = 6;
-const MIN_TEAMS_PER_LEAGUE = 4;
-
-const chunkPlayersPerTeam = (league: League, participants: User[]): User[][] => {
-  if (participants.length === 0) {
-    console.warn(`Cannot bucket players for team in league '${league.name}' because there are no league participants.`);
-    return [];
-  }
-  const chunkPlayers = (minTeamsPerLeague: number): User[][] | null => {
-    for (let i = MAX_USERS_PER_TEAM; i >= MIN_USERS_PER_TEAM; i--) {
-      const chunked = chunk(participants, i);
-      const nTeams = chunked.length;
-      if (nTeams >= minTeamsPerLeague) {
-        return chunked;
-      }
-    }
-    return null;
-  };
-  for (let i = MAX_TEAMS_PER_LEAGUE; i >= MIN_TEAMS_PER_LEAGUE; i--) {
-    const c = chunkPlayers(i);
-    if (c) {
-      if (i !== MAX_TEAMS_PER_LEAGUE) {
-        console.warn(
-          `There were not enough participants for league '${league.name}' to create the desired number of teams, ` +
-            `'${MAX_TEAMS_PER_LEAGUE}'.  Instead, '${c.length}' teams were created.`,
-        );
-      }
-      return c;
-    }
-  }
-  console.warn(
-    `There were not enough participants for league '${league.name}' to create the minimum number of teams, ` +
-      `'${MIN_TEAMS_PER_LEAGUE}'. No teams were created.`,
-  );
-  return [];
-};
 
 async function collectClerkPages<T>(fetch: (params: { limit: number; offset: number }) => Promise<T[]>): Promise<T[]> {
   const results: T[] = [];
@@ -115,61 +68,6 @@ async function generateLocations(ctx: Omit<SeedContext, "getLocation">) {
   );
 }
 
-async function generateLeagueParticipants(league: League, ctx: SeedContext) {
-  const users = infiniteLoopSelection<User, string>(ctx.getUser, {
-    duplicationKey: (u: User) => u.id,
-    length: { min: MIN_PARTICIPANTS_PER_LEAGUE, max: MAX_PARTICIPANTS_PER_LEAGUE },
-  });
-  const result = await prisma.leagueOnParticipants.createMany({
-    data: users.map(u => ({ leagueId: league.id, participantId: u.id, assignedById: u.id })),
-  });
-  /* The users in the randomly iterated loop array will be the same as the participants for the league.  These users
-     will then be used to create the teams in the league. */
-  console.log(`Generated ${result.count} participants for league '${league.name}' in the database.`);
-  return users;
-}
-
-async function generateLeagueTeam(
-  name: string,
-  players: User[],
-  league: League,
-  ctx: SeedContext & { readonly getParticipant: GetUser },
-) {
-  const team = await prisma.team.create({
-    data: {
-      ...getModelMeta("Team", { getUser: ctx.getParticipant }),
-      name,
-      leagueId: league.id,
-      color: selectAtRandom(Object.values(Color)),
-    },
-  });
-  await prisma.teamOnPlayers.createMany({
-    data: players.map(p => ({ teamId: team.id, userId: p.id, assignedById: p.id, leagueId: league.id })),
-  });
-  return team;
-}
-
-async function generateLeagueTeams(
-  league: League,
-  { participants, ...ctx }: SeedContext & { participants: User[]; readonly getParticipant: GetUser },
-) {
-  const chunks = chunkPlayersPerTeam(league, participants);
-  if (chunks.length === 0) {
-    console.error(`There were not enough players to create any teams for league '${league.name}'.`);
-    return [];
-  }
-  // If there are not enough team names to generate a unique name for each team in the league, an error will be thrown.
-  const teamNames = selectArrayAtRandom(fixtures.json.teamNames, {
-    length: chunks.length,
-    duplicationKey: v => v.trim(),
-  });
-  const result = await Promise.all(
-    chunks.map((players, i) => generateLeagueTeam(ensuresDefinedValue(teamNames[i]), players, league, ctx)),
-  );
-  console.info(`Generated ${result.length} teams for league '${league.name}' in the database.`);
-  return result;
-}
-
 async function generateLeagueLocations(league: League, ctx: SeedContext) {
   const locations = infiniteLoopSelection<Location, string>(ctx.getLocation, {
     duplicationKey: (loc: Location) => loc.id,
@@ -183,6 +81,24 @@ async function generateLeagueLocations(league: League, ctx: SeedContext) {
   });
   console.info(`Generated ${locations.length} locations for league '${league.name}' in the database.`);
   return locations;
+}
+
+async function generateLeagueStaff(league: League, ctx: SeedContext) {
+  const leagueStaffUsers = infiniteLoopSelection<User, string>(ctx.getUser, {
+    duplicationKey: (u: User) => u.id,
+    length: { min: MIN_STAFF_PER_LEAGUE, max: MAX_STAFF_PER_LEAGUE },
+  });
+  await prisma.leagueStaff.createMany({
+    data: leagueStaffUsers.map(u => ({
+      ...getModelMeta("LeagueStaff", ctx),
+      leagueId: league.id,
+      userId: u.id,
+      roles: selectArrayAtRandom(Object.values(LeagueStaffRole), {
+        duplicationKey: i => i,
+        length: { min: 1, max: 2 },
+      }),
+    })),
+  });
 }
 
 async function generateSportLeague(sport: Sport, ctx: SeedContext) {
@@ -200,10 +116,14 @@ async function generateSportLeague(sport: Sport, ctx: SeedContext) {
     },
   });
   await generateLeagueLocations(league, ctx);
-  const participants = await generateLeagueParticipants(league, ctx);
-  const getParticipant = infiniteLoop<User>(participants);
-  const teams = await generateLeagueTeams(league, { ...ctx, participants, getParticipant });
-  await generateLeagueGames(league, teams, { ...ctx, getParticipant });
+  await generateLeagueStaff(league, ctx);
+  const [teams, leagueUsers] = await generateLeagueTeams(league, ctx);
+  if (teams.length !== 0) {
+    /* Right now, we only need the users in the league for purposes of the model meta fields on the games - that may
+       change in the future. */
+    const getParticipant = infiniteLoop<User>(leagueUsers);
+    await generateLeagueGames(league, teams, { ...ctx, getParticipant });
+  }
 }
 
 async function generateSportLeagues(sport: Sport, ctx: SeedContext) {

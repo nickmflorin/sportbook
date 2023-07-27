@@ -15,23 +15,23 @@ enum Gender {
 }
 
 model User {
-  id                   String                 @id @default(uuid()) @db.Uuid
-  clerkId              String                 @unique
+  id                   String        @id @default(uuid()) @db.Uuid
+  clerkId              String        @unique
   firstName            String
   lastName             String
   profileImageUrl      String?
-  gender               Gender                 @default(value: NON_BINARY)
+  gender               Gender        @default(value: NON_BINARY)
   emailAddress         String
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
-  org                  Org?                   @relation("orgUsers", fields: [orgId], references: [id])
-  orgId                String?                @db.Uuid
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  org                  Org?          @relation("orgUsers", fields: [orgId], references: [id])
+  orgId                String?       @db.Uuid
   // Users are only created when Clerk data for the user exists - so a default value of "now" makes sense here.
-  lastUpdatedFromClerk DateTime               @default(now())
-  teams                TeamOnPlayers[]        @relation("teams")
-  participatingLeagues LeagueOnParticipants[] @relation("participatingLeagues")
-  createdLocations     Location[]             @relation("createdLocations")
-  uploadedFiles        FileUpload[]           @relation("uploadedFiles")
+  lastUpdatedFromClerk DateTime      @default(now())
+  players              Player[]      @relation("players")
+  createdLocations     Location[]    @relation("createdLocations")
+  uploadedFiles        FileUpload[]  @relation("uploadedFiles")
+  staffPositions       LeagueStaff[] @relation("staff")
 }
 
 model Org {
@@ -134,9 +134,9 @@ enum LeagueType {
   ORGANIZED
 }
 
-enum LeagueParticipantType {
-  REFEREE
-  ADMIN
+enum LeaguePlayerType {
+  CAPTAIN
+  CO_CAPTAIN
   PLAYER
 }
 
@@ -157,16 +157,19 @@ model LeagueOnLocations {
   @@id([leagueId, locationId])
 }
 
-model LeagueOnParticipants {
-  league             League                  @relation("participants", fields: [leagueId], references: [id])
-  leagueId           String                  @db.Uuid
-  participant        User                    @relation("participatingLeagues", fields: [participantId], references: [id])
-  participantId      String                  @db.Uuid
-  assignedAt         DateTime                @default(now())
-  assignedById       String
-  participationTypes LeagueParticipantType[] @default(value: [PLAYER])
+model Player {
+  id         String            @id @default(uuid()) @db.Uuid
+  user       User              @relation("players", fields: [userId], references: [id])
+  userId     String            @db.Uuid
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  playerType LeaguePlayerType? @default(value: PLAYER)
+  // Note: We will have to figure out a way to ensure that participants of type PLAYER always belong to a team.  The
+  // team needs to be optional for cases where the participant is of type ADMIN or REFEREE.
+  team       Team              @relation("players", fields: [teamId], references: [id])
+  teamId     String            @db.Uuid
 
-  @@id([leagueId, participantId])
+  @@unique([userId, teamId])
 }
 
 enum LeagueCompetitionLevel {
@@ -175,55 +178,50 @@ enum LeagueCompetitionLevel {
   SOCIAL_COMPETITIVE
 }
 
+enum LeagueStaffRole {
+  COMISSIONER
+  ADMIN
+  REFEREE
+}
+
+model LeagueStaff {
+  id        String            @id @default(uuid()) @db.Uuid
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  league    League            @relation("staff", fields: [leagueId], references: [id])
+  leagueId  String            @db.Uuid
+  user      User              @relation("staff", fields: [userId], references: [id])
+  userId    String            @db.Uuid
+  // TODO: We may need to validate that the staff user always has at least 1 role or delete them.
+  roles     LeagueStaffRole[]
+
+  @@unique([leagueId, userId])
+}
+
 model League {
-  id                   String                 @id @default(uuid()) @db.Uuid
-  name                 String
-  description          String?
-  createdById          String                 @db.Uuid
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
-  updatedById          String                 @db.Uuid
-  registration         LeagueRegistration?
-  leagueStart          DateTime?
-  leagueEnd            DateTime?
-  leagueType           LeagueType             @default(value: PICKUP)
-  competitionLevel     LeagueCompetitionLevel @default(value: SOCIAL)
-  isPublic             Boolean                @default(true)
-  participants         LeagueOnParticipants[] @relation("participants")
-  sport                Sport
-  requirements         LeagueRequirements?
+  id               String                 @id @default(uuid()) @db.Uuid
+  name             String
+  description      String?
+  createdById      String                 @db.Uuid
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  updatedById      String                 @db.Uuid
+  registration     LeagueRegistration?
+  leagueStart      DateTime?
+  leagueEnd        DateTime?
+  leagueType       LeagueType             @default(value: PICKUP)
+  competitionLevel LeagueCompetitionLevel @default(value: SOCIAL)
+  isPublic         Boolean                @default(true)
+  sport            Sport
+  requirements     LeagueRequirements?
   // Per sport configurations have to be optional because their presence will depend on the sport the league is
   // configured for.  However, they should be constructed such that they have no required fields, so in cases that the
   // config is missing for a League a default configuration can be used.
-  hockeyConfig         HockeyLeagueConfig?    // Only applicable when 'sport' is HOCKEY.
-  leagueGames          Game[]                 @relation("leagueGames")
-  locations            LeagueOnLocations[]    @relation("locations")
-  teams                Team[]                 @relation("leagueTeams")
-  teamPlayers          TeamOnPlayers[]        @relation("leagueTeamPlayers")
-}
-
-enum TeamPlayerRole {
-  CAPTAIN
-  CO_CAPTAIN
-  PLAYER
-}
-
-model TeamOnPlayers {
-  team         Team           @relation("players", fields: [teamId], references: [id])
-  teamId       String         @db.Uuid
-  user         User           @relation("teams", fields: [userId], references: [id])
-  userId       String         @db.Uuid
-  role         TeamPlayerRole @default(value: PLAYER)
-  // This field is added primarily to ensure that a player is only on one team per league.  However, it begs the
-  // question: should we just determine the participants in a league by looking at the teams in the league?  We may need
-  // to initialize a league with an empty team... and what about participants that are not players (i.e. refs, admins)?
-  league       League         @relation("leagueTeamPlayers", fields: [leagueId], references: [id])
-  leagueId     String         @db.Uuid
-  assignedAt   DateTime       @default(now())
-  assignedById String
-
-  @@id([teamId, userId])
-  @@unique([teamId, userId, leagueId])
+  hockeyConfig     HockeyLeagueConfig? // Only applicable when 'sport' is HOCKEY.
+  leagueGames      Game[]                 @relation("leagueGames")
+  locations        LeagueOnLocations[]    @relation("locations")
+  teams            Team[]                 @relation("teams")
+  staff            LeagueStaff[]          @relation("staff")
 }
 
 enum Color {
@@ -236,18 +234,18 @@ enum Color {
 }
 
 model Team {
-  id          String          @id @default(uuid()) @db.Uuid
-  createdById String          @db.Uuid
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  updatedById String          @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
+  createdById String   @db.Uuid
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  updatedById String   @db.Uuid
   name        String
-  color       Color           @default(value: GRAY)
-  league      League          @relation("leagueTeams", fields: [leagueId], references: [id])
-  leagueId    String          @db.Uuid
-  players     TeamOnPlayers[] @relation("players")
-  homeGames   Game[]          @relation("homeGames")
-  awayGames   Game[]          @relation("awayGames")
+  color       Color    @default(value: GRAY)
+  league      League   @relation("teams", fields: [leagueId], references: [id])
+  leagueId    String   @db.Uuid
+  players     Player[] @relation("players")
+  homeGames   Game[]   @relation("homeGames")
+  awayGames   Game[]   @relation("awayGames")
 
   @@unique([name, leagueId])
 }
