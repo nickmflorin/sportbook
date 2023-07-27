@@ -1,34 +1,53 @@
-import { type PlayerWithUser } from "~/prisma/model";
+import { type PlayerWithUser, type Team, type ModelWithFileUrl } from "~/prisma/model";
+import { TeamAvatar } from "~/components/images/TeamAvatar";
+import { UserAvatar } from "~/components/images/UserAvatar";
 
 import { DataTable, type DataTableProps, type Column } from "./DataTable";
 
 export enum PlayersTableColumn {
   USER,
   PLAYER_TYPE,
+  TEAM,
 }
 
-const PlayersTableColumns: { [key in PlayersTableColumn]: Column<PlayerWithUser> } = {
+export type BasePlayer =
+  | PlayerWithUser
+  | (PlayerWithUser & { readonly team: Team })
+  | (PlayerWithUser & { readonly team: ModelWithFileUrl<Team> });
+
+const hasTeam = (
+  p: BasePlayer,
+): p is (PlayerWithUser & { readonly team: Team }) | (PlayerWithUser & { readonly team: ModelWithFileUrl<Team> }) =>
+  (p as PlayerWithUser & { readonly team: Team }).team !== undefined;
+
+const PlayersTableColumns = <P extends BasePlayer>(): { [key in PlayersTableColumn]: Column<P> } => ({
   [PlayersTableColumn.USER]: {
-    title: "User",
+    title: "Name",
     accessor: "user.name",
     textAlignment: "left",
-    render: (player: PlayerWithUser) => player.user.firstName,
+    render: (player: P) => <UserAvatar user={player.user} displayName={true} size={30} />,
   },
   [PlayersTableColumn.PLAYER_TYPE]: {
-    title: "User",
-    accessor: "user.name",
+    title: "",
+    accessor: "playerType",
     textAlignment: "left",
-    render: (player: PlayerWithUser) => player.playerType,
+    render: (player: P) => player.playerType,
   },
-};
+  [PlayersTableColumn.TEAM]: {
+    title: "Team",
+    accessor: "team",
+    textAlignment: "left",
+    render: (player: P) => (hasTeam(player) ? <TeamAvatar team={player.team} size={30} displayName={true} /> : <></>),
+  },
+});
 
-export interface PlayersTableProps extends Omit<DataTableProps<PlayerWithUser>, "onRowEdit" | "columns"> {
+export interface PlayersTableProps<P extends BasePlayer> extends Omit<DataTableProps<P>, "onRowEdit" | "columns"> {
   readonly columns?: PlayersTableColumn[];
 }
 
-export const PlayersTable = ({
-  columns = [PlayersTableColumn.USER, PlayersTableColumn.PLAYER_TYPE],
+export const PlayersTable = <P extends BasePlayer>({
+  columns = [PlayersTableColumn.USER, PlayersTableColumn.PLAYER_TYPE, PlayersTableColumn.TEAM],
   ...props
-}: PlayersTableProps): JSX.Element => (
-  <DataTable<PlayerWithUser> {...props} columns={columns.map(name => PlayersTableColumns[name])} />
+}: PlayersTableProps<P>): JSX.Element => (
+  <DataTable<P> {...props} columns={columns.map(name => PlayersTableColumns()[name])} />
 );

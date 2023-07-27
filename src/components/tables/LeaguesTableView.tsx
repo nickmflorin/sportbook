@@ -14,7 +14,7 @@ import { LeaguesTable, type LeaguesTableProps } from "./LeaguesTable";
 import { TableView, type TableViewProps } from "./TableView";
 
 export interface LeaguesTableViewProps
-  extends Omit<LeaguesTableProps<League>, "style" | "className" | "sx" | "data">,
+  extends Omit<LeaguesTableProps<League>, "style" | "className" | "data">,
     Pick<TableViewProps, "title" | "description" | "actions" | "className" | "style"> {
   readonly data: League[];
 }

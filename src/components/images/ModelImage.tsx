@@ -16,7 +16,7 @@ export type ModelImageProps = ComponentProps &
     readonly src?: ImageProps["src"] | null;
     readonly alt?: string;
     readonly borderRadius?: BorderRadiusSize;
-    readonly size?: Exclude<ImageProps["height"] & ImageProps["width"], undefined>;
+    readonly size: Exclude<ImageProps["height"] & ImageProps["width"], undefined>;
     readonly fontSize?: TextProps["size"];
   };
 

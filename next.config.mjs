@@ -34,6 +34,9 @@ const config = {
   sassOptions: {
     includePaths: [path.join(__dirname, "src/styles")],
   },
+  images: {
+    domains: ["images.clerk.dev"],
+  },
   redirects: async () => [
     {
       source: "/",

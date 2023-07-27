@@ -5,7 +5,7 @@ import { TableView, type TableViewProps } from "./TableView";
 import { TeamStandingsTable, type TeamStandingsTableProps } from "./TeamStandingsTable";
 
 export interface TeamStandingsTableViewProps
-  extends Omit<TeamStandingsTableProps, "style" | "className" | "sx" | "data">,
+  extends Omit<TeamStandingsTableProps, "style" | "className" | "data">,
     Pick<TableViewProps, "title" | "description" | "actions" | "className" | "style"> {
   readonly data: WithFileUrl<TeamStanding>[];
 }

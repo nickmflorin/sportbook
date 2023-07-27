@@ -1,8 +1,10 @@
 import dynamic from "next/dynamic";
 import { notFound, redirect } from "next/navigation";
 
+import uniq from "lodash.uniq";
+
 import { prisma, isPrismaInvalidIdError, isPrismaDoesNotExistError } from "~/prisma/client";
-import { type League } from "~/prisma/model";
+import { type League, FileUploadEntity } from "~/prisma/model";
 import { Loading } from "~/components/loading";
 import { getAuthUser } from "~/server/auth";
 
@@ -34,8 +36,22 @@ export default async function LeagueStandings({ params: { id } }: LeagueStanding
   }
   const players = await prisma.player.findMany({
     where: { team: { leagueId: league.id } },
-    include: { user: true },
+    include: { user: true, team: true },
   });
 
-  return <PlayersTableView data={players} title="Players" />;
+  const imageUploads = await prisma.fileUpload.groupBy({
+    by: ["entityId", "fileUrl", "createdAt"],
+    where: { entityType: FileUploadEntity.TEAM, id: { in: uniq(players.map(t => t.teamId)) } },
+    orderBy: { createdAt: "desc" },
+    take: 1,
+  });
+  const playersWithTeamImage = players.map(p => ({
+    ...p,
+    team: {
+      ...p.team,
+      fileUrl: imageUploads.find(i => i.entityId === p.team.id)?.fileUrl || null,
+    },
+  }));
+
+  return <PlayersTableView data={playersWithTeamImage} title="Players" />;
 }

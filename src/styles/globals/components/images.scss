@@ -1,5 +1,19 @@
 @use "partials";
 
+// Since the underlying image uses NextJS's image, where the height and width are required to be specified in JS, the
+// size of the avatar should not be provided in SASS.
+.avatar-with-name {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: partials.get-spacing("sm");
+
+  > .body {
+    font-size: partials.get-font-size($type: "body", $size: "sm");
+    color: partials.get-color("gray", $shade: 8);
+  }
+}
+
 .model-image {
   display: flex;
   flex-direction: row;
