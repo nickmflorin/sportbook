@@ -1,109 +1,57 @@
-import React, { useState } from "react";
+import React from "react";
 
 import classNames from "classnames";
-import { type Required } from "utility-types";
 
-import { type ComponentProps } from "~/lib/ui";
-import { type IconProp } from "~/components/icons";
+import { MultiMenu } from "./multi";
+import { type MenuProps } from "./props";
 
-type MenuSelectionMode = "single" | "multiple";
+export const Menu = <V extends string | null, M>({ style, className, ...props }: MenuProps<V, M>): JSX.Element => (
+  <div style={style} className={classNames("menu", className)}>
+    <div className="menu__items-container">{props.mode === "multiple" ? <MultiMenu {...props} /> : <></>}</div>
+  </div>
+);
 
-type ValuedMenuItem<V extends string | null, M extends Record<string, unknown>> = {
-  readonly label: string;
-  readonly icon?: IconProp;
-  readonly value: Exclude<V, null>;
-  readonly datum: M;
-};
+// const ValuedSingleMenu = <V extends string | null, M extends Record<string, unknown>>({
+//   value,
+//   onChange,
+//   items,
+//   defaultValue,
+//   clearable,
+//   getValue,
+//   ...props
+// }: ValuedSingleMenuProps<V, M>): JSX.Element => {
+//   if (uniq(items.map(i => i.value)).length !== items.length) {
+//     throw new Error("");
+//   }
+//   /* TODO: Validate that if the menu is nullable, the default value is null - otherwise it is not nullable?
+//      if ((value === null || default === null)) */
 
-type ValuelessMenuItem<M extends Record<string, unknown>> = {
-  readonly label: string;
-  readonly icon?: IconProp;
-  readonly datum: M;
-};
+/*   if (value !== undefined && value === null && defaultValue === undefined) {
+       throw new Error("");
+     } */
 
-type _ValuedDataProps<V extends string | null, M extends Record<string, unknown>> = {
-  readonly items: ValuedMenuItem<V, M>[];
-  readonly getValue?: never;
-};
+//   const [_value, setValue] = useState<Exclude<V, null> | V>(defaultValue === undefined ? (null as V) : defaultValue);
 
-type _ValuelessDataProps<V extends string | null, M extends Record<string, unknown>> = {
-  readonly items: ValuelessMenuItem<M>[];
-  readonly getValue: (item: ValuelessMenuItem<M>) => Exclude<V, null>;
-};
+/*   const onMenuItemClick = useMemo(
+       () => (item: ValuedMenuItem<V, M>) => {
+         setValue(item.value);
+         onChange?.(item.value, item.datum);
+       },
+       [onChange],
+     ); */
 
-type MenuValuedProps<V extends string | null, M extends Record<string, unknown>> =
-  | _ValuedDataProps<V, M>
-  | _ValuelessDataProps<V, M>;
-
-type _MultiMenuNonNullableProps<V extends string | null, M extends Record<string, unknown>> = ComponentProps & {
-  readonly mode: "multiple";
-  readonly defaultValue?: Exclude<V, null>[];
-  readonly clearable?: boolean;
-  readonly value?: Exclude<V, null>[];
-  readonly onChange?: (value: Exclude<V, null>[], data: M[]) => void;
-};
-
-type _SingleMenuNullableProps<V extends string | null, M extends Record<string, unknown>> = {
-  readonly mode: "single";
-  readonly defaultValue?: V;
-  readonly clearable?: boolean;
-  readonly value?: V;
-  readonly onChange?: (value: V, data: M) => void;
-};
-
-type _SingleMenuNonNullableProps<V extends string | null, M extends Record<string, unknown>> = {
-  readonly mode: "single";
-  readonly defaultValue: Exclude<V, null>;
-  readonly clearable?: false;
-  readonly value?: Exclude<V, null>;
-  readonly onChange?: (value: Exclude<V, null>, data: M) => void;
-};
-
-type _MenuModeProps<V extends string | null, M extends Record<string, unknown>> =
-  | _MultiMenuNonNullableProps<V, M>
-  | _SingleMenuNonNullableProps<V, M>
-  | _SingleMenuNullableProps<V, M>;
-
-/* export type MultiMenuProps<V extends string, M extends Record<string, unknown>> = ComponentProps & {
-     readonly mode: "multiple";
-     readonly value?: V[];
-     readonly onChange?: (value: V[], data: M[]) => void;
-   } & (ValuedDataProps<V, M> | ValuelessDataProps<V, M>); */
-
-/* export type SingleMenuProps<V extends string, M extends Record<string, unknown>> = ComponentProps & {
-     readonly mode?: "single";
-     readonly value?: V | null;
-     readonly onChange?: (value: V | null, data: M) => void;
-   } & (ValuedDataProps<V, M> | ValuelessDataProps<V, M>); */
-
-export type MenuProps<V extends string | null, M extends Record<string, unknown>> = _MenuModeProps<V, M> &
-  MenuValuedProps<V, M> &
-  ComponentProps;
-
-export const Menu = <V extends string | null, M extends Record<string, unknown>>({
-  mode,
-  value,
-  onChange,
-  items,
-  defaultValue,
-  clearable,
-  getValue,
-  ...props
-}: MenuProps<V, M>): JSX.Element => {
-  type Value = Required<MenuProps<V, M>, "value">["value"];
-
-  const [_value, setValue] = useState<Value>(defaultValue === undefined ? (null as V) : defaultValue);
-  // const [_multiValue, setMultiValue] = useState<V>()
-
-  return (
-    <div {...props} className={classNames("menu", props.className)}>
-      <div className="menu__items-container">
-        {items.map((item, i) => (
-          <React.Fragment key={i}>
-            <div className="menu-item">{item.label}</div>
-          </React.Fragment>
-        ))}
-      </div>
-    </div>
-  );
-};
+/*   return (
+       <div {...props} className={classNames("menu", props.className)}>
+         <div className="menu__items-container">
+           {items.map((item, i) => (
+             <ValuedMenuItem
+               key={i}
+               {...item}
+               onClick={() => onMenuItemClick(item)}
+               selected={(value === undefined ? _value : value) === item.value}
+             />
+           ))}
+         </div>
+       </div>
+     );
+   }; */

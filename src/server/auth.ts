@@ -28,7 +28,6 @@ export async function getAuthUser(options?: { strict?: boolean } | { whenNotAuth
       (options as { whenNotAuthenticated: () => never }).whenNotAuthenticated();
     }
     return null;
-    return null;
   }
 
   return await prisma.user.findUniqueOrThrow({ where: { clerkId: userId } });

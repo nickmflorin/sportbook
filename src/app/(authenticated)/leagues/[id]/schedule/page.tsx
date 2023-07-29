@@ -9,7 +9,7 @@ import { Loading } from "~/components/loading";
 import { getAuthUser } from "~/server/auth";
 import { getLeagueStandings } from "~/server/leagues";
 
-const TeamStandingsTable = dynamic(() => import("~/components/tables/TeamStandingsTable"), {
+const TeamStandingsTableView = dynamic(() => import("~/components/tables/TeamStandingsTableView"), {
   ssr: true,
   loading: () => <Loading loading={true} />,
 });
@@ -56,5 +56,5 @@ export default async function LeagueStandings({ params: { id } }: LeagueStanding
       fileUrl: imageUploads.find(i => i.entityId === standing.id)?.fileUrl || null,
     }),
   );
-  return <TeamStandingsTable data={standingsWithImages} />;
+  return <TeamStandingsTableView data={standingsWithImages} title="Standings" />;
 }

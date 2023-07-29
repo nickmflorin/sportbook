@@ -1,3 +1,4 @@
+"use client";
 import { type League, type LeagueWithParticipation } from "~/prisma/model";
 import { LeagueCompetitionLevelBadge, LeagueTypeBadge } from "~/components/badges";
 import { AlternateButton } from "~/components/buttons/AlternateButton";
@@ -121,3 +122,5 @@ export const LeaguesTable = <L extends LeagueDatum = LeagueDatum>({
 }: LeaguesTableProps<L>): JSX.Element => (
   <DataTable<L> {...props} columns={columns.map(name => LeaguesTableColumns[name])} />
 );
+
+export default LeaguesTable;

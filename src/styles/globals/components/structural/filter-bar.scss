@@ -1,0 +1,9 @@
+@use "partials";
+
+.filter-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: partials.get-spacing("md");
+}

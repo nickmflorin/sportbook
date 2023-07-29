@@ -4,6 +4,7 @@
 @use "partials";
 @use "./base";
 
+// Not currently used - but will be used eventually.
 .text-input {
   @include base.input-base;
 
@@ -39,4 +40,8 @@
   input + .actions {
     margin-left: partials.get-spacing("lg");
   }
+}
+
+.mantine-TextInput-input {
+  @include base.input-base;
 }

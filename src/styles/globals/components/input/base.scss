@@ -43,11 +43,15 @@ Wrong Usage:
   width: 100%;
 
   &::placeholder {
-    color: partials.$input-placeholder-color;
+    @include partials.input-placeholder-properties;
   }
 
   ::placeholder {
-    color: partials.$input-placeholder-color;
+    @include partials.input-placeholder-properties;
+  }
+
+  div[psuedo="-webkit-input-placeholder"] {
+    @include partials.input-placeholder-properties;
   }
 }
 

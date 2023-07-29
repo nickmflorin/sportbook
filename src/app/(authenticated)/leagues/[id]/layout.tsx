@@ -34,6 +34,7 @@ export default async function LeagueLayout({ scores, children, teams, params: { 
       throw e;
     }
   }
+
   return (
     <DetailPage
       title={league.name}

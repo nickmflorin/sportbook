@@ -38,6 +38,7 @@ $page-header-margin-bottom: "lg";
       position: relative;
       display: flex;
       flex-direction: row;
+      flex-grow: 100;
 
       > .page__content__main {
         max-height: 100%;

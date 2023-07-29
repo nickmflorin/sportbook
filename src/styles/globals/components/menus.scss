@@ -1,0 +1,33 @@
+@use "partials";
+
+.menu {
+  display: flex;
+  flex-direction: column;
+
+  > .menu__items-container {
+    display: flex;
+    flex-direction: column;
+    padding: partials.get-spacing("xs");
+
+    > .menu-item {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      border: 1px solid transparent;
+      border-radius: partials.get-radius("sm");
+
+      @include partials.select-option-properties;
+
+      .label {
+        @include partials.truncate();
+        font-size: partials.get-font-size($type: "label", $size: "sm");
+      }
+    }
+  }
+}
+
+.mantine-Popover-dropdown {
+  padding: 0px;
+  border-radius: partials.get-radius("sm");
+  border: 1px solid partials.get-color("gray", $shade: 2);
+}

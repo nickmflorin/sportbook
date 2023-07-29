@@ -32,7 +32,7 @@
 @mixin button-link-structure($form) {
   $form: partials.validate-value($form, ("button", "link"));
 
-  max-width: fit-content;
+  min-width: fit-content;
 
   > .#{$form}__content {
     display: flex;
@@ -48,6 +48,8 @@
     > .#{$form}__sub-content {
       text-align: inherit;
       vertical-align: middle;
+      line-height: inherit;
+      font-size: inherit;
     }
 
     > .#{$form}__icon-wrapper {

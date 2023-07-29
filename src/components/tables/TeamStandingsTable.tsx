@@ -1,3 +1,4 @@
+"use client";
 import { type TeamStanding, type WithFileUrl } from "~/prisma/model";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
 
@@ -77,3 +78,5 @@ export const TeamStandingsTable = ({
 }: TeamStandingsTableProps): JSX.Element => (
   <DataTable<WithFileUrl<TeamStanding>> {...props} columns={columns.map(name => TeamStandingsTableColumns[name])} />
 );
+
+export default TeamStandingsTable;

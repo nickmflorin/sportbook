@@ -4,23 +4,23 @@ import { redirect } from "next/navigation";
 import { logger } from "~/application/logger";
 import { prisma } from "~/prisma/client";
 import { type LeagueWithParticipation } from "~/prisma/model";
-import { Page } from "~/components/layout/Page";
+import { constructOrSearch } from "~/prisma/util";
 import { Loading } from "~/components/loading";
 import { DataTableSizes } from "~/components/tables/types";
 import { getAuthUser } from "~/server/auth";
 
-const LeaguesTableView = dynamicImport(() => import("~/components/tables/LeaguesTableView"), {
+const LeaguesTable = dynamicImport(() => import("~/components/tables/LeaguesTable"), {
   ssr: false,
   loading: () => <Loading loading={true} />,
 });
 
 interface LeaguesProps {
-  readonly searchParams: { query?: string };
+  readonly searchParams: { search?: string };
 }
 
 export const dynamic = "force-dynamic";
 
-export default async function Leagues({ searchParams: { query } }: LeaguesProps) {
+export default async function Leagues({ searchParams: { search } }: LeaguesProps) {
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
 
   const leagues = await prisma.league.findMany({
@@ -28,15 +28,7 @@ export default async function Leagues({ searchParams: { query } }: LeaguesProps)
     orderBy: { createdAt: "desc" }, // Might want to order by the most recent game in the future.
     where: {
       OR: [{ staff: { some: { userId: user.id } } }, { teams: { some: { players: { some: { userId: user.id } } } } }],
-      AND: {
-        OR:
-          query !== undefined && query.length !== 0
-            ? [
-                { name: { contains: query, mode: "insensitive" } },
-                { description: { contains: query, mode: "insensitive" } },
-              ]
-            : undefined,
-      },
+      AND: constructOrSearch(search, ["name", "description"]),
     },
   });
   const numPlayersPerLeague = await prisma.player.groupBy({
@@ -62,14 +54,5 @@ export default async function Leagues({ searchParams: { query } }: LeaguesProps)
     return { ...l, numParticipants: g._count.userId, teams: l.teams.map(t => t.id) };
   });
 
-  return (
-    <Page title="Leagues">
-      <LeaguesTableView
-        title="Your Leagues"
-        description="Leagues you are participating in."
-        data={leaguesWithParticipantCount}
-        size={DataTableSizes.SM}
-      />
-    </Page>
-  );
+  return <LeaguesTable data={leaguesWithParticipantCount} size={DataTableSizes.SM} />;
 }

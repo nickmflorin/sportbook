@@ -4,25 +4,33 @@ import { notFound, redirect } from "next/navigation";
 import uniq from "lodash.uniq";
 
 import { prisma, isPrismaInvalidIdError, isPrismaDoesNotExistError } from "~/prisma/client";
-import { type League, FileUploadEntity } from "~/prisma/model";
+import { type League, FileUploadEntity, type Team } from "~/prisma/model";
+import { constructOrSearch } from "~/prisma/util";
 import { Loading } from "~/components/loading";
 import { getAuthUser } from "~/server/auth";
 
-const PlayersTableView = dynamic(() => import("~/components/tables/PlayersTableView"), {
+const PlayersTable = dynamic(() => import("~/components/tables/PlayersTable"), {
   ssr: true,
   loading: () => <Loading loading={true} />,
 });
 
 interface LeaguePlayersProps {
   readonly params: { id: string };
-  readonly searchParams: { query?: string };
+  readonly searchParams: { search?: string; teams?: string };
 }
 
-export default async function LeaguePlayers({ params: { id }, searchParams: { query } }: LeaguePlayersProps) {
+export default async function LeaguePlayers({
+  params: { id },
+  searchParams: { search: _search, teams },
+}: LeaguePlayersProps) {
+  const teamArray: string[] = teams !== undefined ? decodeURIComponent(teams).split(",") : [];
+  const search: string = _search !== undefined ? decodeURIComponent(_search) : "";
+
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
-  let league: League;
+  let league: League & { readonly teams: Team[] };
   try {
     league = await prisma.league.findFirstOrThrow({
+      include: { teams: true },
       where: {
         id,
         OR: [{ staff: { some: { userId: user.id } } }, { teams: { some: { players: { some: { userId: user.id } } } } }],
@@ -39,21 +47,25 @@ export default async function LeaguePlayers({ params: { id }, searchParams: { qu
   const players = await prisma.player.findMany({
     include: { user: true, team: true },
     where: {
-      team: { leagueId: league.id },
-      OR:
-        query !== undefined && query.length !== 0
-          ? [
-              {
-                user: {
-                  OR: [
-                    { firstName: { contains: query, mode: "insensitive" } },
-                    { lastName: { contains: query, mode: "insensitive" } },
-                  ],
-                },
-              },
-              { team: { OR: [{ name: { contains: query, mode: "insensitive" } }] } },
-            ]
-          : undefined,
+      ...(teamArray.length > 0 && search.length !== 0
+        ? {
+            team: { id: { in: teamArray }, leagueId: league.id },
+            OR: [
+              { user: constructOrSearch(search, ["firstName", "lastName"]) },
+              { team: { name: { contains: search, mode: "insensitive" } } },
+            ],
+          }
+        : search.length !== 0
+        ? {
+            team: { leagueId: league.id },
+            OR: [
+              { user: constructOrSearch(search, ["firstName", "lastName"]) },
+              { team: { name: { contains: search, mode: "insensitive" } } },
+            ],
+          }
+        : teamArray.length > 0
+        ? { team: { id: { in: teamArray }, leagueId: league.id } }
+        : { team: { leagueId: league.id } }),
     },
   });
 
@@ -63,6 +75,7 @@ export default async function LeaguePlayers({ params: { id }, searchParams: { qu
     orderBy: { createdAt: "desc" },
     take: 1,
   });
+
   const playersWithTeamImage = players.map(p => ({
     ...p,
     team: {
@@ -71,5 +84,5 @@ export default async function LeaguePlayers({ params: { id }, searchParams: { qu
     },
   }));
 
-  return <PlayersTableView data={playersWithTeamImage} title="Players" league={league} />;
+  return <PlayersTable data={playersWithTeamImage} />;
 }

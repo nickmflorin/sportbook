@@ -54,7 +54,10 @@ export type BaseButtonProps<V extends ButtonType = ButtonType> = ComponentProps 
   readonly locked?: boolean;
   readonly loading?: boolean;
   readonly cornerStyle?: ButtonCornerStyle;
-} & Pick<HTMLElementProps<"button">, "onClick" | "onFocus" | "onBlur" | "disabled" | "type">;
+} & Pick<
+    HTMLElementProps<"button">,
+    "id" | "onClick" | "onFocus" | "onBlur" | "disabled" | "type" | "onFocusCapture" | "onBlurCapture"
+  >;
 
 export const getBaseButtonClassName = <V extends ButtonType = ButtonType>(
   props: Required<Omit<BaseButtonProps<V>, "children">, "size" | "buttonType" | "cornerStyle">,

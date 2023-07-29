@@ -1,3 +1,4 @@
+"use client";
 import { type PlayerWithUser, type Team, type ModelWithFileUrl } from "~/prisma/model";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
 import { UserAvatar } from "~/components/images/UserAvatar";
@@ -15,7 +16,7 @@ export type BasePlayer =
   | (PlayerWithUser & { readonly team: Team })
   | (PlayerWithUser & { readonly team: ModelWithFileUrl<Team> });
 
-const hasTeam = (
+export const hasTeam = (
   p: BasePlayer,
 ): p is (PlayerWithUser & { readonly team: Team }) | (PlayerWithUser & { readonly team: ModelWithFileUrl<Team> }) =>
   (p as PlayerWithUser & { readonly team: Team }).team !== undefined;
@@ -51,3 +52,5 @@ export const PlayersTable = <P extends BasePlayer>({
 }: PlayersTableProps<P>): JSX.Element => (
   <DataTable<P> {...props} columns={columns.map(name => PlayersTableColumns()[name])} />
 );
+
+export default PlayersTable;
