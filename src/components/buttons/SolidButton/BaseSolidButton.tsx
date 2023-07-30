@@ -1,20 +1,12 @@
-import classNames from "classnames";
-
 import { type ButtonVariant, ButtonTypes } from "~/components/buttons";
 
-import { ContentButton, type ContentButtonProps } from "../base";
+import { Button, type ButtonProps } from "../base";
 
 export type BaseSolidButtonProps<V extends ButtonVariant> = Omit<
-  ContentButtonProps<typeof ButtonTypes.SOLID>,
+  ButtonProps<typeof ButtonTypes.SOLID, V>,
   "buttonType"
-> & {
-  readonly variant: V;
-};
+>;
 
-export const BaseSolidButton = <V extends ButtonVariant>({ variant, ...props }: BaseSolidButtonProps<V>) => (
-  <ContentButton
-    {...props}
-    buttonType={ButtonTypes.SOLID}
-    className={classNames(`button--solid--${variant}`, props.className)}
-  />
+export const BaseSolidButton = <V extends ButtonVariant>(props: BaseSolidButtonProps<V>) => (
+  <Button {...props} buttonType={ButtonTypes.SOLID} />
 );

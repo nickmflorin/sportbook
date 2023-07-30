@@ -7,3 +7,19 @@
 @include partials.colors("background");
 
 @include partials.colors("border-color");
+
+@include partials.hovered-colors("color");
+
+@include partials.hovered-colors("background-color");
+
+@include partials.hovered-colors("background");
+
+@include partials.hovered-colors("border-color");
+
+@include partials.focused-colors("color");
+
+@include partials.focused-colors("background-color");
+
+@include partials.focused-colors("background");
+
+@include partials.focused-colors("border-color");

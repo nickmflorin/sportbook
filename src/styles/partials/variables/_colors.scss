@@ -191,7 +191,7 @@ $default-shades: (
   @return "#{$p}-#{$c}";
 }
 
-@mixin with-color-classes($color-type) {
+@mixin with-color-classes($color-type, $class-name-state-suffix: null) {
   @each $name in $color-names {
     $default-color: get-color($name);
     $classname: get-color-class-name($color-type, $name);
@@ -200,8 +200,26 @@ $default-shades: (
     @for $i from 1 through list.length(fn.mapget($colors, $name)) {
       $color: get-color($name, $i);
       $classname: get-color-class-name($color-type, $name, $i);
-      @content ($name, string.unquote($classname), $color);
+
+      $cs: if(
+        $class-name-state-suffix,
+        #{string.unquote($classname)}-#{$class-name-state-suffix},
+        string.unquote($classname)
+      );
+      @content ($name, $cs, $color);
     }
+  }
+}
+
+@mixin with-focused-color-classes($color-type) {
+  @include with-color-classes($color-type, $class-name-state-suffix: "focused") using ($name, $cs, $color) {
+    @content ($name, $cs, $color);
+  }
+}
+
+@mixin with-hovered-color-classes($color-type) {
+  @include with-color-classes($color-type, $class-name-state-suffix: "hovered") using ($name, $cs, $color) {
+    @content ($name, $cs, $color);
   }
 }
 
@@ -214,9 +232,19 @@ $default-shades: (
 }
 
 @mixin hovered-colors($color-type) {
-  @include with-color-classes($color-type) using ($name, $classname, $color) {
-    .#{$classname}-hovered {
+  @include with-hovered-color-classes($color-type) using ($name, $classname, $color) {
+    .#{$classname} {
       @include mixins.hovered {
+        #{$color-type}: $color;
+      }
+    }
+  }
+}
+
+@mixin focused-colors($color-type) {
+  @include with-focused-color-classes($color-type) using ($name, $classname, $color) {
+    .#{$classname} {
+      @include mixins.focused {
         #{$color-type}: $color;
       }
     }

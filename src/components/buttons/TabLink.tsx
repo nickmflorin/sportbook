@@ -1,14 +1,14 @@
 import classNames from "classnames";
 
-import { ContentLink, type ContentLinkProps } from "./base";
+import { ButtonLink, type ButtonLinkProps } from "./base";
 
-export interface TabLinkProps extends Omit<ContentLinkProps, "children"> {
+export interface TabLinkProps extends Omit<ButtonLinkProps, "children" | "content"> {
   readonly label: string;
   readonly isActive?: boolean;
 }
 
 export const TabLink = ({ label, isActive, ...props }: TabLinkProps) => (
-  <ContentLink {...props} className={classNames("tab-link", { "tab-link--active": isActive }, props.className)}>
+  <ButtonLink {...props} className={classNames("tab-link", { "tab-link--active": isActive }, props.className)}>
     {label}
-  </ContentLink>
+  </ButtonLink>
 );

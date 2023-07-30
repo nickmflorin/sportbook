@@ -1,6 +1,7 @@
 "use client";
 import { type LinkProps } from "next/link";
 import { usePathname } from "next/navigation";
+import React from "react";
 
 import classNames from "classnames";
 
@@ -14,6 +15,8 @@ export type TabItem = {
   readonly icon?: IconProp;
   readonly href: LinkProps["href"];
   readonly active: PathActive;
+  readonly visible?: boolean;
+  readonly disabled?: boolean;
 };
 
 export interface TabsProps extends ComponentProps {
@@ -24,9 +27,13 @@ export const Tabs = ({ tabs, ...props }: TabsProps) => {
   const pathname = usePathname();
   return (
     <div className={classNames("tabs", props.className)}>
-      {tabs.map(({ active, ...tab }, i) => (
-        <TabLink key={i} {...tab} isActive={pathIsActive(active, pathname)} />
-      ))}
+      {tabs.map(({ active, ...tab }, i) =>
+        tab.visible !== false ? (
+          <TabLink key={i} {...tab} isActive={pathIsActive(active, pathname)} />
+        ) : (
+          <React.Fragment key={i} />
+        ),
+      )}
     </div>
   );
 };

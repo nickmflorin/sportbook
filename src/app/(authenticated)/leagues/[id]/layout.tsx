@@ -63,6 +63,13 @@ export default async function LeagueLayout({ scores, children, teams, params: { 
           label: "Schedule",
           active: { leadingPath: "/leagues/:id/schedule" },
         },
+        {
+          href: `/leagues/${id}/scores`,
+          icon: { name: "people-pulling" },
+          label: "Scores",
+          active: { leadingPath: "/leagues/:id/scores" },
+          disabled: true,
+        },
       ]}
       staticViewWidth={420}
       staticViews={

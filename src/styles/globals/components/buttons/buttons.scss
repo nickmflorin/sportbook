@@ -7,11 +7,6 @@
 
 button {
   @extend %button-link-base;
-
-  // Use the default button variant if no variant class is on the element.
-  @include partials.without-selectors(partials.$button-types, $prefix: ".button--") {
-    @include variants.button-type(partials.$button-default-type);
-  }
 }
 
 .button {

@@ -2,12 +2,21 @@ import NextLink, { type LinkProps as NextLinkProps } from "next/link";
 import React, { type ForwardedRef, useMemo } from "react";
 
 import classNames from "classnames";
-import { type Required } from "utility-types";
+import { type Required, type Optional } from "utility-types";
 
-import { type CSSDirection, CSSDirections, type ComponentProps, type HTMLElementProps } from "~/lib/ui";
 import {
-  type ButtonTypes,
+  type CSSDirection,
+  CSSDirections,
+  type ComponentProps,
+  type HTMLElementProps,
+  type Color,
+  type FontWeight,
+  type TypographySize,
+  getColorClassName,
+} from "~/lib/ui";
+import {
   type ButtonType,
+  type ButtonVariant,
   type ButtonSize,
   type ButtonCornerStyle,
   ButtonCornerStyles,
@@ -16,22 +25,38 @@ import {
 import { type IconProp } from "~/components/icons";
 import { Icon } from "~/components/icons/Icon";
 
-export type BaseLinkProps = ComponentProps & {
+type BaseProps = ComponentProps & {
   readonly children: string | JSX.Element;
-  readonly href: NextLinkProps["href"];
   readonly disabled?: boolean;
+  readonly href?: NextLinkProps["href"];
 };
 
-export const getBaseLinkClassName = (props: Omit<BaseLinkProps, "children">) =>
+export type BaseLinkProps = Required<BaseProps, "href"> & {
+  readonly color?: Color;
+  readonly fontWeight?: FontWeight;
+  readonly fontSize?: TypographySize;
+  readonly hoveredColor?: Color;
+  readonly focusedColor?: Color;
+};
+
+export const getBaseLinkClassName = (props: Omit<BaseLinkProps, "children" | "href">) =>
   classNames(
     "link",
+    props.color && `link--${getColorClassName("color", props.color)}`,
+    props.focusedColor && `link--${getColorClassName("color", props.focusedColor, "focused")}`,
+    props.hoveredColor && `link--${getColorClassName("color", props.hoveredColor, "hovered")}`,
+    props.fontWeight && `link--font-weight-${props.fontWeight}`,
+    props.fontSize && `link--font-size-${props.fontSize}`,
     /* For cases where the element is an HTMLAnchorElement, we will need to define the disabled class name such that the
        disabled behavior can be "mocked". */
     { disabled: props.disabled },
     props.className,
   );
 
-export type BaseButtonProps<V extends ButtonType = ButtonType> = ComponentProps & {
+export type BaseButtonLinkProps = BaseLinkProps &
+  Pick<HTMLElementProps<"button">, "onClick" | "onFocus" | "onBlur" | "type" | "onFocusCapture" | "onBlurCapture">;
+
+export type BaseButtonProps<T extends ButtonType, V extends ButtonVariant> = Optional<BaseProps, "href"> & {
   /**
    * The {@link ForwardedRef} that can be optionally passed through to the underlying {@link HTMLButtonElement}.
    *
@@ -39,10 +64,9 @@ export type BaseButtonProps<V extends ButtonType = ButtonType> = ComponentProps 
    * component, and is necessary for them to work together properly.
    */
   readonly ref?: ForwardedRef<HTMLButtonElement>;
-  readonly children: string | JSX.Element;
-  readonly buttonType: V;
+  readonly buttonType: T;
+  readonly variant: V;
   readonly size?: ButtonSize;
-  readonly href?: NextLinkProps["href"];
   /**
    * Sets the element in a "locked" state, which is a state in which the non-visual characteristics of the "disabled"
    * state should be used, but the element should not be styled as if it is disabled.
@@ -54,16 +78,14 @@ export type BaseButtonProps<V extends ButtonType = ButtonType> = ComponentProps 
   readonly locked?: boolean;
   readonly loading?: boolean;
   readonly cornerStyle?: ButtonCornerStyle;
-} & Pick<
-    HTMLElementProps<"button">,
-    "id" | "onClick" | "onFocus" | "onBlur" | "disabled" | "type" | "onFocusCapture" | "onBlurCapture"
-  >;
+} & Pick<HTMLElementProps<"button">, "onClick" | "onFocus" | "onBlur" | "type" | "onFocusCapture" | "onBlurCapture">;
 
-export const getBaseButtonClassName = <V extends ButtonType = ButtonType>(
-  props: Required<Omit<BaseButtonProps<V>, "children">, "size" | "buttonType" | "cornerStyle">,
+export const getBaseButtonClassName = <T extends ButtonType, V extends ButtonVariant>(
+  props: Required<Omit<BaseButtonProps<T, V>, "children">, "size" | "buttonType" | "cornerStyle" | "variant">,
 ) =>
   classNames(
     "button",
+    `button--${props.variant}`,
     /* For cases where the element is an HTMLAnchorElement, we will need to define the disabled class name such that the
        disabled behavior can be "mocked". */
     { disabled: props.disabled },
@@ -75,7 +97,56 @@ export const getBaseButtonClassName = <V extends ButtonType = ButtonType>(
     props.className,
   );
 
-const _BaseButton = <V extends ButtonType = ButtonType>({
+export const BaseButtonLink = ({
+  onClick,
+  disabled,
+  href,
+  fontWeight,
+  children,
+  color,
+  ...props
+}: BaseButtonLinkProps): JSX.Element => {
+  /* The onClick should be overridden to prevent click behavior when the element is disabled just in case the "disabled"
+     class is being used and the SASS style does not remove pointer event from the element. */
+  const _onClick = useMemo(
+    () => (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (disabled !== true) {
+        onClick?.(e);
+      }
+    },
+    [onClick, disabled],
+  );
+
+  const btn = (
+    <button
+      type="button"
+      {...props}
+      className={getBaseLinkClassName({ ...props, disabled, fontWeight, color })}
+      onClick={onClick !== undefined ? _onClick : undefined}
+      disabled={disabled}
+    >
+      {children}
+    </button>
+  );
+  if (disabled === true) {
+    return btn;
+  }
+  return (
+    <NextLink href={href} className="button-link-wrapper">
+      <button
+        type="button"
+        {...props}
+        className={getBaseLinkClassName({ ...props, disabled, fontWeight, color })}
+        onClick={onClick !== undefined ? _onClick : undefined}
+        disabled={disabled}
+      >
+        {children}
+      </button>
+    </NextLink>
+  );
+};
+
+const _BaseButton = <T extends ButtonType, V extends ButtonVariant>({
   onClick,
   disabled,
   locked,
@@ -85,7 +156,7 @@ const _BaseButton = <V extends ButtonType = ButtonType>({
   buttonType,
   children,
   ...props
-}: Omit<BaseButtonProps<V>, "href">): JSX.Element => {
+}: Omit<BaseButtonProps<T, V>, "href">): JSX.Element => {
   /* The onClick should be overridden to prevent click behavior when the element is disabled just in case the "disabled"
      class is being used and the SASS style does not remove pointer event from the element. */
   const _onClick = useMemo(
@@ -110,8 +181,11 @@ const _BaseButton = <V extends ButtonType = ButtonType>({
   );
 };
 
-export const BaseButton = <V extends ButtonType = ButtonType>({ href, ...props }: BaseButtonProps<V>): JSX.Element =>
-  href !== undefined ? (
+export const BaseButton = <T extends ButtonType, V extends ButtonVariant>({
+  href,
+  ...props
+}: BaseButtonProps<T, V>): JSX.Element =>
+  href !== undefined && props.disabled !== true ? (
     <NextLink href={href} className="button-link-wrapper">
       <_BaseButton {...props} />
     </NextLink>
@@ -119,13 +193,11 @@ export const BaseButton = <V extends ButtonType = ButtonType>({ href, ...props }
     <_BaseButton {...props} />
   );
 
-export const BaseLink = ({ disabled, children, ...props }: BaseLinkProps): JSX.Element => (
-  <NextLink {...props} className={getBaseLinkClassName({ ...props, disabled })}>
+export const BaseLink = ({ disabled, children, color, fontWeight, ...props }: BaseLinkProps): JSX.Element => (
+  <NextLink {...props} className={getBaseLinkClassName({ ...props, disabled, color, fontWeight })}>
     {children}
   </NextLink>
 );
-
-export type ContentButtonType = Exclude<ButtonType, typeof ButtonTypes.ACTION>;
 
 type Loc = Exclude<CSSDirection, typeof CSSDirections.UP | typeof CSSDirections.DOWN>;
 
@@ -169,29 +241,60 @@ const ButtonLinkContent = ({
   </div>
 );
 
-export type ContentButtonProps<V extends ContentButtonType = ContentButtonType> = BaseButtonProps<V> &
-  Omit<ButtonContentProps, "component">;
+export type ButtonProps<T extends ButtonType, V extends ButtonVariant> = Optional<BaseButtonProps<T, V>, "children"> &
+  Omit<ButtonContentProps, "component"> & {
+    readonly content?: JSX.Element;
+  };
 
-export const ContentButton = <V extends ContentButtonType = ContentButtonType>({
+export const Button = <T extends ButtonType, V extends ButtonVariant>({
   icon,
   iconLocation,
   loading,
   children,
+  content,
   ...props
-}: ContentButtonProps<V>) => (
+}: ButtonProps<T, V>) => (
   <BaseButton {...props}>
-    <ButtonLinkContent component="button" loading={loading} iconLocation={iconLocation} icon={icon}>
-      {children}
-    </ButtonLinkContent>
+    {content !== undefined ? (
+      content
+    ) : (
+      <ButtonLinkContent component="button" loading={loading} iconLocation={iconLocation} icon={icon}>
+        {children}
+      </ButtonLinkContent>
+    )}
   </BaseButton>
 );
 
-export type ContentLinkProps = BaseLinkProps & Omit<LinkContentProps, "component">;
+export type LinkProps = Optional<BaseLinkProps, "children"> &
+  Omit<LinkContentProps, "component"> & {
+    readonly content?: JSX.Element;
+  };
 
-export const ContentLink = ({ icon, iconLocation, children, ...props }: ContentLinkProps) => (
+export const Link = ({ icon, iconLocation, children, content, ...props }: LinkProps) => (
   <BaseLink {...props}>
-    <ButtonLinkContent component="link" iconLocation={iconLocation} icon={icon}>
-      {children}
-    </ButtonLinkContent>
+    {content !== undefined ? (
+      content
+    ) : (
+      <ButtonLinkContent component="link" iconLocation={iconLocation} icon={icon}>
+        {children}
+      </ButtonLinkContent>
+    )}
   </BaseLink>
+);
+
+export type ButtonLinkProps = Optional<BaseButtonLinkProps, "children"> &
+  Omit<LinkContentProps, "component"> & {
+    readonly content?: JSX.Element;
+  };
+
+export const ButtonLink = ({ icon, iconLocation, children, content, ...props }: ButtonLinkProps) => (
+  <BaseButtonLink {...props}>
+    {content !== undefined ? (
+      content
+    ) : (
+      <ButtonLinkContent component="link" iconLocation={iconLocation} icon={icon}>
+        {children}
+      </ButtonLinkContent>
+    )}
+  </BaseButtonLink>
 );

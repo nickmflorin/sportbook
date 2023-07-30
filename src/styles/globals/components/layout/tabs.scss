@@ -6,7 +6,7 @@
   border-bottom: 2px solid partials.get-color("gray", $shade: 2);
   width: 100%;
 
-  > .tab-link {
+  .tab-link {
     color: partials.get-color("gray", $shade: 8);
     font-weight: partials.get-font-weight($weight: "medium");
     font-size: partials.get-font-size($type: "body", $size: "sm");

@@ -18,11 +18,51 @@ a {
 .link {
   @extend %button-link-base;
 
-  color: inherit;
   text-decoration: none;
+  line-height: 1;
 
   @include partials.disabled;
   @include button-link-structure("link");
-  font-weight: partials.$link-font-weight;
-  line-height: 1;
+
+  @layer {
+    font-weight: partials.$link-font-weight;
+    color: inherit;
+  }
+
+  @include partials.with-color-classes("color") using ($name, $classname, $color) {
+    &.link--#{$classname} {
+      color: $color;
+    }
+  }
+
+  @include partials.with-color-classes("color", "hovered") using ($name, $classname, $color) {
+    &.link--#{$classname} {
+      @include partials.hovered {
+        color: $color;
+      }
+    }
+  }
+
+  @include partials.with-color-classes("color", "focused") using ($name, $classname, $color) {
+    &.link--#{$classname} {
+      @include partials.focused {
+        color: $color;
+      }
+    }
+  }
+
+  // Allow the font-weight to be overridden.
+  @include partials.with-font-weights() using ($weight, $value) {
+    &.link--font-weight-#{$weight} {
+      font-weight: $value;
+    }
+  }
+
+  // Allow the font-size to be overridden for each size.
+  @include partials.with-font-sizes("body") using ($size, $data) {
+    &.link--font-size-#{$size} {
+      font-size: partials.mapget($data, font-size);
+      line-height: partials.mapget($data, line-height);
+    }
+  }
 }
