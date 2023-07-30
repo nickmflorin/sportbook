@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect, useTransition } from "react";
 
 import uniq from "lodash.uniq";
 
@@ -32,22 +32,27 @@ export const MultiMenu = <V extends string | null, M>({
     defaultValue === undefined ? ([] as Exclude<V, null>[]) : defaultValue,
   );
 
+  useEffect(() => {
+    if (value !== undefined) {
+      setValue(value);
+    }
+  }, [value]);
+
   const passThrough = { ...props, mode: "multiple" } as MultiMenuProps<V, M>;
+  const [_, startTransition] = useTransition();
 
   const onMenuItemClick = useMemo(
-    () => (value: Exclude<V, null>, handler: (newState: Exclude<V, null>[]) => void) => {
-      setValue(prev => {
-        let newState: Exclude<V, null>[];
-        if (prev.includes(value)) {
-          newState = prev.filter(v => v !== value);
-        } else {
-          newState = [...prev, value];
-        }
-        handler(newState);
-        return newState;
-      });
+    () => (clickedValue: Exclude<V, null>, handler: (newState: Exclude<V, null>[]) => void) => {
+      let newState: Exclude<V, null>[];
+      if (_value.includes(clickedValue)) {
+        newState = _value.filter(v => v !== clickedValue);
+      } else {
+        newState = [..._value, clickedValue];
+      }
+      startTransition(() => setValue(newState));
+      handler(newState);
     },
-    [],
+    [_value],
   );
 
   if (isMultiDatumValuedMenuProps<V, M>(passThrough)) {

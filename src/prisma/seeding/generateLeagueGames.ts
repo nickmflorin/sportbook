@@ -36,7 +36,7 @@ const NUM_MATCHUP_VISITATION_PAIRS = 2;
 /* The number of matchups that do not have an associated GameResult.  Their statuses will still be FINAL, but they will
    not have a GameResult record.  This allows the number of "Games Played" for a given Team to be randomly different to
    a slight degree than other Team(s) in the same League. */
-const NUM_UNPLAYED_MATCHUPS = { min: 1, max: 4 };
+const NUM_UNPLAYED_MATCHUPS = { min: 0.4, max: 0.6 };
 
 // The number of additional matchups that should be included with randomly generated, non-FINAL statuses.
 const NUM_ADDITIONAL_MATCHUPS = { min: 1, max: 4 };
@@ -167,7 +167,10 @@ export default async function generateLeagueGames(
       .map((_, i) => i),
     {
       duplicationKey: i => i,
-      length: { min: NUM_UNPLAYED_MATCHUPS.min, max: Math.min(teamMatchups.length, NUM_UNPLAYED_MATCHUPS.max) },
+      length: {
+        min: Math.floor(NUM_UNPLAYED_MATCHUPS.min * teamMatchups.length),
+        max: Math.floor(NUM_UNPLAYED_MATCHUPS.max & teamMatchups.length),
+      },
     },
   );
   const playedMatchups = teamMatchups.filter((matchup, i) => !unplayedMatchupIndicies.includes(i));

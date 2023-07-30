@@ -59,7 +59,7 @@ export const DropdownMenu = ({
   }, [children, buttonText, buttonStyle, isOpen, onClose]);
 
   return (
-    <Popover opened={isOpen} position="bottom" width="target" transitionProps={{ transition: "pop" }}>
+    <Popover position="bottom" width="target" transitionProps={{ transition: "pop" }} trapFocus>
       <Popover.Target>
         <div
           style={{ maxWidth: "fit-content" }}

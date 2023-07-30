@@ -15,6 +15,7 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
             { leadingPath: "/leagues/:id" },
             { leadingPath: "/leagues/:id/standings" },
             { leadingPath: "/leagues/:id/players" },
+            { leadingPath: "/leagues/:id/schedule" },
           ],
         },
         { href: "/teams", icon: <Icon name="people-group" />, active: { leadingPath: "/teams" } },

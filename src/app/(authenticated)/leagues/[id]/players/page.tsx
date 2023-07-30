@@ -5,6 +5,7 @@ import uniq from "lodash.uniq";
 
 import { prisma, isPrismaInvalidIdError, isPrismaDoesNotExistError } from "~/prisma/client";
 import { type League, FileUploadEntity, type Team } from "~/prisma/model";
+import { parseQueryTeamIds } from "~/prisma/urls";
 import { constructOrSearch } from "~/prisma/util";
 import { Loading } from "~/components/loading";
 import { getAuthUser } from "~/server/auth";
@@ -23,8 +24,8 @@ export default async function LeaguePlayers({
   params: { id },
   searchParams: { search: _search, teams },
 }: LeaguePlayersProps) {
-  const teamArray: string[] = teams !== undefined ? decodeURIComponent(teams).split(",") : [];
   const search: string = _search !== undefined ? decodeURIComponent(_search) : "";
+  const teamIds = await parseQueryTeamIds({ value: teams });
 
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
   let league: League & { readonly teams: Team[] };
@@ -47,9 +48,9 @@ export default async function LeaguePlayers({
   const players = await prisma.player.findMany({
     include: { user: true, team: true },
     where: {
-      ...(teamArray.length > 0 && search.length !== 0
+      ...(teamIds.length > 0 && search.length !== 0
         ? {
-            team: { id: { in: teamArray }, leagueId: league.id },
+            team: { id: { in: teamIds }, leagueId: league.id },
             OR: [
               { user: constructOrSearch(search, ["firstName", "lastName"]) },
               { team: { name: { contains: search, mode: "insensitive" } } },
@@ -63,8 +64,8 @@ export default async function LeaguePlayers({
               { team: { name: { contains: search, mode: "insensitive" } } },
             ],
           }
-        : teamArray.length > 0
-        ? { team: { id: { in: teamArray }, leagueId: league.id } }
+        : teamIds.length > 0
+        ? { team: { id: { in: teamIds }, leagueId: league.id } }
         : { team: { leagueId: league.id } }),
     },
   });

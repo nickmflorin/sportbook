@@ -4,25 +4,29 @@ import { notFound, redirect } from "next/navigation";
 import uniq from "lodash.uniq";
 
 import { prisma, isPrismaInvalidIdError, isPrismaDoesNotExistError } from "~/prisma/client";
-import { type Team, type League, FileUploadEntity, type WithFileUrl, type TeamStanding } from "~/prisma/model";
+import { type League, FileUploadEntity, type Team } from "~/prisma/model";
+import { parseQueryTeamIds } from "~/prisma/urls";
 import { Loading } from "~/components/loading";
 import { getAuthUser } from "~/server/auth";
-import { getLeagueStandings } from "~/server/leagues";
 
-const TeamStandingsTableView = dynamic(() => import("~/components/tables/TeamStandingsTableView"), {
+const GameScheduleTable = dynamic(() => import("~/components/tables/GameScheduleTable"), {
   ssr: true,
   loading: () => <Loading loading={true} />,
 });
 
-interface LeagueStandingsProps {
+interface LeagueScheduleProps {
   readonly params: { id: string };
+  readonly searchParams: { teams?: string };
 }
 
-export default async function LeagueStandings({ params: { id } }: LeagueStandingsProps) {
+export default async function LeagueSchedule({ params: { id }, searchParams: { teams } }: LeagueScheduleProps) {
+  const teamIds = await parseQueryTeamIds({ value: teams });
+
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
-  let league: League;
+  let league: League & { readonly teams: Team[] };
   try {
     league = await prisma.league.findFirstOrThrow({
+      include: { teams: true },
       where: {
         id,
         OR: [{ staff: { some: { userId: user.id } } }, { teams: { some: { players: { some: { userId: user.id } } } } }],
@@ -35,26 +39,36 @@ export default async function LeagueStandings({ params: { id } }: LeagueStanding
       throw e;
     }
   }
-  const standings = await getLeagueStandings(league);
 
-  const games = await prisma.game.findMany({
-    where: { leagueId: id, result: { isNot: null } },
-    include: { homeTeam: true, awayTeam: true, result: true },
+  const upcomingGames = await prisma.game.findMany({
+    include: { homeTeam: true, awayTeam: true, location: true },
+    orderBy: { dateTime: "asc" },
+    where: {
+      leagueId: league.id,
+      result: { isNot: null },
+      OR:
+        teamIds.length !== 0
+          ? [{ homeTeam: { id: { in: teamIds } } }, { awayTeam: { id: { in: teamIds } } }]
+          : undefined,
+    },
   });
-  const teams: Team[] = uniq(games.reduce((prev, g) => [...prev, g.awayTeam, g.homeTeam], [] as Team[]));
+
+  const upcomingGameTeamIds: string[] = uniq(
+    upcomingGames.reduce((prev, g) => [...prev, g.awayTeamId, g.homeTeamId], [] as string[]),
+  );
 
   const imageUploads = await prisma.fileUpload.groupBy({
     by: ["entityId", "fileUrl", "createdAt"],
-    where: { entityType: FileUploadEntity.TEAM, id: { in: teams.map(t => t.id) } },
+    where: { entityType: FileUploadEntity.TEAM, id: { in: upcomingGameTeamIds } },
     orderBy: { createdAt: "desc" },
     take: 1,
   });
 
-  const standingsWithImages: WithFileUrl<TeamStanding>[] = standings.map(
-    (standing): WithFileUrl<TeamStanding> => ({
-      ...standing,
-      fileUrl: imageUploads.find(i => i.entityId === standing.id)?.fileUrl || null,
-    }),
-  );
-  return <TeamStandingsTableView data={standingsWithImages} title="Standings" />;
+  const gamesWithTeamImages = upcomingGames.map(g => ({
+    ...g,
+    homeTeam: { ...g.homeTeam, fileUrl: imageUploads.find(i => i.entityId === g.homeTeamId)?.fileUrl || null },
+    awayTeam: { ...g.awayTeam, fileUrl: imageUploads.find(i => i.entityId === g.awayTeamId)?.fileUrl || null },
+  }));
+
+  return <GameScheduleTable data={gamesWithTeamImages} />;
 }

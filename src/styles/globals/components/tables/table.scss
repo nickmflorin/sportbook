@@ -139,4 +139,11 @@ $table-size-properties: (
       }
     }
   }
+
+  // The mantine-datatable package puts a bunch of div elements after the HTML table element (siblings of the HTML table
+  // element), where those elements are responsible for adding weird background shadows/gradients to the top, bottom,
+  // left and right when scrolling.  We want to remove those.
+  table.mantine-Table-root ~ div {
+    display: none;
+  }
 }
