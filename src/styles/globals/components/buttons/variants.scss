@@ -61,14 +61,18 @@
 
   @each $size in partials.$button-size-names {
     &.button--#{$size} {
-      font-size: partials.get-button-font-size("alternate", $size: $size);
-      height: partials.get-button-size("alternate", $size: $size);
-      line-height: partials.get-button-size("alternate", $size: $size);
+      @layer {
+        font-size: partials.get-button-font-size("alternate", $size: $size);
+        height: partials.get-button-size("alternate", $size: $size);
+        line-height: partials.get-button-size("alternate", $size: $size);
+      }
 
       // Allow the font-size to be overridden for each size.
       @include partials.with-font-sizes("body") using ($size, $data) {
         &.font-size-#{$size} {
-          font-size: partials.mapget($data, font-size);
+          @layer {
+            font-size: partials.mapget($data, font-size);
+          }
         }
       }
     }

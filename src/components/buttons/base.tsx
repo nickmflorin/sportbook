@@ -203,7 +203,7 @@ type Loc = Exclude<CSSDirection, typeof CSSDirections.UP | typeof CSSDirections.
 
 type ButtonContentProps = {
   readonly component: "button";
-  readonly children: string | JSX.Element;
+  readonly children?: string | JSX.Element;
   readonly loading?: boolean;
   readonly icon?: IconProp;
   readonly iconLocation?: Loc;
@@ -212,7 +212,7 @@ type ButtonContentProps = {
 type LinkContentProps = {
   readonly component: "link";
   readonly loading?: never;
-  readonly children: string | JSX.Element;
+  readonly children?: string | JSX.Element;
   readonly icon?: IconProp;
   readonly iconLocation?: Loc;
 };
@@ -242,8 +242,9 @@ const ButtonLinkContent = ({
 );
 
 export type ButtonProps<T extends ButtonType, V extends ButtonVariant> = Optional<BaseButtonProps<T, V>, "children"> &
-  Omit<ButtonContentProps, "component"> & {
+  Omit<ButtonContentProps, "component" | "children"> & {
     readonly content?: JSX.Element;
+    readonly children?: string | JSX.Element;
   };
 
 export const Button = <T extends ButtonType, V extends ButtonVariant>({
@@ -266,8 +267,9 @@ export const Button = <T extends ButtonType, V extends ButtonVariant>({
 );
 
 export type LinkProps = Optional<BaseLinkProps, "children"> &
-  Omit<LinkContentProps, "component"> & {
+  Omit<LinkContentProps, "component" | "children"> & {
     readonly content?: JSX.Element;
+    readonly children?: string | JSX.Element;
   };
 
 export const Link = ({ icon, iconLocation, children, content, ...props }: LinkProps) => (

@@ -16,74 +16,76 @@ import {
   menuItemsAreAllValueless,
 } from "./types";
 
-type SingleValuedMixin<T extends Exclude<V, null> | V, V extends string | null> = {
+type SingleMixin<T extends Exclude<V, null> | V, V extends string | null> = {
   readonly mode: "single";
   readonly value?: T;
 };
 
-type SingleValuelessMenuProps = {
+export type SingleValuelessProps = {
   readonly mode: "single";
   readonly items: ValuelessMenuItem[];
 };
 
-type SingleValuedNullableMixin<V extends string | null> = SingleValuedMixin<V, V> & {
+type SingleNullableMixin<V extends string | null> = SingleMixin<V, V> & {
   readonly nullable: true;
   readonly clearable?: boolean;
   readonly defaultValue?: V;
 };
 
-type SingleValuedNonNullableMixin<V extends string | null> = SingleValuedMixin<Exclude<V, null>, V> & {
+type SingleNonNullableMixin<V extends string | null> = SingleMixin<Exclude<V, null>, V> & {
   // The default value is required for non-nullable menus.
   readonly defaultValue: Exclude<V, null>;
 };
 
-type SingleValuedNullableMenuProps<V extends string | null> = SingleValuedNullableMixin<V> & {
+type SingleNullableProps<V extends string | null> = SingleNullableMixin<V> & {
   readonly items: ValuedMenuItem<V>[];
   readonly onChange?: (value: V | null) => void;
 };
 
-type SingleValuedNonNullableMenuProps<V extends string | null> = SingleValuedNonNullableMixin<V> & {
+type SingleNonNullableProps<V extends string | null> = SingleNonNullableMixin<V> & {
   readonly items: ValuedMenuItem<V>[];
   readonly onChange?: (value: Exclude<V, null>) => void;
 };
 
-type SingleDatumValuedNullableMenuProps<V extends string | null, M> = SingleValuedNullableMixin<V> & {
+type SingleDatumNullableProps<V extends string | null, M> = SingleNullableMixin<V> & {
   readonly items: DatumValuedMenuItem<V, M>[];
   readonly onChange?: (value: V | null, data: M) => void;
 };
 
-type SingleDatumValuedNonNullableMenuProps<V extends string | null, M> = SingleValuedNonNullableMixin<V> & {
+type SingleDatumNonNullableProps<V extends string | null, M> = SingleNonNullableMixin<V> & {
   readonly items: DatumValuedMenuItem<V, M>[];
   readonly onChange?: (value: Exclude<V, null>, data: M) => void;
 };
 
-type SingleDatumValuedNullableCallbackMenuProps<V extends string | null, M> = SingleValuedNullableMixin<V> & {
+type SingleDatumNullableCallbackProps<V extends string | null, M> = SingleNullableMixin<V> & {
   readonly items: DatumValuelessMenuItem<M>[];
   readonly getValue: DatumValuelessValueGetter<V, M>;
   readonly onChange?: (value: V | null, data: M | null) => void;
 };
 
-type SingleDatumValuedNonNullableCallbackMenuProps<V extends string | null, M> = SingleValuedNonNullableMixin<V> & {
+type SingleDatumNonNullableCallbackProps<V extends string | null, M> = SingleNonNullableMixin<V> & {
   readonly items: DatumValuelessMenuItem<M>[];
   readonly getValue: DatumValuelessValueGetter<V, M>;
   readonly onChange?: (value: Exclude<V, null>, data: M) => void;
 };
 
 export type SingleMenuNullableProps<V extends string | null, M> =
-  | SingleValuedNullableMenuProps<V>
-  | SingleDatumValuedNullableMenuProps<V, M>
-  | SingleDatumValuedNullableCallbackMenuProps<V, M>;
+  | SingleNullableProps<V>
+  | SingleDatumNullableProps<V, M>
+  | SingleDatumNullableCallbackProps<V, M>;
 
 export type SingleMenuNonNullableProps<V extends string | null, M> =
-  | SingleValuedNonNullableMenuProps<V>
-  | SingleDatumValuedNonNullableCallbackMenuProps<V, M>
-  | SingleDatumValuedNonNullableMenuProps<V, M>;
+  | SingleNonNullableProps<V>
+  | SingleDatumNonNullableCallbackProps<V, M>
+  | SingleDatumNonNullableProps<V, M>;
 
-export type SingleMenuProps<V extends string | null, M> =
+export type SingleMenuValuedProps<V extends string | null, M> =
   | SingleMenuNullableProps<V, M>
   | SingleMenuNonNullableProps<V, M>;
 
-type WithPolymorphicProps<P extends SingleMenuProps<V, M>, V extends string | null, M> = Omit<
+export type SingleMenuProps<V extends string | null, M> = SingleMenuValuedProps<V, M> | SingleValuelessProps;
+
+type WithPolymorphicProps<P extends SingleMenuValuedProps<V, M>, V extends string | null, M> = Omit<
   P,
   "value" | "defaultValue" | "mode"
 > & {
@@ -92,34 +94,34 @@ type WithPolymorphicProps<P extends SingleMenuProps<V, M>, V extends string | nu
 };
 
 const isSingleValuelessProps = <V extends string | null, M>(
-  props: Omit<SingleMenuProps<V, M>, "mode"> | Omit<SingleValuelessMenuProps, "mode">,
-): props is SingleValuelessMenuProps => menuItemsAreAllValueless(props.items);
+  props: Omit<SingleMenuProps<V, M>, "mode"> | Omit<SingleValuelessProps, "mode">,
+): props is SingleValuelessProps => menuItemsAreAllValueless(props.items);
 
-const isSingleValuedNonNullableProps = <V extends string | null, M>(
-  props: Omit<SingleMenuProps<V, M>, "mode"> | Omit<SingleValuelessMenuProps, "mode">,
-): props is SingleValuedNonNullableMenuProps<V> =>
+const isSingleNonNullableProps = <V extends string | null, M>(
+  props: Omit<SingleMenuProps<V, M>, "mode"> | Omit<SingleValuelessProps, "mode">,
+): props is SingleNonNullableProps<V> =>
   menuItemsAreAllValued(props.items) && (props as SingleMenuNullableProps<V, M>).nullable !== true;
 
-const isSingleDatumValuedNonNullableProps = <V extends string | null, M>(
-  props: Omit<SingleMenuProps<V, M>, "mode"> | Omit<SingleValuelessMenuProps, "mode">,
-): props is SingleDatumValuedNonNullableMenuProps<V, M> =>
+const isSingleDatumNonNullableProps = <V extends string | null, M>(
+  props: Omit<SingleMenuProps<V, M>, "mode"> | Omit<SingleValuelessProps, "mode">,
+): props is SingleDatumNonNullableProps<V, M> =>
   menuItemsAreAllDatumValued(props.items) && (props as SingleMenuNullableProps<V, M>).nullable !== true;
 
-const isSingleDatumValuedNonNullableCallbackProps = <V extends string | null, M>(
-  props: Omit<SingleMenuProps<V, M>, "mode"> | Omit<SingleValuelessMenuProps, "mode">,
-): props is SingleDatumValuedNonNullableCallbackMenuProps<V, M> =>
+const isSingleDatumNonNullableCallbackProps = <V extends string | null, M>(
+  props: Omit<SingleMenuProps<V, M>, "mode"> | Omit<SingleValuelessProps, "mode">,
+): props is SingleDatumNonNullableCallbackProps<V, M> =>
   menuItemsAreAllDatumValueless(props.items) &&
   (props as SingleMenuNullableProps<V, M>).nullable !== true &&
-  (props as SingleDatumValuedNonNullableCallbackMenuProps<V, M>).getValue !== undefined;
+  (props as SingleDatumNonNullableCallbackProps<V, M>).getValue !== undefined;
 
-export const isSingleNonNullableProps = <V extends string | null, M>(
-  props: Omit<SingleMenuProps<V, M>, "mode"> | Omit<SingleValuelessMenuProps, "mode">,
+export const isSingleMenuNonNullableProps = <V extends string | null, M>(
+  props: Omit<SingleMenuProps<V, M>, "mode"> | Omit<SingleValuelessProps, "mode">,
 ): props is SingleMenuNonNullableProps<V, M> =>
-  isSingleDatumValuedNonNullableCallbackProps(props) ||
-  isSingleValuedNonNullableProps(props) ||
-  isSingleDatumValuedNonNullableProps(props);
+  isSingleDatumNonNullableCallbackProps(props) ||
+  isSingleNonNullableProps(props) ||
+  isSingleDatumNonNullableProps(props);
 
-const SingleValuelessMenu = ({ items }: Omit<SingleValuelessMenuProps, "mode">): JSX.Element => (
+const SingleValuelessMenu = ({ items }: Omit<SingleValuelessProps, "mode">): JSX.Element => (
   <React.Fragment>
     {items.map((item, i) => (
       <ValuelessMenuItemRenderer key={i} item={item} />
@@ -127,12 +129,12 @@ const SingleValuelessMenu = ({ items }: Omit<SingleValuelessMenuProps, "mode">):
   </React.Fragment>
 );
 
-const SingleValuedNonNullableMenu = <V extends string | null>({
+const _SingleNonNullableMenu = <V extends string | null>({
   items,
   onMenuItemClick,
   onChange,
   value,
-}: WithPolymorphicProps<SingleValuedNonNullableMenuProps<V>, V, never>): JSX.Element => {
+}: WithPolymorphicProps<SingleNonNullableProps<V>, V, never>): JSX.Element => {
   const itemsWithValues = useItemValues<ValuedMenuItem<V>[], V, never>({ items });
 
   return (
@@ -150,13 +152,13 @@ const SingleValuedNonNullableMenu = <V extends string | null>({
   );
 };
 
-const SingleDatumValuedNonNullableMenu = <V extends string | null, M>({
+const _SingleDatumNonNullableMenu = <V extends string | null, M>({
   items,
   onMenuItemClick,
   onChange,
   value,
-}: WithPolymorphicProps<SingleDatumValuedNonNullableMenuProps<V, M>, V, M>): JSX.Element => {
-  const [valueDatumMap, itemsWithValues] = useValueDatumMap<DatumValuedMenuItem<V, M>[], V, M>({ items });
+}: WithPolymorphicProps<SingleDatumNonNullableProps<V, M>, V, M>): JSX.Element => {
+  const [atumMap, itemsWithValues] = useValueDatumMap<DatumValuedMenuItem<V, M>[], V, M>({ items });
 
   return (
     <React.Fragment>
@@ -168,7 +170,7 @@ const SingleDatumValuedNonNullableMenu = <V extends string | null, M>({
           withCheckbox={false}
           onClick={() => {
             onMenuItemClick(item.value, newState => {
-              const datum = valueDatumMap[item.value];
+              const datum = atumMap[item.value];
               if (datum === undefined) {
                 throw new Error(`No datum was found for menu item with value '${item.value}'.`);
               }
@@ -181,14 +183,14 @@ const SingleDatumValuedNonNullableMenu = <V extends string | null, M>({
   );
 };
 
-const SingleDatumValuedNonNullableCallbackMenu = <V extends string | null, M>({
+const _SingleDatumNonNullableCallbackMenu = <V extends string | null, M>({
   items,
   onMenuItemClick,
   onChange,
   getValue,
   value,
-}: WithPolymorphicProps<SingleDatumValuedNonNullableCallbackMenuProps<V, M>, V, M>): JSX.Element => {
-  const [valueDatumMap, itemsWithValues] = useValueDatumMap<DatumValuelessMenuItem<M>[], V, M>({ items, getValue });
+}: WithPolymorphicProps<SingleDatumNonNullableCallbackProps<V, M>, V, M>): JSX.Element => {
+  const [atumMap, itemsWithValues] = useValueDatumMap<DatumValuelessMenuItem<M>[], V, M>({ items, getValue });
 
   return (
     <React.Fragment>
@@ -200,7 +202,7 @@ const SingleDatumValuedNonNullableCallbackMenu = <V extends string | null, M>({
           withCheckbox={false}
           onClick={() => {
             onMenuItemClick(item.value, newState => {
-              const datum = valueDatumMap[item.value];
+              const datum = atumMap[item.value];
               if (datum === undefined) {
                 throw new Error(`No datum was found for menu item with value '${item.value}'.`);
               }
@@ -237,17 +239,17 @@ export const SingleNonNullableMenu = <V extends string | null, M>({
     [],
   );
 
-  if (isSingleDatumValuedNonNullableCallbackProps<V, M>(passThrough)) {
+  if (isSingleDatumNonNullableCallbackProps<V, M>(passThrough)) {
     return (
-      <SingleDatumValuedNonNullableCallbackMenu<V, M>
+      <_SingleDatumNonNullableCallbackMenu<V, M>
         {...passThrough}
         value={value === undefined ? _value : value}
         onMenuItemClick={onMenuItemClick}
       />
     );
-  } else if (isSingleDatumValuedNonNullableProps<V, M>(passThrough)) {
+  } else if (isSingleDatumNonNullableProps<V, M>(passThrough)) {
     return (
-      <SingleDatumValuedNonNullableMenu<V, M>
+      <_SingleDatumNonNullableMenu<V, M>
         {...passThrough}
         value={value === undefined ? _value : value}
         onMenuItemClick={onMenuItemClick}
@@ -255,7 +257,7 @@ export const SingleNonNullableMenu = <V extends string | null, M>({
     );
   } else {
     return (
-      <SingleValuedNonNullableMenu<V>
+      <_SingleNonNullableMenu<V>
         {...passThrough}
         value={value === undefined ? _value : value}
         onMenuItemClick={onMenuItemClick}
@@ -265,7 +267,7 @@ export const SingleNonNullableMenu = <V extends string | null, M>({
 };
 
 export const SingleMenu = <V extends string | null, M>(
-  props: Omit<SingleMenuProps<V, M>, "mode"> | Omit<SingleValuelessMenuProps, "mode">,
+  props: Omit<SingleMenuProps<V, M>, "mode"> | Omit<SingleValuelessProps, "mode">,
 ): JSX.Element => {
   if (isSingleNonNullableProps<V, M>(props)) {
     return <SingleNonNullableMenu {...props} />;

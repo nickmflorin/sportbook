@@ -6,8 +6,8 @@ import { DataTable as MantineDataTable, type DataTableProps as MantineDataTableP
 import { type ClassName } from "~/lib/ui";
 import { EditTableRowButton } from "~/components/buttons/EditTableRowButton";
 import { Loading } from "~/components/loading";
+import { TableActionDropdownMenu, type TableAction } from "~/components/menus/TableActionDropdownMenu";
 
-import { DataTableActionMenu, type DataTableAction } from "./DataTableActionMenu";
 import { type DataTableSize, DataTableSizes } from "./types";
 
 export type Column<T = unknown> = Exclude<MantineDataTableProps<T>["columns"], undefined>[number];
@@ -27,13 +27,13 @@ export const EditRowColumn = <T extends Record<string, unknown>>({
 export const ActionMenuColumn = <T extends Record<string, unknown>>({
   actionMenu,
 }: {
-  actionMenu: (t: T) => DataTableAction[];
+  actionMenu: (t: T) => TableAction[];
 }): Column<T> => ({
   title: "",
   accessor: "",
   width: 40,
   textAlignment: "center",
-  render: (rowData: T) => <DataTableActionMenu actions={actionMenu(rowData)} />,
+  render: (rowData: T) => <TableActionDropdownMenu actions={actionMenu(rowData)} />,
 });
 
 export type DataTableProps<T> = Pick<MantineDataTableProps<T>, "columns" | "sx"> & {
@@ -42,7 +42,7 @@ export type DataTableProps<T> = Pick<MantineDataTableProps<T>, "columns" | "sx">
   readonly loading?: boolean;
   readonly className?: ClassName;
   readonly onRowEdit?: (t: T) => void;
-  readonly actionMenu?: (t: T) => DataTableAction[];
+  readonly actionMenu?: (t: T) => TableAction[];
 };
 
 export const DataTable = <T extends Record<string, unknown>>({

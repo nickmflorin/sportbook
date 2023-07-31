@@ -16,7 +16,10 @@ export const BaseActionButton = <V extends ButtonVariant = ButtonVariant>({
   variant,
   ...props
 }: BaseActionButtonProps<V>) => (
-  <Button {...props} buttonType={ButtonTypes.ACTION} variant={variant}>
-    <Icon icon={icon} loading={props.loading} size={IconSizes.FILL} />
-  </Button>
+  <Button
+    {...props}
+    buttonType={ButtonTypes.ACTION}
+    variant={variant}
+    content={<Icon icon={icon} loading={props.loading} size={IconSizes.FILL} />}
+  />
 );

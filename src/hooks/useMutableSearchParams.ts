@@ -28,11 +28,11 @@ export const useMutableSearchParams = () => {
         } else if (value !== null && value !== undefined && value.length !== 0) {
           newParams.set(param, value);
         }
-        // If the new parameter is null or undefined, remove it from the set of parameters.
-        if (params[param] === null || params[param] === undefined) {
-          newParams.delete(param);
-          continue;
-        }
+        /* // If the new parameter is null or undefined, remove it from the set of parameters.
+           if (params[param] === null || params[param] === undefined) {
+             newParams.delete(param);
+             continue;
+           } */
       }
       const queryString = newParams.toString();
       return { searchParams: newParams, queryString: queryString.length !== 0 ? queryString : null };

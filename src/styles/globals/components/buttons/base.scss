@@ -41,9 +41,11 @@
     height: 100%;
     justify-content: center;
     position: relative;
+    width: 100%;
     text-align: inherit;
     vertical-align: middle;
-    width: 100%;
+    line-height: inherit;
+    font-size: inherit;
 
     > .#{$form}__sub-content {
       text-align: inherit;

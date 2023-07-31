@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState, useEffect, useTransition } from "react";
+import React, { useMemo, useState, useEffect, useTransition, useRef, useImperativeHandle } from "react";
 
 import { useValueDatumMap, useItemValues } from "./hooks";
 import { ValuedMenuItemRenderer } from "./items";
@@ -14,8 +14,20 @@ import {
   menuItemsAreAllDatumValueless,
 } from "./types";
 
+export type IMultiMenu<V extends string | null> = {
+  readonly setValue: (value: Exclude<V, null>[]) => void;
+  readonly clear: () => void;
+};
+
+export const useMultiMenu = <V extends string | null>() => {
+  /* eslint-disable-next-line @typescript-eslint/no-empty-function */
+  const ref = useRef<IMultiMenu<V>>({ setValue: () => {}, clear: () => {} });
+  return ref;
+};
+
 type MultiValuedMixin<V extends string | null> = {
   readonly mode: "multiple";
+  readonly menu?: React.RefObject<IMultiMenu<V>>;
   readonly defaultValue?: Exclude<V, null>[];
   readonly clearable?: boolean;
   readonly value?: Exclude<V, null>[];
@@ -63,7 +75,10 @@ type WithPolymorphicProps<P extends MultiMenuProps<V, M>, V extends string | nul
   "value" | "defaultValue" | "mode"
 > & {
   readonly value: Exclude<P["value"], undefined>;
-  readonly onMenuItemClick: (value: Exclude<V, null>, handler: (newState: Exclude<V, null>[]) => void) => void;
+  readonly setValue: (
+    value: Exclude<V, null> | Exclude<V, null>[],
+    handler: (newState: Exclude<V, null>[]) => void,
+  ) => void;
 };
 
 const MultiDatumlessMenu = <V extends string | null>(
@@ -76,15 +91,27 @@ const MultiDatumlessMenu = <V extends string | null>(
     getValue: (props as WithPolymorphicProps<MultiValuedCallbackMenuProps<V>, V, never>).getValue,
   });
 
+  const { setValue: _setValue, onChange, value, menu, withCheckbox } = props;
+
+  const setValue = useMemo(
+    () => (v: Exclude<V, null> | Exclude<V, null>[]) => _setValue(v, newState => onChange?.(newState)),
+    [_setValue, onChange],
+  );
+
+  useImperativeHandle(menu, () => ({
+    setValue: (v: Exclude<V, null>[]) => setValue(v),
+    clear: () => setValue([]),
+  }));
+
   return (
     <React.Fragment>
       {valuedItems.map((item, i) => (
         <ValuedMenuItemRenderer
           key={i}
           item={item}
-          withCheckbox={props.withCheckbox}
-          onClick={() => props.onMenuItemClick(item.value, newState => props.onChange?.(newState))}
-          selected={props.value.includes(item.value)}
+          withCheckbox={withCheckbox}
+          onClick={() => setValue(item.value)}
+          selected={value.includes(item.value)}
         />
       ))}
     </React.Fragment>
@@ -94,12 +121,37 @@ const MultiDatumlessMenu = <V extends string | null>(
 const MultiDatumValuedMenu = <V extends string | null, M>({
   items,
   withCheckbox,
-  onMenuItemClick,
+  setValue: _setValue,
   onChange,
   value,
+  menu,
   clearable,
 }: WithPolymorphicProps<MultiDatumValuedMenuProps<V, M>, V, M>): JSX.Element => {
   const [valueDatumMap] = useValueDatumMap<DatumValuedMenuItem<V, M>[], V, M>({ items });
+
+  const setValue = useMemo(
+    () => (v: Exclude<V, null> | Exclude<V, null>[]) =>
+      _setValue(
+        v,
+        newState =>
+          onChange?.(
+            newState,
+            newState.map(v => {
+              const datum = valueDatumMap[v];
+              if (datum === undefined) {
+                throw new Error(`No datum was found for menu item with value '${v}'.`);
+              }
+              return datum;
+            }),
+          ),
+      ),
+    [valueDatumMap, _setValue, onChange],
+  );
+
+  useImperativeHandle(menu, () => ({
+    setValue: (v: Exclude<V, null>[]) => setValue(v),
+    clear: () => setValue([]),
+  }));
 
   return (
     <React.Fragment>
@@ -109,22 +161,7 @@ const MultiDatumValuedMenu = <V extends string | null, M>({
           item={item}
           withCheckbox={withCheckbox}
           selected={value.includes(item.value)}
-          onClick={() => {
-            onMenuItemClick(
-              item.value,
-              newState =>
-                onChange?.(
-                  newState,
-                  newState.map(v => {
-                    const datum = valueDatumMap[v];
-                    if (datum === undefined) {
-                      throw new Error(`No datum was found for menu item with value '${v}'.`);
-                    }
-                    return datum;
-                  }),
-                ),
-            );
-          }}
+          onClick={() => setValue(item.value)}
         />
       ))}
     </React.Fragment>
@@ -135,12 +172,38 @@ const MultiDatumCallbackValuedMenu = <V extends string | null, M>({
   items,
   withCheckbox,
   onChange,
-  onMenuItemClick,
   value,
   getValue,
+  setValue: _setValue,
+  menu,
   clearable,
 }: WithPolymorphicProps<MultiDatumValuedCallbackMenuProps<V, M>, V, M>): JSX.Element => {
   const [valueDatumMap, itemsWithValues] = useValueDatumMap<DatumValuelessMenuItem<M>[], V, M>({ items, getValue });
+
+  const setValue = useMemo(
+    () => (v: Exclude<V, null> | Exclude<V, null>[]) =>
+      _setValue(
+        v,
+        newState =>
+          onChange?.(
+            newState,
+            newState.map(v => {
+              const datum = valueDatumMap[v];
+              if (datum === undefined) {
+                throw new Error(`No datum was found for menu item with value '${v}'.`);
+              }
+              return datum;
+            }),
+          ),
+      ),
+    [valueDatumMap, _setValue, onChange],
+  );
+
+  useImperativeHandle(menu, () => ({
+    setValue: (v: Exclude<V, null>[]) => setValue(v),
+    clear: () => setValue([]),
+  }));
+
   return (
     <React.Fragment>
       {itemsWithValues.map((item, i) => (
@@ -149,22 +212,7 @@ const MultiDatumCallbackValuedMenu = <V extends string | null, M>({
           item={item}
           withCheckbox={withCheckbox}
           selected={value.includes(item.value)}
-          onClick={() =>
-            onMenuItemClick(
-              item.value,
-              newState =>
-                onChange?.(
-                  newState,
-                  newState.map(v => {
-                    const datum = valueDatumMap[v];
-                    if (datum === undefined) {
-                      throw new Error(`No datum was found for menu item with value '${v}'.`);
-                    }
-                    return datum;
-                  }),
-                ),
-            )
-          }
+          onClick={() => setValue(item.value)}
         />
       ))}
     </React.Fragment>
@@ -176,28 +224,30 @@ export const MultiMenu = <V extends string | null, M>({
   value,
   ...props
 }: Omit<MultiMenuProps<V, M>, "mode">): JSX.Element => {
-  const [_value, setValue] = useState<Exclude<V, null>[]>(
+  const [_value, _setValue] = useState<Exclude<V, null>[]>(
     defaultValue === undefined ? ([] as Exclude<V, null>[]) : defaultValue,
   );
 
-  useEffect(() => {
-    if (value !== undefined) {
-      setValue(value);
-    }
-  }, [value]);
+  /* useEffect(() => {
+       if (value !== undefined) {
+         _setValue(value);
+       }
+     }, [value]); */
 
   const passThrough = { ...props, mode: "multiple" } as MultiMenuProps<V, M>;
   const [_, startTransition] = useTransition();
 
-  const onMenuItemClick = useMemo(
-    () => (clickedValue: Exclude<V, null>, handler: (newState: Exclude<V, null>[]) => void) => {
+  const setValue = useMemo(
+    () => (val: Exclude<V, null> | Exclude<V, null>[], handler: (newState: Exclude<V, null>[]) => void) => {
       let newState: Exclude<V, null>[];
-      if (_value.includes(clickedValue)) {
-        newState = _value.filter(v => v !== clickedValue);
+      if (Array.isArray(val)) {
+        newState = val;
+      } else if (_value.includes(val)) {
+        newState = _value.filter(v => v !== val);
       } else {
-        newState = [..._value, clickedValue];
+        newState = [..._value, val];
       }
-      startTransition(() => setValue(newState));
+      startTransition(() => _setValue(newState));
       handler(newState);
     },
     [_value],
@@ -205,27 +255,17 @@ export const MultiMenu = <V extends string | null, M>({
 
   if (isMultiDatumValuedMenuProps<V, M>(passThrough)) {
     return (
-      <MultiDatumValuedMenu<V, M>
-        {...passThrough}
-        value={value === undefined ? _value : value}
-        onMenuItemClick={onMenuItemClick}
-      />
+      <MultiDatumValuedMenu<V, M> {...passThrough} value={value === undefined ? _value : value} setValue={setValue} />
     );
   } else if (isMultiDatumCallbackValuedMenuProps<V, M>(passThrough)) {
     return (
       <MultiDatumCallbackValuedMenu<V, M>
         {...passThrough}
         value={value === undefined ? _value : value}
-        onMenuItemClick={onMenuItemClick}
+        setValue={setValue}
       />
     );
   } else {
-    return (
-      <MultiDatumlessMenu<V>
-        {...passThrough}
-        value={value === undefined ? _value : value}
-        onMenuItemClick={onMenuItemClick}
-      />
-    );
+    return <MultiDatumlessMenu<V> {...passThrough} value={value === undefined ? _value : value} setValue={setValue} />;
   }
 };

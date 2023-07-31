@@ -15,10 +15,10 @@ interface PlayersFilterBarProps {
 // TODO: Should we dynamically load the search bar?  Or use suspense around it?
 export const PlayersFilterBar = async ({ leagueId }: PlayersFilterBarProps) => {
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
-  let league: League & { readonly teams: Team[] };
+  let league: League & { readonly teams: (Team & { readonly players: { userId: string }[] })[] };
   try {
     league = await prisma.league.findFirstOrThrow({
-      include: { teams: true },
+      include: { teams: { include: { players: { select: { userId: true } } } } },
       where: {
         id: leagueId,
         OR: [{ staff: { some: { userId: user.id } } }, { teams: { some: { players: { some: { userId: user.id } } } } }],
@@ -31,5 +31,11 @@ export const PlayersFilterBar = async ({ leagueId }: PlayersFilterBarProps) => {
       throw e;
     }
   }
-  return <FilterBar filters={[<SearchBar key="0" />, <TeamMultiMenu key="1" league={league} />]} />;
+  // The team may be null if the user is a staff member of the league but not a player on any team.
+  const playersTeam = league.teams.find(team => team.players.some(player => player.userId === user.id));
+  return (
+    <FilterBar
+      filters={[<SearchBar key="0" />, <TeamMultiMenu key="1" league={league} playersTeam={playersTeam || null} />]}
+    />
+  );
 };

@@ -58,7 +58,11 @@ export const GameScheduleTable = ({
   ],
   ...props
 }: GameScheduleTableProps): JSX.Element => (
-  <DataTable<GameDatum> {...props} columns={columns.map(name => GameScheduleColumns[name])} />
+  <DataTable<GameDatum>
+    {...props}
+    columns={columns.map(name => GameScheduleColumns[name])}
+    actionMenu={() => [{ label: "Test", onClick: () => console.log("test") }]}
+  />
 );
 
 export default GameScheduleTable;

@@ -3,11 +3,31 @@
 .menu {
   display: flex;
   flex-direction: column;
+  // gap: partials.get-spacing("sm");
+  overflow-y: hidden;
+  max-height: 400px; // Might need to revisit this.
+  padding: partials.get-spacing("xs");
+
+  > .menu__shortcuts {
+    display: flex;
+    flex-direction: column;
+    gap: partials.get-spacing("xs");
+    // The XS size of 4px for the top margin plus the SM size of 8px for the gap defined in the parent will evenly space
+    // the shortcuts so that the distance from the top of the menu to the shortcut is 8px and the distance between the
+    // shortcuts and the first menu item is 8px.
+    padding-top: partials.get-spacing("sm");
+    padding-bottom: partials.get-spacing("sm");
+    border-bottom: 1px solid partials.get-color("gray", $shade: 2);
+
+    > .button {
+      font-size: partials.get-font-size($type: "body", $size: "xs");
+    }
+  }
 
   > .menu__items-container {
     display: flex;
     flex-direction: column;
-    padding: partials.get-spacing("xs");
+    overflow-y: scroll;
 
     > .menu-item {
       display: flex;
@@ -23,6 +43,19 @@
         font-size: partials.get-font-size($type: "label", $size: "sm");
       }
     }
+  }
+
+  &--with-shortcuts {
+    > .menu__items-container {
+      margin-top: partials.get-spacing("xs");
+    }
+  }
+
+  > .menu__footer-actions {
+    display: flex;
+    flex-direction: column;
+    gap: partials.get-spacing("xs");
+    margin-top: partials.get-spacing("xs");
   }
 }
 
