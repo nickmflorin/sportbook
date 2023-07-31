@@ -6,12 +6,35 @@
 
 @use "partials";
 
+@mixin button-solid-size($size) {
+  $padding: partials.get-button-padding("solid", $size: $size);
+  $height: partials.get-button-size("solid", $size: $size);
+
+  $vertical-padding: list.nth($padding, 1);
+  $line-height: $height - 2 * $vertical-padding;
+
+  font-size: partials.get-button-font-size("solid", $size: $size);
+
+  /*
+  Usually, the height of the button would just be determined by the combination of the vertical padding and line-height
+  (i.e. height = 2 * vertical-padding + line-height).  However, we need to constrain the height (and not allow it to be
+  "auto") such that the SVG icons or spinners can properly fill up the available height and size responsively.  If we
+  did not define the height explicitly, this would not work.
+
+  So instead of calculating the height based on the padding and line-height, we calculate the line-height based on the
+  padding and height - and all 3 consistent with each other while still allowing the height to be constrained.
+  */
+  height: $height;
+  line-height: $line-height;
+  padding: $padding;
+}
+
 @mixin solid-type() {
   font-weight: partials.get-font-weight($weight: "semibold");
 
   @each $size in partials.$button-size-names {
     &.button--#{$size} {
-      @include partials.button-solid-size($size);
+      @include button-solid-size($size);
     }
   }
 
@@ -64,7 +87,7 @@
   }
 
   @each $variant in partials.$button-variants {
-    &.button--action--#{$variant} {
+    &.button--#{$variant} {
       padding: partials.get-button-padding("action", $variant);
 
       @each $size in partials.$button-size-names {
@@ -76,7 +99,7 @@
     }
   }
 
-  &.button--action--bare {
+  &.button--bare {
     @include partials.button-hovered-colors("color");
     @include partials.button-focused-colors("color");
   }
@@ -85,8 +108,10 @@
 @mixin button-type($type) {
   $type: partials.validate-value($type, partials.$button-types);
   @each $variant in partials.$button-variants {
-    &.button--#{$type}--#{$variant} {
-      @include partials.button-colors($type: $type, $variant: $variant);
+    &.button--#{$type} {
+      &.button--#{$variant} {
+        @include partials.button-colors($type: $type, $variant: $variant);
+      }
     }
   }
   @if string.quote($type) == "solid" {

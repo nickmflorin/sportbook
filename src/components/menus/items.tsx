@@ -1,5 +1,7 @@
 import React from "react";
 
+import classNames from "classnames";
+
 import type * as types from "./types";
 
 import { isIconProp } from "~/components/icons";
@@ -8,41 +10,60 @@ import { Avatar } from "~/components/images/Avatar";
 import { Checkbox } from "~/components/input/Checkbox";
 import { Label } from "~/components/typography";
 
-type ValuedMenuItemProps<
-  I extends types.ValuedMenuItem<V> | types.DatumValuedMenuItem<V, M>,
-  V extends string | null,
-  M extends Record<string, unknown>,
-> = Omit<I, "value" | "datum" | "onClick"> & {
-  readonly selected: boolean;
+type BaseMenuItemProps<I extends types.MenuItem<V, M>, V extends string | null, M extends Record<string, unknown>> = {
+  readonly item: Omit<I, "value">;
+  readonly selected?: boolean;
   readonly withCheckbox?: boolean;
-  readonly onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  readonly onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 };
 
-export const ValuedMenuItem = <
-  I extends types.ValuedMenuItem<V> | types.DatumValuedMenuItem<V, M>,
+export const BaseMenuItem = <
+  I extends types.MenuItem<V, M>,
   V extends string | null,
   M extends Record<string, unknown>,
 >({
-  label,
-  icon,
+  item,
   selected,
   withCheckbox,
   onClick,
-}: ValuedMenuItemProps<I, V, M>) => (
-  <div className="menu-item" onClick={onClick}>
-    {withCheckbox && <Checkbox readOnly checked={selected} mr="md" size={14} />}
-    {icon ? isIconProp(icon) ? <Icon icon={icon} /> : <Avatar {...icon} /> : null}
-    <Label>{label}</Label>
-  </div>
-);
+}: BaseMenuItemProps<I, V, M>): JSX.Element =>
+  item.hidden === true ? (
+    <></>
+  ) : (
+    <div
+      style={item.style}
+      className={classNames("menu-item", { selected, disabled: item.disabled }, item.className)}
+      onClick={e => {
+        if (!item.disabled) {
+          onClick?.(e);
+          item.onClick?.(e);
+        }
+      }}
+    >
+      {/* TODO: We need to come up with a loading state for the Avatar case. */}
+      {withCheckbox && <Checkbox readOnly checked={selected} mr="md" size={14} />}
+      {item.icon ? (
+        isIconProp(item.icon) ? (
+          <Icon icon={item.icon} loading={item.loading} />
+        ) : (
+          <Avatar {...item.icon} />
+        )
+      ) : null}
+      <Label>{item.label}</Label>
+    </div>
+  );
 
-type ValuelessMenuItemProps = Omit<types.ValuelessMenuItem, "onClick"> & {
-  readonly onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-};
+export const ValuedMenuItemRenderer = <
+  I extends types.ValuedMenuItem<V> | types.DatumValuedMenuItem<V, M>,
+  V extends string | null,
+  M extends Record<string, unknown>,
+>(
+  props: BaseMenuItemProps<I, V, M>,
+) => <BaseMenuItem {...props} />;
 
-export const ValuelessMenuItem = ({ label, icon, onClick }: ValuelessMenuItemProps) => (
-  <div className="menu-item" onClick={onClick}>
-    {icon ? isIconProp(icon) ? <Icon icon={icon} /> : <Avatar {...icon} /> : null}
-    <Label>{label}</Label>
-  </div>
-);
+type ValuelessMenuItemProps = Omit<
+  BaseMenuItemProps<types.ValuelessMenuItem, never, never>,
+  "selected" | "withCheckbox" | "onClick"
+>;
+
+export const ValuelessMenuItemRenderer = (props: ValuelessMenuItemProps) => <BaseMenuItem {...props} />;

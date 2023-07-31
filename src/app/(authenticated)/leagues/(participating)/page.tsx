@@ -1,7 +1,6 @@
 import dynamicImport from "next/dynamic";
 import { redirect } from "next/navigation";
 
-import { logger } from "~/application/logger";
 import { prisma } from "~/prisma/client";
 import { type LeagueWithParticipation } from "~/prisma/model";
 import { constructOrSearch } from "~/prisma/util";
@@ -44,11 +43,7 @@ export default async function Leagues({ searchParams: { search } }: LeaguesProps
   });
   const leaguesWithParticipantCount: LeagueWithParticipation[] = leagues.map(l => {
     const g = numPlayersPerLeague.find(n => l.teams.map(t => t.id).includes(n.teamId));
-    if (!g) {
-      logger.error(
-        { name: l.name, id: l.id },
-        `The league '${l.name}' with ID '${l.id}' was not found in the groupBy results for the participation count.`,
-      );
+    if (g === undefined) {
       return { ...l, numParticipants: 0, teams: l.teams.map(t => t.id) };
     }
     return { ...l, numParticipants: g._count.userId, teams: l.teams.map(t => t.id) };

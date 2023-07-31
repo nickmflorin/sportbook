@@ -2,10 +2,12 @@ import { notFound, redirect } from "next/navigation";
 import { type ReactNode } from "react";
 
 import { xprisma, isPrismaDoesNotExistError, isPrismaInvalidIdError } from "~/prisma/client";
-import { type League, type FileUpload } from "~/prisma/model";
+import { type League, type FileUpload, type LeagueStaff, LeagueStaffRole } from "~/prisma/model";
 import { DetailPage } from "~/components/layout/DetailPage";
 import { Flex } from "~/components/structural/Flex";
 import { getAuthUser } from "~/server/auth";
+
+import { useUserLeagueStaffRoles } from "./hooks";
 
 interface LeagueLayoutProps {
   readonly params: { id: string };
@@ -16,11 +18,12 @@ interface LeagueLayoutProps {
 
 export default async function LeagueLayout({ scores, children, teams, params: { id } }: LeagueLayoutProps) {
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
-  let league: League;
+  let league: League & { readonly staff: LeagueStaff[] };
   let fileUpload: FileUpload | null;
   let getImage: () => Promise<FileUpload | null>;
   try {
     ({ getImage, ...league } = await xprisma.league.findFirstOrThrow({
+      include: { staff: true },
       where: {
         id,
         OR: [{ staff: { some: { userId: user.id } } }, { teams: { some: { players: { some: { userId: user.id } } } } }],
@@ -34,6 +37,7 @@ export default async function LeagueLayout({ scores, children, teams, params: { 
       throw e;
     }
   }
+  const { hasLeagueRole } = await useUserLeagueStaffRoles(user, league);
 
   return (
     <DetailPage
@@ -68,7 +72,7 @@ export default async function LeagueLayout({ scores, children, teams, params: { 
           icon: { name: "people-pulling" },
           label: "Scores",
           active: { leadingPath: "/leagues/:id/scores" },
-          disabled: true,
+          visible: hasLeagueRole([LeagueStaffRole.ADMIN, LeagueStaffRole.COMISSIONER]),
         },
       ]}
       staticViewWidth={420}

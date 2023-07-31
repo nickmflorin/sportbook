@@ -266,8 +266,8 @@ $themes: (
   ),
   "secondary": (
     base: colors.get-color("gray", $shade: 2),
-    hovered: colors.get-color("gray", $shade: 4),
-    focused: colors.get-color("gray", $shade: 4),
+    hovered: colors.get-color("gray", $shade: 3),
+    focused: colors.get-color("gray", $shade: 3),
     disabled: colors.$disabled-color,
   ),
   "bare": (),
@@ -522,27 +522,4 @@ $button-color-properties: (
       }
     }
   }
-}
-
-@mixin button-solid-size($size) {
-  $padding: get-button-padding("solid", $size: $size);
-  $height: get-button-size("solid", $size: $size);
-
-  $vertical-padding: list.nth($padding, 1);
-  $line-height: $height - 2 * $vertical-padding;
-
-  font-size: get-button-font-size("solid", $size: $size);
-
-  /*
-  Usually, the height of the button would just be determined by the combination of the vertical padding and line-height
-  (i.e. height = 2 * vertical-padding + line-height).  However, we need to constrain the height (and not allow it to be
-  "auto") such that the SVG icons or spinners can properly fill up the available height and size responsively.  If we
-  did not define the height explicitly, this would not work.
-
-  So instead of calculating the height based on the padding and line-height, we calculate the line-height based on the
-  padding and height - and all 3 consistent with each other while still allowing the height to be constrained.
-  */
-  height: $height;
-  line-height: $line-height;
-  padding: $padding;
 }

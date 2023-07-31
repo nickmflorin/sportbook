@@ -14,6 +14,10 @@ enum Gender {
   NON_BINARY
 }
 
+enum UserRole {
+  SUPERUSER
+}
+
 model User {
   id                   String        @id @default(uuid()) @db.Uuid
   clerkId              String        @unique
@@ -26,6 +30,7 @@ model User {
   updatedAt            DateTime      @updatedAt
   org                  Org?          @relation("orgUsers", fields: [orgId], references: [id])
   orgId                String?       @db.Uuid
+  roles                UserRole[]    @default(value: [])
   // Users are only created when Clerk data for the user exists - so a default value of "now" makes sense here.
   lastUpdatedFromClerk DateTime      @default(now())
   players              Player[]      @relation("players")

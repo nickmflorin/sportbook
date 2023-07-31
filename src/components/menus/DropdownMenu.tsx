@@ -1,12 +1,12 @@
 "use client";
 import React, { useState, useMemo } from "react";
 
-import { Popover } from "@mantine/core";
+import { Popover, type PopoverProps } from "@mantine/core";
 
 import { type Style } from "~/lib/ui";
 import { SolidButton } from "~/components/buttons/SolidButton";
 
-interface BaseDropdownMenuProps {
+interface BaseDropdownMenuProps extends Pick<PopoverProps, "position" | "trapFocus" | "width"> {
   readonly open?: boolean;
   readonly menu: JSX.Element;
   readonly onClose?: () => void;
@@ -33,6 +33,7 @@ export const DropdownMenu = ({
   buttonText,
   menu,
   onClose,
+  ...props
 }: DropdownMenuProps): JSX.Element => {
   const [_open, setOpen] = useState(false);
 
@@ -59,7 +60,7 @@ export const DropdownMenu = ({
   }, [children, buttonText, buttonStyle, isOpen, onClose]);
 
   return (
-    <Popover position="bottom" width="target" transitionProps={{ transition: "pop" }} trapFocus>
+    <Popover position="bottom" width="target" transitionProps={{ transition: "pop" }} trapFocus {...props}>
       <Popover.Target>
         <div
           style={{ maxWidth: "fit-content" }}
