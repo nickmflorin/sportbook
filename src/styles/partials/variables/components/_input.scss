@@ -16,7 +16,7 @@ $input-font-weight: typography.get-font-weight(
 $input-bg-color: colors.get-color("white");
 
 $input-border-color: colors.get-color("gray", $shade: 4);
-$input-focused-border-color: colors.get-color("blue", $shade: 12);
+$input-focused-border-color: colors.get-color("blue", $shade: 7);
 $input-border-radius: radius.get-radius("sm");
 $input-disabled-bg-color: #efefef;
 

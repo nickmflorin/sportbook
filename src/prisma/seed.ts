@@ -1,39 +1,18 @@
 /* eslint-disable no-console -- This script runs outside of the logger context. */
 import clerk from "@clerk/clerk-sdk-node";
 import { v4 as uuid } from "uuid";
-import {
-  type User,
-  Sport,
-  type League,
-  type Location,
-  LeagueStaffRole,
-  LeagueType,
-  LeagueCompetitionLevel,
-  Gender,
-} from "@prisma/client";
+import { type User, Sport, type Location, Gender } from "@prisma/client";
 
 import type { Organization as ClerkOrg } from "@clerk/nextjs/api";
 
-import {
-  infiniteLoop,
-  infiniteLoopSelection,
-  mapOverLength,
-  selectAtRandom,
-  selectArrayAtRandom,
-  generateRandomDate,
-  selectSequentially,
-} from "~/lib/util/random";
+import { infiniteLoop, mapOverLength, selectSequentially } from "~/lib/util/random";
 
 import { prisma, xprisma } from "./client";
-import { safeEnumValue, getModelMeta } from "./model";
-import { fixtures, generateLeagueGames, type SeedContext, generateLeagueTeams } from "./seeding";
+import { safeEnumValue } from "./model";
+import { fixtures, type SeedContext, generateLeague } from "./seeding";
 
-const MIN_LOCATIONS_PER_LEAGUE = 0;
-const MAX_LOCATIONS_PER_LEAGUE = 3;
 const MIN_LEAGUES_PER_SPORT = 3;
 const MAX_LEAGUES_PER_SPORT = 12;
-const MIN_STAFF_PER_LEAGUE = 4;
-const MAX_STAFF_PER_LEAGUE = 10;
 
 // The number of non-Clerk users that should be generated in the database.
 const NUM_FAKE_USERS = 100;
@@ -68,67 +47,9 @@ async function generateLocations(ctx: Omit<SeedContext, "getLocation">) {
   );
 }
 
-async function generateLeagueLocations(league: League, ctx: SeedContext) {
-  const locations = infiniteLoopSelection<Location, string>(ctx.getLocation, {
-    duplicationKey: (loc: Location) => loc.id,
-    length: { min: MIN_LOCATIONS_PER_LEAGUE, max: MAX_LOCATIONS_PER_LEAGUE },
-  });
-  await prisma.leagueOnLocations.createMany({
-    data: locations.map(loc => {
-      const u = ctx.getUser();
-      return { leagueId: league.id, locationId: loc.id, assignedById: u.id };
-    }),
-  });
-  console.info(`Generated ${locations.length} locations for league '${league.name}' in the database.`);
-  return locations;
-}
-
-async function generateLeagueStaff(league: League, ctx: SeedContext) {
-  const leagueStaffUsers = infiniteLoopSelection<User, string>(ctx.getUser, {
-    duplicationKey: (u: User) => u.id,
-    length: { min: MIN_STAFF_PER_LEAGUE, max: MAX_STAFF_PER_LEAGUE },
-  });
-  await prisma.leagueStaff.createMany({
-    data: leagueStaffUsers.map(u => ({
-      ...getModelMeta("LeagueStaff", ctx),
-      leagueId: league.id,
-      userId: u.id,
-      roles: selectArrayAtRandom(Object.values(LeagueStaffRole), {
-        duplicationKey: i => i,
-        length: { min: 1, max: 2 },
-      }),
-    })),
-  });
-}
-
-async function generateSportLeague(sport: Sport, ctx: SeedContext) {
-  const league = await prisma.league.create({
-    data: {
-      ...getModelMeta("League", { getUser: ctx.getUser }),
-      name: fixtures.randomLeagueName(),
-      sport,
-      description: fixtures.randomSentence(),
-      leagueStart: generateRandomDate(),
-      leagueEnd: generateRandomDate(),
-      competitionLevel: selectAtRandom(Object.values(LeagueCompetitionLevel)),
-      leagueType: selectAtRandom(Object.values(LeagueType)),
-      isPublic: true,
-    },
-  });
-  await generateLeagueLocations(league, ctx);
-  await generateLeagueStaff(league, ctx);
-  const [teams, leagueUsers] = await generateLeagueTeams(league, ctx);
-  if (teams.length !== 0) {
-    /* Right now, we only need the users in the league for purposes of the model meta fields on the games - that may
-       change in the future. */
-    const getParticipant = infiniteLoop<User>(leagueUsers);
-    await generateLeagueGames(league, teams, { ...ctx, getParticipant });
-  }
-}
-
 async function generateSportLeagues(sport: Sport, ctx: SeedContext) {
   const leagues = await Promise.all(
-    mapOverLength({ min: MIN_LEAGUES_PER_SPORT, max: MAX_LEAGUES_PER_SPORT }, () => generateSportLeague(sport, ctx)),
+    mapOverLength({ min: MIN_LEAGUES_PER_SPORT, max: MAX_LEAGUES_PER_SPORT }, () => generateLeague(sport, ctx)),
   );
   console.info(`Generated ${leagues.length} leagues for sport '${sport}' in the database.`);
   return leagues;
@@ -158,13 +79,13 @@ async function generateOrganization(clerkOrg: ClerkOrg, clerkUserIds: string[]) 
 }
 
 async function main() {
-  const clerkUsers = await collectClerkPages(p => clerk.users.getUserList(p));
-  console.info(`Found ${clerkUsers.length} users in Clerk.`);
+  const clerkUserList = await collectClerkPages(p => clerk.users.getUserList(p));
+  console.info(`Found ${clerkUserList.length} users in Clerk.`);
 
   /* TODO: We need to figure out how to sync user data with clerk data at certain times.  We cannot do this from the
      middleware script because we cannot run Prisma in the browser. */
-  const users = await Promise.all(clerkUsers.map(u => xprisma.user.createFromClerk(u)));
-  console.info(`Generated ${users.length} clerk users in the database.`);
+  const clerkUsers = await Promise.all(clerkUserList.map(u => xprisma.user.createFromClerk(u)));
+  console.info(`Generated ${clerkUsers.length} users in the database using information from Clerk.`);
 
   const organizations = await collectClerkPages(p => clerk.organizations.getOrganizationList(p));
   console.info(`Found ${organizations.length} organizations in Clerk.`);
@@ -201,12 +122,19 @@ async function main() {
     console.warn("Cannot generate fake users as there is no user data to generate them from.");
   }
 
-  const getUser = infiniteLoop<User>([...users, ...fakeUsers]);
-  const locations = await generateLocations({ getUser });
+  const ctx: Omit<SeedContext, "getLocation"> = {
+    fakeUsers,
+    clerkUsers,
+    getClerkUser: infiniteLoop<User>(clerkUsers),
+    getFakeUser: infiniteLoop<User>(fakeUsers),
+    getUser: infiniteLoop<User>([...clerkUsers, ...fakeUsers]),
+  };
+
+  const locations = await generateLocations(ctx);
   console.info(`\nSuccessfully generated ${locations.length} locations with associated data in database.`);
 
   const getLocation = infiniteLoop<Location>(locations);
-  await generateSports({ getUser, getLocation });
+  await generateSports({ ...ctx, getLocation });
 }
 
 main()

@@ -1,8 +1,10 @@
 import classNames from "classnames";
 
-import { FlexDirections, TypographySizes } from "~/lib/ui";
+import { FlexDirections } from "~/lib/ui";
 import { Flex, type FlexProps } from "~/components/structural";
-import { Text, type TextProps } from "~/components/typography";
+import { Text, type TextProps } from "~/components/typography/Text";
+
+import { TypographySizes } from "./types";
 
 export interface DateTimeTextProps extends Omit<FlexProps, "children"> {
   readonly value: Date | null;

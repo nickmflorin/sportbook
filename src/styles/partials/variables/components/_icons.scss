@@ -8,7 +8,7 @@ $icon-size-axes: ("horizontal", "vertical");
 $icon-size-names: ("xxs", "xs", "sm", "md", "lg", "xl", "fill");
 
 $default-icon-size: "sm";
-$default-icon-size-contain: "fit";
+$default-icon-size-contain: "square";
 $default-icon-size-axis: "vertical";
 
 $icon-sizes: (
@@ -35,8 +35,8 @@ $icon-sizes: (
 
 @mixin icon-contain($contain: $default-icon-size-contain) {
   $contain: fn.validate-value($contain, ("square", "fit"));
-
-  @include with-icon-and-svg {
+  @if $contain == "square" {
+    // Do not set the aspect ratio on the underlying SVG - just the containing <i> tag.
     aspect-ratio: 1;
   }
 }
@@ -54,15 +54,18 @@ $icon-sizes: (
 
   @if $axis == "vertical" {
     width: auto;
-    height: fn.mapget($icon-sizes, $size);
+    @layer {
+      height: fn.mapget($icon-sizes, $size);
+    }
 
     > svg {
       height: 100%;
       width: auto;
     }
-
   } @else {
-    width: fn.mapget($icon-sizes, $size);
+    @layer {
+      width: fn.mapget($icon-sizes, $size);
+    }
     height: auto;
 
     > svg {

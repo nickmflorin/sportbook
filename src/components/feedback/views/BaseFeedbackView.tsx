@@ -3,7 +3,8 @@ import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
 import { AlternateButton, type AlternateButtonProps } from "~/components/buttons/AlternateButton";
-import { Title, Text } from "~/components/typography";
+import { Text } from "~/components/typography/Text";
+import { Title } from "~/components/typography/Title";
 
 type LinkObj = {
   readonly label: string;

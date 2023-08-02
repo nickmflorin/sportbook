@@ -129,8 +129,8 @@ const IconComponent = ({
   loading = false,
   spinnerColor = "blue",
   size = IconSizes.MD,
-  axis = SizeAxes.VERTICAL,
-  contain = SizeContains.FIT,
+  axis,
+  contain,
   style,
   ...props
 }: IconComponentProps) => {
@@ -165,11 +165,9 @@ export const mergeIconElementWithProps = (
     color,
     focusedColor,
     hoveredColor,
-    ...props
-  }: Omit<IconProps, "icon" | keyof IconDefinitionParams>,
+  }: Omit<IconProps, "icon" | "loading" | "spinnerColor" | "spin" | keyof IconDefinitionParams>,
 ): IconElement => {
   const mergedProps: Omit<IconProps, "icon" | keyof IconDefinitionParams> = {
-    ...props,
     style: { ...element.props.style, ...style },
     className: classNames(
       updateIconClassName(element.props.className, { axis, size, contain, color, focusedColor, hoveredColor }),

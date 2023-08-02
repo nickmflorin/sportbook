@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { type ComponentProps } from "~/lib/ui";
 import { type ModelWithFileUrl } from "~/prisma/model";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
-import { Text } from "~/components/typography";
+import { Text } from "~/components/typography/Text";
 
 export interface TeamScoreProps extends ComponentProps {
   readonly team: ModelWithFileUrl<"Team">;

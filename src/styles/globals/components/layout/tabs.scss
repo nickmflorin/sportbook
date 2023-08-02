@@ -28,7 +28,7 @@
     }
 
     &.tab-link--active {
-      border-bottom: 2px solid partials.get-color("blue", $shade: 12);
+      border-bottom: 2px solid partials.get-color("blue");
     }
   }
 }

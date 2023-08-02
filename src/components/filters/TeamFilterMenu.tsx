@@ -8,12 +8,12 @@ import { SolidButton } from "~/components/buttons/SolidButton";
 import { Menu, useMultiMenu } from "~/components/menus/Menu";
 import { useMutableSearchParams } from "~/hooks/useMutableSearchParams";
 
-export type TeamMultiMenuProps = {
+export type TeamFilterMenuProps = {
   readonly teams: Team[];
   readonly playersTeam: Team | null;
 };
 
-export const TeamClientMultiMenu = ({ teams, playersTeam }: TeamMultiMenuProps) => {
+export const TeamFilterMenu = ({ teams, playersTeam }: TeamFilterMenuProps) => {
   const { searchParams, updateParams } = useMutableSearchParams();
   const router = useRouter();
   const pathname = usePathname();

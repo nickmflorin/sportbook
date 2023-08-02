@@ -156,10 +156,14 @@ export default async function generateLeagueGames(
      home team and away team for each created game in the league - ensuring that each team plays each other the same
      number of times. */
   const teamMatchupPermutations: Matchup[] = permutationsAtCount(teams, 2) as Matchup[];
+
   // Duplicate the set of matchups based on teh NUM_MATCHUPS parameter.
   const teamMatchups = Array(NUM_MATCHUP_VISITATION_PAIRS)
     .fill(0)
     .reduce((prev: Matchup[]) => [...prev, ...teamMatchupPermutations], [] as Matchup[]);
+  if (teamMatchups.length === 0) {
+    throw new Error(JSON.stringify(teamMatchupPermutations));
+  }
   // Randomly select a subset of the matchups to be unplayed (but will still have GameStatus = FINAL)
   const unplayedMatchupIndicies = selectArrayAtRandom(
     Array(teamMatchups.length)

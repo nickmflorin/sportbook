@@ -1,6 +1,7 @@
 import classNames from "classnames";
 
-import { type ComponentProps, type TypographySize, type FontWeight, type Color, getColorClassName } from "~/lib/ui";
+import { type ComponentProps, type Color, getColorClassName } from "~/lib/ui";
+import { type FontWeight, type TypographySize } from "~/components/typography";
 
 export interface LabelProps extends ComponentProps {
   readonly children: string | number | undefined | null | false;

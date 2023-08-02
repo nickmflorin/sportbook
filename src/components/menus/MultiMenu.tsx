@@ -1,6 +1,7 @@
 "use client";
-import React, { useMemo, useState, useEffect, useTransition, useRef, useImperativeHandle } from "react";
+import React, { useMemo, useState, useTransition, useRef, useImperativeHandle, useEffect } from "react";
 
+import { BaseMenu, type BaseMenuProps, type WithBaseMenuProps } from "./BaseMenu";
 import { useValueDatumMap, useItemValues } from "./hooks";
 import { ValuedMenuItemRenderer } from "./items";
 import {
@@ -10,6 +11,7 @@ import {
   type DatumValuedMenuItem,
   type ValuelessValueGetter,
   type DatumValuelessValueGetter,
+  type FooterActions,
   menuItemsAreAllDatumValued,
   menuItemsAreAllDatumValueless,
 } from "./types";
@@ -26,12 +28,11 @@ export const useMultiMenu = <V extends string | null>() => {
 };
 
 type MultiValuedMixin<V extends string | null> = {
-  readonly mode: "multiple";
   readonly menu?: React.RefObject<IMultiMenu<V>>;
   readonly defaultValue?: Exclude<V, null>[];
-  readonly clearable?: boolean;
   readonly value?: Exclude<V, null>[];
   readonly withCheckbox?: boolean;
+  readonly footerActions?: FooterActions<{ value: Exclude<V, null>[] }>;
 };
 
 export type MultiValuedMenuProps<V extends string | null> = MultiValuedMixin<V> & {
@@ -56,23 +57,28 @@ export type MultiDatumValuedCallbackMenuProps<V extends string | null, M> = Mult
   readonly onChange?: (value: Exclude<V, null>[], data: M[]) => void;
 };
 
-export type MultiMenuProps<V extends string | null, M> =
+type _MultiMenuProps<V extends string | null, M> =
   | MultiValuedMenuProps<V>
   | MultiValuedCallbackMenuProps<V>
   | MultiDatumValuedMenuProps<V, M>
   | MultiDatumValuedCallbackMenuProps<V, M>;
 
+export type MultiMenuProps<V extends string | null, M> = WithBaseMenuProps<
+  _MultiMenuProps<V, M>,
+  { value: Exclude<V, null>[] }
+>;
+
 const isMultiDatumCallbackValuedMenuProps = <V extends string | null, M>(
-  props: MultiMenuProps<V, M>,
+  props: _MultiMenuProps<V, M>,
 ): props is MultiDatumValuedCallbackMenuProps<V, M> => menuItemsAreAllDatumValueless(props.items);
 
 const isMultiDatumValuedMenuProps = <V extends string | null, M>(
-  props: MultiMenuProps<V, M>,
+  props: _MultiMenuProps<V, M>,
 ): props is MultiDatumValuedMenuProps<V, M> => menuItemsAreAllDatumValued(props.items);
 
-type WithPolymorphicProps<P extends MultiMenuProps<V, M>, V extends string | null, M> = Omit<
+type WithPolymorphicProps<P extends _MultiMenuProps<V, M>, V extends string | null, M> = Omit<
   P,
-  "value" | "defaultValue" | "mode"
+  "value" | "defaultValue" | keyof BaseMenuProps<{ value: Exclude<V, null>[] }>
 > & {
   readonly value: Exclude<P["value"], undefined>;
   readonly setValue: (
@@ -125,7 +131,6 @@ const MultiDatumValuedMenu = <V extends string | null, M>({
   onChange,
   value,
   menu,
-  clearable,
 }: WithPolymorphicProps<MultiDatumValuedMenuProps<V, M>, V, M>): JSX.Element => {
   const [valueDatumMap] = useValueDatumMap<DatumValuedMenuItem<V, M>[], V, M>({ items });
 
@@ -176,7 +181,6 @@ const MultiDatumCallbackValuedMenu = <V extends string | null, M>({
   getValue,
   setValue: _setValue,
   menu,
-  clearable,
 }: WithPolymorphicProps<MultiDatumValuedCallbackMenuProps<V, M>, V, M>): JSX.Element => {
   const [valueDatumMap, itemsWithValues] = useValueDatumMap<DatumValuelessMenuItem<M>[], V, M>({ items, getValue });
 
@@ -222,19 +226,23 @@ const MultiDatumCallbackValuedMenu = <V extends string | null, M>({
 export const MultiMenu = <V extends string | null, M>({
   defaultValue,
   value,
+  footerActions,
+  className,
+  style,
+  shortcuts,
   ...props
-}: Omit<MultiMenuProps<V, M>, "mode">): JSX.Element => {
+}: MultiMenuProps<V, M>): JSX.Element => {
   const [_value, _setValue] = useState<Exclude<V, null>[]>(
     defaultValue === undefined ? ([] as Exclude<V, null>[]) : defaultValue,
   );
 
-  /* useEffect(() => {
-       if (value !== undefined) {
-         _setValue(value);
-       }
-     }, [value]); */
+  useEffect(() => {
+    if (value !== undefined) {
+      _setValue(value);
+    }
+  }, [value]);
 
-  const passThrough = { ...props, mode: "multiple" } as MultiMenuProps<V, M>;
+  const passThrough = props as _MultiMenuProps<V, M>;
   const [_, startTransition] = useTransition();
 
   const setValue = useMemo(
@@ -253,19 +261,25 @@ export const MultiMenu = <V extends string | null, M>({
     [_value],
   );
 
-  if (isMultiDatumValuedMenuProps<V, M>(passThrough)) {
-    return (
-      <MultiDatumValuedMenu<V, M> {...passThrough} value={value === undefined ? _value : value} setValue={setValue} />
-    );
-  } else if (isMultiDatumCallbackValuedMenuProps<V, M>(passThrough)) {
-    return (
-      <MultiDatumCallbackValuedMenu<V, M>
-        {...passThrough}
-        value={value === undefined ? _value : value}
-        setValue={setValue}
-      />
-    );
-  } else {
-    return <MultiDatumlessMenu<V> {...passThrough} value={value === undefined ? _value : value} setValue={setValue} />;
-  }
+  return (
+    <BaseMenu
+      footerActions={footerActions}
+      className={className}
+      style={style}
+      shortcuts={shortcuts}
+      footerActionParams={{ value: value === undefined ? _value : value }}
+    >
+      {isMultiDatumValuedMenuProps<V, M>(passThrough) ? (
+        <MultiDatumValuedMenu<V, M> {...passThrough} value={value === undefined ? _value : value} setValue={setValue} />
+      ) : isMultiDatumCallbackValuedMenuProps<V, M>(passThrough) ? (
+        <MultiDatumCallbackValuedMenu<V, M>
+          {...passThrough}
+          value={value === undefined ? _value : value}
+          setValue={setValue}
+        />
+      ) : (
+        <MultiDatumlessMenu<V> {...passThrough} value={value === undefined ? _value : value} setValue={setValue} />
+      )}
+    </BaseMenu>
+  );
 };

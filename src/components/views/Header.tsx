@@ -1,9 +1,12 @@
 import classNames from "classnames";
 import { type Optional } from "utility-types";
 
-import { type ComponentProps, type ImageProp } from "~/lib/ui";
-import { ModelImage } from "~/components/images";
-import { Title, type TitleProps, type TextProps, Description, descriptionIsVisible } from "~/components/typography";
+import { type ComponentProps } from "~/lib/ui";
+import { type ImageProp } from "~/components/images";
+import { ModelImage } from "~/components/images/ModelImage";
+import { Description, descriptionIsVisible } from "~/components/typography/Description";
+import { type TextProps } from "~/components/typography/Text";
+import { Title, type TitleProps } from "~/components/typography/Title";
 
 import { Actions, type Action, filterVisibleActions } from "../structural/Actions";
 

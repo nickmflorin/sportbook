@@ -18,7 +18,6 @@ $white: #ffffff;
 $black: #000000;
 $transparent: transparent;
 
-// Color Scheme Color: #2660A4
 $blue-shades: (
   #b8d1ee,
   #acc9ec,
@@ -37,23 +36,22 @@ $blue-shades: (
   #2967b0
 );
 
-// Color Scheme Color: #6DA34D
 $green-shades: (
-  #d5e6cb,
-  #cee2c2,
-  #c7deb9,
-  #c0dab0,
-  #b9d6a8,
-  #b2d29f,
-  #abcd96,
-  #a4c98d,
-  #9dc585,
-  #96c17c,
-  #8fbd73,
-  #88b96b,
-  #81b562,
-  #7ab159,
-  #73ac51
+  #cae6cd,
+  #b8ddbc,
+  #a6d5ab,
+  #94cc9a,
+  #82c489,
+  #71bb79,
+  #5fb368,
+  #4daa57,
+  #45994e,
+  #3e8846,
+  #36773d,
+  #2e6634,
+  #27552c,
+  #1f4423,
+  #17331a
 );
 
 // Color Scheme Color: #f19953
@@ -79,21 +77,19 @@ $gray-shades: (#f9f9fa, #f1f3f5, #eaecef, #dee2e6, #cfd4d9, #aeb5bc, #878e95, #4
 
 // Color Scheme Color: #881600
 $red-shades: (
-  #dbb9b3,
-  #cfa299,
-  #c9968c,
-  #c48b80,
-  #be7f73,
-  #b87366,
-  #b26859,
-  #ac5c4d,
-  #a65040,
-  #a04533,
-  #942d19,
-  #8e220d,
-  #811500,
-  #7a1400,
-  #741300
+  #fdd5d3,
+  #fdc0be,
+  #fcaba8,
+  #fb9692,
+  #fa807c,
+  #f96b66,
+  #f95651,
+  #f8413b,
+  #f72c25,
+  #de2821,
+  #c6231e,
+  #ad1f1a,
+  #941a16
 );
 $yellow-shades: (#fff5eb, #fef3c7, #fde68a, #fbd34d, #fbbf24);
 
@@ -117,9 +113,9 @@ $colors: (
 $color-names: map.keys($colors);
 
 $default-shades: (
-  "blue": 10,
-  "green": 14,
-  "red": 12,
+  "blue": 12,
+  "green": 9,
+  "red": 11,
   "yellow": 5,
   "success": 15,
   "error": 14,
@@ -144,6 +140,8 @@ $default-shades: (
   @if $shade {
     @if meta.type-of($cs) != list {
       @return $cs;
+    } @else if list.length($cs) < $shade {
+      @return list.nth($cs, list.length($cs));
     } @else if not list.nth($cs, $shade) {
       @if $shade < 1 {
         @return throw.error("The provided shade #{$shade} is invalid.", $shade: $shade, $source: "get-color()");

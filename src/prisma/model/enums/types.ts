@@ -14,7 +14,9 @@ export type EnumData<
       readonly iconColor?: Color;
       readonly icon?: BasicIconProp;
       readonly badgeBackgroundColor?: Color;
+      readonly badgeBorderColor?: Color;
       readonly badgeColor?: Color;
+      readonly badgeIconColor?: Color;
     }
   : never;
 

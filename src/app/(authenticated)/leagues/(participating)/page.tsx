@@ -23,7 +23,7 @@ export default async function Leagues({ searchParams: { search } }: LeaguesProps
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
 
   const leagues = await prisma.league.findMany({
-    include: { teams: { select: { id: true } } },
+    include: { teams: { select: { id: true } }, config: true },
     orderBy: { createdAt: "desc" }, // Might want to order by the most recent game in the future.
     where: {
       OR: [{ staff: { some: { userId: user.id } } }, { teams: { some: { players: { some: { userId: user.id } } } } }],

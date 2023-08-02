@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { type Optional } from "utility-types";
 
-import { Text } from "~/components/typography";
+import { Text } from "~/components/typography/Text";
 
 import { ModelImage, type ModelImageProps } from "./ModelImage";
 

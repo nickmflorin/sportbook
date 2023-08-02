@@ -10,8 +10,6 @@ import {
   type ComponentProps,
   type HTMLElementProps,
   type Color,
-  type FontWeight,
-  type TypographySize,
   getColorClassName,
 } from "~/lib/ui";
 import {
@@ -24,6 +22,7 @@ import {
 } from "~/components/buttons";
 import { type IconProp } from "~/components/icons";
 import { Icon } from "~/components/icons/Icon";
+import { type FontWeight, type TypographySize } from "~/components/typography";
 
 type BaseProps = ComponentProps & {
   readonly children: string | JSX.Element;

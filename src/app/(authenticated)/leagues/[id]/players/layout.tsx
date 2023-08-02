@@ -1,7 +1,10 @@
+import { redirect } from "next/navigation";
+
 import { TableView } from "~/components/tables/TableView";
 import { TableViewHeader } from "~/components/tables/TableViewHeader";
+import { getAuthUser } from "~/server/auth";
 
-import { PlayersFilterBar } from "./PlayersFilterBar";
+import { LeagueFilterBar } from "../LeagueFilterBar";
 
 interface LeaguePlayersLayoutProps {
   readonly params: { id: string };
@@ -9,13 +12,14 @@ interface LeaguePlayersLayoutProps {
 }
 
 export default async function LeaguePlayersLayout({ children, params: { id } }: LeaguePlayersLayoutProps) {
+  const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
   return (
     <TableView
       header={
         <TableViewHeader
           title="Players"
           description="The players who are currently registered in this league."
-          filterBar={<PlayersFilterBar leagueId={id} />}
+          filterBar={<LeagueFilterBar league={id} user={user} />}
         />
       }
     >

@@ -38,9 +38,9 @@
   display: flex;
   flex-direction: column;
 
-  @layer {
-    color: partials.get-color("gray", $shade: 7);
-  }
+  // @layer {
+  //   color: partials.get-color("gray", $shade: 7);
+  // }
 
   > svg {
     @extend %icon-svg-base;
@@ -66,5 +66,9 @@
 
   &--axis-horizontal:not(&--axis-vertical) {
     @include icon-size-classes("horizontal");
+  }
+
+  &:not(&--axis-horizontal, &--axis-vertical) {
+    @include icon-size-classes(partials.$default-icon-size-axis);
   }
 }

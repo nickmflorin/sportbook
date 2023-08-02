@@ -27,7 +27,7 @@
     }
 
     &.active {
-      background-color: partials.get-color("blue", 12);
+      background-color: partials.get-color("blue");
       color: partials.get-color("white");
     }
 

@@ -3,20 +3,12 @@ import { type League, type LeagueWithParticipation } from "~/prisma/model";
 import { LeagueCompetitionLevelBadge, LeagueTypeBadge } from "~/components/badges";
 import { AlternateButton } from "~/components/buttons/AlternateButton";
 import { Flex } from "~/components/structural";
-import { Text, DateTimeText } from "~/components/typography";
+import { DateTimeText } from "~/components/typography/DateTimeText";
+import { Text } from "~/components/typography/Text";
 
 import { DataTable, type DataTableProps, type Column } from "./DataTable";
 
-type LeagueTableLeagueFields =
-  | "id"
-  | "name"
-  | "description"
-  | "leagueStart"
-  | "leagueEnd"
-  | "leagueType"
-  | "numParticipants"
-  | "teams"
-  | "competitionLevel";
+type LeagueTableLeagueFields = "id" | "name" | "description" | "numParticipants" | "teams" | "config";
 
 type OriginalLeagueFields = keyof League & LeagueTableLeagueFields;
 type OptionalLeagueFields = Exclude<LeagueTableLeagueFields, OriginalLeagueFields> & keyof LeagueWithParticipation;
@@ -77,13 +69,13 @@ const LeaguesTableColumns: { [key in LeaguesTableColumn]: Column<LeagueDatum> } 
     title: "Starts",
     accessor: "leagueStart",
     width: 150,
-    render: ({ leagueStart }) => (leagueStart ? <DateTimeText value={leagueStart} /> : <></>),
+    render: ({ config }) => (config && config?.leagueStart ? <DateTimeText value={config.leagueStart} /> : <></>),
   },
   [LeaguesTableColumn.END]: {
     title: "Ends",
     accessor: "leagueEnd",
     width: 150,
-    render: ({ leagueEnd }) => (leagueEnd ? <DateTimeText value={leagueEnd} /> : <></>),
+    render: ({ config }) => (config && config.leagueEnd ? <DateTimeText value={config.leagueEnd} /> : <></>),
   },
   [LeaguesTableColumn.IS_PUBLIC]: { accessor: "isPublic", title: "Public", width: 100 },
   [LeaguesTableColumn.LEAGUE_TYPE]: {
@@ -91,14 +83,16 @@ const LeaguesTableColumns: { [key in LeaguesTableColumn]: Column<LeagueDatum> } 
     accessor: "leagueType",
     width: 120,
     title: "Type",
-    render: (c: LeagueDatum) => <LeagueTypeBadge size="xs" value={c.leagueType} />,
+    render: (c: LeagueDatum) =>
+      c.config?.leagueType ? <LeagueTypeBadge size="xs" value={c.config.leagueType} /> : <></>,
   },
   [LeaguesTableColumn.COMPETITION_LEVEL]: {
     textAlignment: "center",
     accessor: "competitionLevel",
     width: 180,
     title: "Competition Level",
-    render: (c: LeagueDatum) => <LeagueCompetitionLevelBadge size="xs" value={c.competitionLevel} />,
+    render: (c: LeagueDatum) =>
+      c.config?.competitionLevel ? <LeagueCompetitionLevelBadge size="xs" value={c.config.competitionLevel} /> : <></>,
   },
 };
 

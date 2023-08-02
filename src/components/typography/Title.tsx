@@ -1,7 +1,8 @@
 import classNames from "classnames";
 
-import { type ComponentProps, type Style, type Color, type FontWeight, getColorClassName } from "~/lib/ui";
+import { type ComponentProps, type Style, type Color, getColorClassName } from "~/lib/ui";
 import { ensuresDefinedValue } from "~/lib/util";
+import { type FontWeight } from "~/components/typography";
 
 type TitleOrder = 1 | 2 | 3 | 4 | 5 | 6;
 

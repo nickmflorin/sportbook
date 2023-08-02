@@ -8,6 +8,7 @@ import { type League, FileUploadEntity, type Team } from "~/prisma/model";
 import { parseQueryTeamIds } from "~/prisma/urls";
 import { Loading } from "~/components/loading";
 import { getAuthUser } from "~/server/auth";
+import { getUserLeaguePermissionCodes } from "~/server/leagues";
 
 const GameScheduleTable = dynamic(() => import("~/components/tables/GameScheduleTable"), {
   ssr: true,
@@ -16,10 +17,14 @@ const GameScheduleTable = dynamic(() => import("~/components/tables/GameSchedule
 
 interface LeagueScheduleProps {
   readonly params: { id: string };
-  readonly searchParams: { teams?: string };
+  readonly searchParams: { search?: string; teams?: string };
 }
 
-export default async function LeagueSchedule({ params: { id }, searchParams: { teams } }: LeagueScheduleProps) {
+export default async function LeagueSchedule({
+  params: { id },
+  searchParams: { teams, search: _search },
+}: LeagueScheduleProps) {
+  const search: string = _search !== undefined ? decodeURIComponent(_search) : "";
   const teamIds = await parseQueryTeamIds({ value: teams });
 
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
@@ -44,12 +49,30 @@ export default async function LeagueSchedule({ params: { id }, searchParams: { t
     include: { homeTeam: true, awayTeam: true, location: true },
     orderBy: { dateTime: "asc" },
     where: {
-      leagueId: league.id,
-      result: { isNot: null },
-      OR:
-        teamIds.length !== 0
-          ? [{ homeTeam: { id: { in: teamIds } } }, { awayTeam: { id: { in: teamIds } } }]
-          : undefined,
+      ...(teamIds.length > 0 && search.length !== 0
+        ? {
+            leagueId: league.id,
+            AND: [
+              { OR: [{ homeTeam: { id: { in: teamIds } } }, { awayTeam: { id: { in: teamIds } } }] },
+              {
+                OR: [
+                  { homeTeam: { name: { contains: search, mode: "insensitive" } } },
+                  { awayTeam: { name: { contains: search, mode: "insensitive" } } },
+                ],
+              },
+            ],
+          }
+        : search.length !== 0
+        ? {
+            leagueId: league.id,
+            OR: [
+              { homeTeam: { name: { contains: search, mode: "insensitive" } } },
+              { awayTeam: { name: { contains: search, mode: "insensitive" } } },
+            ],
+          }
+        : teamIds.length > 0
+        ? { leagueId: league.id, OR: [{ homeTeam: { id: { in: teamIds } } }, { awayTeam: { id: { in: teamIds } } }] }
+        : { leagueId: league.id }),
     },
   });
 
@@ -70,5 +93,7 @@ export default async function LeagueSchedule({ params: { id }, searchParams: { t
     awayTeam: { ...g.awayTeam, fileUrl: imageUploads.find(i => i.entityId === g.awayTeamId)?.fileUrl || null },
   }));
 
-  return <GameScheduleTable data={gamesWithTeamImages} />;
+  const permissionCodes = await getUserLeaguePermissionCodes({ league, user });
+
+  return <GameScheduleTable data={gamesWithTeamImages} permissionCodes={permissionCodes} />;
 }

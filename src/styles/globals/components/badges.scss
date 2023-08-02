@@ -1,12 +1,21 @@
 @use "partials";
 
+$badge-vertical-padding: 2px;
+
+@mixin inherit-font-properties {
+  line-height: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  vertical-align: middle;
+}
+
 .badge {
   text-decoration: none;
   display: inline-flex;
   border-radius: partials.get-radius("md");
   -webkit-tap-highlight-color: transparent;
   box-sizing: border-box;
-  align-items: center;
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
@@ -14,31 +23,56 @@
   text-transform: uppercase;
   letter-spacing: 0.0156em;
   cursor: inherit;
-  text-overflow: ellipsis;
   overflow: hidden;
-  border: 0.0625rem solid transparent;
-  padding-right: 4px;
-  padding-left: 4px;
+  outline: 0.0625rem solid transparent;
+  padding-right: 6px;
+  padding-left: 6px;
+  padding-top: $badge-vertical-padding;
+  padding-bottom: $badge-vertical-padding;
   font-family: partials.get-font-family("body");
+  align-items: center;
 
-  // Keep the font sizes and line
-  @each $size in partials.$typography-sizes {
-    &.badge--size-#{$size} {
-      font-size: partials.get-font-size($type: "body", $size: $size);
-      line-height: partials.get-line-height($type: "body", $size: $size);
+  > .badge__content {
+    @include inherit-font-properties();
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    align-items: center;
+
+    > .icon {
+      @layer {
+        color: inherit;
+      }
+    }
+
+    > .badge__text {
+      @include partials.truncate();
+      @include inherit-font-properties();
     }
   }
 
   @include partials.with-font-sizes("body") using ($size, $data) {
     &.badge--size-#{$size} {
+      $line-height: partials.mapget($data, line-height);
+      $height: $line-height + 2 * $badge-vertical-padding;
       font-size: partials.mapget($data, font-size);
-      line-height: partials.mapget($data, line-height);
+      line-height: $line-height;
       font-weight: partials.mapget($data, font-weight);
+      height: $height;
 
       // Allow the font-weight to be overridden for each size.
       @include partials.with-font-weights() using ($weight, $value) {
         &.font-weight-#{$weight} {
           font-weight: $value;
+        }
+      }
+
+      > .badge__content {
+        > .badge__icon {
+          width: $line-height - 2px;
         }
       }
     }

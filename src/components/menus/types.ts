@@ -1,5 +1,6 @@
-import { type ImageProp, type Color, type ComponentProps } from "~/lib/ui";
+import { type Color, type ComponentProps } from "~/lib/ui";
 import { type IconProp } from "~/components/icons";
+import { type ImageProp } from "~/components/images";
 
 type BaseMenuItem = ComponentProps & {
   readonly label: string;
@@ -150,3 +151,7 @@ export const menuItemsAreAllValueless = <V extends string | null, M>(
   }
   return false;
 };
+
+type _FooterAction = JSX.Element | JSX.Element[];
+export type FooterActionsParams = Record<string, unknown>;
+export type FooterActions<P extends FooterActionsParams> = _FooterAction | ((params: P) => _FooterAction);

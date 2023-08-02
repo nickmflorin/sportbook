@@ -80,31 +80,6 @@ enum Sport {
   HOCKEY
 }
 
-enum HockeyLeagueStandingsMethod {
-  RECORD
-  POINTS
-}
-
-enum HockeyLeagueStandingTieBreaker {
-  GOALS_FOR
-  GOALS_AGAINST
-  GOAL_DIFFERENTIAL
-  HEAD_TO_HEAD_MATCHUP
-}
-
-model HockeyLeagueConfig {
-  id              String                           @id @default(uuid()) @db.Uuid
-  createdById     String                           @db.Uuid
-  createdAt       DateTime                         @default(now())
-  updatedAt       DateTime                         @updatedAt
-  updatedById     String                           @db.Uuid
-  standingsMethod HockeyLeagueStandingsMethod      @default(value: POINTS)
-  // We will have to incorporate a solution for cases where the two teams have the same standing after tie breakers.
-  tieBreakers     HockeyLeagueStandingTieBreaker[] @default(value: [HEAD_TO_HEAD_MATCHUP, GOAL_DIFFERENTIAL])
-  league          League                           @relation(fields: [leagueId], references: [id])
-  leagueId        String                           @unique @db.Uuid
-}
-
 // It may (in the future) not make sense to have this be an M2M.
 model Location {
   id                     String              @id @default(uuid()) @db.Uuid
@@ -128,10 +103,10 @@ model Location {
 
 // Registration leagues have finite registration windows and finite start/end times.
 model LeagueRegistration {
-  start    DateTime
-  end      DateTime
-  league   League   @relation(fields: [leagueId], references: [id])
-  leagueId String   @unique @db.Uuid
+  start          DateTime
+  end            DateTime
+  leagueConfig   LeagueConfig @relation(fields: [leagueConfigId], references: [id])
+  leagueConfigId String       @unique @db.Uuid
 }
 
 enum LeagueType {
@@ -146,9 +121,9 @@ enum LeaguePlayerType {
 }
 
 model LeagueRequirements {
-  minimumAge Int?
-  league     League @relation(fields: [leagueId], references: [id])
-  leagueId   String @unique @db.Uuid
+  minimumAge     Int?
+  leagueConfig   LeagueConfig @relation(fields: [leagueConfigId], references: [id])
+  leagueConfigId String       @unique @db.Uuid
 }
 
 model LeagueOnLocations {
@@ -177,6 +152,31 @@ model Player {
   @@unique([userId, teamId])
 }
 
+enum HockeyLeagueStandingsMethod {
+  RECORD
+  POINTS
+}
+
+enum HockeyLeagueStandingTieBreaker {
+  GOALS_FOR
+  GOALS_AGAINST
+  GOAL_DIFFERENTIAL
+  HEAD_TO_HEAD_MATCHUP
+}
+
+model HockeyLeagueConfig {
+  id              String                           @id @default(uuid()) @db.Uuid
+  createdById     String                           @db.Uuid
+  createdAt       DateTime                         @default(now())
+  updatedAt       DateTime                         @updatedAt
+  updatedById     String                           @db.Uuid
+  standingsMethod HockeyLeagueStandingsMethod      @default(value: POINTS)
+  // We will have to incorporate a solution for cases where the two teams have the same standing after tie breakers.
+  tieBreakers     HockeyLeagueStandingTieBreaker[] @default(value: [HEAD_TO_HEAD_MATCHUP, GOAL_DIFFERENTIAL])
+  league          League                           @relation(fields: [leagueId], references: [id])
+  leagueId        String                           @unique @db.Uuid
+}
+
 enum LeagueCompetitionLevel {
   SOCIAL
   COMPETITIVE
@@ -203,30 +203,61 @@ model LeagueStaff {
   @@unique([leagueId, userId])
 }
 
-model League {
+enum LeaguePermissionCode {
+  POSTPONE_GAME
+  CANCEL_GAME
+}
+
+model LeaguePermissionSet {
+  id              String                 @id @default(uuid()) @db.Uuid
+  createdById     String                 @db.Uuid
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  updatedById     String                 @db.Uuid
+  leagueConfig    LeagueConfig           @relation("permissionSets", fields: [leagueConfigId], references: [id])
+  leagueConfigId  String                 @db.Uuid
+  leagueStaffRole LeagueStaffRole
+  permissionCodes LeaguePermissionCode[]
+
+  @@unique([leagueConfigId, leagueStaffRole])
+}
+
+model LeagueConfig {
   id               String                 @id @default(uuid()) @db.Uuid
-  name             String
-  description      String?
   createdById      String                 @db.Uuid
   createdAt        DateTime               @default(now())
   updatedAt        DateTime               @updatedAt
   updatedById      String                 @db.Uuid
+  league           League?
+  isPublic         Boolean                @default(true)
   registration     LeagueRegistration?
+  requirements     LeagueRequirements?
   leagueStart      DateTime?
   leagueEnd        DateTime?
   leagueType       LeagueType             @default(value: PICKUP)
   competitionLevel LeagueCompetitionLevel @default(value: SOCIAL)
-  isPublic         Boolean                @default(true)
-  sport            Sport
-  requirements     LeagueRequirements?
+  permissionSets   LeaguePermissionSet[]  @relation("permissionSets")
+}
+
+model League {
+  id           String              @id @default(uuid()) @db.Uuid
+  name         String
+  description  String?
+  createdById  String              @db.Uuid
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  updatedById  String              @db.Uuid
+  sport        Sport
   // Per sport configurations have to be optional because their presence will depend on the sport the league is
   // configured for.  However, they should be constructed such that they have no required fields, so in cases that the
   // config is missing for a League a default configuration can be used.
-  hockeyConfig     HockeyLeagueConfig? // Only applicable when 'sport' is HOCKEY.
-  leagueGames      Game[]                 @relation("leagueGames")
-  locations        LeagueOnLocations[]    @relation("locations")
-  teams            Team[]                 @relation("teams")
-  staff            LeagueStaff[]          @relation("staff")
+  hockeyConfig HockeyLeagueConfig? // Only applicable when 'sport' is HOCKEY.
+  config       LeagueConfig        @relation(fields: [configId], references: [id])
+  configId     String              @unique @db.Uuid
+  leagueGames  Game[]              @relation("leagueGames")
+  locations    LeagueOnLocations[] @relation("locations")
+  teams        Team[]              @relation("teams")
+  staff        LeagueStaff[]       @relation("staff")
 }
 
 enum Color {

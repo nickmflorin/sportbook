@@ -1,7 +1,7 @@
 import classNames from "classnames";
 
-import { type FontWeight, type TypographySize } from "~/lib/ui";
 import { ButtonTypes, type ButtonVariant } from "~/components/buttons";
+import { type FontWeight, type TypographySize } from "~/components/typography";
 
 import { Button, type ButtonProps } from "../base";
 

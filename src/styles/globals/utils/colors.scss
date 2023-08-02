@@ -1,25 +1,9 @@
 @use "partials";
 
-@include partials.colors("color");
+$color-class-properties: ("color", "background-color", "border-color", "outline-color");
 
-@include partials.colors("background-color");
-
-@include partials.colors("background");
-
-@include partials.colors("border-color");
-
-@include partials.hovered-colors("color");
-
-@include partials.hovered-colors("background-color");
-
-@include partials.hovered-colors("background");
-
-@include partials.hovered-colors("border-color");
-
-@include partials.focused-colors("color");
-
-@include partials.focused-colors("background-color");
-
-@include partials.focused-colors("background");
-
-@include partials.focused-colors("border-color");
+@each $property in $color-class-properties {
+  @include partials.colors($property);
+  @include partials.hovered-colors($property);
+  @include partials.focused-colors($property);
+}

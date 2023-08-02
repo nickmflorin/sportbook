@@ -74,4 +74,8 @@ export class EnumModel<E extends types.PrismaEnum> {
   getBadgeBackgroundColor = (v: types.PrismaEnumValue<E>): Color | undefined => this.config[v].badgeBackgroundColor;
 
   getBadgeColor = (v: types.PrismaEnumValue<E>): Color | undefined => this.config[v].badgeColor;
+
+  getBadgeBorderColor = (v: types.PrismaEnumValue<E>): Color | undefined => this.config[v].badgeBorderColor;
+
+  getBadgeIconColor = (v: types.PrismaEnumValue<E>): Color | undefined => this.config[v].badgeIconColor;
 }

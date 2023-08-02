@@ -27,13 +27,15 @@ export const EditRowColumn = <T extends Record<string, unknown>>({
 export const ActionMenuColumn = <T extends Record<string, unknown>>({
   actionMenu,
 }: {
-  actionMenu: (t: T) => TableAction[];
+  actionMenu: TableAction[] | ((t: T) => TableAction[]);
 }): Column<T> => ({
   title: "",
   accessor: "",
   width: 40,
   textAlignment: "center",
-  render: (rowData: T) => <TableActionDropdownMenu actions={actionMenu(rowData)} />,
+  render: (rowData: T) => (
+    <TableActionDropdownMenu actions={typeof actionMenu === "function" ? actionMenu(rowData) : actionMenu} />
+  ),
 });
 
 export type DataTableProps<T> = Pick<MantineDataTableProps<T>, "columns" | "sx"> & {
@@ -42,7 +44,7 @@ export type DataTableProps<T> = Pick<MantineDataTableProps<T>, "columns" | "sx">
   readonly loading?: boolean;
   readonly className?: ClassName;
   readonly onRowEdit?: (t: T) => void;
-  readonly actionMenu?: (t: T) => TableAction[];
+  readonly actionMenu?: TableAction[] | undefined | ((t: T) => TableAction[]);
 };
 
 export const DataTable = <T extends Record<string, unknown>>({
@@ -61,7 +63,13 @@ export const DataTable = <T extends Record<string, unknown>>({
       if (onRowEdit) {
         return [...cs, EditRowColumn({ onRowEdit })];
       }
-      if (actionMenu) {
+      if (actionMenu && typeof actionMenu === "function") {
+        cs = [...cs, ActionMenuColumn({ actionMenu })];
+      } else if (
+        actionMenu &&
+        actionMenu.length !== 0 &&
+        actionMenu.filter(i => i.hidden !== true).filter(i => i.visible !== false).length !== 0
+      ) {
         cs = [...cs, ActionMenuColumn({ actionMenu })];
       }
       return cs;

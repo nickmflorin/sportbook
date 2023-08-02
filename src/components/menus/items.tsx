@@ -8,7 +8,7 @@ import { isIconProp } from "~/components/icons";
 import { Icon } from "~/components/icons/Icon";
 import { Avatar } from "~/components/images/Avatar";
 import { Checkbox } from "~/components/input/Checkbox";
-import { Label } from "~/components/typography";
+import { Label } from "~/components/typography/Label";
 
 type BaseMenuItemProps<I extends types.MenuItem<V, M>, V extends string | null, M extends Record<string, unknown>> = {
   readonly item: Omit<I, "value">;

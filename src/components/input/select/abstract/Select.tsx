@@ -11,7 +11,8 @@ import classNames from "classnames";
 import { type Color, type ClassName, type Style } from "~/lib/ui";
 import { type BasicIconProp } from "~/components/icons";
 import { Spinner, Icon } from "~/components/icons/Icon";
-import { Text, Label } from "~/components/typography";
+import { Label } from "~/components/typography/Label";
+import { Text } from "~/components/typography/Text";
 
 import { createSelectOption } from "./SelectOption";
 

@@ -1,19 +1,38 @@
-import { type LeagueCompetitionLevel, LeagueCompetitionLevels, type League } from "~/prisma/model";
+import {
+  type LeagueCompetitionLevel,
+  LeagueCompetitionLevels,
+  type LeagueWithConfig,
+  type LeagueConfig,
+} from "~/prisma/model";
 
 import { Badge, type BadgeProps } from "./Badge";
 
-export interface LeagueCompetitionLevelBadgeProps extends Omit<BadgeProps, "color" | "backgroundColor" | "children"> {
-  readonly value: Pick<League, "competitionLevel"> | LeagueCompetitionLevel;
+type L = LeagueConfig | LeagueWithConfig | LeagueCompetitionLevel;
+
+export interface LeagueCompetitionLevelBadgeProps
+  extends Omit<BadgeProps, "color" | "backgroundColor" | "children" | "icon"> {
+  readonly value: L;
+  readonly withIcon?: boolean;
 }
 
-export const LeagueCompetitionLevelBadge = ({ value, ...props }: LeagueCompetitionLevelBadgeProps): JSX.Element => (
+const getValue = (value: L): LeagueCompetitionLevel =>
+  typeof value === "string"
+    ? value
+    : (value as LeagueConfig).competitionLevel !== undefined
+    ? (value as LeagueConfig).competitionLevel
+    : (value as LeagueWithConfig).config.competitionLevel;
+
+export const LeagueCompetitionLevelBadge = ({
+  value,
+  withIcon,
+  ...props
+}: LeagueCompetitionLevelBadgeProps): JSX.Element => (
   <Badge
     {...props}
-    color={LeagueCompetitionLevels.getBadgeColor(typeof value === "string" ? value : value.competitionLevel)}
-    backgroundColor={LeagueCompetitionLevels.getBadgeBackgroundColor(
-      typeof value === "string" ? value : value.competitionLevel,
-    )}
+    color={LeagueCompetitionLevels.getBadgeColor(getValue(value))}
+    backgroundColor={LeagueCompetitionLevels.getBadgeBackgroundColor(getValue(value))}
+    icon={withIcon ? LeagueCompetitionLevels.getIcon(getValue(value)) : undefined}
   >
-    {LeagueCompetitionLevels.getLabel(typeof value === "string" ? value : value.competitionLevel)}
+    {LeagueCompetitionLevels.getLabel(getValue(value))}
   </Badge>
 );

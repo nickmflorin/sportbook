@@ -1,4 +1,4 @@
-import { Text } from "~/components/typography";
+import { Text } from "~/components/typography/Text";
 
 export interface FormFieldErrorProps {
   readonly children: string;

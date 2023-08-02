@@ -48,15 +48,18 @@ type _Color = ColorName | `${ColorName}.${ColorShade}`;
 
 export type Color = _Color | [_Color, ColorShade | null] | { color: _Color; shade?: ColorShade | null };
 
-export const ColorPropNames = ["backgroundColor", "color", "borderColor"] as const;
+export const ColorPropNames = ["backgroundColor", "color", "borderColor", "outlineColor"] as const;
 export type ColorPropName = (typeof ColorPropNames)[number];
 
-type ColorNativePropName = "background-color" | "color" | "border-color";
+type ColorNativePropName = "background-color" | "color" | "border-color" | "outline-color";
+
+export type ColorProps<N extends ColorPropName = ColorPropName> = { [k in N]?: Color };
 
 export const ColorPropNameMap: { [key in ColorPropName]: ColorNativePropName } = {
   backgroundColor: "background-color",
   borderColor: "border-color",
   color: "color",
+  outlineColor: "outline-color",
 };
 
 export const ColorStates = enumeratedLiterals(["focused", "hovered"] as const);

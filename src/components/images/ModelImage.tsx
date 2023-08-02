@@ -4,11 +4,12 @@ import React from "react";
 import classNames from "classnames";
 import { type Optional } from "utility-types";
 
-import { type ComponentProps, type BorderRadiusSize, type ImageProp } from "~/lib/ui";
+import { type ComponentProps, type BorderRadiusSize } from "~/lib/ui";
 import { parseInitials } from "~/lib/util/strings";
 import { type IconProp } from "~/components/icons";
 import { Icon } from "~/components/icons/Icon";
-import { Text, type TextProps } from "~/components/typography";
+import { type ImageProp } from "~/components/images";
+import { Text, type TextProps } from "~/components/typography/Text";
 
 type BaseModelImageProps = ComponentProps & {
   readonly fallbackIcon?: IconProp;

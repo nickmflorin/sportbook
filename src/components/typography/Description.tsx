@@ -3,7 +3,7 @@ import React from "react";
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
-import { Text, type TextProps } from "~/components/typography";
+import { Text, type TextProps } from "~/components/typography/Text";
 
 type SingleDescription = string | JSX.Element | null | undefined;
 export type Description = SingleDescription | SingleDescription[];

@@ -1,1 +1,1 @@
-export * from "./ModelImage";
+export * from "./types";

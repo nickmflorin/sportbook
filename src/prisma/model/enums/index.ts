@@ -1,4 +1,4 @@
-import { Sport, LeagueType, LeagueCompetitionLevel } from "@prisma/client";
+import { Sport, LeagueType, LeagueCompetitionLevel, GameStatus } from "@prisma/client";
 
 import { EnumModel } from "./model";
 
@@ -40,5 +40,40 @@ export const LeagueCompetitionLevels = new EnumModel("leagueCompetitionLevel", L
   [LeagueCompetitionLevel.COMPETITIVE]: {
     label: "Competitive",
     icon: { name: "medal" },
+  },
+});
+
+export const GameStatuses = new EnumModel("gameStatus", GameStatus, {
+  [GameStatus.CANCELLED]: {
+    label: "Cancelled",
+    icon: { name: "xmark" },
+    badgeColor: "gray.7",
+    badgeIconColor: "red.8",
+    badgeBorderColor: "gray.4",
+    badgeBackgroundColor: "white",
+  },
+  [GameStatus.POSTPONED]: {
+    label: "Postponed",
+    icon: { name: "calendar-clock" },
+    badgeColor: "gray.7",
+    badgeIconColor: "blue",
+    badgeBackgroundColor: "white",
+    badgeBorderColor: "gray.4",
+  },
+  [GameStatus.FINAL]: {
+    label: "Ready to Play",
+    icon: { name: "check" },
+    badgeColor: "gray.7",
+    badgeIconColor: "green",
+    badgeBackgroundColor: "white",
+    badgeBorderColor: "gray.4",
+  },
+  [GameStatus.PROPOSED]: {
+    label: "Proposed",
+    icon: { name: "question-circle" },
+    badgeColor: "gray.7",
+    badgeIconColor: "gray.7",
+    badgeBackgroundColor: "white",
+    badgeBorderColor: "gray.4",
   },
 });

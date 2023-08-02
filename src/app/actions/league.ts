@@ -7,13 +7,36 @@ import { getAuthUser } from "~/server/auth";
 
 import { ActionError, ActionErrorCodes } from "./errors";
 
-export const createLeague = async ({ locations, ...data }: z.output<typeof LeagueSchema>) => {
+export const createLeague = async ({
+  locations,
+  competitionLevel,
+  leagueType,
+  isPublic,
+  leagueStart,
+  leagueEnd,
+  ...data
+}: z.output<typeof LeagueSchema>) => {
   const user = await getAuthUser();
   return await prisma.$transaction(
     async tx => {
       if (user) {
         const league = await tx.league.create({
-          data: { createdById: user.id, updatedById: user.id, ...data },
+          data: {
+            createdById: user.id,
+            updatedById: user.id,
+            ...data,
+            config: {
+              create: {
+                competitionLevel,
+                leagueType,
+                isPublic,
+                leagueStart,
+                leagueEnd,
+                createdById: user.id,
+                updatedById: user.id,
+              },
+            },
+          },
         });
         // By default, make the user who created the League an Admin.  We will need to revisit this later.
         await tx.leagueStaff.create({
