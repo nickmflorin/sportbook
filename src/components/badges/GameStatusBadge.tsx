@@ -11,5 +11,5 @@ export interface GameStatusBadgeProps extends Omit<EnumBadgeProps<typeof GameSta
 const getValue = (value: G): GameStatus => (typeof value === "string" ? value : value.status);
 
 export const GameStatusBadge = ({ value, ...props }: GameStatusBadgeProps): JSX.Element => (
-  <EnumBadge {...props} model={GameStatuses} value={getValue(value)} />
+  <EnumBadge {...props} model={GameStatuses} value={getValue(value)} fontWeight="medium" />
 );

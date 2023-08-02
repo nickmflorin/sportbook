@@ -39,11 +39,7 @@ export const Badge = ({
     )}
   >
     <div className="badge__content">
-      <Icon
-        className={classNames("badge__icon", getColorClassName("color", iconColor))}
-        icon={icon}
-        axis="horizontal"
-      />
+      <Icon className={classNames("badge__icon", getColorClassName("color", iconColor))} icon={icon} axis="vertical" />
       <div className="badge_text">{children}</div>
     </div>
   </div>

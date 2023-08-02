@@ -54,7 +54,7 @@ export const GameStatuses = new EnumModel("gameStatus", GameStatus, {
   },
   [GameStatus.POSTPONED]: {
     label: "Postponed",
-    icon: { name: "calendar-clock" },
+    icon: { name: "umbrella" },
     badgeColor: "gray.7",
     badgeIconColor: "blue",
     badgeBackgroundColor: "white",
@@ -70,7 +70,7 @@ export const GameStatuses = new EnumModel("gameStatus", GameStatus, {
   },
   [GameStatus.PROPOSED]: {
     label: "Proposed",
-    icon: { name: "question-circle" },
+    icon: { name: "question" },
     badgeColor: "gray.7",
     badgeIconColor: "gray.7",
     badgeBackgroundColor: "white",

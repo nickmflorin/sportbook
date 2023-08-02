@@ -12,8 +12,8 @@ export const BackButton = ({ children, ...props }: BackButtonProps): JSX.Element
       <AlternateButton.Bare
         color="gray.7"
         hoveredColor="gray.8"
-        fontSize="xs"
-        fontWeight="medium"
+        fontSize="sm"
+        fontWeight="regular"
         {...props}
         className={classNames("back-button", "back-alternate-button", props.className)}
         icon={{ name: "arrow-left" }}

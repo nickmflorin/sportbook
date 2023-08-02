@@ -19,9 +19,7 @@ export const MantineProvider = ({ children }: { children: React.ReactNode }) => 
 
   return (
     <CacheProvider value={cache}>
-      <RootMantineProvider withGlobalStyles withNormalizeCSS>
-        {children}
-      </RootMantineProvider>
+      <RootMantineProvider>{children}</RootMantineProvider>
     </CacheProvider>
   );
 };
