@@ -5,15 +5,9 @@ import {
   type LeagueConfig,
 } from "~/prisma/model";
 
-import { Badge, type BadgeProps } from "./Badge";
+import { EnumBadge, type EnumBadgeProps } from "./EnumBadge";
 
 type L = LeagueConfig | LeagueWithConfig | LeagueCompetitionLevel;
-
-export interface LeagueCompetitionLevelBadgeProps
-  extends Omit<BadgeProps, "color" | "backgroundColor" | "children" | "icon"> {
-  readonly value: L;
-  readonly withIcon?: boolean;
-}
 
 const getValue = (value: L): LeagueCompetitionLevel =>
   typeof value === "string"
@@ -22,17 +16,10 @@ const getValue = (value: L): LeagueCompetitionLevel =>
     ? (value as LeagueConfig).competitionLevel
     : (value as LeagueWithConfig).config.competitionLevel;
 
-export const LeagueCompetitionLevelBadge = ({
-  value,
-  withIcon,
-  ...props
-}: LeagueCompetitionLevelBadgeProps): JSX.Element => (
-  <Badge
-    {...props}
-    color={LeagueCompetitionLevels.getBadgeColor(getValue(value))}
-    backgroundColor={LeagueCompetitionLevels.getBadgeBackgroundColor(getValue(value))}
-    icon={withIcon ? LeagueCompetitionLevels.getIcon(getValue(value)) : undefined}
-  >
-    {LeagueCompetitionLevels.getLabel(getValue(value))}
-  </Badge>
+export interface LeagueCompetitionLevelBadgeProps extends Omit<EnumBadgeProps<typeof LeagueCompetitionLevel>, "value"> {
+  readonly value: L;
+}
+
+export const LeagueCompetitionLevelBadge = ({ value, ...props }: LeagueCompetitionLevelBadgeProps): JSX.Element => (
+  <EnumBadge {...props} model={LeagueCompetitionLevels} value={getValue(value)} />
 );
