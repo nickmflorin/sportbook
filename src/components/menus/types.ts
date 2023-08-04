@@ -2,6 +2,13 @@ import { type Color, type ComponentProps } from "~/lib/ui";
 import { type IconProp } from "~/components/icons";
 import { type ImageProp } from "~/components/images";
 
+export type IMenuItem = {
+  readonly setLoading: (v: boolean) => void;
+  readonly toggleLoading: () => void;
+  readonly showSubContent: (content: JSX.Element) => void;
+  readonly hideSubContent: () => void;
+};
+
 type BaseMenuItem = ComponentProps & {
   readonly label: string;
   readonly icon?: IconProp | ImageProp;
@@ -38,7 +45,7 @@ type BaseMenuItem = ComponentProps & {
    * Default: "gray.5"
    */
   readonly iconColor?: Color;
-  readonly onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  readonly onClick?: (item: IMenuItem, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 };
 
 export type MenuSelectionMode = "single" | "multiple";

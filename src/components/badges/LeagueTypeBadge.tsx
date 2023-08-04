@@ -11,7 +11,7 @@ const getValue = (value: L): LeagueType =>
 
 import { EnumBadge, type EnumBadgeProps } from "./EnumBadge";
 
-export interface LeagueTypeBadgeProps extends Omit<EnumBadgeProps<typeof LeagueType>, "value"> {
+export interface LeagueTypeBadgeProps extends Omit<EnumBadgeProps<typeof LeagueType>, "value" | "model"> {
   readonly value: L;
 }
 

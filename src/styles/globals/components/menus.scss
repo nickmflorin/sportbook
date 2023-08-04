@@ -1,9 +1,9 @@
+@use "sass:list";
 @use "partials";
 
 .menu {
   display: flex;
   flex-direction: column;
-  // gap: partials.get-spacing("sm");
   overflow-y: hidden;
   max-height: 400px; // Might need to revisit this.
   padding: partials.get-spacing("xs");
@@ -31,16 +31,32 @@
 
     > .menu-item {
       display: flex;
-      flex-direction: row;
-      align-items: center;
-      border: 1px solid transparent;
-      border-radius: partials.get-radius("sm");
+      flex-direction: column;
+      gap: list.nth(partials.$menu-item-padding, 1);
 
-      @include partials.select-option-properties;
+      > .menu-item__content {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        border: 1px solid transparent;
+        border-radius: partials.get-radius("sm");
 
-      .label {
-        @include partials.truncate();
-        font-size: partials.get-font-size($type: "label", $size: "sm");
+        @include partials.menu-item-properties;
+
+        .label {
+          @include partials.truncate();
+          font-size: partials.get-font-size($type: "label", $size: "sm");
+        }
+
+        .icon,
+        .avatar {
+          margin-right: partials.get-spacing("sm");
+        }
+      }
+
+      > .menu-item__sub-content {
+        padding: partials.$menu-item-padding;
+        border-top: partials.$input-border;
       }
     }
   }

@@ -16,7 +16,8 @@ const getValue = (value: L): LeagueCompetitionLevel =>
     ? (value as LeagueConfig).competitionLevel
     : (value as LeagueWithConfig).config.competitionLevel;
 
-export interface LeagueCompetitionLevelBadgeProps extends Omit<EnumBadgeProps<typeof LeagueCompetitionLevel>, "value"> {
+export interface LeagueCompetitionLevelBadgeProps
+  extends Omit<EnumBadgeProps<typeof LeagueCompetitionLevel>, "value" | "model"> {
   readonly value: L;
 }
 

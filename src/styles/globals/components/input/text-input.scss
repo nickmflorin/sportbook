@@ -6,40 +6,10 @@
 
 // Not currently used - but will be used eventually.
 .text-input {
-  @include base.input-base;
+  @include partials.text-input;
 
   display: flex;
   flex-direction: row;
-  line-height: partials.$input-line-height;
-  padding: partials.$input-padding;
-
-  $actions-padding: 2px;
-  .actions {
-    // We have to explicitly set the height of the affix-group (rather than relying on the 100% height) because SVGs do
-    // not respond well to relative heights.
-    height: partials.$input-line-height;
-    padding: $actions-padding;
-
-    > * {
-      color: partials.$input-icon-color;
-      // The affixes should be slightly smaller than the accompanying text.
-      height: partials.$input-line-height - 2 * $actions-padding;
-    }
-  }
-
-  &__input {
-    @extend %native-input-base;
-
-    flex-grow: 100;
-  }
-
-  .actions + input {
-    margin-left: partials.get-spacing("lg");
-  }
-
-  input + .actions {
-    margin-left: partials.get-spacing("lg");
-  }
 }
 
 .mantine-TextInput-input {

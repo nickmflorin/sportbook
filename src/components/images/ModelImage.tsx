@@ -9,6 +9,7 @@ import { parseInitials } from "~/lib/util/strings";
 import { type IconProp } from "~/components/icons";
 import { Icon } from "~/components/icons/Icon";
 import { type ImageProp } from "~/components/images";
+import { Loading } from "~/components/loading";
 import { Text, type TextProps } from "~/components/typography/Text";
 
 type BaseModelImageProps = ComponentProps & {
@@ -16,6 +17,7 @@ type BaseModelImageProps = ComponentProps & {
   readonly alt?: string;
   readonly borderRadius?: BorderRadiusSize;
   readonly fontSize?: TextProps["size"];
+  readonly loading?: boolean;
 };
 
 type ModelImageSpreadProps = BaseModelImageProps &
@@ -56,6 +58,7 @@ export const ModelImage = ({
   style,
   fontSize,
   image,
+  loading,
 }: ModelImageProps) => {
   const _url = getImageVar("url", { image, url });
   const _size = getImageVar("size", { image, size });
@@ -65,6 +68,7 @@ export const ModelImage = ({
       style={{ ...style, height: size, width: size }}
       className={classNames("model-image", borderRadius && `model-image--border-radius-${borderRadius}`, className)}
     >
+      <Loading loading={loading === true} />
       {_url !== undefined && _url !== null ? (
         <Image height={_size} width={_size} src={_url} alt={alt} />
       ) : (

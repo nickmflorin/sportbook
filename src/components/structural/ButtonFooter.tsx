@@ -3,6 +3,7 @@ import { experimental_useFormStatus as useFormStatus } from "react-dom";
 
 import { logger } from "~/application/logger";
 import { type ComponentProps } from "~/lib/ui";
+import { type ButtonSize } from "~/components/buttons";
 import { SolidButton } from "~/components/buttons/SolidButton";
 import { ShowHide } from "~/components/util";
 
@@ -17,6 +18,7 @@ export type ButtonFooterProps = ComponentProps & {
   readonly disabled?: boolean;
   readonly submitDisabled?: boolean;
   readonly cancelDisabled?: boolean;
+  readonly buttonSize?: ButtonSize;
   readonly onSubmit?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   readonly onCancel?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
@@ -39,6 +41,7 @@ export const ButtonFooter = ({
   submitText = "Save",
   submitButtonType = "submit",
   orientation = "right-justified",
+  buttonSize = "sm",
   style,
   className,
   ...props
@@ -61,6 +64,7 @@ export const ButtonFooter = ({
       <ShowHide show={visibility.cancel}>
         <SolidButton.Secondary
           className="button-footer__button"
+          size={buttonSize}
           onClick={e => props.onCancel?.(e)}
           locked={submitting}
           disabled={props.disabled || props.cancelDisabled}
@@ -71,6 +75,7 @@ export const ButtonFooter = ({
       <ShowHide show={visibility.submit}>
         <SolidButton.Primary
           className="button-footer__button"
+          size={buttonSize}
           type={submitButtonType}
           loading={submitting}
           onClick={e => props.onSubmit?.(e)}

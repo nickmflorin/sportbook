@@ -6,7 +6,7 @@ import { DeleteButton } from "~/components/buttons/DeleteButton";
 import { LocationTile } from "~/components/views/tiles";
 import { useLocations } from "~/app/api/hooks";
 
-import { LocationSelect, type LocationSelectProps } from "./select";
+import { LocationSelect, type LocationSelectProps } from "./select/LocationSelect";
 
 type Unsaved = z.output<typeof LocationSchema>;
 

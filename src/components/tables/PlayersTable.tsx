@@ -3,7 +3,8 @@ import { type PlayerWithUser, type Team, type ModelWithFileUrl } from "~/prisma/
 import { TeamAvatar } from "~/components/images/TeamAvatar";
 import { UserAvatar } from "~/components/images/UserAvatar";
 
-import { DataTable, type DataTableProps, type Column } from "./DataTable";
+import { type Column } from "./columns";
+import { DataTable, type DataTableProps } from "./DataTable";
 
 export enum PlayersTableColumn {
   USER,

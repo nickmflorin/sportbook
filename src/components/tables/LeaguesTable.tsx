@@ -6,7 +6,8 @@ import { Flex } from "~/components/structural";
 import { DateTimeText } from "~/components/typography/DateTimeText";
 import { Text } from "~/components/typography/Text";
 
-import { DataTable, type DataTableProps, type Column } from "./DataTable";
+import { type Column } from "./columns";
+import { DataTable, type DataTableProps } from "./DataTable";
 
 type LeagueTableLeagueFields = "id" | "name" | "description" | "numParticipants" | "teams" | "config";
 

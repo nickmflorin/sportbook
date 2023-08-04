@@ -1,41 +1,34 @@
 @use "sass:color";
 @use "sass:list";
+@use "sass:map";
+@use "sass:meta";
 
+@use "../../functions" as fn;
 @use "../../mixins" as mixins;
 
 @use "../colors" as colors;
 @use "../radius" as radius;
 @use "../typography" as typography;
 
+$input-sizes: ("xs", "sm", "md", "lg");
+
+// ---------------------------------- Agnostic Properties (The same for all input forms) ---------------------------- //
 $input-color: colors.get-color("gray", $shade: 8);
 $input-font-family: typography.$font-family-inter;
-$input-font-size: typography.get-font-size("body", $size: "sm");
+$input-default-font-size: typography.get-font-size("body", $size: "sm");
 $input-font-weight: typography.get-font-weight(
   $weight: "regular",
 );
 $input-bg-color: colors.get-color("white");
-
 $input-border-color: colors.get-color("gray", $shade: 4);
 $input-focused-border-color: colors.get-color("blue", $shade: 7);
 $input-border-radius: radius.get-radius("sm");
 $input-disabled-bg-color: #efefef;
-
-$input-height: 32px;
-$input-padding: 6px 12px;
-
-// The line height of the text input text should fill up the remaining space after the padding is accounted for.
-$input-line-height: $input-height - 2 * list.nth($input-padding, 1);
-
 $input-icon-color: colors.get-color("gray", $shade: 6);
-
 $input-border-width: 1px;
 $input-border: $input-border-width solid $input-border-color;
 $input-placeholder-color: color.change(#606873, $alpha: 0.6);
 $input-caret-color: colors.get-color("gray", $shade: 8);
-
-$select-option-padding: 4px 8px;
-$select-option-height: 28px;
-$select-option-line-height: $select-option-height - 2 * list.nth($select-option-padding, 1);
 
 @mixin input-placeholder-properties {
   color: $input-placeholder-color;
@@ -45,27 +38,35 @@ $select-option-line-height: $select-option-height - 2 * list.nth($select-option-
   line-height: inherit;
 }
 
-@mixin input-font-properties {
-  color: $input-color;
-  font-family: $input-font-family;
-  font-size: $input-font-size;
-  font-weight: $input-font-weight;
-  line-height: $input-line-height;
+@mixin with-placeholder {
+  &::placeholder {
+    @include input-placeholder-properties;
+  }
+
+  ::placeholder {
+    @include input-placeholder-properties;
+  }
+
+  // Mantine Placeholder
+  #placeholder {
+    @include input-placeholder-properties;
+  }
 }
 
 @mixin input-properties {
-  @include input-font-properties;
   @include mixins.border($input-border-color);
+  @include with-placeholder;
+
+  font-weight: $input-font-weight;
+  color: $input-color;
+  font-family: $input-font-family;
 
   // We need to explicitly set the background color to white (instead of not specifying a background color) such that
   // auto fill styling applied by Google Chrome (and likely others) does not change the background.
   background-color: $input-bg-color;
   border-radius: $input-border-radius;
-  height: $input-height;
-  min-height: $input-height;
-  padding: $input-padding;
 
-  > .icon {
+  .icon {
     color: $input-icon-color;
   }
 
@@ -82,11 +83,330 @@ $select-option-line-height: $select-option-height - 2 * list.nth($select-option-
   }
 }
 
-@mixin select-option-properties {
-  line-height: $select-option-line-height;
-  padding: $select-option-padding;
-  height: $select-option-height;
-  font-weight: $input-font-weight;
+@function padding($args...) {
+  $p: ();
+  @each $a in $args {
+    $p: list.append($p, $a, space);
+  }
+  @return $p;
+}
+
+// ------------------------------------------------------------------------------------------------------------------ //
+
+// ----------------------------------------------------- Text Input ------------------------------------------------- //
+$text-input-default-size: "md";
+
+$text-input-heights: (
+  "xs": 24px,
+  "sm": 28px,
+  "md": 32px,
+  "lg": 36px,
+);
+
+@function get-text-input-height($size: $text-input-default-size) {
+  @return fn.mapget($text-input-heights, $size);
+}
+
+$text-input-font-sizes: (
+  "xs": typography.get-font-size("body", $size: "xs"),
+  "sm": typography.get-font-size("body", $size: "sm"),
+  "md": typography.get-font-size("body", $size: "sm"),
+  "lg": typography.get-font-size("body", $size: "md"),
+);
+
+@function get-text-input-font-size($size: $text-input-default-size) {
+  @return fn.mapget($text-input-font-sizes, $size);
+}
+
+$text-input-line-heights: (
+  "xs": get-text-input-font-size("xs") + 4px,
+  "sm": get-text-input-font-size("sm") + 4px,
+  "md": get-text-input-font-size("md") + 4px,
+  "lg": get-text-input-font-size("lg") + 4px,
+);
+
+@function get-text-input-line-height($size: $text-input-default-size) {
+  @return fn.mapget($text-input-line-heights, $size);
+}
+
+@function get-text-input-padding($size: $text-input-default-size) {
+  $vertical-padding: 0.5 * (get-text-input-height($size) - get-text-input-line-height($size));
+  @return $vertical-padding 12px;
+}
+
+@mixin text-input-size-properties($size: $text-input-default-size) {
+  height: get-text-input-height($size);
+  min-height: get-text-input-height($size);
+
+  > .mantine-Input-wrapper.mantine-TextInput-wrapper {
+    height: 100%;
+    flex-grow: 100;
+
+    > .mantine-TextInput-input {
+      min-height: get-text-input-height($size);
+      padding: get-text-input-padding($size);
+      line-height: get-text-input-line-height($size);
+      font-size: get-text-input-font-size($size);
+      height: 100%;
+    }
+  }
+}
+
+@mixin text-input-size-classes() {
+  @each $size in $input-sizes {
+    &.text-input--#{$size} {
+      @include text-input-size-properties($size);
+    }
+  }
+  @include mixins.without-selectors($input-sizes, $prefix: ".text-input--") {
+    @include text-input-size-properties();
+  }
+}
+
+@mixin text-input {
+  @include text-input-size-classes();
+
+  > .mantine-Input-wrapper.mantine-TextInput-wrapper {
+    height: 100%;
+    flex-grow: 100;
+
+    > .mantine-TextInput-input {
+      @include input-properties();
+    }
+  }
+}
+
+// ----------------------------------------------------- Text Area -------------------------------------------------- //
+$text-area-default-size: "md";
+
+// $text-area-heights: (
+//   "xs": 24px,
+//   "sm": 28px,
+//   "md": 32px,
+//   "lg": 36px,
+// );
+
+// @function get-text-area-height($size: $text-area-default-size) {
+//   @return fn.mapget($text-area-heights, $size);
+// }
+
+$text-area-font-sizes: (
+  "xs": typography.get-font-size("body", $size: "xs"),
+  "sm": typography.get-font-size("body", $size: "sm"),
+  "md": typography.get-font-size("body", $size: "sm"),
+  "lg": typography.get-font-size("body", $size: "md"),
+);
+
+@function get-text-area-font-size($size: $text-area-default-size) {
+  @return fn.mapget($text-area-font-sizes, $size);
+}
+
+$text-area-line-heights: (
+  "xs": get-text-input-font-size("xs") + 4px,
+  "sm": get-text-input-font-size("sm") + 4px,
+  "md": get-text-input-font-size("md") + 4px,
+  "lg": get-text-input-font-size("lg") + 4px,
+);
+
+@function get-text-area-line-height($size: $text-area-default-size) {
+  @return fn.mapget($text-area-line-heights, $size);
+}
+
+$text-area-padding: (
+  "xs": 6px 8px,
+  "sm": 8px 10px,
+  "md": 8px 10px,
+  "lg": 10px 12px,
+);
+
+@function get-text-area-padding($size: $text-area-default-size) {
+  @return fn.mapget($text-area-padding, $size);
+}
+
+@mixin text-area-size-properties($size: $text-input-default-size) {
+  $padding: get-text-area-padding($size);
+  $line-height: get-text-area-line-height($size);
+  $min-height: $line-height + 2 * list.nth($padding, 1);
+
+  line-height: $line-height;
+  font-size: get-text-area-font-size($size);
+  min-height: $min-height;
+
+  > .mantine-Input-wrapper.mantine-Textarea-wrapper {
+    height: 100%;
+    flex-grow: 100;
+
+    > .mantine-Textarea-input {
+      min-height: $min-height;
+      padding: $padding;
+      line-height: inherit;
+      height: 100%;
+      font-size: inherit;
+    }
+  }
+}
+
+@mixin text-area-size-classes() {
+  @each $size in $input-sizes {
+    &.text-area--#{$size} {
+      @include text-area-size-properties($size);
+    }
+  }
+  @include mixins.without-selectors($input-sizes, $prefix: ".text-area--") {
+    @include text-area-size-properties();
+  }
+}
+
+@mixin text-area {
+  @include text-area-size-classes();
+
+  > .mantine-Input-wrapper.mantine-Textarea-wrapper {
+    height: 100%;
+    flex-grow: 100;
+
+    > .mantine-Textarea-input {
+      @include input-properties();
+    }
+  }
+}
+
+// ----------------------------------------------------- Text Area -------------------------------------------------- //
+
+// ---------------------------------------------------- Select Input ------------------------------------------------ //
+$select-default-size: "md";
+
+$select-heights: (
+  "xs": 24px,
+  "sm": 28px,
+  "md": 32px,
+  "lg": 36px,
+);
+
+@function get-select-height($size: $select-default-size) {
+  @return fn.mapget($select-heights, $size);
+}
+
+$select-font-sizes: (
+  "xs": typography.get-font-size("body", $size: "xs"),
+  "sm": typography.get-font-size("body", $size: "sm"),
+  "md": typography.get-font-size("body", $size: "sm"),
+  "lg": typography.get-font-size("body", $size: "md"),
+);
+
+@function get-select-font-size($size: $select-default-size) {
+  @return fn.mapget($select-font-sizes, $size);
+}
+
+$select-line-heights: (
+  "xs": get-select-font-size("xs") + 4px,
+  "sm": get-select-font-size("sm") + 4px,
+  "md": get-select-font-size("md") + 4px,
+  "lg": get-select-font-size("lg") + 4px,
+);
+
+@function get-select-line-height($size: $select-default-size) {
+  @return fn.mapget($select-line-heights, $size);
+}
+
+$select-padding: ();
+
+@each $size in $input-sizes {
+  $select-padding: map.set(
+    $select-padding,
+    $size,
+    padding(0.5 * (get-select-height($size) - get-select-line-height($size)), 12px)
+  );
+}
+
+@function get-select-padding($size: $select-default-size) {
+  @return fn.mapget($select-padding, $size);
+}
+
+@function get-select-size-properties($size: $select-default-size) {
+  @return (
+    padding: get-select-padding($size),
+    line-height: get-select-line-height($size),
+    font-size: get-select-font-size($size),
+    height: get-select-height($size),
+    min-height: get-select-height($size)
+  );
+}
+
+@mixin mantine-select-combobox {
+  > div[role="combobox"] {
+    @content;
+  }
+}
+
+@mixin mantine-select-wrapper {
+  @include mantine-select-combobox() {
+    > .mantine-Input-wrapper.mantine-Select-wrapper {
+      @content;
+    }
+  }
+}
+
+@mixin mantine-select-input {
+  @include mantine-select-wrapper {
+    > input.mantine-Select-input.mantine-Input-input {
+      @content;
+    }
+  }
+}
+
+@mixin select-size-properties($size: $select-default-size) {
+  $properties: get-select-size-properties($size);
+
+  height: fn.mapget($properties, height);
+  min-height: fn.mapget($properties, min-height);
+
+  @include mantine-select-input {
+    height: 100%;
+    padding: fn.mapget($properties, padding);
+    line-height: fn.mapget($properties, line-height);
+    font-size: fn.mapget($properties, font-size);
+  }
+}
+
+@mixin select-size-classes() {
+  @include mantine-select-combobox {
+    width: 100%;
+    height: 100%;
+  }
+
+  @include mantine-select-wrapper {
+    height: 100%;
+  }
+
+  @each $size in $input-sizes {
+    &.select--#{$size} {
+      @include select-size-properties($size);
+    }
+  }
+  @include mixins.without-selectors($input-sizes, $prefix: ".select--") {
+    @include select-size-properties();
+  }
+}
+
+@mixin select {
+  @include input-properties();
+  @include select-size-classes();
+}
+
+// ---------------------------------------------------- Select Input ------------------------------------------------ //
+
+$menu-item-padding: 4px 8px;
+$menu-item-height: 28px;
+$menu-item-line-height: $menu-item-height - 2 * list.nth($menu-item-padding, 1);
+$menu-item-font-weight: typography.get-font-weight(
+  $weight: "regular",
+);
+
+@mixin menu-item-properties {
+  padding: $menu-item-padding;
+  line-height: $menu-item-line-height;
+  font-weight: $menu-item-font-weight;
+  height: $menu-item-height;
 
   > .icon {
     color: $input-icon-color;

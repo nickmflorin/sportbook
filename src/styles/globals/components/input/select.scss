@@ -3,7 +3,7 @@
 @use "./base";
 
 @mixin select-option-structure {
-  @include partials.select-option-properties;
+  @include partials.menu-item-properties;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -17,47 +17,11 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  // We need to explicitly set the background color to white (instead of not specifying a background color) such that
-  // auto fill styling applied by Google Chrome (and likely others) does not change the background.
-  height: partials.$input-height;
 
-  > div[role="combobox"] {
-    width: 100%;
-    height: 100%;
-
-    > .mantine-Input-wrapper.mantine-Select-wrapper {
-      height: 100%;
-
-      > input.mantine-Select-input.mantine-Input-input {
-        @extend %native-input-base;
-        border-radius: partials.$input-border-radius;
-        border: partials.$input-border;
-
-        // We need to explicitly set the background color to white (instead of not specifying a background color) such that
-        // auto fill styling applied by Google Chrome (and likely others) does not change the background.
-        background-color: partials.$input-bg-color;
-        color: partials.$input-color;
-        padding: partials.$input-padding;
-        height: 100%;
-        min-height: 0;
-
-        > .icon {
-          color: partials.$input-icon-color;
-        }
-
-        @include partials.disabled {
-          background-color: partials.$input-disabled-bg-color;
-        }
-
-        @include partials.focused {
-          outline-color: partials.$input-focused-border-color;
-        }
-
-        @include partials.focused-within {
-          outline-color: partials.$input-focused-border-color;
-        }
-      }
-    }
+  @include partials.select-size-classes();
+  @include partials.mantine-select-input {
+    @include base.input-base;
+    @include partials.input-properties;
   }
 
   .select__option {

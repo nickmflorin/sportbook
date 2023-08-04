@@ -2,7 +2,8 @@
 import { type TeamStanding, type WithFileUrl } from "~/prisma/model";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
 
-import { DataTable, type DataTableProps, type Column } from "./DataTable";
+import { type Column } from "./columns";
+import { DataTable, type DataTableProps } from "./DataTable";
 
 export enum TeamStandingsTableColumn {
   RANK,

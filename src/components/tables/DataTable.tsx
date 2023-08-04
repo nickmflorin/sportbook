@@ -1,42 +1,14 @@
+"use client";
 import { useMemo } from "react";
 
 import classNames from "classnames";
 import { DataTable as MantineDataTable, type DataTableProps as MantineDataTableProps } from "mantine-datatable";
 
 import { type ClassName } from "~/lib/ui";
-import { EditTableRowButton } from "~/components/buttons/EditTableRowButton";
 import { Loading } from "~/components/loading";
-import { TableActionDropdownMenu, type TableAction } from "~/components/menus/TableActionDropdownMenu";
 
-import { type DataTableSize, DataTableSizes } from "./types";
-
-export type Column<T = unknown> = Exclude<MantineDataTableProps<T>["columns"], undefined>[number];
-
-export const EditRowColumn = <T extends Record<string, unknown>>({
-  onRowEdit,
-}: {
-  onRowEdit: (t: T) => void;
-}): Column<T> => ({
-  title: "",
-  accessor: "",
-  width: 40,
-  textAlignment: "center",
-  render: (rowData: T) => <EditTableRowButton onClick={() => onRowEdit(rowData)} />,
-});
-
-export const ActionMenuColumn = <T extends Record<string, unknown>>({
-  actionMenu,
-}: {
-  actionMenu: TableAction[] | ((t: T) => TableAction[]);
-}): Column<T> => ({
-  title: "",
-  accessor: "",
-  width: 40,
-  textAlignment: "center",
-  render: (rowData: T) => (
-    <TableActionDropdownMenu actions={typeof actionMenu === "function" ? actionMenu(rowData) : actionMenu} />
-  ),
-});
+import { ActionMenuColumn, EditRowColumn } from "./columns";
+import { type DataTableSize, DataTableSizes, type ActionMenu } from "./types";
 
 export type DataTableProps<T> = Pick<MantineDataTableProps<T>, "columns" | "sx"> & {
   readonly size?: DataTableSize;
@@ -44,7 +16,7 @@ export type DataTableProps<T> = Pick<MantineDataTableProps<T>, "columns" | "sx">
   readonly loading?: boolean;
   readonly className?: ClassName;
   readonly onRowEdit?: (t: T) => void;
-  readonly actionMenu?: TableAction[] | undefined | ((t: T) => TableAction[]);
+  readonly actionMenu?: ActionMenu<T>;
 };
 
 export const DataTable = <T extends Record<string, unknown>>({
@@ -68,7 +40,7 @@ export const DataTable = <T extends Record<string, unknown>>({
       } else if (
         actionMenu &&
         actionMenu.length !== 0 &&
-        actionMenu.filter(i => i.hidden !== true).filter(i => i.visible !== false).length !== 0
+        actionMenu.filter(i => i.hidden !== true && i.visible !== false).length !== 0
       ) {
         cs = [...cs, ActionMenuColumn({ actionMenu })];
       }

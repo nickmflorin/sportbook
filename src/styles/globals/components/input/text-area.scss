@@ -1,0 +1,7 @@
+@use "partials";
+@use "./base";
+
+.text-area {
+  @include base.input-base;
+  @include partials.text-area;
+}

@@ -1,10 +1,30 @@
 "use client";
-import { type ModelWithFileUrl, type Game, type Team, type Location, LeaguePermissionCode } from "~/prisma/model";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+
+import { isServerErrorResponse } from "~/application/errors";
+import {
+  type ModelWithFileUrl,
+  type Game,
+  type Team,
+  type Location,
+  LeaguePermissionCode,
+  GameStatus,
+} from "~/prisma/model";
 import { GameStatusBadge } from "~/components/badges";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
+import { Loading } from "~/components/loading";
+import { type TableAction } from "~/components/menus/TableActionDropdownMenu";
 import { DateTimeText } from "~/components/typography/DateTimeText";
+import { postponeGame, cancelGame } from "~/app/actions/game";
 
-import { DataTable, type DataTableProps, type Column } from "./DataTable";
+import { type Column } from "./columns";
+import { DataTable, type DataTableProps } from "./DataTable";
+
+const CancelGameForm = dynamic(() => import("~/components/forms/CancelGameForm").then(mod => mod.CancelGameForm), {
+  ssr: false,
+  loading: () => <Loading loading={true} />,
+});
 
 type GameDatum = Game & {
   readonly homeTeam: ModelWithFileUrl<Team>;
@@ -58,34 +78,59 @@ export interface GameScheduleTableProps extends Omit<DataTableProps<GameDatum>, 
   readonly permissionCodes?: LeaguePermissionCode[];
 }
 
-const actionMenuItems = (permissionCodes: LeaguePermissionCode[]) => {
-  if (
-    permissionCodes.includes(LeaguePermissionCode.CANCEL_GAME) ||
-    permissionCodes.includes(LeaguePermissionCode.POSTPONE_GAME)
-  ) {
-    return [
-      {
-        label: "Postpone",
-        onClick: () => console.log("Postpone"),
-        hidden: !permissionCodes.includes(LeaguePermissionCode.POSTPONE_GAME),
-      },
-      {
-        label: "Cancel",
-        onClick: () => console.log("Cancel"),
-        hidden: !permissionCodes.includes(LeaguePermissionCode.CANCEL_GAME),
-      },
-    ];
-  }
-  return [];
-};
+const hasActionMenu = (permissionCodes?: LeaguePermissionCode[]) =>
+  permissionCodes &&
+  (permissionCodes.includes(LeaguePermissionCode.CANCEL_GAME) ||
+    permissionCodes.includes(LeaguePermissionCode.POSTPONE_GAME));
 
-const actionMenu = (permissionCodes?: LeaguePermissionCode[]) => {
+const actionMenuItems = (
+  datum: GameDatum,
+  permissionCodes: LeaguePermissionCode[],
+  router: ReturnType<typeof useRouter>,
+): TableAction<GameDatum>[] => [
+  {
+    label: "Postpone",
+    onClick: async (datum, item) => {
+      item.setLoading(true);
+      await postponeGame({ id: datum.id });
+      item.setLoading(false);
+    },
+    visible:
+      permissionCodes.includes(LeaguePermissionCode.POSTPONE_GAME) &&
+      !([GameStatus.POSTPONED, GameStatus.CANCELLED, GameStatus.PROPOSED] as string[]).includes(datum.status),
+  },
+  {
+    label: "Cancel",
+    onClick: async (datum, item) =>
+      item.showSubContent(
+        <CancelGameForm
+          action={async data => {
+            const response = await cancelGame({ id: datum.id, cancellationReason: data.cancellationReason });
+            if (isServerErrorResponse(response)) {
+              // Handle server error properly.
+              console.error(response);
+            } else {
+              item.hideSubContent();
+              router.refresh();
+            }
+          }}
+          onCancel={() => item.hideSubContent()}
+        />,
+      ),
+    visible:
+      permissionCodes.includes(LeaguePermissionCode.CANCEL_GAME) &&
+      !([GameStatus.CANCELLED, GameStatus.PROPOSED] as string[]).includes(datum.status),
+  },
+];
+
+const actionMenu = (
+  datum: GameDatum,
+  router: ReturnType<typeof useRouter>,
+  permissionCodes?: LeaguePermissionCode[],
+) => {
   if (permissionCodes !== undefined) {
-    const items = actionMenuItems(permissionCodes);
-    if (items.length === 0 || items.every(i => i.hidden)) {
-      return undefined;
-    }
-    return items;
+    const items = actionMenuItems(datum, permissionCodes, router);
+    return items.filter(i => i.visible !== false && i.hidden !== true);
   }
   return undefined;
 };
@@ -100,12 +145,15 @@ export const GameScheduleTable = ({
   ],
   permissionCodes,
   ...props
-}: GameScheduleTableProps): JSX.Element => (
-  <DataTable<GameDatum>
-    {...props}
-    columns={columns.map(name => GameScheduleColumns[name])}
-    actionMenu={actionMenu(permissionCodes)}
-  />
-);
+}: GameScheduleTableProps): JSX.Element => {
+  const router = useRouter();
+  return (
+    <DataTable<GameDatum>
+      {...props}
+      columns={columns.map(name => GameScheduleColumns[name])}
+      actionMenu={hasActionMenu(permissionCodes) ? datum => actionMenu(datum, router, permissionCodes) : undefined}
+    />
+  );
+};
 
 export default GameScheduleTable;

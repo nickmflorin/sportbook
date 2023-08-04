@@ -36,3 +36,5 @@ export const SearchBar = ({ queryParamName = "search" }: SearchBarProps) => {
     />
   );
 };
+
+export default SearchBar;

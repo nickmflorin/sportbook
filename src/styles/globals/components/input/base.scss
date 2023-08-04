@@ -28,8 +28,6 @@ Wrong Usage:
 */
 %native-input-base {
   @include partials.transition(none);
-  @include partials.input-font-properties;
-
   align-items: center;
   background-image: none !important;
   border: none;
@@ -41,18 +39,6 @@ Wrong Usage:
   margin: 0;
   min-width: 0;
   width: 100%;
-
-  &::placeholder {
-    @include partials.input-placeholder-properties;
-  }
-
-  ::placeholder {
-    @include partials.input-placeholder-properties;
-  }
-
-  div[psuedo="-webkit-input-placeholder"] {
-    @include partials.input-placeholder-properties;
-  }
 }
 
 /*
@@ -91,17 +77,5 @@ Wrong Usage:
 </div>
 */
 @mixin input-base {
-  $p: &; // Parent selector for use in strings
-  @extend %native-input-base;
-  @include partials.input-properties;
-
-  > .native-input {
-    font-size: inherit;
-    line-height: inherit;
-    padding: 0;
-  }
-}
-
-.native-input {
   @extend %native-input-base;
 }

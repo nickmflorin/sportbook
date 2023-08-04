@@ -7,7 +7,6 @@ import {
   type ClassName,
   getColorClassName,
   SizeContains,
-  SizeAxes,
   getHoveredColorClassName,
   getFocusedColorClassName,
   replaceOrAddClassName,

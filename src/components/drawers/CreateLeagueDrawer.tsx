@@ -7,9 +7,12 @@ import { DateInput } from "@mantine/dates";
 import type * as z from "zod";
 
 import { type LeagueSchema } from "~/prisma/model";
-import { Form, type FormProps } from "~/components/forms";
 import { CreateLocationForm } from "~/components/forms/CreateLocationForm";
-import { LeagueTypeSelect, LeagueCompetitionLevelSelect, SportSelect, LocationsChooser } from "~/components/input";
+import { Form, type FormProps } from "~/components/forms/Form";
+import { LocationsChooser } from "~/components/input/LocationsChooser";
+import { LeagueCompetitionLevelSelect } from "~/components/input/select/LeagueCompetitionLevelSelect";
+import { LeagueTypeSelect } from "~/components/input/select/LeagueTypeSelect";
+import { SportSelect } from "~/components/input/select/SportSelect";
 import { ShowHide } from "~/components/util";
 
 import { useManagedDrawers } from "./hooks";

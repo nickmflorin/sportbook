@@ -1,11 +1,10 @@
 "use server";
 import { type z } from "zod";
 
+import { ServerError } from "~/application/errors";
 import { prisma } from "~/prisma/client";
 import { Prisma, type LeagueSchema, LeagueStaffRole } from "~/prisma/model";
 import { getAuthUser } from "~/server/auth";
-
-import { ActionError, ActionErrorCodes } from "./errors";
 
 export const createLeague = async ({
   locations,
@@ -69,10 +68,8 @@ export const createLeague = async ({
         });
         return league;
       }
-      throw new ActionError({
-        message: "You must be authenticated to create a League.",
-        code: ActionErrorCodes.NOT_AUTHENTICATED,
-      });
+      // TODO: What does this cause to happen on the client?
+      return ServerError.NotAuthenticated("You must be authenticated to create a League.").toResponse();
     },
     { isolationLevel: Prisma.TransactionIsolationLevel.ReadUncommitted },
   );

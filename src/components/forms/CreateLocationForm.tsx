@@ -1,10 +1,10 @@
 import React from "react";
 
-import { TextInput } from "@mantine/core";
 import { zodResolver } from "@mantine/form";
 import { type z } from "zod";
 
 import { LocationSchema } from "~/prisma/model";
+import { TextInput } from "~/components/input/TextInput";
 
 import { Form, type FormProps } from "./Form";
 

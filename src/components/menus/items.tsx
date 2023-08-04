@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useImperativeHandle, useRef } from "react";
 
 import classNames from "classnames";
 
@@ -26,32 +26,50 @@ export const BaseMenuItem = <
   selected,
   withCheckbox,
   onClick,
-}: BaseMenuItemProps<I, V, M>): JSX.Element =>
-  item.hidden === true ? (
-    <></>
-  ) : (
-    <div
-      style={item.style}
-      className={classNames("menu-item", { selected, disabled: item.disabled }, item.className)}
-      onClick={e => {
-        if (!item.disabled) {
-          onClick?.(e);
-          item.onClick?.(e);
-        }
-      }}
-    >
-      {/* TODO: We need to come up with a loading state for the Avatar case. */}
-      {withCheckbox && <Checkbox readOnly checked={selected} mr="md" size={14} />}
-      {item.icon ? (
-        isIconProp(item.icon) ? (
-          <Icon icon={item.icon} loading={item.loading} />
+}: BaseMenuItemProps<I, V, M>): JSX.Element => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [subContent, setSubContent] = useState<JSX.Element | undefined>(undefined);
+
+  const menuItem = useRef<types.IMenuItem>(null);
+
+  useImperativeHandle(menuItem, () => ({
+    setLoading,
+    toggleLoading: () => setLoading(prev => !prev),
+    showSubContent: (content: JSX.Element) => setSubContent(content),
+    hideSubContent: () => setSubContent(undefined),
+  }));
+
+  if (item.hidden === true || item.visible === false) {
+    return <></>;
+  }
+  return (
+    <div style={item.style} className={classNames("menu-item", { selected, disabled: item.disabled }, item.className)}>
+      <div
+        className="menu-item__content"
+        onClick={e => {
+          if (!item.disabled && menuItem.current) {
+            onClick?.(e);
+            item.onClick?.(menuItem.current, e);
+          }
+        }}
+      >
+        {/* TODO: We need to come up with a loading state for the Avatar case. */}
+        {withCheckbox && <Checkbox readOnly checked={selected} mr="md" size={14} />}
+        {item.icon ? (
+          isIconProp(item.icon) ? (
+            <Icon size="xs" icon={item.icon} loading={item.loading || loading} />
+          ) : (
+            <Avatar {...item.icon} loading={item.loading || loading} />
+          )
         ) : (
-          <Avatar {...item.icon} />
-        )
-      ) : null}
-      <Label>{item.label}</Label>
+          <Icon size="xs" loading={item.loading || loading} />
+        )}
+        <Label>{item.label}</Label>
+      </div>
+      {subContent && <div className="menu-item__sub-content">{subContent}</div>}
     </div>
   );
+};
 
 export const ValuedMenuItemRenderer = <
   I extends types.ValuedMenuItem<V> | types.DatumValuedMenuItem<V, M>,

@@ -10,7 +10,7 @@ import { getAuthUser } from "~/server/auth";
 import { getLeagueStandings } from "~/server/leagues";
 
 const TeamStandingsTable = dynamic(() => import("~/components/tables/TeamStandingsTable"), {
-  ssr: true,
+  ssr: false,
   loading: () => <Loading loading={true} />,
 });
 
