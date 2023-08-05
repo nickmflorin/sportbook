@@ -25,7 +25,7 @@ $page-header-margin-bottom: "lg";
       gap: partials.get-spacing("md");
 
       > .header {
-        > .header__titles {
+        > .header__content {
           > .title {
             line-height: 30px;
           }

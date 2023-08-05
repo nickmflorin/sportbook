@@ -2,6 +2,7 @@ import classNames from "classnames";
 import { type Optional } from "utility-types";
 
 import { type ComponentProps } from "~/lib/ui";
+import { type BadgeProps } from "~/components/badges/Badge";
 import { type ImageProp } from "~/components/images";
 import { ModelImage } from "~/components/images/ModelImage";
 import { Description, descriptionIsVisible } from "~/components/typography/Description";
@@ -16,6 +17,7 @@ export interface HeaderProps extends ComponentProps {
   readonly description?: Description;
   readonly actions?: Action[];
   readonly titleProps?: Omit<TitleProps, "children">;
+  readonly tags?: React.ReactElement<BadgeProps>[];
   readonly descriptionProps?: Omit<TextProps, "children">;
 }
 
@@ -37,6 +39,7 @@ export const Header = ({
   titleProps,
   descriptionProps,
   image,
+  tags = [],
   ...props
 }: HeaderProps): JSX.Element =>
   headerIsVisible({ title, description, actions, image }) ? (
@@ -45,7 +48,7 @@ export const Header = ({
       className={classNames("header", { "header--with-image": headerHasImage({ image }) }, props.className)}
     >
       {image !== undefined && headerHasImage({ image }) && <ModelImage image={{ size: 80, ...image }} />}
-      <div className="header__titles">
+      <div className="header__content">
         {typeof title === "string" ? (
           <Title order={5} {...titleProps} className={classNames("header__title", titleProps?.className)}>
             {title}
@@ -53,6 +56,7 @@ export const Header = ({
         ) : (
           title
         )}
+        {tags.length !== 0 && <div className="header__tags">{tags}</div>}
         <Description className="header__descriptions" description={description} {...descriptionProps} />
       </div>
       <Actions actions={actions} />

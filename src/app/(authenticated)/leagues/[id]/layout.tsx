@@ -1,8 +1,9 @@
 import { notFound, redirect } from "next/navigation";
 import { type ReactNode } from "react";
 
-import { xprisma, isPrismaDoesNotExistError, isPrismaInvalidIdError } from "~/prisma/client";
+import { xprisma, isPrismaDoesNotExistError, isPrismaInvalidIdError, prisma } from "~/prisma/client";
 import { type LeagueWithConfig, type FileUpload, type LeagueStaff, LeagueStaffRole } from "~/prisma/model";
+import { Badge } from "~/components/badges/Badge";
 import { DetailPage } from "~/components/layout/DetailPage";
 import { Flex } from "~/components/structural/Flex";
 import { getAuthUser } from "~/server/auth";
@@ -18,12 +19,12 @@ interface LeagueLayoutProps {
 
 export default async function LeagueLayout({ scores, children, teams, params: { id } }: LeagueLayoutProps) {
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
-  let league: LeagueWithConfig & { readonly staff: LeagueStaff[] };
+  let league: LeagueWithConfig & { readonly staff: LeagueStaff[]; readonly teams: { readonly id: string }[] };
   let fileUpload: FileUpload | null;
   let getImage: () => Promise<FileUpload | null>;
   try {
     ({ getImage, ...league } = await xprisma.league.findFirstOrThrow({
-      include: { staff: true, config: true },
+      include: { staff: true, config: true, teams: { select: { id: true } } },
       where: {
         id,
         OR: [{ staff: { some: { userId: user.id } } }, { teams: { some: { players: { some: { userId: user.id } } } } }],
@@ -38,6 +39,8 @@ export default async function LeagueLayout({ scores, children, teams, params: { 
     }
   }
 
+  const numPlayers = await prisma.player.count({ where: { teamId: { in: league.teams.map(l => l.id) } } });
+
   const { hasLeagueRole } = await useUserLeagueStaffRoles(user, league);
 
   return (
@@ -46,6 +49,10 @@ export default async function LeagueLayout({ scores, children, teams, params: { 
       description={[league.description]}
       headerProps={{
         image: { url: fileUpload === null ? null : fileUpload.fileUrl, initials: league.name },
+        tags: [
+          <Badge key="0" size="xxs">{`${league.teams.length} Teams`}</Badge>,
+          <Badge key="`" size="xxs">{`${numPlayers} Players`}</Badge>,
+        ],
       }}
       backHref="/leagues"
       backText="All Leagues"

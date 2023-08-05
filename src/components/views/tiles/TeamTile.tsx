@@ -6,7 +6,7 @@ type Tm = Pick<Team, "name" | "color"> & {
   readonly fileUrl: string | null;
 };
 
-export type TeamTileProps = Omit<TileProps, "title" | "description" | "imageProps"> & {
+export type TeamTileProps = Omit<TileProps, "title" | "description" | "imageProps" | "children"> & {
   readonly team: Tm;
   readonly image?: Omit<TileProps["image"], "url" | "initials">;
 };

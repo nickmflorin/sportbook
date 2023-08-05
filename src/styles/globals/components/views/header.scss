@@ -6,7 +6,7 @@
   align-items: center;
   width: 100%;
 
-  > .header__titles {
+  > .header__content {
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -15,6 +15,12 @@
 
     > .header__title {
       color: partials.get-font-color("heading", $shade: 8);
+    }
+
+    > .header__tags {
+      display: flex;
+      flex-direction: row;
+      gap: partials.get-spacing("md");
     }
   }
 
@@ -29,7 +35,7 @@
   &--with-image {
     align-items: flex-start;
 
-    > .header__titles {
+    > .header__content {
       padding-top: partials.get-spacing("xs");
     }
   }
