@@ -1,5 +1,5 @@
 "use client";
-import { useRouter, redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { type Location } from "~/prisma/model";
@@ -28,12 +28,11 @@ export const CreateLeagueButton = ({ locations }: CreateLeagueButtonProps): JSX.
         locations={locations}
         open={leagueDrawerOpened}
         action={async leagueData => {
-          console.log({ leagueData });
-          /* await createLeague(leagueData);
-             form.reset();
-             startTransition(() => {
-               router.refresh();
-             }); */
+          await createLeague(leagueData);
+          form.reset();
+          startTransition(() => {
+            router.refresh();
+          });
         }}
         onClose={() => setLeagueDrawerOpened(false)}
         onCancel={() => setLeagueDrawerOpened(false)}
