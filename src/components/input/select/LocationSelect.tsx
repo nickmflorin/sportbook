@@ -19,6 +19,7 @@ export interface LocationSelectProps<M extends SelectMode>
   readonly onError?: (err: Error) => void;
 }
 
+// TODO: This is not currently used - might want to remove it.
 export const LocationSelect = <M extends SelectMode>({
   requestDisabled,
   onError,

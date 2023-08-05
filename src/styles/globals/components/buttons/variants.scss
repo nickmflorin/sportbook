@@ -32,6 +32,10 @@
 @mixin solid-type() {
   font-weight: partials.get-font-weight($weight: "semibold");
 
+  &.button--outline {
+    font-weight: partials.get-font-weight($weight: "regular");
+  }
+
   @each $size in partials.$button-size-names {
     &.button--#{$size} {
       @include button-solid-size($size);

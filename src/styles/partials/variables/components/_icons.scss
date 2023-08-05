@@ -2,6 +2,7 @@
 @use "sass:string";
 
 @use "../../functions" as fn;
+@use "../colors" as colors;
 
 $icon-contain-names: ("square", "fit");
 $icon-size-axes: ("horizontal", "vertical");
@@ -10,6 +11,7 @@ $icon-size-names: ("xxs", "xs", "sm", "md", "lg", "xl", "fill");
 $default-icon-size: "sm";
 $default-icon-size-contain: "square";
 $default-icon-size-axis: "vertical";
+$default-icon-color: colors.get-color("gray", 8);
 
 $icon-sizes: (
   "xxs": 10px,

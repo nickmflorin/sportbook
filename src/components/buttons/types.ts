@@ -6,7 +6,7 @@ export type ButtonType = EnumeratedLiteralType<typeof ButtonTypes>;
 export const ButtonSizes = enumeratedLiterals(["xs", "sm", "md", "lg"] as const);
 export type ButtonSize = EnumeratedLiteralType<typeof ButtonSizes>;
 
-export const ButtonVariants = enumeratedLiterals(["primary", "secondary", "bare", "danger"] as const);
+export const ButtonVariants = enumeratedLiterals(["primary", "secondary", "bare", "danger", "outline"] as const);
 export type ButtonVariant = EnumeratedLiteralType<typeof ButtonVariants>;
 
 export const ButtonCornerStyles = enumeratedLiterals(["rounded", "square", "normal"] as const);

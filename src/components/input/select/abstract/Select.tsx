@@ -14,6 +14,8 @@ import { Spinner, Icon } from "~/components/icons/Icon";
 import { Label } from "~/components/typography/Label";
 import { Text } from "~/components/typography/Text";
 
+import { type InputSize } from "../../types";
+
 import { createSelectOption } from "./SelectOption";
 
 export type BaseSelectOption<T, V> = T & {
@@ -54,6 +56,7 @@ export type SelectProps<
   readonly placeholder?: string;
   readonly disabled?: boolean;
   readonly clearable?: boolean;
+  readonly size?: InputSize;
   readonly mode: M;
   readonly loading?: boolean;
   readonly data: O[];
@@ -83,6 +86,7 @@ export const useSelectProps = <
   optionComponent,
   datumKeys,
   withCheckbox,
+  size,
   getValue,
   getLabel,
   getCreateLabel,
@@ -118,7 +122,7 @@ export const useSelectProps = <
         <Label>{getCreateLabel?.(query) || "Create"}</Label>
       </div>
     ),
-    className: classNames("select", props.className),
+    className: classNames("select", size && `select--${size}`, props.className),
     // TODO: Use FontAwesome spinner and style in SASS.
     rightSection: loading ? <Spinner loading={true} size="xs" color="gray.6" /> : undefined,
     disabled: props.disabled || loading,

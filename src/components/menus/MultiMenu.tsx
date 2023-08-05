@@ -283,3 +283,5 @@ export const MultiMenu = <V extends string | null, M>({
     </BaseMenu>
   );
 };
+
+export default MultiMenu;

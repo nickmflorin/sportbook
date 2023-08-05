@@ -1,6 +1,5 @@
-import { useMemo } from "react";
-
 import classNames from "classnames";
+import { type SubmitErrorHandler } from "react-hook-form";
 
 import { type ComponentProps } from "~/lib/ui";
 import { CloseButton } from "~/components/buttons/CloseButton";
@@ -8,7 +7,7 @@ import { Loading } from "~/components/loading";
 import { ButtonFooter, type ButtonFooterProps } from "~/components/structural/ButtonFooter";
 import { Header, type HeaderProps } from "~/components/views/Header";
 
-import { Field, FieldConditions, FieldGroup } from "./fields/Field";
+import { Field, FieldConditions, FieldGroup, ControlledField } from "./Field";
 import { NativeForm, type NativeFormProps } from "./NativeForm";
 import { type FormInstance, type BaseFormValues } from "./types";
 import { useForm } from "./useForm";
@@ -16,21 +15,22 @@ import { useForm } from "./useForm";
 export { type NativeFormProps } from "./NativeForm";
 export * from "./types";
 
-type SubmitAction<I extends BaseFormValues, O extends BaseFormValues = I> = (data: O) => void;
+type SubmitAction<I extends BaseFormValues> = (data: I) => void;
 
-export type FormProps<I extends BaseFormValues, O extends BaseFormValues = I> = ComponentProps &
+export type FormProps<I extends BaseFormValues> = ComponentProps &
   Pick<HeaderProps, "title" | "description" | "actions" | "titleProps" | "descriptionProps"> &
   Omit<NativeFormProps, keyof ComponentProps | "action" | "onSubmit" | "submitButtonType"> &
   Omit<ButtonFooterProps, "onSubmit" | keyof ComponentProps> & {
-    readonly form: FormInstance<I, O>;
+    readonly form: FormInstance<I>;
     readonly loading?: boolean;
-    readonly onSubmit?: SubmitAction<I, O>;
-    readonly action?: SubmitAction<I, O>;
+    readonly onSubmit?: SubmitAction<I>;
+    readonly action?: SubmitAction<I>;
     readonly onClose?: () => void;
+    readonly onError?: SubmitErrorHandler<I>;
   };
 
-export const Form = <I extends BaseFormValues, O extends BaseFormValues = I>({
-  form: { validate, getTransformedValues, setErrors },
+export const Form = <I extends BaseFormValues>({
+  form: { handleSubmit },
   children,
   className,
   style,
@@ -43,51 +43,28 @@ export const Form = <I extends BaseFormValues, O extends BaseFormValues = I>({
   action,
   onClose,
   onSubmit,
+  onError,
   ...props
-}: FormProps<I, O>): JSX.Element => {
-  /* Normally, we would want to use the FormData from the action to reconstruct the values that are then provided to the
-     API request.  However, because we are using Mantine's input components with Mantine's useForm hook (right now at
-     least), the FormData will not have the corresponding values in the underlying <form /> because Mantine uses
-     controlled inputs.
-
-     Eventually we will want to improve this, and likely ditch Mantine's 'useForm' hook - while making the inputs it
-     offers controlled such that they work with the action of the underlying <form />. */
-  const handler = useMemo(
-    () => (cb: (data: O) => void) => {
-      const result = validate();
-      if (result.hasErrors) {
-        setErrors(result.errors);
-      } else {
-        /* The way that the custom 'useForm' hook is typed is such that the two generic types, I and O, represent the
-           type of the unvalidated form input and the type of the schema-validated form output, respectively.  Mantine's
-           Form and associated 'useForm' hook do not respect these two separate typings, but instead expose a generic
-           type for a transformation function (which we have typed such that it returns the type of the validated
-           output). However, since we are using a schema to validate the form, we can assume that the current values in
-           the form are the validated values of the form, since we have already performed the validation above.
-           Additionally, since we do not provide a transformation function, the return value of
-           'form.getTransformedValues()' is the same as the value of 'form.values' - but 'form.getTransformedValues()'
-           is typed based on O, not I.
-
-           This should be improved in the future as we will likely move away from Mantine's form hook. */
-        cb(getTransformedValues());
-      }
-    },
-    [validate, setErrors, getTransformedValues],
-  );
-
-  const __action = useMemo(() => (a: SubmitAction<I, O>) => () => handler(data => a(data)), [handler]);
-
-  const __onSubmit = useMemo(() => (a: SubmitAction<I, O>) => () => handler(data => a(data)), [handler]);
-
-  const _action = action !== undefined ? __action(action) : undefined;
-  const _onSubmit = onSubmit !== undefined ? __onSubmit(onSubmit) : undefined;
-
-  if (_onSubmit && _action) {
+}: FormProps<I>): JSX.Element => {
+  if (onSubmit && action) {
     throw new Error("Both the action and submit handler cannot be simultaneously provided.");
   }
 
   return (
-    <NativeForm style={style} className={classNames("form", className)} action={_action} onSubmit={_onSubmit}>
+    <NativeForm
+      style={style}
+      className={classNames("form", className)}
+      action={
+        action !== undefined
+          ? () => {
+              handleSubmit((data: I) => {
+                action(data);
+              }, onError)();
+            }
+          : undefined
+      }
+      onSubmit={onSubmit !== undefined ? handleSubmit(onSubmit, onError) : undefined}
+    >
       {onClose && <CloseButton className="form__close-button" onClick={onClose} />}
       <Header
         className="form__header"
@@ -107,6 +84,7 @@ export const Form = <I extends BaseFormValues, O extends BaseFormValues = I>({
 
 Form.Native = NativeForm;
 Form.Field = Field;
+Form.ControlledField = ControlledField;
 Form.FieldGroup = FieldGroup;
 Form.FieldCondition = FieldConditions;
 Form.useForm = useForm;

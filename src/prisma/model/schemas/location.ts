@@ -4,10 +4,7 @@ import { createRequiredStringField } from "./util";
 
 export const LocationSchema = z.object({
   name: createRequiredStringField({ requiredError: "The name of the location is required." }),
-  /* The description is nullable but null values do not work with the form typings, so we have to force it to be a
-     string.  An empty string will be the nullish value.  This might introduce problems if we have a minimum length
-     requirement, but we will revisit that later. */
-  description: z.string(),
+  description: z.string().optional(),
   primaryStreetAddress: createRequiredStringField({
     requiredError: "The primary address of the location is required.",
   }),

@@ -3,6 +3,10 @@ import { LeagueCompetitionLevel, LeagueType, Sport } from "@prisma/client";
 
 import { LocationSchema } from "./location";
 
+const UnsavedLocationIdSchema = z.custom<`unsaved-${string}`>(
+  data => typeof data === "string" && data.startsWith("unsaved-"),
+);
+
 // TODO: Include league requirements and league registration parameters.
 export const LeagueSchema = z
   .object({
@@ -42,52 +46,13 @@ export const LeagueSchema = z
     leagueStart: z.date().nullable(),
     leagueEnd: z.date().nullable(),
     // TODO: Should we enforce that each league be associated with a least one location?  How do we do this in the DB?
-    locations: z.array(z.union([LocationSchema, z.string().uuid()])),
-    sport: z
-      .nativeEnum(Sport, {
-        required_error: "A league must belong to a sport.",
-      })
-      .nullable()
-      /* When the value is "null" (which it often will be when initializing the Form with a null value) - the error that
-         is shown is not the required error, but rather the invalid type error.  This is because "null" is not treated
-         as missing by "zod".  To fix this, until we find a better way, we have to use a custom transform. */
-      .transform((value, ctx): Sport => {
-        if (value == null) {
-          ctx.addIssue({
-            code: "custom",
-            message: "A league must belong to a sport.",
-          });
-          return z.NEVER;
-        }
-        return value;
-      }),
-    isPublic: z.boolean().default(true),
-    competitionLevel: z
-      .nativeEnum(LeagueCompetitionLevel)
-      .nullable()
-      .transform((value, ctx): LeagueCompetitionLevel => {
-        if (value == null) {
-          ctx.addIssue({
-            code: "custom",
-            message: "A league must have a competition level.",
-          });
-          return z.NEVER;
-        }
-        return value;
-      }),
-    leagueType: z
-      .nativeEnum(LeagueType)
-      .nullable()
-      .transform((value, ctx): LeagueType => {
-        if (value == null) {
-          ctx.addIssue({
-            code: "custom",
-            message: "A league must have a type.",
-          });
-          return z.NEVER;
-        }
-        return value;
-      }),
+    locations: z.array(z.union([LocationSchema.extend({ id: UnsavedLocationIdSchema }), z.string().uuid()])),
+    sport: z.nativeEnum(Sport, {
+      required_error: "A league must belong to a sport.",
+    }),
+    isPublic: z.boolean().optional(),
+    competitionLevel: z.nativeEnum(LeagueCompetitionLevel),
+    leagueType: z.nativeEnum(LeagueType),
   })
   .refine(data => !data.leagueStart || !data.leagueEnd || data.leagueEnd > data.leagueStart, {
     message: "The league's start date must be before the end date.",

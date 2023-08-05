@@ -16,11 +16,13 @@ export interface DropdownMenuChildrenProps extends BaseDropdownMenuProps {
   readonly children: JSX.Element;
   readonly buttonText?: never;
   readonly buttonStyle?: never;
+  readonly buttonWidth?: never;
 }
 
 export interface DropdownMenuChildlessProps extends BaseDropdownMenuProps {
   readonly buttonText: string;
-  readonly buttonStyle?: Style;
+  readonly buttonStyle?: Omit<Style, "width">;
+  readonly buttonWidth?: number | string;
   readonly children?: never;
 }
 
@@ -32,6 +34,7 @@ export const DropdownMenu = ({
   buttonStyle,
   buttonText,
   menu,
+  buttonWidth,
   onClose,
   ...props
 }: DropdownMenuProps): JSX.Element => {
@@ -42,8 +45,8 @@ export const DropdownMenu = ({
   const target = useMemo(() => {
     if (children === undefined) {
       return (
-        <SolidButton.Secondary
-          style={buttonStyle}
+        <SolidButton.Outline
+          style={{ textAlign: "left", ...buttonStyle, width: buttonWidth }}
           icon={isOpen ? { name: "chevron-up" } : { name: "chevron-down" }}
           iconLocation="right"
           onFocusCapture={() => setOpen(true)}
@@ -53,17 +56,17 @@ export const DropdownMenu = ({
           }}
         >
           {buttonText}
-        </SolidButton.Secondary>
+        </SolidButton.Outline>
       );
     }
     return children;
-  }, [children, buttonText, buttonStyle, isOpen, onClose]);
+  }, [children, buttonText, buttonStyle, buttonWidth, isOpen, onClose]);
 
   return (
     <Popover position="bottom" width="target" transitionProps={{ transition: "pop" }} trapFocus {...props}>
       <Popover.Target>
         <div
-          style={{ maxWidth: "fit-content" }}
+          style={buttonWidth ? { width: buttonWidth } : { maxWidth: "fit-content" }}
           onFocusCapture={() => setOpen(true)}
           onBlurCapture={() => {
             setOpen(false);
@@ -77,3 +80,5 @@ export const DropdownMenu = ({
     </Popover>
   );
 };
+
+export default DropdownMenu;

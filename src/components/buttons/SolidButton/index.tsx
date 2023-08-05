@@ -2,6 +2,7 @@ import { type ButtonVariant, ButtonVariants } from "~/components/buttons";
 
 import { BareButton, type BareButtonProps } from "./BareButton";
 import { DangerButton, type DangerButtonProps } from "./DangerButton";
+import { OutlineButton, type OutlineButtonProps } from "./OutlineButton";
 import { PrimaryButton, type PrimaryButtonProps } from "./PrimaryButton";
 import { SecondaryButton, type SecondaryButtonProps } from "./SecondaryButton";
 
@@ -10,6 +11,7 @@ export type SolidButtonPolymorphicProps<V extends ButtonVariant> = {
   primary: PrimaryButtonProps;
   secondary: SecondaryButtonProps;
   danger: DangerButtonProps;
+  outline: OutlineButtonProps;
 }[V];
 
 export type SolidButtonProps<V extends ButtonVariant> = { readonly variant: V } & SolidButtonPolymorphicProps<V>;
@@ -20,6 +22,7 @@ export type SolidButton = {
   Secondary: (props: SolidButtonPolymorphicProps<"secondary">) => JSX.Element;
   Danger: (props: SolidButtonPolymorphicProps<"danger">) => JSX.Element;
   Bare: (props: SolidButtonPolymorphicProps<"bare">) => JSX.Element;
+  Outline: (props: SolidButtonPolymorphicProps<"outline">) => JSX.Element;
 };
 
 const _SolidButton = <V extends ButtonVariant>({ variant, ...props }: SolidButtonProps<V>): JSX.Element => {
@@ -32,6 +35,8 @@ const _SolidButton = <V extends ButtonVariant>({ variant, ...props }: SolidButto
       return <SecondaryButton {...props} />;
     case ButtonVariants.DANGER:
       return <DangerButton {...props} />;
+    case ButtonVariants.OUTLINE:
+      return <OutlineButton {...props} />;
     default:
       // I do not know why TS is not picking this case up as the never type.
       throw new Error(`Invalid variant ${variant}!`);
@@ -43,4 +48,5 @@ export const SolidButton: SolidButton = Object.assign(_SolidButton, {
   Secondary: (props: SolidButtonPolymorphicProps<"secondary">) => <SecondaryButton {...props} />,
   Danger: (props: SolidButtonPolymorphicProps<"danger">) => <DangerButton {...props} />,
   Bare: (props: SolidButtonPolymorphicProps<"bare">) => <BareButton {...props} />,
+  Outline: (props: SolidButtonPolymorphicProps<"outline">) => <OutlineButton {...props} />,
 });

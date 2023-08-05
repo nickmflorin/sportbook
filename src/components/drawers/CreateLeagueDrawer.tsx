@@ -1,32 +1,41 @@
 "use client";
 import React, { useState } from "react";
 
-import { TextInput, Switch } from "@mantine/core";
+import { Switch } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
+import { v4 as uuid } from "uuid";
 
 import type * as z from "zod";
 
-import { type LeagueSchema } from "~/prisma/model";
+import { type LeagueSchema, type Location } from "~/prisma/model";
 import { CreateLocationForm } from "~/components/forms/CreateLocationForm";
 import { Form, type FormProps } from "~/components/forms/Form";
 import { LocationsChooser } from "~/components/input/LocationsChooser";
 import { LeagueCompetitionLevelSelect } from "~/components/input/select/LeagueCompetitionLevelSelect";
 import { LeagueTypeSelect } from "~/components/input/select/LeagueTypeSelect";
 import { SportSelect } from "~/components/input/select/SportSelect";
+import { TextInput } from "~/components/input/TextInput";
 import { ShowHide } from "~/components/util";
 
 import { useManagedDrawers } from "./hooks";
 import { ManagedDrawers } from "./ManagedDrawers";
 
-export type LeagueFormInput = z.input<typeof LeagueSchema>;
-export type LeagueFormOutput = z.output<typeof LeagueSchema>;
+export type LeagueFormValues = z.output<typeof LeagueSchema>;
 
-export type CreateLeagueDrawerProps = Omit<FormProps<LeagueFormInput, LeagueFormOutput>, "children"> & {
+export type CreateLeagueDrawerProps = Omit<FormProps<LeagueFormValues>, "children"> & {
   readonly open: boolean;
+  readonly locations: Location[];
   readonly onClose?: () => void;
 };
 
-export const CreateLeagueDrawer = ({ action, open, form, onClose, ...props }: CreateLeagueDrawerProps): JSX.Element => {
+export const CreateLeagueDrawer = ({
+  action,
+  open,
+  form,
+  locations,
+  onClose,
+  ...props
+}: CreateLeagueDrawerProps): JSX.Element => {
   const [hasFiniteDuration, setHasFiniteDuration] = useState(false);
   const handler = useManagedDrawers<"locations">();
 
@@ -46,62 +55,71 @@ export const CreateLeagueDrawer = ({ action, open, form, onClose, ...props }: Cr
             title="Create a New League"
             description="Configure your league however you would like."
           >
-            <Form.Field form={form} name="name" label="Name" condition={Form.FieldCondition.REQUIRED}>
-              <TextInput {...form.getInputProps("name")} placeholder="John Doe" />
-            </Form.Field>
-            <Form.Field form={form} name="leagueType" label="Type">
-              <LeagueTypeSelect {...form.getInputProps("leagueType")} />
-            </Form.Field>
-            <Form.Field form={form} name="competitionLevel" label="Competition Level">
-              <LeagueCompetitionLevelSelect {...form.getInputProps("competitionLevel")} />
-            </Form.Field>
-            <Form.Field
+            <Form.ControlledField form={form} name="name" label="Name" condition={Form.FieldCondition.REQUIRED}>
+              {({ field: { onChange, value } }) => (
+                <TextInput value={value} onChange={onChange} placeholder="John Doe" />
+              )}
+            </Form.ControlledField>
+            <Form.ControlledField form={form} name="leagueType" label="Type">
+              {({ field: { onChange, value } }) => <LeagueTypeSelect onChange={onChange} value={value} />}
+            </Form.ControlledField>
+            <Form.ControlledField form={form} name="competitionLevel" label="Competition Level">
+              {({ field: { onChange, value } }) => <LeagueCompetitionLevelSelect onChange={onChange} value={value} />}
+            </Form.ControlledField>
+            <Form.ControlledField
               form={form}
               name="sport"
               label="Sport"
               description="The sport that will be played in your new league."
             >
-              <SportSelect {...form.getInputProps("sport")} />
-            </Form.Field>
+              {({ field: { onChange, value } }) => <SportSelect onChange={onChange} value={value} />}
+            </Form.ControlledField>
             <Form.FieldGroup form={form} name={["leagueStart", "leagueEnd"]} label="Duration">
               <Switch
                 onChange={e => {
                   if (e.target.checked === false) {
-                    form.setFieldValue("leagueStart", form.getInitialValues().leagueStart);
-                    form.setFieldValue("leagueEnd", form.getInitialValues().leagueEnd);
+                    form.register("leagueStart");
+                    form.register("leagueEnd");
+                  } else {
+                    form.unregister("leagueStart");
+                    form.unregister("leagueEnd");
                   }
                   setHasFiniteDuration(e.target.checked);
                 }}
                 style={{ marginBottom: 6 }}
               />
               <ShowHide show={hasFiniteDuration}>
-                <Form.Field label="Starts">
-                  <DateInput {...form.getInputProps("leagueStart")} />
-                </Form.Field>
-                <Form.Field label="Ends">
-                  <DateInput {...form.getInputProps("leagueEnd")} />
-                </Form.Field>
+                <Form.ControlledField form={form} name="leagueStart" label="Starts">
+                  {({ field: { onChange, value } }) => <DateInput onChange={onChange} value={value} />}
+                </Form.ControlledField>
+                <Form.ControlledField form={form} label="Ends" name="leagueStart">
+                  {({ field: { onChange, value } }) => <DateInput onChange={onChange} value={value} />}
+                </Form.ControlledField>
               </ShowHide>
             </Form.FieldGroup>
-            <Form.Field
+            <Form.ControlledField
               form={form}
               name="locations"
               label="Locations"
               description="Associate certain locations with your league, either existing locations or new ones."
               condition={Form.FieldCondition.OPTIONAL}
             >
-              <LocationsChooser
-                requestDisabled={!open}
-                onAdd={() => handler.current.open("locations")}
-                onDelete={(id: string) =>
-                  form.setFieldValue(
-                    "locations",
-                    form.values.locations.filter(v => typeof v !== "string" || v !== id),
-                  )
-                }
-                {...form.getInputProps("locations")}
-              />
-            </Form.Field>
+              {({ field: { onChange, value } }) => (
+                <LocationsChooser
+                  value={value}
+                  locations={locations}
+                  onChange={onChange}
+                  onAdd={() => handler.current.open("locations")}
+                  onDelete={(id: string) => {
+                    const locations = form.getValues("locations");
+                    form.setValue(
+                      "locations",
+                      locations.filter(v => (typeof v !== "string" ? v.id !== id : v !== id)),
+                    );
+                  }}
+                />
+              )}
+            </Form.ControlledField>
           </Form>
         ),
         locations: (
@@ -109,7 +127,8 @@ export const CreateLeagueDrawer = ({ action, open, form, onClose, ...props }: Cr
             style={{ width: 300 }}
             onCancel={() => handler.current.close("locations")}
             onSubmit={data => {
-              form.setFieldValue("locations", [...form.values.locations, data]);
+              const locations = form.getValues("locations");
+              form.setValue("locations", [...locations, { ...data, id: `unsaved-${uuid()}` }]);
               handler.current.close("locations");
             }}
           />

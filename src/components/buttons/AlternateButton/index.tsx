@@ -10,6 +10,7 @@ export type AlternateButtonPolymorphicProps<V extends ButtonVariant> = {
   primary: PrimaryAlternateButtonProps;
   secondary: SecondaryAlternateButtonProps;
   danger: DangerAlternateButtonProps;
+  outline: never;
 }[V];
 
 export type AlternateButtonProps<V extends ButtonVariant> = {
@@ -34,6 +35,8 @@ const _AlternateButton = <V extends ButtonVariant>({ variant, ...props }: Altern
       return <SecondaryAlternateButton {...props} />;
     case ButtonVariants.DANGER:
       return <DangerAlternateButton {...props} />;
+    case ButtonVariants.OUTLINE:
+      throw new Error("The 'outline' variant is not applicable for alternate buttons!");
     default:
       // I do not know why TS is not picking this case up as the never type.
       throw new Error(`Invalid variant ${variant}!`);

@@ -1,78 +1,85 @@
+import dynamic from "next/dynamic";
+
 import { type z } from "zod";
 
 import { logger } from "~/application/logger";
-import { type LocationSchema } from "~/prisma/model";
+import { type LocationSchema, type Location } from "~/prisma/model";
 import { DeleteButton } from "~/components/buttons/DeleteButton";
-import { LocationTile } from "~/components/views/tiles";
-import { useLocations } from "~/app/api/hooks";
+import { SolidButton } from "~/components/buttons/SolidButton";
+import { Text } from "~/components/typography/Text";
+import { TileContainer } from "~/components/views/tiles/TileContainer";
 
-import { LocationSelect, type LocationSelectProps } from "./select/LocationSelect";
+const DropdownMenu = dynamic(() => import("~/components/menus/DropdownMenu"), {
+  ssr: false,
+});
 
-type Unsaved = z.output<typeof LocationSchema>;
+const MultiMenu = dynamic(() => import("~/components/menus/MultiMenu"), {
+  ssr: false,
+});
+
+type Unsaved = z.output<typeof LocationSchema> & {
+  readonly id: `unsaved-${string}`;
+};
 
 type Loc = string | Unsaved;
 
-export interface LocationsChooserProps extends Omit<LocationSelectProps<"multiple">, "loading" | "mode"> {
+export interface LocationsChooserProps {
   readonly value: (Unsaved | string)[];
-  readonly initialValue?: Loc[];
-  readonly onAdd: (name: string) => void;
+  readonly locations: Location[];
+  readonly onAdd: () => void;
   readonly onDelete: (id: string) => void;
+  readonly onChange: (value: Loc[]) => void;
 }
 
-export const LocationsChooser = ({
-  onAdd,
-  onError,
-  onDelete,
-  requestDisabled,
-  value,
-  ...props
-}: LocationsChooserProps) => {
-  const { data = [], isLoading } = useLocations({
-    isPaused: () => requestDisabled === true,
-    onError: err => {
-      logger.error({ error: err }, "There was an error loading the sports data used to populate the select.");
-      onError?.(err);
-    },
-    fallbackData: [],
-  });
-
-  return (
-    <div className="locations-chooser">
-      <div className="locations-chooser__locations">
-        {value.map((loc, i) => {
-          if (typeof loc === "string") {
-            const model = data.find(d => d.id === loc);
-            if (!model) {
-              logger.error(
-                { loc },
-                `The location with ID '${loc}' could not be found in the data returned from the API for the ` +
-                  "locations chooser form field.  This is likely an indication that the API data has been mutated " +
-                  "since the first render.",
-              );
-              return <></>;
-            }
-            return (
-              <LocationTile
-                key={i}
-                location={model}
-                actions={[<DeleteButton key="0" onClick={() => onDelete(loc)} />]}
-              />
+export const LocationsChooser = ({ locations, value, onAdd, onDelete, onChange }: LocationsChooserProps) => (
+  <div className="locations-chooser">
+    <div className="locations-chooser__locations">
+      {value.map((loc, i) => {
+        if (typeof loc === "string") {
+          const model = locations.find(d => d.id === loc);
+          if (!model) {
+            logger.error(
+              { loc },
+              `The location with ID '${loc}' could not be found in the data returned from the API for the ` +
+                "locations chooser form field.  This is likely an indication that the API data has been mutated " +
+                "since the first render.",
             );
+            return <></>;
           }
-          return <LocationTile key={i} location={loc} />;
-        })}
-      </div>
-      <LocationSelect
-        {...props}
-        data={data}
-        searchable={true}
-        creatable={true}
-        shouldCreate={() => true}
-        getCreateLabel={() => "Create a New Location"}
-        onCreate={query => onAdd(query)}
-        loading={isLoading}
-        mode="multiple"
-      />
+          return (
+            <TileContainer direction="row" align="center" key={i} style={{ padding: "6px 8px" }}>
+              <Text size="sm" style={{ flexGrow: 100 }}>
+                {model.name}
+              </Text>
+            </TileContainer>
+          );
+        }
+        return (
+          <TileContainer direction="row" align="center" key={i} style={{ padding: "6px 8px" }}>
+            <Text size="sm" style={{ flexGrow: 100 }}>
+              {loc.name}
+            </Text>
+            <DeleteButton key="0" size="xs" onClick={() => onDelete(loc.id)} />
+          </TileContainer>
+        );
+      })}
     </div>
-  );
-};
+    <DropdownMenu
+      buttonText="Locations"
+      buttonWidth="100%"
+      menu={
+        <MultiMenu
+          items={locations.map(loc => ({ value: loc.id, label: loc.name }))}
+          value={value.filter((vi): vi is string => typeof vi === "string")}
+          onChange={onChange}
+          withCheckbox
+          footerActions={[
+            <SolidButton.Primary size="xs" onClick={() => onAdd()} key="0">
+              Add a Location
+            </SolidButton.Primary>,
+          ]}
+        />
+      }
+    />
+  </div>
+);

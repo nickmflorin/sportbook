@@ -2,10 +2,6 @@
 
 %button-link-base {
   @include partials.transition(none);
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
   appearance: none;
   background-color: transparent;
 
@@ -33,6 +29,10 @@
   $form: partials.validate-value($form, ("button", "link"));
 
   min-width: fit-content;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
   > .#{$form}__content {
     display: flex;
@@ -46,12 +46,18 @@
     vertical-align: middle;
     line-height: inherit;
     font-size: inherit;
+    overflow: hidden;
+    max-width: 100%;
+    flex-grow: 100;
 
     > .#{$form}__sub-content {
       text-align: inherit;
       vertical-align: middle;
       line-height: inherit;
       font-size: inherit;
+      max-width: 100%;
+      flex-grow: 100;
+      @include partials.truncate();
     }
 
     > .#{$form}__icon-wrapper {

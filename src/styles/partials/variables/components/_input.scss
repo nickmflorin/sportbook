@@ -9,8 +9,10 @@
 @use "../colors" as colors;
 @use "../radius" as radius;
 @use "../typography" as typography;
+@use "./icons" as icons;
 
 $input-sizes: ("xs", "sm", "md", "lg");
+$input-default-size: "md";
 
 // ---------------------------------- Agnostic Properties (The same for all input forms) ---------------------------- //
 $input-color: colors.get-color("gray", $shade: 8);
@@ -24,7 +26,7 @@ $input-border-color: colors.get-color("gray", $shade: 4);
 $input-focused-border-color: colors.get-color("blue", $shade: 7);
 $input-border-radius: radius.get-radius("sm");
 $input-disabled-bg-color: #efefef;
-$input-icon-color: colors.get-color("gray", $shade: 6);
+$input-icon-color: icons.$default-icon-color;
 $input-border-width: 1px;
 $input-border: $input-border-width solid $input-border-color;
 $input-placeholder-color: color.change(#606873, $alpha: 0.6);
@@ -83,19 +85,9 @@ $input-caret-color: colors.get-color("gray", $shade: 8);
   }
 }
 
-@function padding($args...) {
-  $p: ();
-  @each $a in $args {
-    $p: list.append($p, $a, space);
-  }
-  @return $p;
-}
-
 // ------------------------------------------------------------------------------------------------------------------ //
 
 // ----------------------------------------------------- Text Input ------------------------------------------------- //
-$text-input-default-size: "md";
-
 $text-input-heights: (
   "xs": 24px,
   "sm": 28px,
@@ -103,7 +95,7 @@ $text-input-heights: (
   "lg": 36px,
 );
 
-@function get-text-input-height($size: $text-input-default-size) {
+@function get-text-input-height($size: $input-default-size) {
   @return fn.mapget($text-input-heights, $size);
 }
 
@@ -114,7 +106,7 @@ $text-input-font-sizes: (
   "lg": typography.get-font-size("body", $size: "md"),
 );
 
-@function get-text-input-font-size($size: $text-input-default-size) {
+@function get-text-input-font-size($size: $input-default-size) {
   @return fn.mapget($text-input-font-sizes, $size);
 }
 
@@ -125,16 +117,16 @@ $text-input-line-heights: (
   "lg": get-text-input-font-size("lg") + 4px,
 );
 
-@function get-text-input-line-height($size: $text-input-default-size) {
+@function get-text-input-line-height($size: $input-default-size) {
   @return fn.mapget($text-input-line-heights, $size);
 }
 
-@function get-text-input-padding($size: $text-input-default-size) {
+@function get-text-input-padding($size: $input-default-size) {
   $vertical-padding: 0.5 * (get-text-input-height($size) - get-text-input-line-height($size));
   @return $vertical-padding 12px;
 }
 
-@mixin text-input-size-properties($size: $text-input-default-size) {
+@mixin text-input-size-properties($size: $input-default-size) {
   height: get-text-input-height($size);
   min-height: get-text-input-height($size);
 
@@ -179,17 +171,6 @@ $text-input-line-heights: (
 // ----------------------------------------------------- Text Area -------------------------------------------------- //
 $text-area-default-size: "md";
 
-// $text-area-heights: (
-//   "xs": 24px,
-//   "sm": 28px,
-//   "md": 32px,
-//   "lg": 36px,
-// );
-
-// @function get-text-area-height($size: $text-area-default-size) {
-//   @return fn.mapget($text-area-heights, $size);
-// }
-
 $text-area-font-sizes: (
   "xs": typography.get-font-size("body", $size: "xs"),
   "sm": typography.get-font-size("body", $size: "sm"),
@@ -223,7 +204,7 @@ $text-area-padding: (
   @return fn.mapget($text-area-padding, $size);
 }
 
-@mixin text-area-size-properties($size: $text-input-default-size) {
+@mixin text-area-size-properties($size: $input-default-size) {
   $padding: get-text-area-padding($size);
   $line-height: get-text-area-line-height($size);
   $min-height: $line-height + 2 * list.nth($padding, 1);
@@ -261,9 +242,6 @@ $text-area-padding: (
   @include text-area-size-classes();
 
   > .mantine-Input-wrapper.mantine-Textarea-wrapper {
-    height: 100%;
-    flex-grow: 100;
-
     > .mantine-Textarea-input {
       @include input-properties();
     }
@@ -308,18 +286,9 @@ $select-line-heights: (
   @return fn.mapget($select-line-heights, $size);
 }
 
-$select-padding: ();
-
-@each $size in $input-sizes {
-  $select-padding: map.set(
-    $select-padding,
-    $size,
-    padding(0.5 * (get-select-height($size) - get-select-line-height($size)), 12px)
-  );
-}
-
-@function get-select-padding($size: $select-default-size) {
-  @return fn.mapget($select-padding, $size);
+@function get-select-padding($size: $input-default-size) {
+  $vertical-padding: 0.5 * (get-select-height($size) - get-select-line-height($size));
+  @return $vertical-padding 12px;
 }
 
 @function get-select-size-properties($size: $select-default-size) {
@@ -332,52 +301,30 @@ $select-padding: ();
   );
 }
 
-@mixin mantine-select-combobox {
-  > div[role="combobox"] {
-    @content;
-  }
-}
-
-@mixin mantine-select-wrapper {
-  @include mantine-select-combobox() {
-    > .mantine-Input-wrapper.mantine-Select-wrapper {
-      @content;
-    }
-  }
-}
-
-@mixin mantine-select-input {
-  @include mantine-select-wrapper {
-    > input.mantine-Select-input.mantine-Input-input {
-      @content;
-    }
-  }
-}
-
 @mixin select-size-properties($size: $select-default-size) {
-  $properties: get-select-size-properties($size);
+  height: get-select-height($size);
+  min-height: get-select-height($size);
 
-  height: fn.mapget($properties, height);
-  min-height: fn.mapget($properties, min-height);
-
-  @include mantine-select-input {
+  > div[role="combobox"] {
     height: 100%;
-    padding: fn.mapget($properties, padding);
-    line-height: fn.mapget($properties, line-height);
-    font-size: fn.mapget($properties, font-size);
+    width: 100%;
+
+    > .mantine-Input-wrapper.mantine-Select-wrapper {
+      height: 100%;
+      flex-grow: 100;
+
+      > .mantine-Select-input {
+        min-height: get-select-height($size);
+        padding: get-select-padding($size);
+        line-height: get-select-line-height($size);
+        font-size: get-select-font-size($size);
+        height: 100%;
+      }
+    }
   }
 }
 
 @mixin select-size-classes() {
-  @include mantine-select-combobox {
-    width: 100%;
-    height: 100%;
-  }
-
-  @include mantine-select-wrapper {
-    height: 100%;
-  }
-
   @each $size in $input-sizes {
     &.select--#{$size} {
       @include select-size-properties($size);
@@ -389,8 +336,15 @@ $select-padding: ();
 }
 
 @mixin select {
-  @include input-properties();
   @include select-size-classes();
+
+  > div[role="combobox"] {
+    > .mantine-Input-wrapper.mantine-Select-wrapper {
+      > .mantine-Select-input {
+        @include input-properties();
+      }
+    }
+  }
 }
 
 // ---------------------------------------------------- Select Input ------------------------------------------------ //

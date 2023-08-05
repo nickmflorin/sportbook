@@ -18,11 +18,8 @@
   flex-direction: row;
   align-items: center;
 
-  @include partials.select-size-classes();
-  @include partials.mantine-select-input {
-    @include base.input-base;
-    @include partials.input-properties;
-  }
+  @include base.input-base;
+  @include partials.select;
 
   .select__option {
     @include select-option-structure;

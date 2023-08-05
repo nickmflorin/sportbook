@@ -15,7 +15,7 @@
 /* ----------------------------------------- Variants ------------------------------------------ */
 $button-types: ("solid", "alternate", "action");
 $button-default-type: "solid";
-$button-variants: ("primary", "secondary", "danger", "bare");
+$button-variants: ("primary", "secondary", "danger", "bare", "outline");
 
 /* ------------------------------------------------------- Mixins --------------------------------------------------- */
 $button-locked-class: ".button--locked";
@@ -100,12 +100,14 @@ $button-action-bare-padding: 2px;
 $button-action-primary-padding: 6px;
 $button-action-secondary-padding: 6px;
 $button-action-danger-padding: 6px;
+$button-action-outline-padding: 6px;
 
 $button-action-padding: (
   "bare": $button-action-bare-padding,
   "primary": $button-action-primary-padding,
   "secondary": $button-action-secondary-padding,
   "danger": $button-action-danger-padding,
+  "outline": $button-action-outline-padding,
 );
 
 $button-padding: (
@@ -270,6 +272,12 @@ $themes: (
     focused: colors.get-color("gray", $shade: 3),
     disabled: colors.$disabled-color,
   ),
+  "outline": (
+    base: colors.get-color("gray", $shade: 4),
+    hovered: colors.get-color("gray", $shade: 5),
+    focused: colors.get-color("gray", $shade: 5),
+    disabled: colors.$disabled-color,
+  ),
   "bare": (),
 );
 
@@ -326,6 +334,21 @@ $button-color-properties: (
         outline-color: fn.mapget($themes, "danger", "disabled"),
       ),
     ),
+    "outline": (
+      outline-color: fn.mapget($themes, "outline", "base"),
+      background-color: colors.get-color("white"),
+      color: colors.get-color("gray", $shade: 8),
+      hovered: (
+        outline-color: fn.mapget($themes, "outline", "hovered"),
+      ),
+      focused: (
+        outline-color: fn.mapget($themes, "outline", "hovered"),
+      ),
+      disabled: (
+        background-color: fn.mapget($themes, "primary", "disabled"),
+        outline-color: fn.mapget($themes, "primary", "disabled"),
+      ),
+    ),
     "bare": (),
   ),
   "action": (
@@ -380,6 +403,21 @@ $button-color-properties: (
         outline-color: fn.mapget($themes, "danger", "disabled"),
       ),
     ),
+    "outline": (
+      outline-color: fn.mapget($themes, "outline", "base"),
+      background-color: colors.get-color("white"),
+      color: fn.mapget($themes, "outline", "base"),
+      hovered: (
+        outline-color: fn.mapget($themes, "outline", "hovered"),
+      ),
+      focused: (
+        outline-color: fn.mapget($themes, "outline", "hovered"),
+      ),
+      disabled: (
+        background-color: fn.mapget($themes, "primary", "disabled"),
+        outline-color: fn.mapget($themes, "primary", "disabled"),
+      ),
+    ),
     "bare": (),
   ),
   "alternate": (
@@ -411,6 +449,8 @@ $button-color-properties: (
         color: fn.mapget($themes, "secondary", "disabled"),
       ),
     ),
+    // The outline variant for an alternate button is not applicable.
+    "outline": (),
     "danger": (
       background-color: colors.$transparent,
       color: fn.mapget($themes, "danger", "base"),

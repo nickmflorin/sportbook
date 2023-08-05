@@ -92,8 +92,15 @@ const actionMenuItems = (
     label: "Postpone",
     onClick: async (datum, item) => {
       item.setLoading(true);
-      await postponeGame({ id: datum.id });
+      const response = await postponeGame({ id: datum.id });
       item.setLoading(false);
+      if (isServerErrorResponse(response)) {
+        // Handle server error properly.
+        console.error(response);
+      } else {
+        item.hideSubContent();
+        router.refresh();
+      }
     },
     visible:
       permissionCodes.includes(LeaguePermissionCode.POSTPONE_GAME) &&

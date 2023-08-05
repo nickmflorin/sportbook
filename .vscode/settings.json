@@ -9,7 +9,7 @@
   },
   // "eslint.codeActionsOnSave.mode": "problems",
   "eslint.run": "onSave",
-  "eslint.lintTask.enable": true,
+  // "eslint.lintTask.enable": true,
   "editor.trimAutoWhitespace": true,
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"

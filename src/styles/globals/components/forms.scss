@@ -11,7 +11,7 @@
 .form-field {
   .form-field__header {
     width: 100%;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
     display: flex;
     flex-direction: row;
     height: 20px;
@@ -41,7 +41,7 @@
     color: partials.get-color("gray", $shade: 6);
     line-height: 16px;
     font-weight: partials.get-font-weight("body", $weight: "regular");
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 
   .form-field__errors {

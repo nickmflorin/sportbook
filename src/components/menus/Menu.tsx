@@ -4,8 +4,6 @@ import { MultiMenu, type MultiMenuProps } from "./MultiMenu";
 import { SingleMenu, type SingleMenuProps } from "./SingleMenu";
 import { type MenuSelectionMode } from "./types";
 
-export { useMultiMenu } from "./MultiMenu";
-
 type _MenuProps<V extends string | null, M, MODE extends MenuSelectionMode = MenuSelectionMode> = {
   single: SingleMenuProps<V, M>;
   multiple: MultiMenuProps<V, M>;
@@ -30,3 +28,5 @@ export const Menu = <V extends string | null, M>(props: MenuProps<V, M>): JSX.El
   const { mode: _, ...rest } = props;
   return <SingleMenu {...rest} />;
 };
+
+export default Menu;

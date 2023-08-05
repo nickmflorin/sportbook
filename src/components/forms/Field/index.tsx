@@ -1,14 +1,16 @@
-import { type JSX } from "react";
+import { type JSX, useMemo } from "react";
 
 import classNames from "classnames";
+import { Controller, type ControllerProps, type FieldErrors, type FieldPath } from "react-hook-form";
 
 import { type ComponentProps } from "~/lib/ui";
+import { ensuresDefinedValue } from "~/lib/util";
 import { enumeratedLiterals, type EnumeratedLiteralType } from "~/lib/util/literals";
 import { Actions, type Action } from "~/components/structural";
 import { Label } from "~/components/typography/Label";
 import { Text } from "~/components/typography/Text";
 
-import { type FormInstance, type BaseFormValues, type FieldError, type FormKeys } from "../../types";
+import { type FormInstance, type BaseFormValues, type FieldError } from "../types";
 
 import { FormFieldErrors } from "./FieldErrors";
 
@@ -42,23 +44,11 @@ type _BaseFieldProps<T> = T &
     readonly _className?: string;
   };
 
-type _FormFieldProps<
-  K extends FormKeys<I>,
-  I extends BaseFormValues,
-  O extends BaseFormValues,
-  _N extends K | K[],
-> = _BaseFieldProps<{
-  readonly form: FormInstance<I, O>;
+export type FormFieldProps<K extends FieldPath<I>, I extends BaseFormValues, _N extends K | K[]> = _BaseFieldProps<{
+  readonly form: FormInstance<I>;
   readonly name: _N;
   readonly errors?: never;
 }>;
-
-export type FormFieldProps<K extends FormKeys<I>, I extends BaseFormValues, O extends BaseFormValues> = _FormFieldProps<
-  K,
-  I,
-  O,
-  K
->;
 
 export type GenericFieldProps = _BaseFieldProps<{
   readonly errors?: FieldError[];
@@ -66,30 +56,39 @@ export type GenericFieldProps = _BaseFieldProps<{
   readonly name?: never;
 }>;
 
-type _FieldProps<K extends FormKeys<I>, I extends BaseFormValues, O extends BaseFormValues, _N extends K | K[]> =
+type _FieldProps<K extends FieldPath<I>, I extends BaseFormValues, _N extends K | K[]> =
   | GenericFieldProps
-  | _FormFieldProps<K, I, O, _N>;
+  | FormFieldProps<K, I, _N>;
 
-const _isControlFieldProps = <
-  K extends FormKeys<I>,
-  I extends BaseFormValues,
-  O extends BaseFormValues,
-  _N extends K | K[],
->(
-  props: _FieldProps<K, I, O, _N>,
-): props is _FormFieldProps<K, I, O, _N> => (props as _FormFieldProps<K, I, O, _N>).name !== undefined;
+const _isControlFieldProps = <K extends FieldPath<I>, I extends BaseFormValues, _N extends K | K[]>(
+  props: _FieldProps<K, I, _N>,
+): props is FormFieldProps<K, I, _N> => (props as FormFieldProps<K, I, _N>).name !== undefined;
 
-const _Field = <K extends FormKeys<I>, I extends BaseFormValues, O extends BaseFormValues, _N extends K | K[]>(
-  props: _FieldProps<K, I, O, _N>,
+const _Field = <K extends FieldPath<I>, I extends BaseFormValues, _N extends K | K[]>(
+  props: _FieldProps<K, I, _N>,
 ): JSX.Element => {
+  let formErrors: FieldErrors<I> | undefined = undefined;
   const { children, name, errors: _errors, _className = "form-field" } = props;
-  const errors = _isControlFieldProps(props)
-    ? props.form.getFieldErrors<K>(...(Array.isArray(name) ? name : [name]))
-    : _errors;
-
   if (_isControlFieldProps(props)) {
-    props.form;
+    ({
+      form: {
+        formState: { errors: formErrors },
+      },
+    } = props);
   }
+  const errors = useMemo(() => {
+    // TODO: Build better support for multiple field errors in a group.
+    const _name = ensuresDefinedValue(Array.isArray(name) ? name[0] : name);
+    if (formErrors) {
+      const errs = formErrors[_name as keyof FieldErrors<I>];
+      if (errs !== undefined && errs.message !== undefined) {
+        return [errs.message.toString()];
+      }
+      return [];
+    }
+    return _errors;
+  }, [_errors, formErrors, name]);
+
   return (
     <div style={props.style} className={classNames(_className, props.className)}>
       {(props.condition !== undefined || props.label !== undefined) && (
@@ -108,32 +107,43 @@ const _Field = <K extends FormKeys<I>, I extends BaseFormValues, O extends BaseF
   );
 };
 
-type _FieldGroupProps<K extends FormKeys<I>, I extends BaseFormValues, O extends BaseFormValues> = _FieldProps<
-  K,
-  I,
-  O,
-  K[]
->;
+type ControlledFieldProps<K extends FieldPath<I>, I extends BaseFormValues> = Omit<
+  FormFieldProps<K, I, K>,
+  "children"
+> & {
+  readonly children: ControllerProps<I, K>["render"];
+};
 
-const _FieldGroup = <K extends FormKeys<I>, I extends BaseFormValues, O extends BaseFormValues>({
+const _ControlledField = <K extends FieldPath<I>, I extends BaseFormValues>({
   children,
   ...props
-}: _FieldGroupProps<K, I, O>): JSX.Element => (
-  <_Field<K, I, O, K[]> {...props} _className="form-field-group">
+}: ControlledFieldProps<K, I>): JSX.Element => (
+  <Field<K, I> {...props}>
+    <Controller control={props.form.control} name={props.name} render={children} />
+  </Field>
+);
+
+type _FieldGroupProps<K extends FieldPath<I>, I extends BaseFormValues> = _FieldProps<K, I, K[]>;
+
+const _FieldGroup = <K extends FieldPath<I>, I extends BaseFormValues>({
+  children,
+  ...props
+}: _FieldGroupProps<K, I>): JSX.Element => (
+  <_Field<K, I, K[]> {...props} _className="form-field-group">
     {children}
   </_Field>
 );
 
 export const FieldGroup = _FieldGroup as {
   (props: GenericFieldProps): JSX.Element;
-  <K extends FormKeys<I>, I extends BaseFormValues, O extends BaseFormValues>(
-    props: _FormFieldProps<K, I, O, K[]>,
-  ): JSX.Element;
+  <K extends FieldPath<I>, I extends BaseFormValues>(props: FormFieldProps<K, I, K[]>): JSX.Element;
 };
 
 export const Field = _Field as {
   (props: GenericFieldProps): JSX.Element;
-  <K extends FormKeys<I>, I extends BaseFormValues, O extends BaseFormValues>(
-    props: _FormFieldProps<K, I, O, K>,
-  ): JSX.Element;
+  <K extends FieldPath<I>, I extends BaseFormValues>(props: FormFieldProps<K, I, K>): JSX.Element;
+};
+
+export const ControlledField = _ControlledField as {
+  <K extends FieldPath<I>, I extends BaseFormValues>(props: ControlledFieldProps<K, I>): JSX.Element;
 };
