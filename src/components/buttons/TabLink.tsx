@@ -1,6 +1,6 @@
 import classNames from "classnames";
 
-import { ButtonLink, type ButtonLinkProps } from "./base";
+import { ButtonLink, type ButtonLinkProps } from "./ButtonLink";
 
 export interface TabLinkProps extends Omit<ButtonLinkProps, "children" | "content"> {
   readonly label: string;

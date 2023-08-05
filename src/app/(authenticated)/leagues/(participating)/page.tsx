@@ -17,8 +17,6 @@ interface LeaguesProps {
   readonly searchParams: { search?: string };
 }
 
-export const dynamic = "force-dynamic";
-
 export default async function Leagues({ searchParams: { search } }: LeaguesProps) {
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
 

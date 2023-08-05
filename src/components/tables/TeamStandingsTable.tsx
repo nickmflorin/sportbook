@@ -26,7 +26,9 @@ const TeamStandingsTableColumns: { [key in TeamStandingsTableColumn]: Column<Wit
     title: "Team",
     accessor: "name",
     textAlignment: "left",
-    render: (standing: WithFileUrl<TeamStanding>) => <TeamAvatar displayName team={standing} />,
+    render: (standing: WithFileUrl<TeamStanding>) => (
+      <TeamAvatar displayName href={`/teams/${standing.id}`} team={standing} />
+    ),
   },
   [TeamStandingsTableColumn.WINS]: {
     title: "Wins",

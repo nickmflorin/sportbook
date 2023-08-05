@@ -8,13 +8,13 @@ import { v4 as uuid } from "uuid";
 import type * as z from "zod";
 
 import { type LeagueSchema, type Location } from "~/prisma/model";
+import { TextInputField } from "~/components/fields/TextInputField";
 import { CreateLocationForm } from "~/components/forms/CreateLocationForm";
 import { Form, type FormProps } from "~/components/forms/Form";
 import { LocationsChooser } from "~/components/input/LocationsChooser";
 import { LeagueCompetitionLevelSelect } from "~/components/input/select/LeagueCompetitionLevelSelect";
 import { LeagueTypeSelect } from "~/components/input/select/LeagueTypeSelect";
 import { SportSelect } from "~/components/input/select/SportSelect";
-import { TextInput } from "~/components/input/TextInput";
 import { ShowHide } from "~/components/util";
 
 import { useManagedDrawers } from "./hooks";
@@ -55,15 +55,22 @@ export const CreateLeagueDrawer = ({
             title="Create a New League"
             description="Configure your league however you would like."
           >
-            <Form.ControlledField form={form} name="name" label="Name" condition={Form.FieldCondition.REQUIRED}>
-              {({ field: { onChange, value } }) => (
-                <TextInput value={value} onChange={onChange} placeholder="John Doe" />
-              )}
-            </Form.ControlledField>
-            <Form.ControlledField form={form} name="leagueType" label="Type">
+            <TextInputField
+              form={form}
+              name="name"
+              label="Name"
+              condition={Form.FieldCondition.REQUIRED}
+              placeholder="John Doe"
+            />
+            <Form.ControlledField form={form} name="leagueType" label="Type" condition={Form.FieldCondition.REQUIRED}>
               {({ field: { onChange, value } }) => <LeagueTypeSelect onChange={onChange} value={value} />}
             </Form.ControlledField>
-            <Form.ControlledField form={form} name="competitionLevel" label="Competition Level">
+            <Form.ControlledField
+              form={form}
+              name="competitionLevel"
+              label="Competition Level"
+              condition={Form.FieldCondition.REQUIRED}
+            >
               {({ field: { onChange, value } }) => <LeagueCompetitionLevelSelect onChange={onChange} value={value} />}
             </Form.ControlledField>
             <Form.ControlledField

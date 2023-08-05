@@ -1,4 +1,5 @@
 import dynamicImport from "next/dynamic";
+import { redirect } from "next/navigation";
 
 import { prisma } from "~/prisma/client";
 import { Page } from "~/components/layout/Page";

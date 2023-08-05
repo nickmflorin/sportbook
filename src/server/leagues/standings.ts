@@ -18,6 +18,9 @@ export const rankHockeyTeams = async <T extends Team>(
   teams: T[],
   config: LeagueConfig<"HOCKEY">,
 ): Promise<TeamStanding<T>[]> => {
+  if (teams.length === 0) {
+    return [];
+  }
   const games = (await prisma.game.findMany({
     include: { result: true },
     where: {
@@ -30,6 +33,9 @@ export const rankHockeyTeams = async <T extends Team>(
 
   // Sanity Checks -- These may be temporary
   const leagueIds = new Set(teams.map(team => team.leagueId));
+  /* The number of league IDs will only be 0 if there are no teams - which we already validated in the initial line of
+     the function.  If there are more than one league IDs, it means that the provided teams belong to more than one
+     league. */
   if (leagueIds.size !== 1) {
     throw new Error("The provided teams belong to multiple different leagues.");
   }

@@ -14,18 +14,18 @@ export const getAuthUserFromRequest = async (...args: Parameters<typeof getAuth>
   return await prisma.user.findUniqueOrThrow({ where: { clerkId: userId } });
 };
 
-export async function getAuthUser(options: { whenNotAuthenticated: () => never }): Promise<User>;
+export async function getAuthUser(options: { whenNotAuthenticated: () => void }): Promise<User>;
 export async function getAuthUser(options: { strict: true }): Promise<User>;
 export async function getAuthUser(options?: { strict?: false }): Promise<User | null>;
-export async function getAuthUser(options?: { strict?: boolean } | { whenNotAuthenticated: () => never }) {
+export async function getAuthUser(options?: { strict?: boolean } | { whenNotAuthenticated: () => void }) {
   throwIfClient();
 
   const { userId } = auth();
   if (!userId) {
     if (options && (options as { strict: true }).strict === true) {
       throw new NotAuthenticatedError();
-    } else if (options && (options as { whenNotAuthenticated: () => never }).whenNotAuthenticated !== undefined) {
-      (options as { whenNotAuthenticated: () => never }).whenNotAuthenticated();
+    } else if (options && (options as { whenNotAuthenticated: () => void }).whenNotAuthenticated !== undefined) {
+      (options as { whenNotAuthenticated: () => void }).whenNotAuthenticated();
     }
     return null;
   }

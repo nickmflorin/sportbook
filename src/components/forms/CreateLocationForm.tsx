@@ -3,7 +3,7 @@ import React from "react";
 import { type z } from "zod";
 
 import { LocationSchema } from "~/prisma/model";
-import { TextInput } from "~/components/input/TextInput";
+import { TextInputField } from "~/components/fields/TextInputField";
 
 import { Form, type FormProps } from "./Form";
 
@@ -37,39 +37,55 @@ export const CreateLocationForm = (props: CreateLocationFormProps): JSX.Element 
 
   return (
     <Form<LocationFormValues> {...props} form={form}>
-      <Form.ControlledField form={form} name="name" label="Name" condition={Form.FieldCondition.REQUIRED}>
-        {({ field: { onChange, value } }) => <TextInput value={value} onChange={onChange} placeholder="Watkins Rink" />}
-      </Form.ControlledField>
-      <Form.ControlledField form={form} name="description" label="Description" condition={Form.FieldCondition.OPTIONAL}>
-        {({ field: { onChange, value } }) => (
-          <TextInput value={value} onChange={onChange} placeholder="Outdoor ball hockey court." />
-        )}
-      </Form.ControlledField>
-      <Form.ControlledField
+      <TextInputField
+        form={form}
+        name="name"
+        label="Name"
+        condition={Form.FieldCondition.REQUIRED}
+        placeholder="Watkins Rink"
+      />
+      <TextInputField
+        form={form}
+        name="description"
+        label="Description"
+        condition={Form.FieldCondition.OPTIONAL}
+        placeholder="Outdoor ball hockey court."
+      />
+      <TextInputField
         form={form}
         name="primaryStreetAddress"
         label="Primary Address"
         condition={Form.FieldCondition.REQUIRED}
-      >
-        {({ field: { onChange, value } }) => <TextInput value={value} onChange={onChange} placeholder="123 Main St" />}
-      </Form.ControlledField>
-      <Form.ControlledField
+        placeholder="123 Main St"
+      />
+      <TextInputField
         form={form}
         name="secondaryStreetAddress"
         label="Secondary Address"
         condition={Form.FieldCondition.OPTIONAL}
-      >
-        {({ field: { onChange, value } }) => <TextInput value={value} onChange={onChange} placeholder="Apt 208" />}
-      </Form.ControlledField>
-      <Form.ControlledField form={form} name="city" label="City" condition={Form.FieldCondition.REQUIRED}>
-        {({ field: { onChange, value } }) => <TextInput value={value} onChange={onChange} placeholder="Phoenix" />}
-      </Form.ControlledField>
-      <Form.ControlledField form={form} name="state" label="State" condition={Form.FieldCondition.REQUIRED}>
-        {({ field: { onChange, value } }) => <TextInput value={value} onChange={onChange} placeholder="AZ" />}
-      </Form.ControlledField>
-      <Form.ControlledField form={form} name="zipCode" label="Zip" condition={Form.FieldCondition.REQUIRED}>
-        {({ field: { onChange, value } }) => <TextInput value={value} onChange={onChange} placeholder="12345" />}
-      </Form.ControlledField>
+        placeholder="Apt 208"
+      />
+      <TextInputField
+        form={form}
+        name="city"
+        label="City"
+        condition={Form.FieldCondition.REQUIRED}
+        placeholder="Phoenix"
+      />
+      <TextInputField
+        form={form}
+        name="state"
+        label="State"
+        condition={Form.FieldCondition.REQUIRED}
+        placeholder="AZ"
+      />
+      <TextInputField
+        form={form}
+        name="zipCode"
+        label="Zip"
+        condition={Form.FieldCondition.REQUIRED}
+        placeholder="12345"
+      />
     </Form>
   );
 };

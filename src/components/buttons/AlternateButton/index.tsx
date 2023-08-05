@@ -13,7 +13,7 @@ export type AlternateButtonPolymorphicProps<V extends ButtonVariant> = {
   outline: never;
 }[V];
 
-export type AlternateButtonProps<V extends ButtonVariant> = {
+export type AlternateButtonProps<V extends ButtonVariant = ButtonVariant> = {
   readonly variant: V;
 } & AlternateButtonPolymorphicProps<V>;
 

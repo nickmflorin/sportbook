@@ -1,21 +1,26 @@
+import { useRef } from "react";
+
 import classNames from "classnames";
 import { type SubmitErrorHandler } from "react-hook-form";
 
 import { type ComponentProps } from "~/lib/ui";
 import { CloseButton } from "~/components/buttons/CloseButton";
+import { FieldConditions } from "~/components/fields";
+import { Field, FieldGroup, ControlledField } from "~/components/fields/Field";
 import { Loading } from "~/components/loading";
 import { ButtonFooter, type ButtonFooterProps } from "~/components/structural/ButtonFooter";
 import { Header, type HeaderProps } from "~/components/views/Header";
 
-import { Field, FieldConditions, FieldGroup, ControlledField } from "./Field";
-import { NativeForm, type NativeFormProps } from "./NativeForm";
-import { type FormInstance, type BaseFormValues } from "./types";
-import { useForm } from "./useForm";
+import { NativeForm, type NativeFormProps } from "../NativeForm";
+import { type FormInstance, type BaseFormValues } from "../types";
+import { useForm } from "../useForm";
 
-export { type NativeFormProps } from "./NativeForm";
-export * from "./types";
+import { FormErrors, type IFormErrors } from "./FormErrors";
 
-type SubmitAction<I extends BaseFormValues> = (data: I) => void;
+export { type NativeFormProps } from "../NativeForm";
+export * from "../types";
+
+type SubmitAction<I extends BaseFormValues> = (data: I, errorHandler: IFormErrors) => void;
 
 export type FormProps<I extends BaseFormValues> = ComponentProps &
   Pick<HeaderProps, "title" | "description" | "actions" | "titleProps" | "descriptionProps"> &
@@ -46,10 +51,11 @@ export const Form = <I extends BaseFormValues>({
   onError,
   ...props
 }: FormProps<I>): JSX.Element => {
+  const errorHandler = useRef<IFormErrors>(null);
+
   if (onSubmit && action) {
     throw new Error("Both the action and submit handler cannot be simultaneously provided.");
   }
-
   return (
     <NativeForm
       style={style}
@@ -58,12 +64,24 @@ export const Form = <I extends BaseFormValues>({
         action !== undefined
           ? () => {
               handleSubmit((data: I) => {
-                action(data);
+                if (errorHandler.current) {
+                  errorHandler.current.clearErrors();
+                  action(data, errorHandler.current);
+                }
               }, onError)();
             }
           : undefined
       }
-      onSubmit={onSubmit !== undefined ? handleSubmit(onSubmit, onError) : undefined}
+      onSubmit={
+        onSubmit !== undefined
+          ? handleSubmit(data => {
+              if (errorHandler.current) {
+                errorHandler.current.clearErrors();
+                onSubmit(data, errorHandler.current);
+              }
+            }, onError)
+          : undefined
+      }
     >
       {onClose && <CloseButton className="form__close-button" onClick={onClose} />}
       <Header
@@ -77,6 +95,7 @@ export const Form = <I extends BaseFormValues>({
       <div className="form__content">
         <Loading loading={loading === true}>{children}</Loading>
       </div>
+      <FormErrors handler={errorHandler} />
       <ButtonFooter {...props} submitDisabled={props.submitDisabled || loading} />
     </NativeForm>
   );

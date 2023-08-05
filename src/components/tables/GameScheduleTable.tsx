@@ -95,7 +95,7 @@ const actionMenuItems = (
       const response = await postponeGame({ id: datum.id });
       item.setLoading(false);
       if (isServerErrorResponse(response)) {
-        // Handle server error properly.
+        // TODO: How do we show errors when the error is the result of a menu item click?
         console.error(response);
       } else {
         item.hideSubContent();
@@ -111,11 +111,10 @@ const actionMenuItems = (
     onClick: async (datum, item) =>
       item.showSubContent(
         <CancelGameForm
-          action={async data => {
+          action={async (data, handler) => {
             const response = await cancelGame({ id: datum.id, cancellationReason: data.cancellationReason });
             if (isServerErrorResponse(response)) {
-              // Handle server error properly.
-              console.error(response);
+              handler.addServerError(response);
             } else {
               item.hideSubContent();
               router.refresh();

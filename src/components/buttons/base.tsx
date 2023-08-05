@@ -208,7 +208,7 @@ type ButtonContentProps = {
   readonly iconLocation?: Loc;
 };
 
-type LinkContentProps = {
+export type LinkContentProps = {
   readonly component: "link";
   readonly loading?: never;
   readonly children?: string | JSX.Element;
@@ -218,7 +218,7 @@ type LinkContentProps = {
 
 type ButtonLinkContentProps = ButtonContentProps | LinkContentProps;
 
-const ButtonLinkContent = ({
+export const ButtonLinkContent = ({
   iconLocation = CSSDirections.LEFT,
   loading,
   component,
@@ -263,39 +263,4 @@ export const Button = <T extends ButtonType, V extends ButtonVariant>({
       </ButtonLinkContent>
     )}
   </BaseButton>
-);
-
-export type LinkProps = Optional<BaseLinkProps, "children"> &
-  Omit<LinkContentProps, "component" | "children"> & {
-    readonly content?: JSX.Element;
-    readonly children?: string | JSX.Element;
-  };
-
-export const Link = ({ icon, iconLocation, children, content, ...props }: LinkProps) => (
-  <BaseLink {...props}>
-    {content !== undefined ? (
-      content
-    ) : (
-      <ButtonLinkContent component="link" iconLocation={iconLocation} icon={icon}>
-        {children}
-      </ButtonLinkContent>
-    )}
-  </BaseLink>
-);
-
-export type ButtonLinkProps = Optional<BaseButtonLinkProps, "children"> &
-  Omit<LinkContentProps, "component"> & {
-    readonly content?: JSX.Element;
-  };
-
-export const ButtonLink = ({ icon, iconLocation, children, content, ...props }: ButtonLinkProps) => (
-  <BaseButtonLink {...props}>
-    {content !== undefined ? (
-      content
-    ) : (
-      <ButtonLinkContent component="link" iconLocation={iconLocation} icon={icon}>
-        {children}
-      </ButtonLinkContent>
-    )}
-  </BaseButtonLink>
 );

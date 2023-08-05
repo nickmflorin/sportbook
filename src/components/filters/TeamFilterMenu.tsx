@@ -5,7 +5,8 @@ import { useTransition, useMemo } from "react";
 import { type Team } from "~/prisma/model";
 import { parseQueryParamIds } from "~/prisma/urls";
 import { SolidButton } from "~/components/buttons/SolidButton";
-import { Menu, useMultiMenu } from "~/components/menus/Menu";
+import { Menu } from "~/components/menus/Menu";
+import { useMultiMenu } from "~/components/menus/MultiMenu";
 import { useMutableSearchParams } from "~/hooks/useMutableSearchParams";
 
 export type TeamFilterMenuProps = {

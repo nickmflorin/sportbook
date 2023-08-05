@@ -5,17 +5,13 @@ import { Controller, type ControllerProps, type FieldErrors, type FieldPath } fr
 
 import { type ComponentProps } from "~/lib/ui";
 import { ensuresDefinedValue } from "~/lib/util";
-import { enumeratedLiterals, type EnumeratedLiteralType } from "~/lib/util/literals";
+import { FieldConditions, type FieldCondition } from "~/components/fields";
+import { type FormInstance, type BaseFormValues, type FieldError } from "~/components/forms";
 import { Actions, type Action } from "~/components/structural";
 import { Label } from "~/components/typography/Label";
 import { Text } from "~/components/typography/Text";
 
-import { type FormInstance, type BaseFormValues, type FieldError } from "../types";
-
 import { FormFieldErrors } from "./FieldErrors";
-
-export const FieldConditions = enumeratedLiterals(["required", "optional"] as const);
-export type FieldCondition = EnumeratedLiteralType<typeof FieldConditions>;
 
 const ConditionLabels: { [key in FieldCondition]: string } = {
   [FieldConditions.OPTIONAL]: "optional",
@@ -44,25 +40,25 @@ type _BaseFieldProps<T> = T &
     readonly _className?: string;
   };
 
-export type FormFieldProps<K extends FieldPath<I>, I extends BaseFormValues, _N extends K | K[]> = _BaseFieldProps<{
+type _FormFieldProps<K extends FieldPath<I>, I extends BaseFormValues, _N extends K | K[]> = _BaseFieldProps<{
   readonly form: FormInstance<I>;
   readonly name: _N;
   readonly errors?: never;
 }>;
 
-export type GenericFieldProps = _BaseFieldProps<{
+type _GenericFieldProps = _BaseFieldProps<{
   readonly errors?: FieldError[];
   readonly form?: never;
   readonly name?: never;
 }>;
 
 type _FieldProps<K extends FieldPath<I>, I extends BaseFormValues, _N extends K | K[]> =
-  | GenericFieldProps
-  | FormFieldProps<K, I, _N>;
+  | _GenericFieldProps
+  | _FormFieldProps<K, I, _N>;
 
 const _isControlFieldProps = <K extends FieldPath<I>, I extends BaseFormValues, _N extends K | K[]>(
   props: _FieldProps<K, I, _N>,
-): props is FormFieldProps<K, I, _N> => (props as FormFieldProps<K, I, _N>).name !== undefined;
+): props is _FormFieldProps<K, I, _N> => (props as _FormFieldProps<K, I, _N>).name !== undefined;
 
 const _Field = <K extends FieldPath<I>, I extends BaseFormValues, _N extends K | K[]>(
   props: _FieldProps<K, I, _N>,
@@ -107,8 +103,13 @@ const _Field = <K extends FieldPath<I>, I extends BaseFormValues, _N extends K |
   );
 };
 
-type ControlledFieldProps<K extends FieldPath<I>, I extends BaseFormValues> = Omit<
-  FormFieldProps<K, I, K>,
+export type FormFieldProps<K extends FieldPath<I>, I extends BaseFormValues> = Omit<
+  _FormFieldProps<K, I, K>,
+  "_className"
+>;
+
+export type ControlledFieldProps<K extends FieldPath<I>, I extends BaseFormValues> = Omit<
+  FormFieldProps<K, I>,
   "children"
 > & {
   readonly children: ControllerProps<I, K>["render"];
@@ -135,13 +136,13 @@ const _FieldGroup = <K extends FieldPath<I>, I extends BaseFormValues>({
 );
 
 export const FieldGroup = _FieldGroup as {
-  (props: GenericFieldProps): JSX.Element;
-  <K extends FieldPath<I>, I extends BaseFormValues>(props: FormFieldProps<K, I, K[]>): JSX.Element;
+  (props: _GenericFieldProps): JSX.Element;
+  <K extends FieldPath<I>, I extends BaseFormValues>(props: _FieldGroupProps<K, I>): JSX.Element;
 };
 
 export const Field = _Field as {
-  (props: GenericFieldProps): JSX.Element;
-  <K extends FieldPath<I>, I extends BaseFormValues>(props: FormFieldProps<K, I, K>): JSX.Element;
+  (props: _GenericFieldProps): JSX.Element;
+  <K extends FieldPath<I>, I extends BaseFormValues>(props: FormFieldProps<K, I>): JSX.Element;
 };
 
 export const ControlledField = _ControlledField as {

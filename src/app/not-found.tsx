@@ -1,13 +1,5 @@
-import Link from "next/link";
+import { NotFoundView } from "~/components/feedback/views/NotFoundView";
 
 export default function NotFound() {
-  return (
-    <div>
-      <h2>Not Found</h2>
-      <p>Could not find requested resource at root</p>
-      <p>
-        View <Link href="/blog">all posts</Link>
-      </p>
-    </div>
-  );
+  return <NotFoundView />;
 }

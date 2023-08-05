@@ -3,7 +3,7 @@ import React from "react";
 import { type z } from "zod";
 
 import { CancelGameSchema } from "~/prisma/model";
-import { TextArea } from "~/components/input/TextArea";
+import { TextAreaField } from "~/components/fields/TextAreaField";
 
 import { Form, type FormProps } from "./Form";
 
@@ -23,16 +23,15 @@ export const CancelGameForm = (props: CancelGameFormProps): JSX.Element => {
 
   return (
     <Form<CancelGameFormValues> {...props} form={form} buttonSize="xs">
-      <Form.ControlledField
+      <TextAreaField
         form={form}
         name="cancellationReason"
         label="Reason"
         condition={Form.FieldCondition.OPTIONAL}
-      >
-        {({ field: { onChange, value } }) => (
-          <TextArea value={value} onChange={onChange} size="xs" placeholder="Inclement weather" minRows={2} />
-        )}
-      </Form.ControlledField>
+        size="xs"
+        placeholder="Inclement weather"
+        minRows={2}
+      />
     </Form>
   );
 };

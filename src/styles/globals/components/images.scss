@@ -13,6 +13,11 @@
     color: partials.get-color("gray", $shade: 8);
     @include partials.truncate();
   }
+
+  .button {
+    font-size: partials.get-font-size($type: "body", $size: "sm");
+    @include partials.truncate();
+  }
 }
 
 .model-image {
