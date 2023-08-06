@@ -1,7 +1,11 @@
 import { Icon } from "~/components/icons/Icon";
 import { AppLayout } from "~/components/layout/AppLayout";
 
-export default function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
+export interface AuthenticatedLayoutParams {
+  readonly children: React.ReactNode;
+}
+
+export default function AuthenticatedLayout({ children }: AuthenticatedLayoutParams) {
   return (
     <AppLayout
       authenticated={true}

@@ -1,12 +1,9 @@
 import dynamicImport from "next/dynamic";
-import { redirect } from "next/navigation";
 
-import { prisma } from "~/prisma/client";
 import { Page } from "~/components/layout/Page";
 import { Loading } from "~/components/loading";
 import { TableView } from "~/components/tables/TableView";
 import { TableViewHeader } from "~/components/tables/TableViewHeader";
-import { getAuthUser } from "~/server/auth";
 
 import { LeaguesFilterBar } from "./LeaguesFilterBar";
 
@@ -19,18 +16,12 @@ interface LeaguesProps {
   readonly children: React.ReactNode;
 }
 
-export const dynamic = "force-dynamic";
-
 export default async function Leagues({ children }: LeaguesProps) {
-  const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
-
-  const locations = await prisma.location.findMany({ where: { createdById: user.id } });
-
   return (
     <Page
       title="Leagues"
       headerProps={{
-        actions: [<CreateLeagueButton key="0" locations={locations} />],
+        actions: [<CreateLeagueButton key="0" />],
       }}
     >
       <TableView

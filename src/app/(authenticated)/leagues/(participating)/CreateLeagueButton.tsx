@@ -1,42 +1,33 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useTransition } from "react";
 
-import { type Location } from "~/prisma/model";
 import { SolidButton } from "~/components/buttons/SolidButton";
-import { CreateLeagueDrawer } from "~/components/drawers/CreateLeagueDrawer";
-import { hooks } from "~/components/forms";
-import { createLeague } from "~/app/actions/league";
+import { useMutableSearchParams } from "~/hooks/useMutableSearchParams";
 
-interface CreateLeagueButtonProps {
-  readonly locations: Location[];
-}
+export const CreateLeagueButton = (): JSX.Element => {
+  const { updateParams } = useMutableSearchParams();
+  const [pending, startTransition] = useTransition();
 
-export const CreateLeagueButton = ({ locations }: CreateLeagueButtonProps): JSX.Element => {
-  const [leagueDrawerOpened, setLeagueDrawerOpened] = useState(false);
-  const form = hooks.useLeagueForm();
+  const pathname = usePathname();
   const router = useRouter();
-  const [_, startTransition] = useTransition();
 
   return (
     <>
-      <SolidButton.Primary key="0" onClick={() => setLeagueDrawerOpened(true)}>
+      <SolidButton.Primary
+        key="0"
+        loading={pending}
+        onClick={() => {
+          const updated = updateParams({ drawerId: "createLeague" });
+          if (updated.queryString) {
+            startTransition(() => {
+              router.push(`${pathname}?${updated.queryString}`);
+            });
+          }
+        }}
+      >
         Create League
       </SolidButton.Primary>
-      <CreateLeagueDrawer
-        form={form}
-        locations={locations}
-        open={leagueDrawerOpened}
-        action={async leagueData => {
-          await createLeague(leagueData);
-          form.reset();
-          startTransition(() => {
-            router.refresh();
-          });
-        }}
-        onClose={() => setLeagueDrawerOpened(false)}
-        onCancel={() => setLeagueDrawerOpened(false)}
-      />
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { useReducer, type Reducer, useImperativeHandle } from "react";
+import React, { useReducer, type Reducer, useImperativeHandle } from "react";
 
 import classNames from "classnames";
 import difference from "lodash.difference";
@@ -6,9 +6,8 @@ import intersection from "lodash.intersection";
 import uniq from "lodash.uniq";
 
 import { logger } from "~/application/logger";
+import { type ComponentProps } from "~/lib/ui";
 
-import { Drawer, type DrawerProps } from "./Drawer";
-import { DrawerView } from "./DrawerView";
 import { type ManagedDrawersHandler } from "./hooks";
 
 type ManagedDrawersState<N> = N[];
@@ -67,8 +66,14 @@ const managedDrawerReducer = <N extends string>(
   }
 };
 
-export interface ManagedDrawersProps<N extends string, A extends string> extends Omit<DrawerProps, "children"> {
-  readonly drawers: Record<N | A, JSX.Element>;
+type ManagedDrawerContent<N extends string, A extends string> = {
+  [key in N]: (params: { onClose: () => void }) => JSX.Element;
+} & {
+  [key in A]: JSX.Element;
+};
+
+export interface ManagedDrawersProps<N extends string, A extends string> extends ComponentProps {
+  readonly drawers: ManagedDrawerContent<N, A>;
   readonly defaultOpen?: N[];
   readonly alwaysOpen?: A[];
   readonly handler: React.Ref<ManagedDrawersHandler<N>>;
@@ -79,7 +84,6 @@ export const ManagedDrawers = <N extends string, A extends string>({
   defaultOpen = [],
   alwaysOpen = [],
   handler,
-  onClose,
   ...props
 }: ManagedDrawersProps<N, A>): JSX.Element => {
   const [state, dispatch] = useReducer<Reducer<ManagedDrawersState<N>, ManagedDrawerOpenAction<N>>>(
@@ -93,17 +97,15 @@ export const ManagedDrawers = <N extends string, A extends string>({
   }));
 
   return (
-    <Drawer {...props} className={classNames("managed-drawers", props.className)}>
+    <div {...props} className={classNames("managed-drawers", props.className)}>
       {alwaysOpen.map((drawer, i) => (
-        <DrawerView key={`static-${i}`} onClose={() => onClose?.()}>
-          {drawers[drawer]}
-        </DrawerView>
+        <React.Fragment key={`static-${i}`}>{drawers[drawer]}</React.Fragment>
       ))}
       {state.map((drawer, i) => (
-        <DrawerView key={`dynamic-${i}`} onClose={() => dispatch({ type: ManagedDrawerActionType.CLOSE, drawer })}>
-          {drawers[drawer]}
-        </DrawerView>
+        <React.Fragment key={`dynamic-${i}`}>
+          {drawers[drawer]({ onClose: () => dispatch({ type: ManagedDrawerActionType.CLOSE, drawer }) })}
+        </React.Fragment>
       ))}
-    </Drawer>
+    </div>
   );
 };

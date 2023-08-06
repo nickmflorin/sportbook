@@ -7,12 +7,16 @@
 
 .app-layout {
   overflow: hidden;
+  max-height: 100vh;
+  max-width: 100vw;
+  position: relative;
 
   > .app-main {
     min-height: calc(100vh - partials.$app-header-height);
     max-width: 100vw;
     width: 100vw;
     height: calc(100vh - partials.$app-header-height);
+    max-height: calc(100vh - partials.$app-header-height);
     overflow: hidden;
     position: relative;
     display: flex;
@@ -28,14 +32,23 @@
       max-width: 100%;
       min-width: 100%;
       background-color: partials.$white;
+      position: relative;
 
       > .app-viewport__content {
         flex-grow: 100;
         overflow-y: scroll;
+        overflow-x: hidden;
         max-height: 100%;
         max-width: 100%;
         padding: partials.get-spacing("md") partials.get-spacing("lg") partials.get-spacing("md")
           partials.get-spacing("lg");
+      }
+
+      > .drawer {
+        max-height: 100%;
+        max-width: 100%;
+        height: 100%;
+        position: relative;
       }
     }
 

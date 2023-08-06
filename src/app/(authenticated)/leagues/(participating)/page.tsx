@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "~/prisma/client";
 import { type LeagueWithParticipation } from "~/prisma/model";
 import { constructOrSearch } from "~/prisma/util";
+import { DrawerIds } from "~/components/drawers";
 import { Loading } from "~/components/loading";
 import { DataTableSizes } from "~/components/tables/types";
 import { getAuthUser } from "~/server/auth";
@@ -14,11 +15,12 @@ const LeaguesTable = dynamicImport(() => import("~/components/tables/LeaguesTabl
 });
 
 interface LeaguesProps {
-  readonly searchParams: { search?: string };
+  readonly searchParams: { search?: string; drawerId?: string };
 }
 
-export default async function Leagues({ searchParams: { search } }: LeaguesProps) {
+export default async function Leagues({ searchParams: { search, drawerId } }: LeaguesProps) {
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
+  const _drawerId = DrawerIds.contains(drawerId) ? drawerId : undefined;
 
   const leagues = await prisma.league.findMany({
     include: { teams: { select: { id: true } }, config: true },
