@@ -16,7 +16,7 @@ export interface FlexProps extends ComponentProps {
 export const Flex = ({
   textAlign,
   direction = "row",
-  gap = "xs",
+  gap,
   children,
   justify,
   align,
@@ -32,7 +32,7 @@ export const Flex = ({
     className={classNames(
       "flex",
       `flex--direction-${direction}`,
-      `flex--gap-${gap}`,
+      gap && `flex--gap-${gap}`,
       textAlign && `flex--text-align-${textAlign}`,
       props.className,
     )}

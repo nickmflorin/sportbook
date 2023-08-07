@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { type Optional } from "utility-types";
 
+import { isJSXElement } from "~/lib/core";
 import { type ComponentProps } from "~/lib/ui";
 import { type BadgeProps } from "~/components/badges/Badge";
 import { type ImageProp } from "~/components/images";
@@ -13,7 +14,7 @@ import { Actions, type Action, filterVisibleActions } from "../structural/Action
 
 export interface HeaderProps extends ComponentProps {
   readonly title?: string | JSX.Element;
-  readonly image?: Optional<ImageProp, "size">;
+  readonly image?: Optional<ImageProp, "size"> | JSX.Element;
   readonly description?: Description;
   readonly actions?: Action[];
   readonly titleProps?: Omit<TitleProps, "children">;
@@ -22,7 +23,9 @@ export interface HeaderProps extends ComponentProps {
 }
 
 const headerHasImage = (props: Pick<HeaderProps, "image">): boolean =>
-  [props.image?.url !== undefined, props.image?.initials !== undefined].includes(true);
+  isJSXElement(props.image)
+    ? true
+    : [props.image?.url !== undefined, props.image?.initials !== undefined].includes(true);
 
 export const headerIsVisible = (props: Pick<HeaderProps, "title" | "description" | "image" | "actions">): boolean =>
   [
@@ -47,7 +50,15 @@ export const Header = ({
       {...props}
       className={classNames("header", { "header--with-image": headerHasImage({ image }) }, props.className)}
     >
-      {image !== undefined && headerHasImage({ image }) && <ModelImage image={{ size: 80, ...image }} />}
+      {image !== undefined && headerHasImage({ image }) ? (
+        isJSXElement(image) ? (
+          image
+        ) : (
+          <ModelImage image={{ size: 80, ...image }} />
+        )
+      ) : (
+        <></>
+      )}
       <div className="header__content">
         {typeof title === "string" ? (
           <Title order={5} {...titleProps} className={classNames("header__title", titleProps?.className)}>

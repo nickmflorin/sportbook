@@ -4,10 +4,11 @@ import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
 import { Loading } from "~/components/loading";
+import { Flex, type FlexProps } from "~/components/structural/Flex";
 
 import { ViewHeader, type ViewHeaderProps } from "./ViewHeader";
 
-export interface ViewContainerProps extends ComponentProps {
+export interface ViewContainerProps extends Omit<FlexProps, "direction"> {
   readonly bordered?: boolean;
   readonly contentScrollable?: boolean;
 }
@@ -18,7 +19,7 @@ export const ViewContainer = ({
   contentScrollable,
   ...props
 }: ViewContainerProps & { readonly children: ReactNode }) => (
-  <div
+  <Flex
     {...props}
     className={classNames(
       "view",
@@ -27,18 +28,17 @@ export const ViewContainer = ({
     )}
   >
     {children}
-  </div>
+  </Flex>
 );
 
-export interface ViewContentProps extends ComponentProps {
+export interface ViewContentProps extends Omit<FlexProps, "direction"> {
   readonly children: ReactNode;
-  readonly loading?: boolean;
 }
 
-export const ViewContent = ({ loading, children, ...props }: ViewContentProps) => (
-  <div {...props} className={classNames("view__content", props.className)}>
-    <Loading loading={loading === true}>{children}</Loading>
-  </div>
+export const ViewContent = ({ children, ...props }: ViewContentProps) => (
+  <Flex {...props} className={classNames("view__content", props.className)}>
+    {children}
+  </Flex>
 );
 
 export const ViewFooter = ({ children, ...props }: ComponentProps & { readonly children: ReactNode }) => (
@@ -54,6 +54,7 @@ export interface ViewProps
   readonly header?: JSX.Element;
   readonly children: ReactNode;
   readonly headerProps?: Omit<ViewHeaderProps, "title" | "description" | "actions">;
+  readonly contentProps?: Omit<ViewContentProps, "children">;
 }
 
 export const View = ({
@@ -64,11 +65,12 @@ export const View = ({
   description,
   actions,
   headerProps,
+  contentProps,
   ...props
 }: ViewProps & { readonly children: ReactNode }): JSX.Element => (
   <ViewContainer {...props}>
     {header ? header : <ViewHeader {...headerProps} title={title} description={description} actions={actions} />}
-    <ViewContent>{children}</ViewContent>
+    <ViewContent {...contentProps}>{children}</ViewContent>
     {footer && <ViewFooter>{footer}</ViewFooter>}
   </ViewContainer>
 );

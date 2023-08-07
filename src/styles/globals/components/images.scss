@@ -3,20 +3,25 @@
 // Since the underlying image uses NextJS's image, where the height and width are required to be specified in JS, the
 // size of the avatar should not be provided in SASS.
 .avatar-with-name {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: partials.get-spacing("sm");
-
-  > .body {
-    font-size: partials.get-font-size($type: "body", $size: "sm");
-    color: partials.get-color("gray", $shade: 8);
-    @include partials.truncate();
+  @layer {
+    gap: partials.get-spacing("sm");
   }
 
-  .button {
-    font-size: partials.get-font-size($type: "body", $size: "sm");
-    @include partials.truncate();
+  > .avatar-with-name__content {
+    @layer {
+      gap: partials.get-spacing("xs");
+    }
+
+    > .body {
+      font-size: partials.get-font-size($type: "body", $size: "sm");
+      color: partials.get-color("gray", $shade: 8);
+      @include partials.truncate();
+    }
+
+    .button {
+      font-size: partials.get-font-size($type: "body", $size: "sm");
+      @include partials.truncate();
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useMemo } from "react";
 
 import { DrawerContext } from "~/components/context/DrawerContext";
 
@@ -22,27 +22,35 @@ export const ClientAppDrawers = <D extends { [key in DrawerId]: ClientAppDrawer<
   const searchParams = useSearchParams();
   const drawerId = useContext(DrawerContext);
   const [element, setElement] = useState<JSX.Element | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const drawer = useMemo(() => {
+    if (drawerId) {
+      return drawers[drawerId];
+    }
+    return null;
+  }, [drawerId, drawers]);
 
   useEffect(() => {
-    const render = async (id: DrawerId) => {
-      const dw = drawers[id];
-      if (dw) {
-        const result = await dw.render([...searchParams.entries()]);
-        if (result) {
-          return setElement(<Drawer>{result}</Drawer>);
-        }
+    const render = async (d: ClientAppDrawer<string>) => {
+      setLoading(true);
+      const result = await d.render([...searchParams.entries()]);
+      if (result) {
+        setElement(result);
       }
-      return setElement(null);
+      setLoading(false);
     };
-    if (drawerId) {
-      render(drawerId);
+    if (drawer) {
+      render(drawer);
     } else {
       setElement(null);
     }
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-  }, [drawerId, drawers]);
+  }, [drawer, searchParams]);
 
-  return <>{element}</>;
+  if (drawer) {
+    return <Drawer loading={loading}>{element}</Drawer>;
+  }
+  return <></>;
 };
 
 export default ClientAppDrawers;

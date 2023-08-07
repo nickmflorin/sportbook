@@ -1,8 +1,13 @@
 import dynamic from "next/dynamic";
 
-import { renderCreateLeagueDrawer, renderTeamDrawer } from "./renderers";
+import { Loading } from "~/components/loading/Loading";
 
-const ClientAppDrawers = dynamic(() => import("./ClientAppDrawers"), { ssr: false });
+import { renderCreateLeagueDrawer, ServerTeamDrawer } from "./renderers";
+
+const ClientAppDrawers = dynamic(() => import("./ClientAppDrawers"), {
+  ssr: false,
+  loading: () => <Loading loading={true} />,
+});
 
 export const AppDrawers = () => (
   <ClientAppDrawers
@@ -12,7 +17,7 @@ export const AppDrawers = () => (
         params: [],
       },
       leagueTeam: {
-        render: renderTeamDrawer,
+        render: ServerTeamDrawer,
         params: ["teamId"],
       },
     }}
