@@ -5,16 +5,14 @@ import classNames from "classnames";
 import { type ComponentProps } from "~/lib/ui";
 import { Loading } from "~/components/loading";
 
-import { Header, type HeaderProps } from "./Header";
+import { ViewHeader, type ViewHeaderProps } from "./ViewHeader";
 
 export interface ViewContainerProps extends ComponentProps {
-  readonly loading?: boolean;
   readonly bordered?: boolean;
   readonly contentScrollable?: boolean;
 }
 
 export const ViewContainer = ({
-  loading,
   children,
   bordered,
   contentScrollable,
@@ -28,7 +26,7 @@ export const ViewContainer = ({
       props.className,
     )}
   >
-    <Loading loading={loading === true}>{children}</Loading>
+    {children}
   </div>
 );
 
@@ -43,36 +41,20 @@ export const ViewContent = ({ loading, children, ...props }: ViewContentProps) =
   </div>
 );
 
-type ViewHeaderProps = Omit<HeaderProps, keyof ComponentProps>;
-
-export const ViewHeader = (props: ViewHeaderProps) => <Header {...props} className="view__header" />;
-
 export const ViewFooter = ({ children, ...props }: ComponentProps & { readonly children: ReactNode }) => (
   <div {...props} className={classNames("view__footer", props.className)}>
     {children}
   </div>
 );
 
-export interface BaseViewProps
-  extends Omit<ViewContentProps, keyof ComponentProps | "children">,
-    Omit<ViewContainerProps, "children"> {
+export interface ViewProps
+  extends Omit<ViewContainerProps, "children">,
+    Pick<ViewHeaderProps, "title" | "description" | "actions"> {
   readonly footer?: JSX.Element;
+  readonly header?: JSX.Element;
+  readonly children: ReactNode;
+  readonly headerProps?: Omit<ViewHeaderProps, "title" | "description" | "actions">;
 }
-
-type _ViewWithHeaderProps = BaseViewProps &
-  Pick<ViewHeaderProps, "title" | "description" | "actions"> & {
-    readonly header?: never;
-    readonly headerProps?: Omit<ViewHeaderProps, "title" | "description" | "actions">;
-  };
-
-type _ViewWithHeaderElement = BaseViewProps & { [key in keyof ViewHeaderProps]?: never } & {
-  readonly header: JSX.Element;
-  readonly headerProps?: never;
-};
-
-export type WithViewProps<T> = (_ViewWithHeaderProps & T) | (_ViewWithHeaderElement & T);
-
-export type ViewProps = _ViewWithHeaderProps | _ViewWithHeaderElement;
 
 export const View = ({
   children,
@@ -85,11 +67,7 @@ export const View = ({
   ...props
 }: ViewProps & { readonly children: ReactNode }): JSX.Element => (
   <ViewContainer {...props}>
-    {header ? (
-      <div className="view__header">{header}</div>
-    ) : (
-      <Header {...headerProps} title={title} description={description} actions={actions} className="view__header" />
-    )}
+    {header ? header : <ViewHeader {...headerProps} title={title} description={description} actions={actions} />}
     <ViewContent>{children}</ViewContent>
     {footer && <ViewFooter>{footer}</ViewFooter>}
   </ViewContainer>

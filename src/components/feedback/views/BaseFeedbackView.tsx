@@ -6,6 +6,8 @@ import { AlternateButton, type AlternateButtonProps } from "~/components/buttons
 import { Text } from "~/components/typography/Text";
 import { Title } from "~/components/typography/Title";
 
+import css from "./FeedbackView.module.scss";
+
 type LinkObj = {
   readonly label: string;
   readonly href: Exclude<AlternateButtonProps<"primary">["href"], undefined>;
@@ -17,6 +19,7 @@ export interface BaseFeedbackViewProps extends ComponentProps {
   readonly title: string;
   readonly description?: string;
   readonly link?: Link;
+  readonly coverScreen?: boolean;
 }
 
 const linkIsNotJSX = (link: Link): link is LinkObj =>
@@ -27,9 +30,18 @@ const linkIsNotJSX = (link: Link): link is LinkObj =>
   "href" in link &&
   link.href !== undefined;
 
-export const BaseFeedbackView = ({ title, description, link, ...props }: BaseFeedbackViewProps): JSX.Element => (
-  <div {...props} className={classNames("feedback-view", props.className)}>
-    <div className="feedback-view__content">
+export const BaseFeedbackView = ({
+  coverScreen,
+  title,
+  description,
+  link,
+  ...props
+}: BaseFeedbackViewProps): JSX.Element => (
+  <div
+    {...props}
+    className={classNames(css["feedback-view"], coverScreen && css["feedback-view--cover-screen"], props.className)}
+  >
+    <div className={css["feedback-view__content"]}>
       <Title order={3}>{title}</Title>
       {description && <Text>{description}</Text>}
       {link && linkIsNotJSX(link) ? (

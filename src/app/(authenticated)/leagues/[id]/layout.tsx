@@ -5,19 +5,16 @@ import { xprisma, isPrismaDoesNotExistError, isPrismaInvalidIdError, prisma } fr
 import { type LeagueWithConfig, type FileUpload, type LeagueStaff, LeagueStaffRole } from "~/prisma/model";
 import { Badge } from "~/components/badges/Badge";
 import { DetailPage } from "~/components/layout/DetailPage";
-import { Flex } from "~/components/structural/Flex";
 import { getAuthUser } from "~/server/auth";
 
 import { useUserLeagueStaffRoles } from "./hooks";
 
 interface LeagueLayoutProps {
   readonly params: { id: string };
-  readonly scores: ReactNode;
-  readonly teams: ReactNode;
   readonly children: ReactNode;
 }
 
-export default async function LeagueLayout({ scores, children, teams, params: { id } }: LeagueLayoutProps) {
+export default async function LeagueLayout({ children, params: { id } }: LeagueLayoutProps) {
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
   let league: LeagueWithConfig & { readonly staff: LeagueStaff[]; readonly teams: { readonly id: string }[] };
   let fileUpload: FileUpload | null;
@@ -83,13 +80,6 @@ export default async function LeagueLayout({ scores, children, teams, params: { 
           visible: hasLeagueRole([LeagueStaffRole.ADMIN, LeagueStaffRole.COMISSIONER]),
         },
       ]}
-      staticViewWidth={420}
-      staticViews={
-        <Flex direction="column" gap="md" style={{ width: "100%", height: "100%" }}>
-          {teams}
-          {scores}
-        </Flex>
-      }
     >
       {children}
     </DetailPage>

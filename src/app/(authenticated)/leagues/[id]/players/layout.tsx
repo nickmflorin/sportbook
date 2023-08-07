@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { TableView } from "~/components/tables/TableView";
-import { TableViewHeader } from "~/components/tables/TableViewHeader";
+import { TableView } from "~/components/views/TableView";
+import { TableViewHeader } from "~/components/views/TableViewHeader";
 import { getAuthUser } from "~/server/auth";
 
 import { LeagueFilterBar } from "../LeagueFilterBar";

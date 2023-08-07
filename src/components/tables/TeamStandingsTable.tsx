@@ -1,6 +1,9 @@
 "use client";
+import { useMemo } from "react";
+
 import { type TeamStanding, type WithFileUrl } from "~/prisma/model";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
+import { useMutableSearchParams } from "~/hooks/useMutableSearchParams";
 
 import { type Column } from "./columns";
 import { DataTable, type DataTableProps } from "./DataTable";
@@ -15,7 +18,9 @@ export enum TeamStandingsTableColumn {
   GAMES_PLAYED,
 }
 
-const TeamStandingsTableColumns: { [key in TeamStandingsTableColumn]: Column<WithFileUrl<TeamStanding>> } = {
+const TeamStandingsTableColumns: (teamPathGetter: (teamId: string) => string) => {
+  [key in TeamStandingsTableColumn]: Column<WithFileUrl<TeamStanding>>;
+} = teamPathGetter => ({
   [TeamStandingsTableColumn.RANK]: {
     title: "Rank",
     accessor: "leagueRank",
@@ -27,7 +32,7 @@ const TeamStandingsTableColumns: { [key in TeamStandingsTableColumn]: Column<Wit
     accessor: "name",
     textAlignment: "left",
     render: (standing: WithFileUrl<TeamStanding>) => (
-      <TeamAvatar displayName href={`/teams/${standing.id}`} team={standing} />
+      <TeamAvatar displayName href={teamPathGetter(standing.id)} team={standing} />
     ),
   },
   [TeamStandingsTableColumn.WINS]: {
@@ -60,7 +65,7 @@ const TeamStandingsTableColumns: { [key in TeamStandingsTableColumn]: Column<Wit
     textAlignment: "left",
     render: (standing: WithFileUrl<TeamStanding>) => standing.stats.points.total,
   },
-};
+});
 
 export interface TeamStandingsTableProps
   extends Omit<DataTableProps<WithFileUrl<TeamStanding>>, "onRowEdit" | "columns"> {
@@ -78,8 +83,17 @@ export const TeamStandingsTable = ({
     TeamStandingsTableColumn.POINTS,
   ],
   ...props
-}: TeamStandingsTableProps): JSX.Element => (
-  <DataTable<WithFileUrl<TeamStanding>> {...props} columns={columns.map(name => TeamStandingsTableColumns[name])} />
-);
+}: TeamStandingsTableProps): JSX.Element => {
+  const { updateParams } = useMutableSearchParams();
+  const cols = useMemo(
+    () =>
+      TeamStandingsTableColumns(teamId => {
+        const { path } = updateParams({ drawerId: "leagueTeam", teamId });
+        return path;
+      }),
+    [updateParams],
+  );
+  return <DataTable<WithFileUrl<TeamStanding>> {...props} columns={columns.map(name => cols[name])} />;
+};
 
 export default TeamStandingsTable;

@@ -2,8 +2,8 @@ import dynamicImport from "next/dynamic";
 
 import { Page } from "~/components/layout/Page";
 import { Loading } from "~/components/loading";
-import { TableView } from "~/components/tables/TableView";
-import { TableViewHeader } from "~/components/tables/TableViewHeader";
+import { TableView } from "~/components/views/TableView";
+import { TableViewHeader } from "~/components/views/TableViewHeader";
 
 import { LeaguesFilterBar } from "./LeaguesFilterBar";
 

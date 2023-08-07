@@ -1,12 +1,26 @@
 "use client";
-import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { ReadonlyURLSearchParams, useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useMemo, useTransition } from "react";
 
-export const useMutableSearchParams = () => {
+type Params = Record<string, string | null | undefined>;
+
+export interface IMutableSearchParams {
+  readonly searchParams: ReadonlyURLSearchParams;
+  readonly pending: boolean;
+  readonly updateParams: (
+    params: Params,
+    options?: { push?: boolean },
+  ) => { searchParams: ReadonlyURLSearchParams; queryString: string | null; path: string };
+}
+
+export const useMutableSearchParams = (): IMutableSearchParams => {
   const searchParams = useSearchParams();
+  const [pending, startTransition] = useTransition();
+  const router = useRouter();
+  const pathname = usePathname();
 
   const updateParams = useMemo(
-    () => (params: Record<string, string | null | undefined>) => {
+    () => (params: Params, options?: { push?: boolean }) => {
       const newParams = new URLSearchParams(searchParams.toString());
 
       /* First, add all of the existing query parameters to the set as long as they are not in the set of new
@@ -23,22 +37,31 @@ export const useMutableSearchParams = () => {
 
       for (const param in params) {
         const value = params[param];
+        // If the new parameter is null or undefined, remove it from the set of parameters.
         if ((value === null || (typeof value === "string" && value.length === 0)) && newParams.has(param)) {
           newParams.delete(param);
         } else if (value !== null && value !== undefined && value.length !== 0) {
           newParams.set(param, value);
         }
-        /* // If the new parameter is null or undefined, remove it from the set of parameters.
-           if (params[param] === null || params[param] === undefined) {
-             newParams.delete(param);
-             continue;
-           } */
       }
-      const queryString = newParams.toString();
-      return { searchParams: newParams, queryString: queryString.length !== 0 ? queryString : null };
+      let queryString = "";
+      let path = pathname;
+      if (newParams.size !== 0) {
+        queryString = newParams.toString();
+        if (queryString.length !== 0) {
+          path = `${pathname}?${queryString}`;
+        }
+      }
+
+      if (options?.push === true) {
+        startTransition(() => {
+          router.push(path);
+        });
+      }
+      return { searchParams: new ReadonlyURLSearchParams(newParams), queryString, path };
     },
-    [searchParams],
+    [searchParams, pathname, router],
   );
 
-  return { searchParams, updateParams };
+  return { searchParams, pending, updateParams };
 };

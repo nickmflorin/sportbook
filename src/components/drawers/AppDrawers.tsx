@@ -1,9 +1,20 @@
 import dynamic from "next/dynamic";
 
-import { renderCreateLeagueDrawer } from "./ServerCreateLeagueDrawer";
+import { renderCreateLeagueDrawer, renderTeamDrawer } from "./renderers";
 
 const ClientAppDrawers = dynamic(() => import("./ClientAppDrawers"), { ssr: false });
 
 export const AppDrawers = () => (
-  <ClientAppDrawers drawerContent={{ createLeague: renderCreateLeagueDrawer, leagueTeam: null }} />
+  <ClientAppDrawers
+    drawers={{
+      createLeague: {
+        render: renderCreateLeagueDrawer,
+        params: [],
+      },
+      leagueTeam: {
+        render: renderTeamDrawer,
+        params: ["teamId"],
+      },
+    }}
+  />
 );

@@ -10,6 +10,12 @@
     gap: partials.get-spacing("md");
   }
 
+  > .view__header {
+    display: flex;
+    flex-direction: column;
+    gap: partials.get-spacing("md");
+  }
+
   > .view__content {
     flex-grow: 100;
     display: flex;
@@ -32,9 +38,27 @@
   }
 }
 
+.table-view {
+  max-height: 100%;
+  height: 100%;
+  min-height: 100%;
 
-.tiles-view {
   > .view__content {
-    gap: partials.get-spacing("md");
+    max-height: 100%;
+
+    > .table {
+      > .mantine-ScrollArea-root {
+        max-height: 100%;
+        height: 100%;
+        // Remove overflow behavior on the scroll root so that the content underneath the table th row can scroll.
+        overflow: hidden;
+      }
+    }
   }
+}
+
+.tiles {
+  display: flex;
+  flex-direction: column;
+  gap: partials.get-spacing("md");
 }

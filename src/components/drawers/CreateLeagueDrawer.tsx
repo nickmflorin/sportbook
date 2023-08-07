@@ -1,5 +1,5 @@
 "use client";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useState, useTransition } from "react";
 
 import { Switch } from "@mantine/core";
@@ -38,7 +38,6 @@ export const CreateLeagueDrawer = ({ locations }: CreateLeagueDrawerProps): JSX.
   const [_, startTransition] = useTransition();
   const router = useRouter();
   const { updateParams } = useMutableSearchParams();
-  const pathname = usePathname();
 
   return (
     <ManagedDrawers
@@ -49,18 +48,7 @@ export const CreateLeagueDrawer = ({ locations }: CreateLeagueDrawerProps): JSX.
           <DrawerView
             title="Create a New League"
             description="Configure your league however you would like."
-            onClose={() => {
-              const { queryString } = updateParams({ drawerId: null });
-              if (queryString) {
-                startTransition(() => {
-                  router.push(`${pathname}?${queryString}`);
-                });
-              } else {
-                startTransition(() => {
-                  router.push(`${pathname}?${queryString}`);
-                });
-              }
-            }}
+            onClose={() => updateParams({ drawerId: null }, { push: true })}
           >
             <Form
               action={async leagueData => {

@@ -1,16 +1,10 @@
-import dynamic from "next/dynamic";
-
 import uniq from "lodash.uniq";
 
 import { logger } from "~/application/logger";
 import { prisma } from "~/prisma/client";
 import { type GameWithResult, type Team, FileUploadEntity } from "~/prisma/model";
-import { Loading } from "~/components/loading";
-
-const ScoresTileView = dynamic(() => import("~/components/views/ScoreTilesView"), {
-  ssr: true,
-  loading: () => <Loading loading={true} />,
-});
+import { ScoreTile } from "~/components/views/tiles/ScoreTile";
+import { TilesWrapper } from "~/components/views/TilesWrapper";
 
 interface LeagueScoresProps {
   readonly params: { id: string };
@@ -44,7 +38,5 @@ export default async function LeagueScores({ params: { id } }: LeagueScoresProps
       }
       return g.result !== null;
     });
-  return (
-    <ScoresTileView contentScrollable={true} data={gamesWithResult} title={`Scores (${gamesWithResult.length})`} />
-  );
+  return <TilesWrapper data={gamesWithResult}>{({ datum }) => <ScoreTile game={datum} />}</TilesWrapper>;
 }

@@ -5,10 +5,10 @@ import { FileUploadEntity } from "~/prisma/model";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
 import { Loading } from "~/components/loading";
 
-const TeamTilesView = dynamic(() => import("~/components/views/TeamTilesView"), {
-  ssr: true,
-  loading: () => <Loading loading={true} />,
-});
+/* const TeamTilesView = dynamic(() => import("~/components/views/TeamTilesView"), {
+     ssr: true,
+     loading: () => <Loading loading={true} />,
+   }); */
 
 interface LeagueTeamsProps {
   readonly params: { id: string };
@@ -29,12 +29,13 @@ export default async function LeagueTeams({ params: { id } }: LeagueTeamsProps) 
     ...t,
     fileUrl: imageUploads.find(i => i.entityId === t.id)?.fileUrl || null,
   }));
-  return (
-    <TeamTilesView
-      contentScrollable={true}
-      data={teamsWithImage}
-      title={`Teams (${teamsWithImage.length})`}
-      renderTileContent={datum => <TeamAvatar size={35} fontSize="xs" team={datum} displayName />}
-    />
-  );
+  return <></>;
+  /* return (
+       <TeamTilesView
+         contentScrollable={true}
+         data={teamsWithImage}
+         title={`Teams (${teamsWithImage.length})`}
+         renderTileContent={datum => <TeamAvatar size={35} fontSize="xs" team={datum} displayName />}
+       />
+     ); */
 }

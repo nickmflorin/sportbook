@@ -1,7 +1,7 @@
 import { type GameWithResult } from "~/prisma/model";
 
-import { ScoreTile } from "./tiles";
-import { TilesView, type TilesViewDataProps } from "./TilesView";
+import { ScoreTile } from "./TilesWrapper";
+import { TilesView, type TilesViewDataProps } from "./TilesWrapper";
 import { type WithViewProps } from "./View";
 
 export type ScoreTilesViewProps = WithViewProps<Omit<TilesViewDataProps<GameWithResult>, "renderItem">>;
