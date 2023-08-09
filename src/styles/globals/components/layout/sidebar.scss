@@ -2,7 +2,7 @@
 
 .app-sidebar {
   width: partials.$app-sidebar-width;
-  border-right: partials.$layout-border;
+  border-right: partials.$default-border;
   padding: partials.get-spacing("sm");
   display: flex;
   flex-direction: column;

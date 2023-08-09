@@ -64,7 +64,7 @@ $page-header-margin-bottom: "lg";
         position: relative;
         overflow: hidden;
         height: 100%;
-        border-left: partials.$layout-border;
+        border-left: partials.$default-border;
         // Apply margin between the page__main element and the page__static-views element.  When the padding is applied
         // in conjunction, the border-left will be centered between the two.
         margin-left: partials.get-spacing("md");
@@ -82,7 +82,7 @@ $page-header-margin-bottom: "lg";
     position: relative;
     overflow: hidden;
     height: 100%;
-    border-left: partials.$layout-border;
+    border-left: partials.$default-border;
     // Apply margin between the page__main element and the page__static-views element.  When the padding is applied
     // in conjunction, the border-left will be centered between the two.
     margin-left: partials.get-spacing("md");

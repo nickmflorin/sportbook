@@ -3,13 +3,13 @@ import { type ReactNode } from "react";
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
-import { Loading } from "~/components/loading";
+import { CloseButton } from "~/components/buttons/CloseButton";
 import { Flex, type FlexProps } from "~/components/structural/Flex";
 
 import { ViewHeader, type ViewHeaderProps } from "./ViewHeader";
 
 export interface ViewContainerProps extends Omit<FlexProps, "direction"> {
-  readonly bordered?: boolean;
+  readonly bordered?: boolean | "top" | "left" | "right" | "bottom";
   readonly contentScrollable?: boolean;
 }
 
@@ -52,6 +52,7 @@ export interface ViewProps
     Pick<ViewHeaderProps, "title" | "description" | "actions"> {
   readonly footer?: JSX.Element;
   readonly header?: JSX.Element;
+  readonly onClose?: () => void;
   readonly children: ReactNode;
   readonly headerProps?: Omit<ViewHeaderProps, "title" | "description" | "actions">;
   readonly contentProps?: Omit<ViewContentProps, "children">;
@@ -66,9 +67,11 @@ export const View = ({
   actions,
   headerProps,
   contentProps,
+  onClose,
   ...props
 }: ViewProps & { readonly children: ReactNode }): JSX.Element => (
   <ViewContainer {...props}>
+    {onClose && <CloseButton className="view__close-button" onClick={onClose} />}
     {header ? header : <ViewHeader {...headerProps} title={title} description={description} actions={actions} />}
     <ViewContent {...contentProps}>{children}</ViewContent>
     {footer && <ViewFooter>{footer}</ViewFooter>}

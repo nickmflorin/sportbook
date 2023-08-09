@@ -1,7 +1,7 @@
 "use client";
 import { useMemo } from "react";
 
-import { type TeamStanding, type WithFileUrl } from "~/prisma/model";
+import { type TeamWithStats, type WithFileUrl } from "~/prisma/model";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
 import { useMutableSearchParams } from "~/hooks/useMutableSearchParams";
 
@@ -19,19 +19,19 @@ export enum TeamStandingsTableColumn {
 }
 
 const TeamStandingsTableColumns: (teamPathGetter: (teamId: string) => string) => {
-  [key in TeamStandingsTableColumn]: Column<WithFileUrl<TeamStanding>>;
+  [key in TeamStandingsTableColumn]: Column<WithFileUrl<TeamWithStats>>;
 } = teamPathGetter => ({
   [TeamStandingsTableColumn.RANK]: {
     title: "Rank",
-    accessor: "leagueRank",
+    accessor: "stats.leagueRank",
     textAlignment: "left",
-    render: (standing: WithFileUrl<TeamStanding>) => standing.leagueRank,
+    render: (standing: WithFileUrl<TeamWithStats>) => standing.stats.leagueRank,
   },
   [TeamStandingsTableColumn.TEAM]: {
     title: "Team",
     accessor: "name",
     textAlignment: "left",
-    render: (standing: WithFileUrl<TeamStanding>) => (
+    render: (standing: WithFileUrl<TeamWithStats>) => (
       <TeamAvatar displayName href={teamPathGetter(standing.id)} team={standing} />
     ),
   },
@@ -39,36 +39,36 @@ const TeamStandingsTableColumns: (teamPathGetter: (teamId: string) => string) =>
     title: "Wins",
     accessor: "stats.wins.total",
     textAlignment: "left",
-    render: (standing: WithFileUrl<TeamStanding>) => standing.stats.wins.total,
+    render: (standing: WithFileUrl<TeamWithStats>) => standing.stats.wins.total,
   },
   [TeamStandingsTableColumn.LOSSES]: {
     title: "Losses",
     accessor: "stats.losses.total",
     textAlignment: "left",
-    render: (standing: WithFileUrl<TeamStanding>) => standing.stats.losses.total,
+    render: (standing: WithFileUrl<TeamWithStats>) => standing.stats.losses.total,
   },
   [TeamStandingsTableColumn.TIES]: {
     title: "Ties",
     accessor: "stats.ties.total",
     textAlignment: "left",
-    render: (standing: WithFileUrl<TeamStanding>) => standing.stats.ties.total,
+    render: (standing: WithFileUrl<TeamWithStats>) => standing.stats.ties.total,
   },
   [TeamStandingsTableColumn.GAMES_PLAYED]: {
     title: "Games Played",
     accessor: "stats.gamesPlayed.total",
     textAlignment: "left",
-    render: (standing: WithFileUrl<TeamStanding>) => standing.stats.gamesPlayed.total,
+    render: (standing: WithFileUrl<TeamWithStats>) => standing.stats.gamesPlayed.total,
   },
   [TeamStandingsTableColumn.POINTS]: {
     title: "Points",
     accessor: "stats.points.total",
     textAlignment: "left",
-    render: (standing: WithFileUrl<TeamStanding>) => standing.stats.points.total,
+    render: (standing: WithFileUrl<TeamWithStats>) => standing.stats.points.total,
   },
 });
 
 export interface TeamStandingsTableProps
-  extends Omit<DataTableProps<WithFileUrl<TeamStanding>>, "onRowEdit" | "columns"> {
+  extends Omit<DataTableProps<WithFileUrl<TeamWithStats>>, "onRowEdit" | "columns"> {
   readonly columns?: TeamStandingsTableColumn[];
 }
 
@@ -93,7 +93,7 @@ export const TeamStandingsTable = ({
       }),
     [updateParams],
   );
-  return <DataTable<WithFileUrl<TeamStanding>> {...props} columns={columns.map(name => cols[name])} />;
+  return <DataTable<WithFileUrl<TeamWithStats>> {...props} columns={columns.map(name => cols[name])} />;
 };
 
 export default TeamStandingsTable;

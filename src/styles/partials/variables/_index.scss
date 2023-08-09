@@ -1,3 +1,4 @@
+@forward "./borders";
 @forward "./colors";
 @forward "./components";
 @forward "./radius";
@@ -16,5 +17,3 @@ $alignments: (left, center, right);
 
 $app-header-height: 60px;
 $app-sidebar-width: 60px;
-
-$layout-border: 1px solid colors.get-color("gray", 4);

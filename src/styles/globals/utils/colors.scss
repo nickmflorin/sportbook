@@ -1,9 +1,42 @@
 @use "partials";
 
-$color-class-properties: ("color", "background-color", "border-color", "outline-color");
+$color-class-properties: ("color", "background-color", "outline-color");
 
 @each $property in $color-class-properties {
   @include partials.colors($property);
   @include partials.hovered-colors($property);
   @include partials.focused-colors($property);
+}
+
+// Leaving for now - will likely get rid of.
+$border-sides: ("top", "right", "bottom", "left");
+
+.border-color-default {
+  border-color: partials.$default-border-color;
+  border: partials.$default-border;
+}
+
+@include partials.with-colors($prefix: border-color) using ($name, $color, $color-name) {
+  .#{$name} {
+    border-color: $color;
+    border: 1px solid #{$color};
+  }
+}
+
+@each $side in $border-sides {
+  .border-#{$side}-color-default {
+    &:not(.border-color-default) {
+      border-#{$side}-color: partials.$default-border-color;
+      border-#{$side}: partials.$default-border;
+    }
+  }
+
+  @include partials.with-colors($prefix: border-#{$side}-color) using ($name, $color, $color-name) {
+    .#{$name} {
+      &:not(.border-color-#{$color-name}) {
+        border-#{$side}-color: $color;
+        border-#{$side}: 1px solid #{$color};
+      }
+    }
+  }
 }

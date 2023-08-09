@@ -29,22 +29,22 @@ a {
     color: inherit;
   }
 
-  @include partials.with-color-classes("color") using ($name, $classname, $color) {
-    &.link--#{$classname} {
+  @include partials.with-color-classes("color") using ($name, $color, $color-name) {
+    &.link--#{$name} {
       color: $color;
     }
   }
 
-  @include partials.with-color-classes("color", "hovered") using ($name, $classname, $color) {
-    &.link--#{$classname} {
+  @include partials.with-color-classes("color", "hovered") using ($name, $color, $color-name) {
+    &.link--#{$name} {
       @include partials.hovered {
         color: $color;
       }
     }
   }
 
-  @include partials.with-color-classes("color", "focused") using ($name, $classname, $color) {
-    &.link--#{$classname} {
+  @include partials.with-color-classes("color", "focused") using ($name, $color, $color-name) {
+    &.link--#{$name} {
       @include partials.focused {
         color: $color;
       }

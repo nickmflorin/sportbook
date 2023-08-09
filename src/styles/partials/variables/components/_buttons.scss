@@ -5,6 +5,7 @@
 @use "sass:color";
 
 @use "../../functions" as fn;
+
 @use "../../mixins" as mixins;
 
 @use "../colors" as colors;
@@ -38,8 +39,8 @@ $button-loading-class: ".button--loading";
 }
 
 @mixin button-hovered-colors($color-type) {
-  @include colors.with-color-classes($color-type) using ($name, $classname, $color) {
-    &.#{$classname}-hovered {
+  @include colors.with-color-classes($color-type) using ($name, $color, $color-name) {
+    &.#{$name}-hovered {
       @include button-hovered {
         #{$color-type}: $color;
       }
@@ -48,8 +49,8 @@ $button-loading-class: ".button--loading";
 }
 
 @mixin button-focused-colors($color-type) {
-  @include colors.with-color-classes($color-type) using ($name, $classname, $color) {
-    &.#{$classname}-focused {
+  @include colors.with-color-classes($color-type) using ($name, $color, $color-name) {
+    &.#{$name}-focused {
       @include button-focused {
         #{$color-type}: $color;
       }

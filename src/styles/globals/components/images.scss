@@ -55,6 +55,7 @@
     width: auto;
     aspect-ratio: 1;
     background-color: partials.get-color("gray", $shade: 2);
+    padding: partials.get-spacing("xs");
 
     > .body {
       font-weight: partials.get-font-weight($weight: "medium");

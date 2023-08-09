@@ -1,4 +1,11 @@
+@use "partials";
+
 @use "./actions";
 @use "./button-footer";
 @use "./flex";
 @use "./filter-bar";
+
+.separator {
+  border-top: partials.$default-border;
+  height: 1px;
+}

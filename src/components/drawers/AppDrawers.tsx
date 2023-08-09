@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 
 import { Loading } from "~/components/loading/Loading";
 
-import { renderCreateLeagueDrawer, ServerTeamDrawer } from "./renderers";
+import { ServerCreateLeagueDrawer, ServerTeamDrawer } from "./renderers";
 
 const ClientAppDrawers = dynamic(() => import("./ClientAppDrawers"), {
   ssr: false,
@@ -13,7 +13,7 @@ export const AppDrawers = () => (
   <ClientAppDrawers
     drawers={{
       createLeague: {
-        render: renderCreateLeagueDrawer,
+        render: ServerCreateLeagueDrawer,
         params: [],
       },
       leagueTeam: {

@@ -9,7 +9,7 @@ import {
   type MinimumViableStatGame,
 } from "~/prisma/model";
 
-import { getGameResultType, getGameLocation } from "./games";
+import { getGameResultType, getGameLocation } from "../games";
 
 const GameResultPoints: { [key in GameResultType]: number } = {
   [GameResultType.WIN]: 2,
@@ -17,7 +17,7 @@ const GameResultPoints: { [key in GameResultType]: number } = {
   [GameResultType.TIE]: 1,
 };
 
-const INITIAL_TEAM_STATS: TeamStats = {
+const INITIAL_TEAM_STATS: Omit<TeamStats, "leagueRank"> = {
   [TeamStatMetric.WINS]: {
     [GameLocation.HOME]: 0,
     [GameLocation.AWAY]: 0,
@@ -61,7 +61,7 @@ export type TeamGameMap<G extends MinimumViableStatGame> = Record<Team["id"], G[
 export type TeamGameInfo<G extends MinimumViableStatGame> = TeamGameMap<G> | G[];
 
 const _generateTeamStats = <G extends MinimumViableStatGame>(team: Team | Team["id"], games: G[]) =>
-  games.reduce((prev: TeamStats, game: G) => {
+  games.reduce((prev: Omit<TeamStats, "leagueRank">, game: G) => {
     const resultType = getGameResultType(team, game);
     if (typeof team !== "string" && game.leagueId !== team.leagueId) {
       throw new Error(
@@ -136,7 +136,9 @@ export const generateTeamStats = <G extends MinimumViableStatGame>(team: Team | 
   return _generateTeamStats(team, _games);
 };
 
-export const fetchTeamStats = async <G extends MinimumViableStatGame>(team: Team | Team["id"]): Promise<TeamStats> => {
+export const fetchTeamStats = async <G extends MinimumViableStatGame>(
+  team: Team | Team["id"],
+): Promise<Omit<TeamStats, "leagueRank">> => {
   const games = (await getFinishedTeamGames(team)) as G[];
   return generateTeamStats(team, games);
 };

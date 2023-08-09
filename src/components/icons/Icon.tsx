@@ -3,14 +3,7 @@ import React from "react";
 import classNames from "classnames";
 import { type Optional } from "utility-types";
 
-import {
-  type ClassName,
-  getColorClassName,
-  SizeContains,
-  getHoveredColorClassName,
-  getFocusedColorClassName,
-  replaceOrAddClassName,
-} from "~/lib/ui";
+import { type ClassName, getColorClassName, SizeContains, replaceOrAddClassName } from "~/lib/ui";
 
 import {
   IconSizes,
@@ -86,11 +79,11 @@ const DynamicClassNameConfig: { [key in DynamicIconClassNamePropName]: DynamicIc
     predicate: className => className.startsWith("color-"),
   },
   hoveredColor: {
-    create: v => (v !== undefined ? getHoveredColorClassName("color", v) : null),
+    create: v => (v !== undefined ? getColorClassName("color", v, "hovered") : null),
     predicate: className => className.startsWith("color-") && className.endsWith("-hovered"),
   },
   focusedColor: {
-    create: v => (v !== undefined ? getFocusedColorClassName("color", v) : null),
+    create: v => (v !== undefined ? getColorClassName("color", v, "focused") : null),
     predicate: className => className.startsWith("color-") && className.endsWith("-focused"),
   },
 };

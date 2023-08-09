@@ -109,10 +109,6 @@ export type MinimumViableStatGame = Pick<Game, "id" | "awayTeamId" | "homeTeamId
   readonly result: Pick<GameResult, "homeScore" | "awayScore">;
 };
 
-export type TeamWithStats<T extends Team = Team> = T & {
-  readonly stats: TeamStats;
-};
-
 export type TeamStatDimension = Record<GameLocation | "total", number>;
 
 export enum TeamStatMetric {
@@ -123,10 +119,12 @@ export enum TeamStatMetric {
   GAMES_PLAYED = "gamesPlayed",
 }
 
-export type TeamStats = Record<TeamStatMetric, TeamStatDimension>;
-
-export type TeamStanding<T extends Team = Team> = TeamWithStats<T> & {
+export type TeamStats = Record<TeamStatMetric, TeamStatDimension> & {
   readonly leagueRank: number;
+};
+
+export type TeamWithStats<T extends Team = Team, S extends keyof TeamStats = keyof TeamStats> = T & {
+  readonly stats: Pick<TeamStats, S>;
 };
 
 export type PlayerWithUser = Player & {

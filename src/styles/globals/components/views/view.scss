@@ -23,6 +23,13 @@
     position: relative;
   }
 
+  > .view__close-button {
+    position: absolute;
+    z-index: 100;
+    top: partials.get-spacing("lg");
+    right: partials.get-spacing("md");
+  }
+
   &--content-scrollable {
     height: 100%;
 
@@ -32,7 +39,7 @@
   }
 
   &--bordered {
-    border: partials.$layout-border;
+    border: partials.$default-border;
     border-radius: partials.get-radius("sm");
     padding: partials.get-spacing("sm") partials.get-spacing("md");
   }

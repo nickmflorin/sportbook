@@ -74,6 +74,7 @@ $orange-shades: (
 );
 
 $gray-shades: (#f9f9fa, #f1f3f5, #eaecef, #dee2e6, #cfd4d9, #aeb5bc, #878e95, #494056, #353a3f, #222529);
+$border-shades: $gray-shades;
 
 // Color Scheme Color: #881600
 $red-shades: (
@@ -94,6 +95,7 @@ $red-shades: (
 $yellow-shades: (#fff5eb, #fef3c7, #fde68a, #fbd34d, #fbbf24);
 
 $colors: (
+  "border": $border-shades,
   "blue": $blue-shades,
   "green": $green-shades,
   "red": $red-shades,
@@ -113,6 +115,7 @@ $colors: (
 $color-names: map.keys($colors);
 
 $default-shades: (
+  "border": 4,
   "blue": 12,
   "green": 9,
   "red": 11,
@@ -182,56 +185,69 @@ $default-shades: (
   }
 }
 
-@function get-color-class-name($p, $c, $shade: null) {
-  @if $shade {
-    @return "#{$p}-#{$c}-#{$shade}";
+@function get-color-class-name($c, $prefix: null, $shade: null, $state: null) {
+  @if $prefix and $shade and $state {
+    @return #{$prefix}-#{$c}-#{$shade}-#{$state};
+  } @else if $prefix and $shade {
+    @return #{$prefix}-#{$c}-#{$shade};
+  } @else if $shade and $state {
+    @return #{$c}-#{$shade}-#{$state};
+  } @else if $prefix and $state {
+    @return #{$prefix}-#{$c}-#{$state};
+  } @else if $shade {
+    @return #{$c}-#{$shade};
+  } @else if $prefix {
+    @return #{$prefix}-#{$c};
+  } @else if $state {
+    @return #{$c}-#{$state};
   }
-  @return "#{$p}-#{$c}";
+  @return $c;
 }
 
-@mixin with-color-classes($color-type, $class-name-state-suffix: null) {
+@mixin with-colors($prefix: null, $state: null) {
   @each $name in $color-names {
     $default-color: get-color($name);
-    $classname: get-color-class-name($color-type, $name);
-    @content ($name, string.unquote($classname), $default-color);
+    $n: get-color-class-name($name, $prefix: $prefix, $state: $state);
+    @content ($n, $default-color, $name);
 
     @for $i from 1 through list.length(fn.mapget($colors, $name)) {
       $color: get-color($name, $i);
-      $classname: get-color-class-name($color-type, $name, $i);
-
-      $cs: if(
-        $class-name-state-suffix,
-        #{string.unquote($classname)}-#{$class-name-state-suffix},
-        string.unquote($classname)
-      );
-      @content ($name, $cs, $color);
+      $name-with-shade: get-color-class-name($name, $shade: $i, $prefix: $prefix, $state: $state);
+      $n2: get-color-class-name($name, $shade: $i);
+      @content ($name-with-shade, $color, $n2);
     }
   }
 }
 
+@mixin with-color-classes($color-type, $state: null) {
+  @include with-colors($prefix: $color-type, $state: $state) using ($name, $color, $color-name) {
+    @content ($name, $color, $color-name);
+  }
+}
+
 @mixin with-focused-color-classes($color-type) {
-  @include with-color-classes($color-type, $class-name-state-suffix: "focused") using ($name, $cs, $color) {
-    @content ($name, $cs, $color);
+  @include with-color-classes($color-type, $state: "focused") using ($name, $color, $color-name) {
+    @content ($name, $color, $color-name);
   }
 }
 
 @mixin with-hovered-color-classes($color-type) {
-  @include with-color-classes($color-type, $class-name-state-suffix: "hovered") using ($name, $cs, $color) {
-    @content ($name, $cs, $color);
+  @include with-color-classes($color-type, $state: "hovered") using ($name, $color, $color-name) {
+    @content ($name, $color, $color-name);
   }
 }
 
 @mixin colors($color-type) {
-  @include with-color-classes($color-type) using ($name, $classname, $color) {
-    .#{$classname} {
+  @include with-color-classes($color-type) using ($name, $color, $color-name) {
+    .#{$name} {
       #{$color-type}: $color;
     }
   }
 }
 
 @mixin hovered-colors($color-type) {
-  @include with-hovered-color-classes($color-type) using ($name, $classname, $color) {
-    .#{$classname} {
+  @include with-hovered-color-classes($color-type) using ($name, $color, $color-name) {
+    .#{$name} {
       @include mixins.hovered {
         #{$color-type}: $color;
       }
@@ -240,8 +256,8 @@ $default-shades: (
 }
 
 @mixin focused-colors($color-type) {
-  @include with-focused-color-classes($color-type) using ($name, $classname, $color) {
-    .#{$classname} {
+  @include with-focused-color-classes($color-type) using ($name, $color, $color-name) {
+    .#{$name} {
       @include mixins.focused {
         #{$color-type}: $color;
       }

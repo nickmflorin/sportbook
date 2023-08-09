@@ -6,32 +6,8 @@
   height: 100%;
 }
 
-.drawer {
-  > .drawer__close-button {
-    position: absolute;
-    z-index: 100;
-    top: partials.get-spacing("lg");
-    right: partials.get-spacing("md");
-  }
-}
-
 .drawer-view {
   border-left: 1px solid partials.get-color("gray", $shade: 3);
   padding: partials.get-spacing("md") partials.get-spacing("lg") partials.get-spacing("md") partials.get-spacing("lg");
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: partials.get-spacing("md");
   height: 100%;
-
-  > .drawer__close-button {
-    position: absolute;
-    z-index: 100;
-    top: partials.get-spacing("lg");
-    right: partials.get-spacing("md");
-  }
-
-  > .drawer-view__content {
-    overflow-y: scroll;
-  }
 }

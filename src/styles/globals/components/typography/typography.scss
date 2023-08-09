@@ -211,4 +211,16 @@ h6 {
     font-weight: inherit;
     line-height: inherit;
   }
+
+  > .span {
+    @layer {
+      color: inherit;
+      font-size: inherit;
+      font-style: inherit;
+      font-weight: inherit;
+      line-height: inherit;
+      text-transform: inherit;
+      text-decoration: inherit;
+    }
+  }
 }

@@ -5,7 +5,7 @@
   height: partials.$app-header-height;
   display: flex;
   padding: partials.$spacing-md;
-  border-bottom: partials.$layout-border;
+  border-bottom: partials.$default-border;
 
   &__left,
   &__right {

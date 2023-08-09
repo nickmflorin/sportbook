@@ -6,6 +6,7 @@ import { prisma, isPrismaInvalidIdError } from "~/prisma/client";
 import { type Team, type Player, type User } from "~/prisma/model";
 import { Loading } from "~/components/loading/Loading";
 import { getAuthUser } from "~/server/auth";
+import { getTeamStats } from "~/server/leagues";
 
 const CreateLeagueDrawer = dynamic(() => import("~/components/drawers/CreateLeagueDrawer"), {
   ssr: false,
@@ -17,7 +18,7 @@ const TeamDrawer = dynamic(() => import("~/components/drawers/TeamDrawer"), {
   loading: () => <Loading loading={true} />,
 });
 
-export const renderCreateLeagueDrawer = async () => {
+export const ServerCreateLeagueDrawer = async () => {
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
   const locations = await prisma.location.findMany({ where: { createdById: user.id } });
   return <CreateLeagueDrawer locations={locations} />;
@@ -31,7 +32,10 @@ export const ServerTeamDrawer = async (params: [string, string][]) => {
     let team: (Team & { readonly players: (Player & { readonly user: User })[] }) | null = null;
     try {
       team = await prisma.team.findFirst({
-        include: { players: { include: { user: true } } },
+        include: {
+          players: { include: { user: true } },
+          league: { include: { teams: true } },
+        },
         where: {
           id: teamId,
           league: {
@@ -48,7 +52,8 @@ export const ServerTeamDrawer = async (params: [string, string][]) => {
       }
     }
     if (team) {
-      return <TeamDrawer team={team} />;
+      const stats = await getTeamStats(team);
+      return <TeamDrawer team={team} stats={stats} />;
     }
   }
   return <></>;
