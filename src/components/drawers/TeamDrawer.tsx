@@ -38,6 +38,17 @@ export const TeamDrawer = ({ team, stats }: TeamDrawerProps): JSX.Element => {
     >
       <Separator mb="sm" />
       <View
+        title="Recent Scores"
+        gap="sm"
+        headerProps={{ titleProps: { order: 6, fontWeight: "medium" } }}
+        contentProps={{ gap: "sm" }}
+      >
+        {team.players.map((player, i) => (
+          <PlayerAvatar key={i} player={player} contentDirection="row" />
+        ))}
+      </View>
+      <Separator mb="sm" />
+      <View
         title="Players"
         gap="sm"
         headerProps={{ titleProps: { order: 6, fontWeight: "medium" } }}

@@ -14,19 +14,19 @@ export const TeamStatsText = ({ stats, size, ...props }: TeamStatsTextProps): JS
     <Text size={size} color="gray.8" fontWeight="medium">
       {stats.wins.total}
       <Text color="gray.7" span fontWeight="regular" ml="xxs">
-        Wins
+        {stats.wins.total === 1 ? "Win" : "Wins"}
       </Text>
     </Text>
     <Text size={size} color="gray.8" fontWeight="medium">
       {stats.losses.total}
       <Text color="gray.7" span fontWeight="regular" ml="xxs">
-        Losses
+        {stats.losses.total === 1 ? "Loss" : "Losses"}
       </Text>
     </Text>
     <Text size={size} color="gray.8" fontWeight="medium">
       {stats.ties.total}
       <Text color="gray.7" span fontWeight="regular" ml="xxs">
-        Ties
+        {stats.ties.total === 1 ? "Tie" : "Ties"}
       </Text>
     </Text>
   </Flex>
