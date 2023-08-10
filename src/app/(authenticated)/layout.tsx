@@ -3,9 +3,11 @@ import { AppLayout } from "~/components/layout/AppLayout";
 
 export interface AuthenticatedLayoutParams {
   readonly children: React.ReactNode;
+  readonly drawer: React.ReactNode;
 }
 
-export default function AuthenticatedLayout({ children }: AuthenticatedLayoutParams) {
+export default function AuthenticatedLayout({ children, drawer }: AuthenticatedLayoutParams) {
+  console.log(drawer);
   return (
     <AppLayout
       authenticated={true}
@@ -26,7 +28,10 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPar
         { href: "/games", icon: <Icon name="table-tennis-paddle-ball" />, active: { leadingPath: "/games" } },
       ]}
     >
-      {children}
+      <>
+        {children}
+        <div className="drawer-wrapper-layout">{drawer}</div>
+      </>
     </AppLayout>
   );
 }

@@ -42,7 +42,7 @@ const LeaguesTableColumns: { [key in LeaguesTableColumn]: Column<LeagueDatum> } 
         .join(" ");
       return (
         <Flex direction="column" align="left" gap="sm">
-          <AlternateButton.Secondary href={`/leagues/${league.id}`} size="sm" style={{ textAlign: "left" }}>
+          <AlternateButton.Secondary href="/leagues/team" size="sm" style={{ textAlign: "left" }}>
             {league.name}
           </AlternateButton.Secondary>
           {lines.length !== 0 && (

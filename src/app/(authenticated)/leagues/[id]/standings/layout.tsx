@@ -19,7 +19,6 @@ export default async function LeagueStandingsLayout({ standings, scores, childre
       <View contentScrollable={true} header={<ViewHeader title="Scores" />} style={{ maxWidth: 600, minWidth: 400 }}>
         {scores}
       </View>
-      {children}
     </Flex>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useMemo } from "react";
 
 import { type TeamWithStats, type WithFileUrl } from "~/prisma/model";
@@ -32,7 +33,9 @@ const TeamStandingsTableColumns: (teamPathGetter: (teamId: string) => string) =>
     accessor: "name",
     textAlignment: "left",
     render: (standing: WithFileUrl<TeamWithStats>) => (
-      <TeamAvatar displayName href={teamPathGetter(standing.id)} team={standing} />
+      <Link href="/leagues/team">
+        <TeamAvatar displayName team={standing} />
+      </Link>
     ),
   },
   [TeamStandingsTableColumn.WINS]: {

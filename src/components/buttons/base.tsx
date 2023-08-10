@@ -193,7 +193,7 @@ export const BaseButton = <T extends ButtonType, V extends ButtonVariant>({
   );
 
 export const BaseLink = ({ disabled, children, color, fontWeight, ...props }: BaseLinkProps): JSX.Element => (
-  <NextLink {...props} className={getBaseLinkClassName({ ...props, disabled, color, fontWeight })}>
+  <NextLink {...props} className={getBaseLinkClassName({ ...props, disabled, color, fontWeight })} passHref>
     {children}
   </NextLink>
 );
