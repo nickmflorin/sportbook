@@ -70,7 +70,7 @@ export const Header = ({
         {tags.length !== 0 && <div className="header__tags">{tags}</div>}
         <Description className="header__descriptions" description={description} {...descriptionProps} />
       </div>
-      <Actions actions={actions} />
+      {/* <Actions actions={actions} /> */}
     </div>
   ) : (
     <></>

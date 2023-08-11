@@ -14,13 +14,6 @@ $drawer-width: 400px;
 .drawer-target {
   @include drawer-container();
   max-width: $drawer-width;
-  transition: width 4s ease-in;
-
-  // TODO: The reason that this was applied was to attempt to apply a transition effect to the width to animate the
-  // opening of the drawer.  This needs to be revisited - but the solution may involve removing the 'open' class.
-  &.open {
-    width: $drawer-width;
-  }
 
   // The 'drawer-wrapper' is responsible for wrapping the actual content of the drawer (the 'drawer') and setting a
   // constant width for the drawer.  Since the 'drawer-wrapper' will only be present in the DOM when the drawer is open,
@@ -28,10 +21,7 @@ $drawer-width: 400px;
   // causing the drawer to change widths or hide/show when the content changes.
   > .drawer-wrapper {
     @include drawer-container();
-    // See above not regarding the 'open' class and the width/animation of the drawer transition.
-    // width: $drawer-width;
-    // min-width: $drawer-width;
-    width: 100%;
+    width: $drawer-width;
 
     max-width: 100%;
     border-left: 1px solid partials.get-color("gray", $shade: 3);

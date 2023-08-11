@@ -1,3 +1,4 @@
+"use client";
 import { type ReactNode } from "react";
 
 import { CloseButton } from "~/components/buttons/CloseButton";
@@ -13,9 +14,12 @@ export interface DrawerPortalProps {
 }
 
 export const DrawerPortal = ({ children, onClose, loading, open, slot = 1 }: DrawerPortalProps): JSX.Element => (
-  /* There will be times when we want to render the drawer wrapper in the layout with a loading indicator before the
-     content is ready to be shown. */
-  <Portal id={`drawer-target-${slot}`} open={open}>
+  <Portal
+    targetId={`drawer-target-${slot}`}
+    open={open}
+    // Remove old drawers from the portal target when a new one is opened.
+    isExistingChild={element => element.classList.contains("drawer-wrapper")}
+  >
     <div className="drawer-wrapper">
       {onClose && <CloseButton className="drawer__close-button" onClick={onClose} />}
       <Loading loading={loading === true} />

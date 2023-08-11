@@ -4,10 +4,10 @@ import classNames from "classnames";
 
 import { Loading } from "~/components/loading/Loading";
 import { type ViewProps } from "~/components/views/View";
-
-const View = dynamic(() => import("~/components/views/View"), {
-  loading: () => <Loading loading={true} />,
-});
+import { View } from "~/components/views/View";
+/* const View = dynamic(() => import("~/components/views/View"), {
+     loading: () => <Loading loading={true} />,
+   }); */
 
 export type DrawerViewProps = Omit<ViewProps, "contentScrollable"> & {
   readonly loading?: boolean;

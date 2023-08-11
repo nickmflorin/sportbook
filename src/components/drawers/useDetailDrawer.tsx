@@ -6,10 +6,12 @@ export type DetailDrawerRenderer = (props: { id: string }) => Promise<JSX.Elemen
 
 export interface UseDetailDrawerProps extends Omit<DrawerProps, "loading" | "onClose" | "children" | "open"> {
   readonly render?: DetailDrawerRenderer;
+  readonly disabled?: boolean;
 }
 
 export const useDetailDrawer = ({
   render,
+  disabled,
   ...props
 }: UseDetailDrawerProps): {
   drawer: JSX.Element | null;
@@ -23,7 +25,7 @@ export const useDetailDrawer = ({
 
   const renderContent = useMemo(
     () => async (id: string) => {
-      if (render) {
+      if (render && disabled !== true) {
         setLoading(true);
         const content = await render({ id });
         if (content) {
@@ -34,7 +36,7 @@ export const useDetailDrawer = ({
         setLoading(false);
       }
     },
-    [render],
+    [render, disabled],
   );
 
   useEffect(() => {

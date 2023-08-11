@@ -24,26 +24,96 @@ export const usePortal = (id: string | number | undefined): Element | null => {
 };
 
 export interface PortalProps {
-  id: string | number | undefined;
-  children: ReactNode;
-  open: boolean;
+  readonly targetId: string | number | undefined;
+  readonly children: ReactNode;
+  readonly open: boolean;
+  /**
+   * A callback function that indicates whether or not a potentially previously rendered child of the portal target
+   * element is stale content that should be removed in favor of new content.  This can be used to swap drawers that
+   * depend on dynamic parameters, such as an ID, without having to manage the state of the drawer content further up
+   * in the tree.
+   */
+  readonly isExistingChild?: (element: Element) => boolean;
 }
 
-export const Portal = ({ id, children, open }: PortalProps): JSX.Element => {
-  const target = usePortal(id);
+export const Portal = ({ targetId, children, isExistingChild, open }: PortalProps): JSX.Element => {
+  const target = usePortal(targetId);
+  const [element, setElement] = useState<JSX.Element | null>(null);
 
-  if (target !== null) {
-    if (open) {
-      /* See comments in src/styles/globals/components/layout/drawer.scss - this is related to the animation of the
-         drawer transition.  We may not need this class name, which would mean we may be able to remove the 'open' prop
-         from this component as well. */
-      if (!target.classList.contains("open")) {
-        target.classList.add("open");
+  useEffect(() => {
+    if (target !== null) {
+      if (open) {
+        /* If a child identifier is provided, and the target has more than one child where any of them meet that
+           criteria, it means that the portal's content has changed and the new content is added as a sibling of the
+           stale content.  In this case, all previously rendered content that meet that criteria (which should only be
+           at most 1 element - but the loop accounts for potentially multiple due to unforeseen weird rendering
+           behavior) should be removed.
+
+           This allows content to be rendered in the portal that replaces older content, without having to alter the
+           inner content of the portal itself when it changes.
+
+           Example:
+           --------
+           There is a drawer that renders data associated with a Team with a particular ID when an associated row is
+           clicked in a table.  When a new row is clicked, the team ID changes, and thus the content of the drawer
+           changes as well.  If we were to leave stale children inside the portal, this situation would require that the
+           outer <Drawer> be static, and the content inside of the drawer changes when the row is clicked. This would
+           mean that the drawer would have to be rendered and managed at the table level, since it would have to
+           rerender the content based on the ID:
+
+           const [id, setId] = useState<string | null>(null);
+
+           <Table>
+             {teams.map((team) => ( <Row onClick={() => setId(team.id)} /> ))}
+           </Table>
+           <Drawer open={id !== null} onClose={() => setId(null)}>
+              <DrawerContent id={id} />
+           </Drawer>
+
+           However, if we remove the stale children from the portal, we can render the drawer at the row level, and
+           we don't have to worry about just changing the inner content of the <Drawer> component - the <Drawer> can
+           be swapped in and out:
+
+           <Table>
+             {teams.map((team) => ( <Row /> ))}
+           </Table>
+
+           const [drawerOpen, setDrawerOpen] = useState(false);
+
+           <Row onClick={() => openDrawer()} />
+           <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+              <DrawerContent id={props.id} />
+           </Drawer>
+           */
+        if (isExistingChild && target.children.length > 1) {
+          let toRemove: Element[] = [];
+          for (let i = 0; i < target.children.length - 1; i++) {
+            const c = target.children[i];
+            if (c && isExistingChild(c)) {
+              toRemove = [...toRemove, c];
+            }
+          }
+          setTimeout(() =>
+            toRemove.forEach(c => {
+              try {
+                target.removeChild(c);
+              } catch (e) {
+                /* This sometimes fails when the component unmounts during a route change.  It would be nice to
+                   eventually just throw the error we are looking for - but I cannot seem to figure out where to import
+                   the NotFoundError from. */
+              }
+            }),
+          );
+        }
+        const el = createPortal(children, target);
+        setElement(el);
+      } else {
+        setElement(null);
       }
-      return createPortal(children, target);
     } else {
-      target.classList.remove("open");
+      setElement(null);
     }
-  }
-  return <></>;
+  }, [open, target, children, isExistingChild]);
+
+  return <>{element}</>;
 };

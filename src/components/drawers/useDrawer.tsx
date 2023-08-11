@@ -6,10 +6,12 @@ export type DrawerRenderer = () => Promise<JSX.Element | null>;
 
 export interface UseDetailDrawerProps extends Omit<DrawerProps, "loading" | "onClose" | "children" | "open"> {
   readonly render?: DrawerRenderer;
+  readonly disabled?: boolean;
 }
 
 export const useDrawer = ({
   render,
+  disabled,
   ...props
 }: UseDetailDrawerProps): {
   drawer: JSX.Element | null;
@@ -24,7 +26,7 @@ export const useDrawer = ({
 
   const renderContent = useMemo(
     () => async () => {
-      if (render) {
+      if (render && disabled !== true) {
         setLoading(true);
         const content = await render();
         if (content) {
@@ -37,7 +39,7 @@ export const useDrawer = ({
         setContent(null);
       }
     },
-    [render],
+    [render, disabled],
   );
 
   useEffect(() => {

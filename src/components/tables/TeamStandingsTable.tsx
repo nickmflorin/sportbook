@@ -1,8 +1,7 @@
 "use client";
-import React, { useMemo } from "react";
+import React from "react";
 
 import { type TeamWithStats, type WithFileUrl } from "~/prisma/model";
-import { useDetailDrawer, type DetailDrawerRenderer } from "~/components/drawers/useDetailDrawer";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
 
 import { type Column } from "./columns";
@@ -18,13 +17,9 @@ export enum TeamStandingsTableColumn {
   GAMES_PLAYED,
 }
 
-interface TeamStandingsColumnProps {
-  readonly openTeamDrawer?: (id: string) => void;
-}
-
-const TeamStandingsTableColumns: (props: TeamStandingsColumnProps) => {
+const TeamStandingsTableColumns: {
   [key in TeamStandingsTableColumn]: Column<WithFileUrl<TeamWithStats>>;
-} = ({ openTeamDrawer }) => ({
+} = {
   [TeamStandingsTableColumn.RANK]: {
     title: "Rank",
     accessor: "stats.leagueRank",
@@ -35,13 +30,7 @@ const TeamStandingsTableColumns: (props: TeamStandingsColumnProps) => {
     title: "Team",
     accessor: "name",
     textAlignment: "left",
-    render: (standing: WithFileUrl<TeamWithStats>) => (
-      <TeamAvatar
-        displayName
-        onClick={openTeamDrawer !== undefined ? () => openTeamDrawer(standing.id) : undefined}
-        team={standing}
-      />
-    ),
+    render: (standing: WithFileUrl<TeamWithStats>) => <TeamAvatar displayName team={standing} />,
   },
   [TeamStandingsTableColumn.WINS]: {
     title: "Wins",
@@ -73,12 +62,11 @@ const TeamStandingsTableColumns: (props: TeamStandingsColumnProps) => {
     textAlignment: "left",
     render: (standing: WithFileUrl<TeamWithStats>) => standing.stats.points.total,
   },
-});
+};
 
 export interface TeamStandingsTableProps
   extends Omit<DataTableProps<WithFileUrl<TeamWithStats>>, "onRowEdit" | "columns"> {
   readonly columns?: TeamStandingsTableColumn[];
-  readonly renderTeamDrawer?: DetailDrawerRenderer;
 }
 
 export const TeamStandingsTable = ({
@@ -91,28 +79,10 @@ export const TeamStandingsTable = ({
     TeamStandingsTableColumn.TIES,
     TeamStandingsTableColumn.POINTS,
   ],
-  renderTeamDrawer,
+
   ...props
-}: TeamStandingsTableProps): JSX.Element => {
-  const { setId, drawer } = useDetailDrawer({
-    render: renderTeamDrawer,
-    insideView: false,
-  });
-
-  const cols = useMemo(
-    () =>
-      TeamStandingsTableColumns({
-        openTeamDrawer: async id => setId(id),
-      }),
-    [setId],
-  );
-
-  return (
-    <>
-      <DataTable<WithFileUrl<TeamWithStats>> {...props} columns={columns.map(name => cols[name])} />
-      {drawer}{" "}
-    </>
-  );
-};
+}: TeamStandingsTableProps): JSX.Element => (
+  <DataTable<WithFileUrl<TeamWithStats>> {...props} columns={columns.map(name => TeamStandingsTableColumns[name])} />
+);
 
 export default TeamStandingsTable;
