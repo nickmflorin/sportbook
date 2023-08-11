@@ -10,7 +10,12 @@ import { getAuthUser } from "~/server/auth";
 import { getLeagueStandings } from "~/server/leagues";
 
 const TeamStandingsTable = dynamic(() => import("~/components/tables/TeamStandingsTable"), {
-  ssr: false,
+  loading: () => <Loading loading={true} />,
+});
+
+/* The drawer has to be dynamically loaded to prevent the entire table from being put into a loading state when the
+   drawer is opened. */
+const TeamDrawer = dynamic(() => import("~/components/drawers/TeamDrawer"), {
   loading: () => <Loading loading={true} />,
 });
 
@@ -56,5 +61,13 @@ export default async function LeagueStandings({ params: { id } }: LeagueStanding
       fileUrl: imageUploads.find(i => i.entityId === standing.id)?.fileUrl || null,
     }),
   );
-  return <TeamStandingsTable data={standingsWithImages} />;
+  return (
+    <TeamStandingsTable
+      data={standingsWithImages}
+      renderTeamDrawer={async ({ id }) => {
+        "use server";
+        return <TeamDrawer teamId={id} />;
+      }}
+    />
+  );
 }

@@ -89,3 +89,5 @@ export const CreateLocationForm = (props: CreateLocationFormProps): JSX.Element 
     </Form>
   );
 };
+
+export default CreateLocationForm;

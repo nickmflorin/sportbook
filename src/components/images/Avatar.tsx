@@ -13,6 +13,7 @@ type Base = Optional<Omit<ModelImageProps, "borderRadius" | "fallbackIcon" | "im
 export interface AvatarProps extends Base {
   readonly displayName?: string | null;
   readonly href?: AlternateButtonProps["href"];
+  readonly onClick?: AlternateButtonProps["onClick"];
   readonly tags?: React.ReactElement<BadgeProps>[];
   readonly contentDirection?: "row" | "column";
 }
@@ -22,6 +23,7 @@ export const Avatar = ({
   href,
   contentDirection = "column",
   tags = [],
+  onClick,
   size = 30,
   ...props
 }: AvatarProps): JSX.Element => {
@@ -44,6 +46,8 @@ export const Avatar = ({
         {displayName ? (
           href !== undefined ? (
             <AlternateButton.Secondary href={href}>{displayName}</AlternateButton.Secondary>
+          ) : onClick !== undefined ? (
+            <AlternateButton.Secondary onClick={onClick}>{displayName}</AlternateButton.Secondary>
           ) : (
             <Text>{displayName}</Text>
           )

@@ -1,14 +1,5 @@
-import dynamic from "next/dynamic";
-
 import { prisma } from "~/prisma/client";
 import { FileUploadEntity } from "~/prisma/model";
-import { TeamAvatar } from "~/components/images/TeamAvatar";
-import { Loading } from "~/components/loading";
-
-/* const TeamTilesView = dynamic(() => import("~/components/views/TeamTilesView"), {
-     ssr: true,
-     loading: () => <Loading loading={true} />,
-   }); */
 
 interface LeagueTeamsProps {
   readonly params: { id: string };

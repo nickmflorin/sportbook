@@ -1,18 +1,22 @@
-import { type ReactNode } from "react";
+import { DrawerPortal, type DrawerPortalProps } from "./DrawerPortal";
+import { DrawerView, type DrawerViewProps } from "./DrawerView";
 
-import classNames from "classnames";
-
-import { type ComponentProps } from "~/lib/ui";
-import { Loading } from "~/components/loading/Loading";
-
-export interface DrawerProps extends ComponentProps {
-  readonly children: ReactNode;
-  readonly loading?: boolean;
+export interface DrawerProps extends DrawerViewProps, Omit<DrawerPortalProps, "onClose"> {
+  readonly insideView?: false;
 }
 
-export const Drawer = ({ children, loading, ...props }: DrawerProps): JSX.Element => (
-  <div {...props} className={classNames("drawer", props.className)}>
-    <Loading loading={loading === true} overlay />
-    {children}
-  </div>
+export const Drawer = ({
+  children,
+  open,
+  slot = 1,
+  onClose,
+  insideView,
+  loading,
+  ...props
+}: DrawerProps): JSX.Element => (
+  <DrawerPortal open={open} slot={slot} loading={loading} onClose={onClose}>
+    {insideView !== false ? <DrawerView {...props}>{children}</DrawerView> : <>{children}</>}
+  </DrawerPortal>
 );
+
+export default Drawer;

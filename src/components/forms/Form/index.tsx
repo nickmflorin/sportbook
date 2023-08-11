@@ -1,3 +1,4 @@
+"use client";
 import { useRef } from "react";
 
 import classNames from "classnames";
@@ -107,3 +108,5 @@ Form.ControlledField = ControlledField;
 Form.FieldGroup = FieldGroup;
 Form.FieldCondition = FieldConditions;
 Form.useForm = useForm;
+
+export default Form;

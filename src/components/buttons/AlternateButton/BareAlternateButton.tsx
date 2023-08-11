@@ -16,7 +16,7 @@ export const BareAlternateButton = ({ color, hoveredColor, focusedColor, ...prop
     {...props}
     variant={ButtonVariants.BARE}
     className={classNames(
-      getColorClassName("color", color, { hovered: hoveredColor, focused: focusedColor }),
+      getColorClassName("color", { normal: color, hovered: hoveredColor, focused: focusedColor }),
       props.className,
     )}
   />

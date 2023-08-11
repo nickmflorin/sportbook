@@ -1,5 +1,6 @@
 @use "partials";
 
+@use "./drawers";
 @use "./header";
 @use "./page";
 @use "./sidebar";
@@ -42,13 +43,6 @@
         max-width: 100%;
         padding: partials.get-spacing("md") partials.get-spacing("lg") partials.get-spacing("md")
           partials.get-spacing("lg");
-      }
-
-      > .drawer {
-        max-height: 100%;
-        max-width: 100%;
-        height: 100%;
-        position: relative;
       }
     }
 

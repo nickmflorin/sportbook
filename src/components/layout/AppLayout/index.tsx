@@ -2,8 +2,6 @@ import { type ReactNode } from "react";
 
 import classNames from "classnames";
 
-import { type DrawerId } from "~/components/drawers";
-
 import { AppHeader } from "./AppHeader";
 import { AppViewport } from "./AppViewport";
 import { Sidebar, type SidebarProps } from "./Sidebar";

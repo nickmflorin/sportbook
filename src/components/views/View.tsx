@@ -21,6 +21,7 @@ export const ViewContainer = ({
 }: ViewContainerProps & { readonly children: ReactNode }) => (
   <Flex
     {...props}
+    direction="column"
     className={classNames(
       "view",
       { "view--bordered": bordered, "view--content-scrollable": contentScrollable },

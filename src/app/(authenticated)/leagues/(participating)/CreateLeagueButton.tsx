@@ -1,33 +1,24 @@
 "use client";
-import { usePathname, useRouter } from "next/navigation";
-import { useTransition } from "react";
-
 import { SolidButton } from "~/components/buttons/SolidButton";
-import { useMutableSearchParams } from "~/hooks/useMutableSearchParams";
+import { useDrawer, type DrawerRenderer } from "~/components/drawers/useDrawer";
 
-export const CreateLeagueButton = (): JSX.Element => {
-  const { updateParams } = useMutableSearchParams();
-  const [pending, startTransition] = useTransition();
+export interface CreateLeagueButtonProps {
+  readonly renderDrawer: DrawerRenderer;
+}
 
-  const pathname = usePathname();
-  const router = useRouter();
+export const CreateLeagueButton = ({ renderDrawer }: CreateLeagueButtonProps): JSX.Element => {
+  const { drawer, open } = useDrawer({
+    render: renderDrawer,
+    title: "Create a New League",
+    description: "Configure your league however you would like.",
+  });
 
   return (
     <>
-      <SolidButton.Primary
-        key="0"
-        loading={pending}
-        onClick={() => {
-          const updated = updateParams({ drawerId: "createLeague" });
-          if (updated.queryString) {
-            startTransition(() => {
-              router.push(`${pathname}?${updated.queryString}`);
-            });
-          }
-        }}
-      >
+      <SolidButton.Primary key="0" onClick={() => open()}>
         Create League
       </SolidButton.Primary>
+      {drawer}
     </>
   );
 };

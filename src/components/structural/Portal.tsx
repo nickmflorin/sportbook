@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect, type ReactNode } from "react";
 
 import { createPortal } from "react-dom";
@@ -25,12 +26,24 @@ export const usePortal = (id: string | number | undefined): Element | null => {
 export interface PortalProps {
   id: string | number | undefined;
   children: ReactNode;
+  open: boolean;
 }
 
-export const Portal = ({ id, children }: PortalProps): JSX.Element => {
+export const Portal = ({ id, children, open }: PortalProps): JSX.Element => {
   const target = usePortal(id);
+
   if (target !== null) {
-    return createPortal(children, target);
+    if (open) {
+      /* See comments in src/styles/globals/components/layout/drawer.scss - this is related to the animation of the
+         drawer transition.  We may not need this class name, which would mean we may be able to remove the 'open' prop
+         from this component as well. */
+      if (!target.classList.contains("open")) {
+        target.classList.add("open");
+      }
+      return createPortal(children, target);
+    } else {
+      target.classList.remove("open");
+    }
   }
   return <></>;
 };

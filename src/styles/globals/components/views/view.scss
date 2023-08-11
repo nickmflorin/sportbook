@@ -52,6 +52,7 @@
 
   > .view__content {
     max-height: 100%;
+    overflow-y: scroll;
 
     > .table {
       > .mantine-ScrollArea-root {

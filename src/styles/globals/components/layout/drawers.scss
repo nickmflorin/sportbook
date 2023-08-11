@@ -1,0 +1,65 @@
+@use "partials";
+
+$drawer-width: 400px;
+
+@mixin drawer-container {
+  max-height: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+// The 'drawer-target' is the empty div placeholder with an appropriate ID (depending on the drawer slot) that the
+// drawer portal is injected into.  It will always be in the DOM - but will only have children when the drawer is open.
+.drawer-target {
+  @include drawer-container();
+  max-width: $drawer-width;
+  transition: width 4s ease-in;
+
+  // TODO: The reason that this was applied was to attempt to apply a transition effect to the width to animate the
+  // opening of the drawer.  This needs to be revisited - but the solution may involve removing the 'open' class.
+  &.open {
+    width: $drawer-width;
+  }
+
+  // The 'drawer-wrapper' is responsible for wrapping the actual content of the drawer (the 'drawer') and setting a
+  // constant width for the drawer.  Since the 'drawer-wrapper' will only be present in the DOM when the drawer is open,
+  // it allows the content inside of the drawer-wrapper to change dynamically while showing a loading indicator without
+  // causing the drawer to change widths or hide/show when the content changes.
+  > .drawer-wrapper {
+    @include drawer-container();
+    // See above not regarding the 'open' class and the width/animation of the drawer transition.
+    // width: $drawer-width;
+    // min-width: $drawer-width;
+    width: 100%;
+
+    max-width: 100%;
+    border-left: 1px solid partials.get-color("gray", $shade: 3);
+    padding: partials.get-spacing("md") partials.get-spacing("lg") partials.get-spacing("md") partials.get-spacing("lg");
+
+    // TODO: Does this need to be inside of the 'drawer' instead?  Maybe both?
+    > .drawer__close-button {
+      position: absolute;
+      z-index: 100;
+      top: partials.get-spacing("lg");
+      right: partials.get-spacing("md");
+    }
+
+    // The actual drawer view, which holds the specific content of a given drawer with a given set of potential server
+    // side parameters.  This is the only dynamic element of the drawer that can change outside of the closing/opening
+    // of the drawer.
+    .drawer {
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
+      max-height: 100%;
+      overflow: hidden;
+
+      // The 'drawer' is a 'view'...
+      > .view__content {
+        overflow-y: scroll;
+        @include partials.scrollbar();
+      }
+    }
+  }
+}
