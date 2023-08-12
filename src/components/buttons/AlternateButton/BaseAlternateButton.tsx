@@ -1,5 +1,6 @@
 import classNames from "classnames";
 
+import { type Alignment } from "~/lib/ui";
 import { ButtonTypes, type ButtonVariant } from "~/components/buttons";
 import { type FontWeight, type TypographySize } from "~/components/typography";
 
@@ -11,11 +12,13 @@ export type BaseAlternateButtonProps<V extends ButtonVariant> = Omit<
 > & {
   readonly fontWeight?: FontWeight;
   readonly fontSize?: TypographySize;
+  readonly textAlign?: Alignment;
 };
 
 export const BaseAlternateButton = <V extends ButtonVariant>({
   fontWeight,
   fontSize,
+  textAlign,
   ...props
 }: BaseAlternateButtonProps<V>) => (
   <Button
@@ -24,6 +27,7 @@ export const BaseAlternateButton = <V extends ButtonVariant>({
     className={classNames(
       fontWeight && `font-weight-${fontWeight}`,
       fontSize && `font-size-${fontSize}`,
+      textAlign && `text-align-${textAlign}`,
       props.className,
     )}
   />

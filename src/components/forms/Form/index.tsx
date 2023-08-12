@@ -10,7 +10,7 @@ import { FieldConditions } from "~/components/fields";
 import { Field, FieldGroup, ControlledField } from "~/components/fields/Field";
 import { Loading } from "~/components/loading";
 import { ButtonFooter, type ButtonFooterProps } from "~/components/structural/ButtonFooter";
-import { Header, type HeaderProps } from "~/components/views/Header";
+import { InfoView, type InfoViewProps } from "~/components/views/InfoView";
 
 import { NativeForm, type NativeFormProps } from "../NativeForm";
 import { type FormInstance, type BaseFormValues } from "../types";
@@ -24,7 +24,7 @@ export * from "../types";
 type SubmitAction<I extends BaseFormValues> = (data: I, errorHandler: IFormErrors) => void;
 
 export type FormProps<I extends BaseFormValues> = ComponentProps &
-  Pick<HeaderProps, "title" | "description" | "actions" | "titleProps" | "descriptionProps"> &
+  Pick<InfoViewProps, "title" | "description" | "actions" | "titleProps" | "descriptionProps"> &
   Omit<NativeFormProps, keyof ComponentProps | "action" | "onSubmit" | "submitButtonType"> &
   Omit<ButtonFooterProps, "onSubmit" | keyof ComponentProps> & {
     readonly form: FormInstance<I>;
@@ -85,7 +85,7 @@ export const Form = <I extends BaseFormValues>({
       }
     >
       {onClose && <CloseButton className="form__close-button" onClick={onClose} />}
-      <Header
+      <InfoView
         className="form__header"
         title={title}
         description={description}

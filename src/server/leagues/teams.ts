@@ -1,15 +1,8 @@
 import { type Team } from "@prisma/client";
 
-import { prisma } from "~/prisma/client";
-import {
-  type TeamStats,
-  TeamStatMetric,
-  GameLocation,
-  GameResultType,
-  type MinimumViableStatGame,
-} from "~/prisma/model";
+import { type TeamStats, TeamStatMetric, GameLocation, GameResultType } from "~/prisma/model";
 
-import { getGameResultType, getGameLocation } from "../games";
+import { getGameResultType, getGameLocation, type MinimumViableStatGame } from "./games";
 
 const GameResultPoints: { [key in GameResultType]: number } = {
   [GameResultType.WIN]: 2,
@@ -43,17 +36,6 @@ const INITIAL_TEAM_STATS: Omit<TeamStats, "leagueRank"> = {
     [GameLocation.AWAY]: 0,
     total: 0,
   },
-};
-
-const getFinishedTeamGames = async (team: Team | Team["id"]): Promise<MinimumViableStatGame[]> => {
-  const teamId = typeof team === "string" ? team : team.id;
-  return (await prisma.game.findMany({
-    include: { result: true },
-    where: {
-      result: { isNot: null },
-      OR: [{ homeTeamId: teamId }, { awayTeamId: teamId }],
-    },
-  })) as MinimumViableStatGame[];
 };
 
 export type TeamGameMap<G extends MinimumViableStatGame> = Record<Team["id"], G[]>;
@@ -134,11 +116,4 @@ export const generateTeamStats = <G extends MinimumViableStatGame>(team: Team | 
     throw new Error("Detected duplicate games when generating team stats.");
   }
   return _generateTeamStats(team, _games);
-};
-
-export const fetchTeamStats = async <G extends MinimumViableStatGame>(
-  team: Team | Team["id"],
-): Promise<Omit<TeamStats, "leagueRank">> => {
-  const games = (await getFinishedTeamGames(team)) as G[];
-  return generateTeamStats(team, games);
 };

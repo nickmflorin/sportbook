@@ -1,5 +1,7 @@
 import { Sport, LeagueType, LeagueCompetitionLevel, GameStatus, LeaguePlayerType } from "@prisma/client";
 
+import { GameResultType } from "../types";
+
 import { EnumModel } from "./model";
 
 export { type EnumModel } from "./model";
@@ -81,5 +83,17 @@ export const LeaguePlayerTypes = new EnumModel("playerType", LeaguePlayerType, {
     label: "Player",
     icon: { name: "football-helmet" },
     badgeIconColor: "gray.7",
+  },
+});
+
+export const GameResultTypes = new EnumModel("gameResultType", GameResultType, {
+  [GameResultType.WIN]: {
+    label: "Win",
+  },
+  [GameResultType.LOSS]: {
+    label: "Loss",
+  },
+  [GameResultType.TIE]: {
+    label: "Tie",
   },
 });

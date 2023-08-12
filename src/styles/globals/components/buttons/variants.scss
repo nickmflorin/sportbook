@@ -63,6 +63,12 @@
     }
   }
 
+  @include partials.with-alignment() using ($alignment) {
+    &.text-align-#{$alignment} {
+      text-align: $alignment;
+    }
+  }
+
   @each $size in partials.$button-size-names {
     &.button--#{$size} {
       @layer {

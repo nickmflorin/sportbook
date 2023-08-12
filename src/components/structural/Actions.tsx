@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { type ReactNode } from "react";
 
 import classNames from "classnames";
 
@@ -21,7 +21,7 @@ export type IconAction<V extends ButtonVariant = ButtonVariant> = V extends Butt
     }
   : never;
 
-export type Action = JSX.Element | IconAction | RenderAction | IconProp | undefined | null;
+export type Action = ReactNode | JSX.Element | IconAction | RenderAction | IconProp | undefined | null;
 
 const isRenderAction = (action: Exclude<Action, undefined | null>): action is RenderAction =>
   !isIcon(action) && (action as RenderAction).render !== undefined;
@@ -43,7 +43,7 @@ export interface ActionsProps extends ComponentProps {
    * type {@link RenderAction} or type {@link IconAction}.
    */
   readonly actions?: Action[];
-  readonly children?: JSX.Element | JSX.Element[];
+  readonly children?: ReactNode | JSX.Element | JSX.Element[];
 }
 
 /**
@@ -52,25 +52,23 @@ export interface ActionsProps extends ComponentProps {
  * one another and ensure that the actions are aligned with sibling elements they accompany.
  */
 export const Actions = ({ children = [], actions, ...props }: ActionsProps): JSX.Element => {
-  const visibleActions = useMemo<JSX.Element[]>(
-    () =>
-      filterVisibleActions(actions || (Array.isArray(children) ? children : [children])).map((a, i) => {
-        if (isRenderAction(a)) {
-          return <React.Fragment key={i}>{a.render()}</React.Fragment>;
-        } else if (isIconAction(a)) {
-          return <ActionButton key={i} {...a} />;
-        } else if (isIcon(a)) {
-          return <Icon key={i} icon={a} />;
-        }
-        return a;
-      }),
-    [actions, children],
+  // Do not wrap in a useMemo hook - it prevents usage of this component on the server.
+  const visibleActions = filterVisibleActions(actions || (Array.isArray(children) ? children : [children])).map(
+    (a, i) => {
+      if (isRenderAction(a)) {
+        return <React.Fragment key={i}>{a.render()}</React.Fragment>;
+      } else if (isIconAction(a)) {
+        return <ActionButton key={i} {...a} />;
+      } else if (isIcon(a)) {
+        return <Icon key={i} icon={a} />;
+      }
+      return a;
+    },
   );
-
   if (visibleActions.length !== 0) {
     return (
       <div {...props} className={classNames("actions", props.className)}>
-        {visibleActions.map((a: JSX.Element, i: number) => (
+        {visibleActions.map((a: JSX.Element | ReactNode, i: number) => (
           <React.Fragment key={i}>{a}</React.Fragment>
         ))}
       </div>

@@ -1,11 +1,17 @@
 @use "partials";
 
+$aligment-to-flex: (
+  left: flex-start,
+  right: flex-end,
+  center: center,
+);
+
 @mixin row-direction() {
   flex-direction: row;
   @include partials.with-alignment() using ($alignment) {
     &.flex--text-align-#{$alignment} {
       text-align: $alignment;
-      justify-content: $alignment;
+      justify-content: partials.mapget($aligment-to-flex, $alignment);
     }
   }
 }
@@ -15,7 +21,7 @@
   @include partials.with-alignment() using ($alignment) {
     &.flex--text-align-#{$alignment} {
       text-align: $alignment;
-      align-items: $alignment;
+      align-items: partials.mapget($aligment-to-flex, $alignment);
     }
   }
 }

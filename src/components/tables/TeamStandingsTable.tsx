@@ -30,7 +30,7 @@ const TeamStandingsTableColumns: {
     title: "Team",
     accessor: "name",
     textAlignment: "left",
-    render: (standing: WithFileUrl<TeamWithStats>) => <TeamAvatar displayName team={standing} />,
+    render: (standing: WithFileUrl<TeamWithStats>) => <TeamAvatar withButton team={standing} />,
   },
   [TeamStandingsTableColumn.WINS]: {
     title: "Wins",

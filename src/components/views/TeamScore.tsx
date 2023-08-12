@@ -13,7 +13,7 @@ export interface TeamScoreProps extends ComponentProps {
 
 export const TeamScore = ({ team, score, isLoser, ...props }: TeamScoreProps): JSX.Element => (
   <div {...props} className={classNames("team-score", { "team-score--loser": isLoser }, props.className)}>
-    <TeamAvatar team={team} href={`/teams/${team.id}`} />
+    <TeamAvatar team={team} withName />
     <Text className="team-score__name">{team.name}</Text>
     <Text className="team-score__score">{score}</Text>
   </div>

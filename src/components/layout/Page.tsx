@@ -5,12 +5,12 @@ import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
 import { BackButton } from "~/components/buttons/BackButton";
-import { Header, type HeaderProps } from "~/components/views/Header";
+import { InfoView, type InfoViewProps } from "~/components/views/InfoView";
 
-export interface PageProps extends Pick<HeaderProps, "title" | "description">, ComponentProps {
+export interface PageProps extends Pick<InfoViewProps, "title" | "description">, ComponentProps {
   readonly children: ReactNode;
   readonly header?: JSX.Element;
-  readonly headerProps?: Omit<HeaderProps, "title" | "description">;
+  readonly headerProps?: Omit<InfoViewProps, "title" | "description">;
   readonly subHeader?: JSX.Element;
   readonly backHref?: LinkProps["href"];
   readonly backText?: string;
@@ -38,7 +38,7 @@ export const Page = ({
     <div className="page__main">
       <div className="page__header">
         {backHref && <BackButton href={backHref}>{backText}</BackButton>}
-        {header || <Header {...headerProps} titleProps={{ order: 4 }} title={title} description={description} />}
+        {header || <InfoView {...headerProps} titleProps={{ order: 4 }} title={title} description={description} />}
         {subHeader}
       </div>
       <div className="page__content">

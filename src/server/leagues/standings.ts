@@ -120,45 +120,57 @@ export async function getLeagueStandings<T extends Team>(league: League | League
   return rankTeams(_teams, config);
 }
 
-type Tg =
-  | string
-  | Team
-  | (Team & { readonly league: League })
-  | (Team & { readonly league: League & { readonly teams: Team[] } });
+const argIsOptions = (arg: League | { strict: boolean }): arg is { strict: boolean } =>
+  (arg as { strict: boolean }).strict !== undefined;
 
-const isTeamWithLeague = (t: Tg): t is Team & { readonly league: League } =>
-  typeof t !== "string" &&
-  (t as Team & { readonly league: League }).league !== undefined &&
-  (t as Team & { readonly league: League & { readonly teams: Team[] } }).league.teams === undefined;
+export async function getTeamStats(team: string, options: { strict: false }): Promise<TeamStats | null>;
+export async function getTeamStats(team: Team | string): Promise<TeamStats>;
+export async function getTeamStats(team: Team, league: League): Promise<TeamStats>;
+export async function getTeamStats(team: Team, league: League, teams: Team[]): Promise<TeamStats>;
 
-const isTeamWithLeagueTeams = (t: Tg): t is Team & { readonly league: League & { readonly teams: Team[] } } =>
-  typeof t !== "string" &&
-  (t as Team & { readonly league: League }).league !== undefined &&
-  (t as Team & { readonly league: League & { readonly teams: Team[] } }).league.teams !== undefined;
-
-export async function getTeamStats(team: Tg | string): Promise<TeamStats> {
-  let data: TeamWithStats[];
-  let teamId: string;
-  if (typeof team === "string") {
-    teamId = team;
-    const tm = await prisma.team.findUniqueOrThrow({
-      where: { id: team },
-      include: { league: { include: { teams: true } } },
-    });
-    data = await getLeagueStandings(tm.league, tm.league.teams);
-  } else if (isTeamWithLeague(team)) {
-    data = await getLeagueStandings(team.league);
-    teamId = team.id;
-  } else if (isTeamWithLeagueTeams(team)) {
-    data = await getLeagueStandings(team.league, team.league.teams);
-    teamId = team.id;
-  } else {
-    data = await getLeagueStandings(team.leagueId);
-    teamId = team.id;
+export async function getTeamStats(
+  arg1: Team | string,
+  arg2?: League | { strict: false } | undefined,
+  arg3?: Team[],
+): Promise<TeamStats | null> {
+  const safeReturn = async (id: string, promise: Promise<TeamWithStats[]>): Promise<TeamStats> => {
+    const awaited = await promise;
+    const result = awaited.find(t => t.id === id);
+    if (!result) {
+      throw new Error(`Team with ID '${id}' not found in team standings for league!`);
+    }
+    return result.stats;
+  };
+  if (typeof arg1 === "string") {
+    if (arg2 && !argIsOptions(arg2)) {
+      throw new Error("Invalid arguments provided to getTeamStats.");
+    }
+    let team: Team & { readonly league: League & { readonly teams: Team[] } };
+    // The query should only be treated as not strict if explicitly specified as false.
+    if (arg2?.strict === false) {
+      const _team = await prisma.team.findUnique({
+        where: { id: arg1 },
+        include: { league: { include: { teams: true } } },
+      });
+      if (_team) {
+        team = _team;
+      } else {
+        return null;
+      }
+    } else {
+      team = await prisma.team.findUniqueOrThrow({
+        where: { id: arg1 },
+        include: { league: { include: { teams: true } } },
+      });
+    }
+    return safeReturn(team.id, getLeagueStandings(team.league, team.league.teams));
+  } else if (arg2 && !argIsOptions(arg2)) {
+    if (arg1.leagueId !== arg2.id) {
+      throw new Error(`The provided team '${arg1.id}' does not belong to the provided league '${arg2.id}'.`);
+    } else if (arg3) {
+      return safeReturn(arg1.id, getLeagueStandings(arg2, arg3));
+    }
+    return safeReturn(arg1.id, getLeagueStandings(arg2));
   }
-  const t = data.find(t => t.id === teamId);
-  if (!t) {
-    throw new Error(`Team with ID '${teamId}' not found in team standings for league!`);
-  }
-  return t.stats;
+  throw new Error("Invalid arguments provided to getTeamStats.");
 }

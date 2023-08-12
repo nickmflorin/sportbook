@@ -1,0 +1,61 @@
+@use "partials";
+
+.info-view {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+
+  > .info-view__content {
+    display: flex;
+    flex-direction: row;
+    max-width: 800px;
+    align-items: center;
+    flex-grow: 100;
+
+    > .info-view__content-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      height: 100%;
+      flex-grow: 100;
+
+      > .info-view__title {
+        color: partials.get-font-color("heading", $shade: 8);
+      }
+
+      > .info-view__tags {
+        display: flex;
+        flex-direction: row;
+        gap: partials.get-spacing("md");
+        margin-top: 2px;
+        margin-bottom: 4px;
+      }
+    }
+
+    .info-view__content-right {
+      justify-content: flex-end;
+      margin-left: partials.get-spacing("md");
+    }
+  }
+
+  > .model-image {
+    margin-right: partials.get-spacing("lg");
+  }
+
+  > .actions {
+    flex-grow: 100;
+  }
+
+  &--with-image {
+    align-items: flex-start;
+
+    > .info-view__content {
+      align-items: flex-start;
+
+      > .info-view__content-left {
+        padding-top: partials.get-spacing("xs");
+      }
+    }
+  }
+}

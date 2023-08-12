@@ -25,6 +25,7 @@ export const DateTimeText = ({
   size,
   direction = FlexDirections.COLUMN,
   includeTime = true,
+
   ...props
 }: DateTimeTextProps): JSX.Element =>
   value ? (

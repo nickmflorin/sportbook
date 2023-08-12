@@ -105,10 +105,6 @@ export type GameWithResult = Game & {
   readonly awayTeam: ModelWithFileUrl<"Team">;
 };
 
-export type MinimumViableStatGame = Pick<Game, "id" | "awayTeamId" | "homeTeamId" | "leagueId"> & {
-  readonly result: Pick<GameResult, "homeScore" | "awayScore">;
-};
-
 export type TeamStatDimension = Record<GameLocation | "total", number>;
 
 export enum TeamStatMetric {
@@ -129,4 +125,23 @@ export type TeamWithStats<T extends Team = Team, S extends keyof TeamStats = key
 
 export type PlayerWithUser = Player & {
   readonly user: User;
+};
+
+export type GameWithTeams = GameWithResult & { readonly awayTeam: Team; readonly homeTeam: Team };
+
+export type TeamWithPlayers = Team & { readonly players: PlayerWithUser[] };
+
+export type TeamGame<G extends GameWithResult = GameWithResult> = G & {
+  readonly resultType: GameResultType;
+  readonly score: number;
+  readonly opponentScore: number;
+  readonly opponentId: string;
+};
+
+export type TeamGameWithOpponent<G extends GameWithResult = GameWithResult> = G & {
+  readonly resultType: GameResultType;
+  readonly score: number;
+  readonly opponentScore: number;
+  readonly opponentId: string;
+  readonly opponent: Team;
 };

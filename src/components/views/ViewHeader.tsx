@@ -1,14 +1,14 @@
 import classNames from "classnames";
 
-import { Header, type HeaderProps } from "~/components/views/Header";
+import { InfoView, type InfoViewProps } from "~/components/views/InfoView";
 
-export interface ViewHeaderProps extends HeaderProps {
+export interface ViewHeaderProps extends InfoViewProps {
   readonly children?: JSX.Element;
 }
 
 export const ViewHeader = ({ className, style, children, ...props }: ViewHeaderProps): JSX.Element => (
   <div style={style} className={classNames("view__header", className)}>
-    <Header className="view__primary-header" {...props} />
+    <InfoView className="view__primary-header" {...props} />
     {children}
   </div>
 );

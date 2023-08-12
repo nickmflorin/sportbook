@@ -1,7 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
 
 import { isServerErrorResponse } from "~/application/errors";
 import {
@@ -18,7 +17,6 @@ import { Loading } from "~/components/loading";
 import { type TableAction } from "~/components/menus/TableActionDropdownMenu";
 import { DateTimeText } from "~/components/typography/DateTimeText";
 import { postponeGame, cancelGame } from "~/app/actions/game";
-import { useMutableSearchParams } from "~/hooks/useMutableSearchParams";
 
 import { type Column } from "./columns";
 import { DataTable, type DataTableProps } from "./DataTable";
@@ -42,24 +40,20 @@ export enum GameScheduleTableColumn {
   LOCATION,
 }
 
-const GameScheduleColumns: (teamPathGetter: (teamId: string) => string) => {
+const GameScheduleColumns: {
   [key in GameScheduleTableColumn]: Column<GameDatum>;
-} = teamPathGetter => ({
+} = {
   [GameScheduleTableColumn.HOME_TEAM]: {
     title: "Home",
     accessor: "homeTeam",
     textAlignment: "left",
-    render: (game: GameDatum) => (
-      <TeamAvatar team={game.homeTeam} href={teamPathGetter(game.homeTeam.id)} size={30} displayName={true} />
-    ),
+    render: (game: GameDatum) => <TeamAvatar team={game.homeTeam} withButton size={30} />,
   },
   [GameScheduleTableColumn.AWAY_TEAM]: {
     title: "Away",
     accessor: "awayTeam",
     textAlignment: "left",
-    render: (game: GameDatum) => (
-      <TeamAvatar team={game.awayTeam} href={teamPathGetter(game.awayTeam.id)} size={30} displayName={true} />
-    ),
+    render: (game: GameDatum) => <TeamAvatar team={game.awayTeam} withButton size={30} />,
   },
   [GameScheduleTableColumn.TIME]: {
     title: "Time",
@@ -79,7 +73,7 @@ const GameScheduleColumns: (teamPathGetter: (teamId: string) => string) => {
     width: 150,
     render: ({ location }) => (location !== null ? location.name : <></>),
   },
-});
+};
 
 export interface GameScheduleTableProps extends Omit<DataTableProps<GameDatum>, "onRowEdit" | "columns"> {
   readonly columns?: GameScheduleTableColumn[];
@@ -161,20 +155,11 @@ export const GameScheduleTable = ({
   ...props
 }: GameScheduleTableProps): JSX.Element => {
   const router = useRouter();
-  const { updateParams } = useMutableSearchParams();
-  const cols = useMemo(
-    () =>
-      GameScheduleColumns(teamId => {
-        const { path } = updateParams({ drawerId: "leagueTeam", teamId });
-        return path;
-      }),
-    [updateParams],
-  );
 
   return (
     <DataTable<GameDatum>
       {...props}
-      columns={columns.map(name => cols[name])}
+      columns={columns.map(name => GameScheduleColumns[name])}
       actionMenu={hasActionMenu(permissionCodes) ? datum => actionMenu(datum, router, permissionCodes) : undefined}
     />
   );
