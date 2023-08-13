@@ -6,7 +6,7 @@ import { Avatar, type AvatarProps } from "./Avatar";
 type BaseTeam = Pick<Team, "name" | "id"> | Pick<ModelWithFileUrl<Team>, "id" | "name" | "fileUrl">;
 
 export interface TeamAvatarProps<T extends BaseTeam>
-  extends Omit<AvatarProps, "initials" | "displayName" | "onClick" | "href"> {
+  extends Omit<AvatarProps, "initials" | "name" | "onClick" | "href" | "button"> {
   readonly team: T;
   readonly withName?: true;
   readonly withButton?: true;
@@ -27,3 +27,5 @@ export const TeamAvatar = <T extends BaseTeam>({
     button={withButton ? <TeamButton team={team} /> : undefined}
   />
 );
+
+export default TeamAvatar;

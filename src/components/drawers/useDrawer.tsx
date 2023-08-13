@@ -1,69 +1,38 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 
-import { Drawer, type DrawerProps } from "./Drawer";
+import { useDrawerRenderer, type DrawerRendererProps } from "./useDrawerRenderer";
 
-export type DrawerRenderer = () => Promise<JSX.Element | null>;
-
-export interface UseDetailDrawerProps extends Omit<DrawerProps, "loading" | "onClose" | "children" | "open"> {
-  readonly render?: DrawerRenderer;
-  readonly disabled?: boolean;
-}
+export type UseDetailDrawerProps = Omit<DrawerRendererProps<[]>, "onClose">;
 
 export const useDrawer = ({
-  render,
+  renderer,
+  drawerProps,
   disabled,
-  ...props
 }: UseDetailDrawerProps): {
   drawer: JSX.Element | null;
   open: () => void;
   close: () => void;
   toggle: () => void;
-  loading: boolean;
 } => {
   const [open, setOpen] = useState(false);
-  const [content, setContent] = useState<JSX.Element | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const renderContent = useMemo(
-    () => async () => {
-      if (render && disabled !== true) {
-        setLoading(true);
-        const content = await render();
-        if (content) {
-          setContent(content);
-        } else {
-          setContent(null);
-        }
-        setLoading(false);
-      } else {
-        setContent(null);
-      }
-    },
-    [render, disabled],
-  );
+  const { renderContent, clearContent, drawer } = useDrawerRenderer({
+    renderer,
+    disabled,
+    drawerProps,
+    onClose: () => setOpen(false),
+  });
 
   useEffect(() => {
     if (open) {
       renderContent();
     } else {
-      setContent(null);
+      clearContent();
     }
-  }, [open, renderContent]);
+  }, [open, renderContent, clearContent]);
 
   return {
-    /* The loading state when there is already prepopulated content is handled by the suspense of the server
-       component. */
-    drawer: (
-      <Drawer
-        {...props}
-        loading={loading && content === null}
-        open={loading || content !== null}
-        onClose={() => setOpen(false)}
-      >
-        {content}
-      </Drawer>
-    ),
-    loading,
+    // The loading state when there is already prepopulated content is handled by the suspense of the server component.
+    drawer,
     open: () => setOpen(true),
     close: () => setOpen(false),
     toggle: () => setOpen(v => !v),

@@ -1,8 +1,8 @@
 "use client";
 import { type PlayerWithUser, type Team, type ModelWithFileUrl } from "~/prisma/model";
 import { LeaguePlayerTypeBadge } from "~/components/badges/LeaguePlayerTypeBadge";
+import { PlayerAvatar } from "~/components/images/PlayerAvatar";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
-import { UserAvatar } from "~/components/images/UserAvatar";
 
 import { type Column } from "./columns";
 import { DataTable, type DataTableProps } from "./DataTable";
@@ -28,7 +28,7 @@ const PlayersTableColumns = <P extends BasePlayer>(): { [key in PlayersTableColu
     title: "Name",
     accessor: "user.name",
     textAlignment: "left",
-    render: (player: P) => <UserAvatar user={player.user} displayName={true} size={30} />,
+    render: (player: P) => <PlayerAvatar player={player} withButton size={30} />,
   },
   [PlayersTableColumn.PLAYER_TYPE]: {
     title: "",

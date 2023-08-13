@@ -10,14 +10,14 @@ type BaseUser = Pick<User, "firstName" | "lastName" | "emailAddress" | "profileI
 export interface UserAvatarProps<U extends BaseUser>
   extends Omit<AvatarProps, "imageUrl" | "initials" | "displayName"> {
   readonly user: U;
-  readonly displayName?: boolean;
+  readonly withName?: boolean;
 }
 
-export const UserAvatar = <U extends BaseUser>({ user, displayName, ...props }: UserAvatarProps<U>): JSX.Element => (
+export const UserAvatar = <U extends BaseUser>({ user, withName, ...props }: UserAvatarProps<U>): JSX.Element => (
   <Avatar
     url={user.profileImageUrl}
     initials={parseUserDisplayName(user, { fallback: "" })}
-    displayName={displayName === true ? parseUserDisplayName(user) : undefined}
+    name={withName === true ? parseUserDisplayName(user) : undefined}
     {...props}
   />
 );

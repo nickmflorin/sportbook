@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import { notFound, redirect } from "next/navigation";
 import { type ReactNode } from "react";
 
@@ -8,6 +9,8 @@ import { DetailPage } from "~/components/layout/DetailPage";
 import { getAuthUser } from "~/server/auth";
 
 import { useUserLeagueStaffRoles } from "./hooks";
+
+const LeagueDrawers = dynamic(() => import("./LeagueDrawers"));
 
 interface LeagueLayoutProps {
   readonly params: { id: string };
@@ -41,47 +44,51 @@ export default async function LeagueLayout({ children, params: { id } }: LeagueL
   const { hasLeagueRole } = await useUserLeagueStaffRoles(user, league);
 
   return (
-    <DetailPage
-      title={league.name}
-      description={[league.description]}
-      headerProps={{
-        image: { url: fileUpload === null ? null : fileUpload.fileUrl, initials: league.name },
-        tags: [
-          <Badge key="0" size="xxs">{`${league.teams.length} Teams`}</Badge>,
-          <Badge key="`" size="xxs">{`${numPlayers} Players`}</Badge>,
-        ],
-      }}
-      backHref="/leagues"
-      backText="All Leagues"
-      tabs={[
-        {
-          label: "Standings",
-          href: `/leagues/${id}/standings`,
-          icon: { name: "ranking-star" },
-          active: { leadingPath: "/leagues/:id/standings" },
-        },
-        {
-          href: `/leagues/${id}/players`,
-          icon: { name: "people-pulling" },
-          label: "Players",
-          active: { leadingPath: "/leagues/:id/players" },
-        },
-        {
-          href: `/leagues/${id}/schedule`,
-          icon: { name: "people-pulling" },
-          label: "Schedule",
-          active: { leadingPath: "/leagues/:id/schedule" },
-        },
-        {
-          href: `/leagues/${id}/scores`,
-          icon: { name: "people-pulling" },
-          label: "Scores",
-          active: { leadingPath: "/leagues/:id/scores" },
-          visible: hasLeagueRole([LeagueStaffRole.ADMIN, LeagueStaffRole.COMISSIONER]),
-        },
-      ]}
-    >
-      {children}
-    </DetailPage>
+    <>
+      <DetailPage
+        title={league.name}
+        description={[league.description]}
+        headerProps={{
+          image: { url: fileUpload === null ? null : fileUpload.fileUrl, initials: league.name },
+          tags: [
+            <Badge key="0" size="xxs">{`${league.teams.length} Teams`}</Badge>,
+            <Badge key="`" size="xxs">{`${numPlayers} Players`}</Badge>,
+          ],
+        }}
+        backHref="/leagues"
+        backText="All Leagues"
+        tabQueryParams={["teamId"]}
+        tabs={[
+          {
+            label: "Standings",
+            href: `/leagues/${id}/standings`,
+            icon: { name: "ranking-star" },
+            active: { leadingPath: "/leagues/:id/standings" },
+          },
+          {
+            href: `/leagues/${id}/players`,
+            icon: { name: "people-pulling" },
+            label: "Players",
+            active: { leadingPath: "/leagues/:id/players" },
+          },
+          {
+            href: `/leagues/${id}/schedule`,
+            icon: { name: "people-pulling" },
+            label: "Schedule",
+            active: { leadingPath: "/leagues/:id/schedule" },
+          },
+          {
+            href: `/leagues/${id}/scores`,
+            icon: { name: "people-pulling" },
+            label: "Scores",
+            active: { leadingPath: "/leagues/:id/scores" },
+            visible: hasLeagueRole([LeagueStaffRole.ADMIN, LeagueStaffRole.COMISSIONER]),
+          },
+        ]}
+      >
+        {children}
+      </DetailPage>
+      <LeagueDrawers />
+    </>
   );
 }

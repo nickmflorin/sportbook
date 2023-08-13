@@ -7,7 +7,7 @@ import { parseQueryParamIds } from "~/prisma/urls";
 import { SolidButton } from "~/components/buttons/SolidButton";
 import { Menu } from "~/components/menus/Menu";
 import { useMultiMenu } from "~/components/menus/MultiMenu";
-import { useMutableSearchParams } from "~/hooks/useMutableSearchParams";
+import { useQueryParams } from "~/hooks/useQueryParams";
 
 export type TeamFilterMenuProps = {
   readonly teams: Team[];
@@ -15,7 +15,7 @@ export type TeamFilterMenuProps = {
 };
 
 export const TeamFilterMenu = ({ teams, playersTeam }: TeamFilterMenuProps) => {
-  const { searchParams, updateParams } = useMutableSearchParams();
+  const { params, updateParams } = useQueryParams();
   const router = useRouter();
   const pathname = usePathname();
   const [_, startTransition] = useTransition();
@@ -23,7 +23,7 @@ export const TeamFilterMenu = ({ teams, playersTeam }: TeamFilterMenuProps) => {
   const multiMenu = useMultiMenu();
 
   const teamIds = teams.map(t => t.id);
-  const queryTeamIds = parseQueryParamIds({ params: searchParams, key: "teams" }).filter(id => teamIds.includes(id));
+  const queryTeamIds = parseQueryParamIds({ params, key: "teams" }).filter(id => teamIds.includes(id));
 
   const updateQuery = useMemo(
     () => (tms: string[] | null) => {

@@ -1,31 +1,23 @@
 "use client";
-import { type Team, type ModelWithFileUrl } from "~/prisma/model";
-import { useDetailDrawer } from "~/components/drawers/useDetailDrawer";
-import { renderTeamDrawer } from "~/app/actions/renderTeamDrawer";
+import { type Team } from "~/prisma/model";
+import { useQueryParams } from "~/hooks/useQueryParams";
 
 import { AlternateButton, type AlternateButtonProps } from "./AlternateButton";
 
-type BaseTeam = Pick<Team, "name" | "id"> | Pick<ModelWithFileUrl<Team>, "id" | "name" | "fileUrl">;
+type BaseTeam = Pick<Team, "name" | "id">;
 
-export interface TeamButtonProps<T extends BaseTeam> extends Omit<AlternateButtonProps<"secondary">, "variant"> {
+export interface TeamButtonProps<T extends BaseTeam>
+  extends Omit<AlternateButtonProps<"secondary">, "variant" | "href" | "onClick"> {
   readonly team: T;
 }
 
-export const TeamButton = <T extends BaseTeam>({ team, href, ...props }: TeamButtonProps<T>): JSX.Element => {
-  const { setId, drawer } = useDetailDrawer({
-    render: renderTeamDrawer,
-    insideView: false,
-  });
+export const TeamButton = <T extends BaseTeam>({ team, ...props }: TeamButtonProps<T>): JSX.Element => {
+  const { updateParams } = useQueryParams();
   return (
-    <>
-      <AlternateButton.Secondary
-        onClick={href === undefined ? async () => setId(team.id) : undefined}
-        href={href}
-        {...props}
-      >
-        {team.name}
-      </AlternateButton.Secondary>
-      {drawer}
-    </>
+    <AlternateButton.Secondary href={updateParams({ teamId: team.id }).href} {...props}>
+      {team.name}
+    </AlternateButton.Secondary>
   );
 };
+
+export default TeamButton;

@@ -1,30 +1,26 @@
 import { parseUserDisplayName } from "~/lib/user";
-import { type Player, type User } from "~/prisma/model";
+import { type PlayerWithUser } from "~/prisma/model";
 import { LeaguePlayerTypeBadge } from "~/components/badges/LeaguePlayerTypeBadge";
+import { PlayerButton } from "~/components/buttons/PlayerButton";
 
 import { Avatar, type AvatarProps } from "./Avatar";
 
-type Pl = (Player & { readonly user: User }) | User;
-
-const isPlayerWithUser = (p: Pl): p is Player & { readonly user: User } =>
-  (p as Player & { readonly user: User }).user !== undefined;
-
-export interface PlayerAvatarProps<P extends Pl> extends Omit<AvatarProps, "imageUrl" | "initials" | "displayName"> {
-  readonly player: P;
+export interface PlayerAvatarProps extends Omit<AvatarProps, "initials" | "name" | "onClick" | "href" | "button"> {
+  readonly player: PlayerWithUser;
+  readonly withTags?: true;
+  readonly withName?: true;
+  readonly withButton?: true;
 }
 
-export const PlayerAvatar = <P extends Pl>({ player, ...props }: PlayerAvatarProps<P>): JSX.Element => (
+export const PlayerAvatar = ({ player, withName, withButton, withTags, ...props }: PlayerAvatarProps): JSX.Element => (
   <Avatar
-    url={isPlayerWithUser(player) ? player.user.profileImageUrl : player.profileImageUrl}
-    tags={
-      isPlayerWithUser(player) ? [<LeaguePlayerTypeBadge key="0" size="xxs" withIcon value={player.playerType} />] : []
-    }
-    initials={
-      isPlayerWithUser(player)
-        ? parseUserDisplayName(player.user, { fallback: "" })
-        : parseUserDisplayName(player, { fallback: "" })
-    }
-    displayName={isPlayerWithUser(player) ? parseUserDisplayName(player.user) : parseUserDisplayName(player)}
+    url={player.user.profileImageUrl}
+    tags={withTags ? [<LeaguePlayerTypeBadge key="0" size="xxs" withIcon value={player.playerType} />] : []}
+    initials={parseUserDisplayName(player.user, { fallback: "" })}
+    name={withName ? parseUserDisplayName(player.user) : undefined}
     {...props}
+    button={withButton ? <PlayerButton player={player} /> : undefined}
   />
 );
+
+export default PlayerAvatar;

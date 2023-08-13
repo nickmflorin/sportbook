@@ -21,12 +21,11 @@ import { Separator } from "~/components/structural/Separator";
 import { DateTimeText } from "~/components/typography/DateTimeText";
 import { TeamStatsText } from "~/components/typography/TeamStatsText";
 import { Text } from "~/components/typography/Text";
+import { InfoView } from "~/components/views/InfoView";
 import { View } from "~/components/views/View";
 import { getAuthUser } from "~/server/auth";
 import { getTeamStats } from "~/server/leagues";
 import { putGameInTeamPerspective } from "~/server/leagues/games";
-
-import { InfoView } from "../views/InfoView";
 
 const DrawerView = dynamic(() => import("~/components/drawers/DrawerView"), {
   loading: () => <Loading loading={true} />,

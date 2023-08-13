@@ -3,18 +3,18 @@ import { useRouter, usePathname } from "next/navigation";
 import { useTransition } from "react";
 
 import { TextInput } from "~/components/input/TextInput";
-import { useMutableSearchParams } from "~/hooks/useMutableSearchParams";
+import { useQueryParams } from "~/hooks/useQueryParams";
 
 export interface SearchBarProps {
   readonly queryParamName?: string;
 }
 
 export const SearchBar = ({ queryParamName = "search" }: SearchBarProps) => {
-  const { searchParams, updateParams } = useMutableSearchParams();
+  const { params, updateParams } = useQueryParams();
   const router = useRouter();
   const pathname = usePathname();
 
-  const search = searchParams.get(queryParamName) || "";
+  const search = params.get(queryParamName) || "";
   const [_, startTransition] = useTransition();
 
   return (
