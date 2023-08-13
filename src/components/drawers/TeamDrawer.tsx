@@ -177,7 +177,7 @@ export const TeamDrawer = async ({ teamId }: TeamDrawerProps): Promise<JSX.Eleme
         contentProps={{ gap: "sm" }}
       >
         {team.players.map((player, i) => (
-          <PlayerAvatar key={i} player={player} contentDirection="row" />
+          <PlayerAvatar key={i} player={player} withButton contentDirection="row" />
         ))}
       </View>
     </DrawerView>
