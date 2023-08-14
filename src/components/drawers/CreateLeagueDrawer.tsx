@@ -26,7 +26,6 @@ export type LeagueFormValues = z.output<typeof LeagueSchema>;
 
 export type CreateLeagueDrawerProps = {
   readonly locations: Location[];
-  //  readonly onClose: () => void; */
 };
 
 export const CreateLeagueDrawer = ({ locations }: CreateLeagueDrawerProps): JSX.Element => {

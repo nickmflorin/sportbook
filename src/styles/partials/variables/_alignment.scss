@@ -1,0 +1,10 @@
+$alignments: (left, center, right);
+
+@mixin with-alignment {
+  @each $alignment in $alignments {
+    @content ($alignment);
+  }
+}
+
+$app-header-height: 60px;
+$app-sidebar-width: 60px;

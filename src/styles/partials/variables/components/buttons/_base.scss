@@ -1,0 +1,184 @@
+@use "sass:meta";
+@use "sass:string";
+
+@use "../../../functions" as fn;
+@use "../../../mixins" as mixins;
+
+@use "../../alignment" as alignment;
+@use "../../colors" as colors;
+@use "../../typography" as typography;
+@use "../../radius" as radius;
+
+@use "./sizing" as sizing;
+@use "./colors" as button-colors;
+
+$button-border-radius: radius.get-radius("sm");
+
+/* ------------------------------------------------------- Fonts --------------------------------------------------- */
+$button-font-family: typography.$font-family-inter;
+
+// The button font-weight here is used as the default - the font-weight will usually depend on the variant.
+$button-font-weight: typography.get-font-weight(
+  $weight: "medium",
+);
+$link-font-weight: typography.get-font-weight(
+  $weight: "medium",
+);
+
+@mixin button-base() {
+  @include mixins.transition(none);
+  appearance: none;
+  background-color: transparent;
+
+  /* When providing a border, we need to use the outline property - not the border property.  This
+     is because a border will contribute to the size of the button, whereas an outline will not. */
+  border: none;
+  border-radius: $button-border-radius;
+  box-shadow: none !important;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-family: $button-font-family;
+  font-stretch: normal;
+  font-weight: $button-font-weight;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  min-height: 0px;
+  letter-spacing: 0.6px;
+  -webkit-tap-highlight-color: transparent;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  vertical-align: middle;
+
+  outline-offset: -1 * button-colors.$button-outline-width;
+}
+
+@mixin solid-button($variant: null, $size: null) {
+  font-weight: typography.get-font-weight($weight: "semibold");
+
+  &.button--outline {
+    font-weight: typography.get-font-weight($weight: "regular");
+  }
+
+  > .button__content {
+    > .button__icon-wrapper {
+      padding-bottom: sizing.$button-icon-padding;
+      // When an icon or loading indicator is in the button, we want the height to slightly smaller than the line height
+      // of the accompanying text - so we subtract a little height from the wrapper.
+      padding-top: sizing.$button-icon-padding;
+    }
+  }
+
+  @if $size {
+    @include sizing.button-solid-size($size);
+  } @else {
+    @each $size in sizing.$button-size-names {
+      &.button--#{$size} {
+        @include sizing.button-solid-size($size);
+      }
+    }
+  }
+
+  @if $variant {
+    @include button-colors.button-colors($type: "solid", $variant: $variant);
+  } @else {
+    @each $variant in sizing.$button-variants {
+      &.button--#{$variant} {
+        @include button-colors.button-colors($type: "solid", $variant: $variant);
+      }
+    }
+  }
+}
+
+@mixin alternate-button($size: null, $weight: null, $variant: null) {
+  font-weight: typography.get-font-weight($weight: "medium");
+  padding: sizing.get-button-padding("alternate");
+
+  @if $weight {
+    font-weight: typography.get-font-weight($weight: $weight);
+  } @else {
+    // Allow the font-weight to be overridden.
+    @include typography.with-font-weights() using ($weight, $value) {
+      &.font-weight-#{$weight} {
+        font-weight: $value;
+      }
+    }
+  }
+
+  @if $variant {
+    @include button-colors.button-colors($type: "alternate", $variant: $variant);
+  } @else {
+    @each $variant in sizing.$button-variants {
+      &.button--#{$variant} {
+        @include button-colors.button-colors($type: "alternate", $variant: $variant);
+      }
+    }
+  }
+
+  @include alignment.with-alignment() using ($alignment) {
+    &.text-align-#{$alignment} {
+      text-align: $alignment;
+    }
+  }
+
+  @if $size {
+    @include sizing.button-alternate-size($size: $size);
+  } @else {
+    @each $size in sizing.$button-size-names {
+      &.button--#{$size} {
+        @include sizing.button-alternate-size($size: $size);
+      }
+    }
+  }
+}
+
+@mixin action-button-variant($variant, $size: null) {
+  @if $variant == "bare" {
+    @include button-colors.button-hovered-colors("color");
+    @include button-colors.button-focused-colors("color");
+  }
+  @if $size {
+    @include sizing.button-action-size($size, $variant);
+  } @else {
+    @each $size in sizing.$button-size-names {
+      &.button--#{$size} {
+        @include sizing.button-action-size($size, $variant);
+      }
+    }
+  }
+}
+
+@mixin action-button($variant: null, $size: null) {
+  // Use a layer so that the color can be more easily overridden in SASS elsewhere.
+  @layer {
+    color: colors.get-color("gray", $shade: 6);
+    @include mixins.with-state(("hovered", "focused")) {
+      color: colors.get-color("gray", $shade: 7);
+    }
+  }
+
+  @if $variant {
+    @include action-button-variant($variant, $size: $size);
+  } @else {
+    @each $variant in sizing.$button-variants {
+      &.button--#{$variant} {
+        @include action-button-variant($variant, $size: $size);
+      }
+    }
+  }
+}
+
+@mixin button($type, $args...) {
+  @include button-base();
+  $type: fn.validate-value($type, sizing.$button-types);
+  @if string.quote($type) == "solid" {
+    @include solid-button($args...);
+  } @else if string.quote($type) == "alternate" {
+    @include alternate-button($args...);
+  } @else if string.quote($type) == "action" {
+    @include action-button($args...);
+  } @else {
+    @error "The provided button type #{meta.inspect($type)} is not a supported type.";
+  }
+}

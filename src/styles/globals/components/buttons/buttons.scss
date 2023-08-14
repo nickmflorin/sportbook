@@ -2,23 +2,18 @@
 @use "sass:map";
 
 @use "partials";
-@use "./variants" as variants;
 @use "./base" as *;
 
 button {
-  @extend %button-link-base;
+  @include partials.button-base;
 }
 
 .button {
-  @extend %button-link-base;
-
   @include partials.disabled;
   @include partials.with-selectors((partials.$button-locked-class, partials.$button-loading-class)) {
     pointer-events: none;
   }
   @include button-link-structure("button");
-
-  outline-offset: -1 * partials.$button-outline-width;
 
   &--corner-style-square {
     border-radius: 0px !important;
@@ -37,7 +32,7 @@ button {
   */
   @each $type in partials.$button-types {
     @include partials.with-distinct-selector($type, partials.$button-types, $prefix: ".button--") {
-      @include variants.button-type($type);
+      @include partials.button($type);
     }
   }
 }

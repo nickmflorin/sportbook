@@ -5,7 +5,7 @@
 @use "./base" as *;
 
 a {
-  @extend %button-link-base;
+  @include partials.button-base();
 
   color: inherit;
   text-decoration: none;
@@ -16,7 +16,7 @@ a {
 }
 
 .link {
-  @extend %button-link-base;
+  @include partials.button-base();
 
   text-decoration: none;
   line-height: 1;

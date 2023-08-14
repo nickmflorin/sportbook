@@ -1,24 +1,35 @@
 "use client";
+import dynamic from "next/dynamic";
+import { useState } from "react";
+
 import { SolidButton } from "~/components/buttons/SolidButton";
-import { type DrawerRenderer } from "~/components/drawers";
-import { useDrawer } from "~/components/drawers/useDrawer";
+import { Loading } from "~/components/loading/Loading";
+
+const Drawer = dynamic(() => import("~/components/drawers/Drawer"), {
+  ssr: false,
+  loading: () => <Loading loading={true} />,
+});
 
 export interface CreateLeagueButtonProps {
-  readonly renderDrawer: DrawerRenderer;
+  readonly drawer: JSX.Element;
 }
 
-export const CreateLeagueButton = ({ renderDrawer }: CreateLeagueButtonProps): JSX.Element => {
-  const { drawer, open } = useDrawer({
-    renderer: renderDrawer,
-    drawerProps: { title: "Create a New League", description: "Configure your league however you would like." },
-  });
+export const CreateLeagueButton = ({ drawer }: CreateLeagueButtonProps): JSX.Element => {
+  const [open, setOpen] = useState(false);
 
   return (
     <>
-      <SolidButton.Primary key="0" onClick={() => open()}>
-        Create League
-      </SolidButton.Primary>
-      {drawer}
+      <SolidButton.Primary onClick={() => setOpen(true)}>Create League</SolidButton.Primary>
+      {open && (
+        <Drawer
+          title="Create a New League"
+          description="Configure your league however you would like."
+          open={open}
+          onClose={() => setOpen(false)}
+        >
+          {drawer}
+        </Drawer>
+      )}
     </>
   );
 };

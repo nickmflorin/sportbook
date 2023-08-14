@@ -1,0 +1,21 @@
+@use "../../../mixins" as mixins;
+
+/* ------------------------------------------------------- Mixins --------------------------------------------------- */
+$button-locked-class: ".button--locked";
+$button-loading-class: ".button--loading";
+
+@mixin button-hovered {
+  @include mixins.hovered {
+    @include mixins.without-selectors(($button-loading-class, $button-locked-class)) {
+      @content;
+    }
+  }
+}
+
+@mixin button-focused {
+  @include mixins.focused {
+    @include mixins.without-selectors(($button-loading-class, $button-locked-class)) {
+      @content;
+    }
+  }
+}

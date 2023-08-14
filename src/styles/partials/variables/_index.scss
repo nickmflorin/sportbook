@@ -1,3 +1,4 @@
+@forward "./alignment";
 @forward "./borders";
 @forward "./colors";
 @forward "./components";
@@ -5,16 +6,3 @@
 @forward "./scrollbar";
 @forward "./spacing";
 @forward "./typography";
-
-@use "./colors" as colors;
-
-$alignments: (left, center, right);
-
-@mixin with-alignment {
-  @each $alignment in $alignments {
-    @content ($alignment);
-  }
-}
-
-$app-header-height: 60px;
-$app-sidebar-width: 60px;
