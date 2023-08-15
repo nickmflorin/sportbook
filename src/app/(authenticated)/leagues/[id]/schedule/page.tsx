@@ -1,14 +1,16 @@
 import dynamic from "next/dynamic";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import uniq from "lodash.uniq";
 
-import { prisma, isPrismaInvalidIdError, isPrismaDoesNotExistError } from "~/prisma/client";
-import { type League, FileUploadEntity, type Team } from "~/prisma/model";
+import { prisma } from "~/prisma/client";
+import { FileUploadEntity } from "~/prisma/model";
 import { parseQueryTeamIds } from "~/prisma/urls";
-import { Loading } from "~/components/loading";
+import { Loading } from "~/components/loading/Loading";
 import { getAuthUser } from "~/server/auth";
 import { getUserLeaguePermissionCodes } from "~/server/leagues";
+
+import { getLeague } from "../getLeague";
 
 const GameScheduleTable = dynamic(() => import("~/components/tables/GameScheduleTable"), {
   ssr: true,
@@ -28,22 +30,7 @@ export default async function LeagueSchedule({
   const teamIds = await parseQueryTeamIds({ value: teams });
 
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
-  let league: League & { readonly teams: Team[] };
-  try {
-    league = await prisma.league.findFirstOrThrow({
-      include: { teams: true },
-      where: {
-        id,
-        OR: [{ staff: { some: { userId: user.id } } }, { teams: { some: { players: { some: { userId: user.id } } } } }],
-      },
-    });
-  } catch (e) {
-    if (isPrismaInvalidIdError(e) || isPrismaDoesNotExistError(e)) {
-      notFound();
-    } else {
-      throw e;
-    }
-  }
+  const league = await getLeague(id, user);
 
   const upcomingGames = await prisma.game.findMany({
     include: { homeTeam: true, awayTeam: true, location: true },

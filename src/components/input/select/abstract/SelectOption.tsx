@@ -1,9 +1,9 @@
 import { forwardRef } from "react";
 
-import { Checkbox } from "@mantine/core";
 import classNames from "classnames";
 
 import { pluckObjAttributes } from "~/lib/util";
+import { Checkbox } from "~/components/input/Checkbox";
 
 type BaseSelectOptionProps = {
   readonly disabled?: boolean;

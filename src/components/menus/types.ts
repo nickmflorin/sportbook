@@ -11,7 +11,7 @@ export type IMenuItem = {
 
 type BaseMenuItem = ComponentProps & {
   readonly label: string;
-  readonly icon?: IconProp | ImageProp;
+  readonly icon?: IconProp | ImageProp | JSX.Element;
   /**
    * Whether or not the {@link MenuItem} is in a loading state and should indicate as such with a loading indicator.
    *
@@ -57,12 +57,14 @@ export type ValuedMenuItem<V extends string | null> = BaseMenuItem & {
 export type DatumValuedMenuItem<V extends string | null, M> = BaseMenuItem & {
   readonly datum: M;
   readonly value: Exclude<V, null>;
+  // readonly renderContent?: (datum: M) => JSX.Element;
 };
 
 export type ValuelessMenuItem = BaseMenuItem;
 
 export type DatumValuelessMenuItem<M> = BaseMenuItem & {
   readonly datum: M;
+  // readonly renderContent?: (datum: M) => JSX.Element;
 };
 
 export type ValuelessValueGetter<V extends string | null> = (item: ValuelessMenuItem) => Exclude<V, null>;

@@ -1,5 +1,5 @@
 "use client";
-import { TextInput as RootTextInput, type TextInputProps as RootTextInputProps } from "@mantine/core";
+import { TextInput as RootTextInput, type TextInputProps as RootTextInputProps } from "@mantine/core/lib/TextInput";
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";

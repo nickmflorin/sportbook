@@ -1,5 +1,12 @@
+import { z } from "zod";
+
 export type InitialsArray = [string | undefined | null, string | undefined | null];
 export type InitialsString = string | InitialsArray;
+
+export const InitialsStringSchema = z.union([z.string(), z.array(z.string().optional().nullable())]);
+
+export const isInitialsString = (value: unknown): value is InitialsString =>
+  InitialsStringSchema.safeParse(value).success;
 
 export const parseInitials = (value: InitialsString): string => {
   if (Array.isArray(value)) {

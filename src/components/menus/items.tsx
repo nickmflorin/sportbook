@@ -6,6 +6,7 @@ import type * as types from "./types";
 
 import { isIconProp } from "~/components/icons";
 import { Icon } from "~/components/icons/Icon";
+import { isImageProp } from "~/components/images";
 import { Avatar } from "~/components/images/Avatar";
 import { Checkbox } from "~/components/input/Checkbox";
 import { Label } from "~/components/typography/Label";
@@ -58,8 +59,10 @@ export const BaseMenuItem = <
         {item.icon ? (
           isIconProp(item.icon) ? (
             <Icon size="xs" icon={item.icon} loading={item.loading || loading} />
-          ) : (
+          ) : isImageProp(item.icon) ? (
             <Avatar {...item.icon} loading={item.loading || loading} />
+          ) : (
+            item.icon
           )
         ) : (
           <Icon size="xs" loading={item.loading || loading} />

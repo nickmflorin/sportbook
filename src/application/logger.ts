@@ -1,9 +1,13 @@
-import pino, { type LoggerOptions } from "pino";
-
 import { env } from "~/env.mjs";
 
+import { createHotReloadIsolatedFn } from "./util";
+
 const initializeLogger = () => {
-  const loggerOptions: LoggerOptions = {
+  /* eslint-disable-next-line @typescript-eslint/no-var-requires */
+  const pino = require("pino").default;
+
+  /* eslint-disable-next-line @typescript-eslint/consistent-type-imports */
+  const loggerOptions: import("pino").LoggerOptions = {
     browser: {},
     level: env.NEXT_PUBLIC_LOG_LEVEL,
     base: {
@@ -19,4 +23,4 @@ const initializeLogger = () => {
   return pino(loggerOptions);
 };
 
-export const logger = initializeLogger();
+export const logger = createHotReloadIsolatedFn("logger", initializeLogger);

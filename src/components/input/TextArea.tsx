@@ -1,5 +1,5 @@
 "use client";
-import { Textarea as RootTextArea, type TextareaProps as RootTextAreaProps } from "@mantine/core";
+import { Textarea as RootTextArea, type TextareaProps as RootTextAreaProps } from "@mantine/core/lib/Textarea";
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";

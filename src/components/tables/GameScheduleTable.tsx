@@ -13,7 +13,7 @@ import {
 } from "~/prisma/model";
 import { GameStatusBadge } from "~/components/badges";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
-import { Loading } from "~/components/loading";
+import { Loading } from "~/components/loading/Loading";
 import { type TableAction } from "~/components/menus/TableActionDropdownMenu";
 import { DateTimeText } from "~/components/typography/DateTimeText";
 import { postponeGame, cancelGame } from "~/app/actions/game";

@@ -5,7 +5,7 @@ import classNames from "classnames";
 import { DataTable as MantineDataTable, type DataTableProps as MantineDataTableProps } from "mantine-datatable";
 
 import { type ClassName } from "~/lib/ui";
-import { Loading } from "~/components/loading";
+import { Loading } from "~/components/loading/Loading";
 
 import { ActionMenuColumn, EditRowColumn } from "./columns";
 import { type DataTableSize, DataTableSizes, type ActionMenu } from "./types";

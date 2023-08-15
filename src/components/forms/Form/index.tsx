@@ -8,7 +8,7 @@ import { type ComponentProps } from "~/lib/ui";
 import { CloseButton } from "~/components/buttons/CloseButton";
 import { FieldConditions } from "~/components/fields";
 import { Field, FieldGroup, ControlledField } from "~/components/fields/Field";
-import { Loading } from "~/components/loading";
+import { Loading } from "~/components/loading/Loading";
 import { ButtonFooter, type ButtonFooterProps } from "~/components/structural/ButtonFooter";
 import { InfoView, type InfoViewProps } from "~/components/views/InfoView";
 

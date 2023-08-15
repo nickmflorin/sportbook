@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useMemo } from "react";
 
-import { Popover, type PopoverProps } from "@mantine/core";
+import { Popover, type PopoverProps } from "@mantine/core/lib/Popover";
 
 import { type Style } from "~/lib/ui";
 import { SolidButton } from "~/components/buttons/SolidButton";

@@ -1,7 +1,11 @@
+import dynamic from "next/dynamic";
+
 import classNames from "classnames";
 
 import { Page, type PageProps } from "./Page";
-import { Tabs, type TabItem } from "./Tabs";
+import { type TabItem } from "./Tabs";
+
+const Tabs = dynamic(() => import("./Tabs"));
 
 export type DetailPageProps = Omit<PageProps, "header" | "imageSize" | "subHeader"> & {
   readonly tabs?: TabItem[];

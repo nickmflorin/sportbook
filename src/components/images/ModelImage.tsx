@@ -9,7 +9,7 @@ import { parseInitials } from "~/lib/util/strings";
 import { type IconProp } from "~/components/icons";
 import { Icon } from "~/components/icons/Icon";
 import { type ImageProp } from "~/components/images";
-import { Loading } from "~/components/loading";
+import { Loading } from "~/components/loading/Loading";
 import { Text, type TextProps } from "~/components/typography/Text";
 
 type BaseModelImageProps = ComponentProps & {

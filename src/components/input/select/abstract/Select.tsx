@@ -1,11 +1,10 @@
 import { useCallback } from "react";
 
 import {
-  Select as RootSingleSelect,
   MultiSelect as RootMultiSelect,
-  type SelectProps as _RootSingleSelectProps,
   type MultiSelectProps as _RootMultiSelectProps,
-} from "@mantine/core";
+} from "@mantine/core/lib/MultiSelect";
+import { Select as RootSingleSelect, type SelectProps as _RootSingleSelectProps } from "@mantine/core/lib/Select";
 import classNames from "classnames";
 
 import { type Color, type ClassName, type Style } from "~/lib/ui";

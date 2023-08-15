@@ -1,16 +1,17 @@
 import dynamic from "next/dynamic";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { type ReactNode } from "react";
 
-import { xprisma, isPrismaDoesNotExistError, isPrismaInvalidIdError, prisma } from "~/prisma/client";
-import { type LeagueWithConfig, type FileUpload, type LeagueStaff, LeagueStaffRole } from "~/prisma/model";
-import { Badge } from "~/components/badges/Badge";
+import { prisma } from "~/prisma/client";
+import { LeagueStaffRole } from "~/prisma/model";
 import { DetailPage } from "~/components/layout/DetailPage";
 import { getAuthUser } from "~/server/auth";
 
+import { getLeague } from "./getLeague";
 import { useUserLeagueStaffRoles } from "./hooks";
 
-const LeagueDrawers = dynamic(() => import("./LeagueDrawers"));
+const LeagueDrawers = dynamic(() => import("./LeagueDrawers"), { ssr: false });
+const Badge = dynamic(() => import("~/components/badges/Badge"), { ssr: false });
 
 interface LeagueLayoutProps {
   readonly params: { id: string };
@@ -19,25 +20,9 @@ interface LeagueLayoutProps {
 
 export default async function LeagueLayout({ children, params: { id } }: LeagueLayoutProps) {
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
-  let league: LeagueWithConfig & { readonly staff: LeagueStaff[]; readonly teams: { readonly id: string }[] };
-  let fileUpload: FileUpload | null;
-  let getImage: () => Promise<FileUpload | null>;
-  try {
-    ({ getImage, ...league } = await xprisma.league.findFirstOrThrow({
-      include: { staff: true, config: true, teams: { select: { id: true } } },
-      where: {
-        id,
-        OR: [{ staff: { some: { userId: user.id } } }, { teams: { some: { players: { some: { userId: user.id } } } } }],
-      },
-    }));
-    fileUpload = await getImage();
-  } catch (e) {
-    if (isPrismaInvalidIdError(e) || isPrismaDoesNotExistError(e)) {
-      notFound();
-    } else {
-      throw e;
-    }
-  }
+
+  const { getImage, ...league } = await getLeague(id, user);
+  const fileUpload = await getImage();
 
   const numPlayers = await prisma.player.count({ where: { teamId: { in: league.teams.map(l => l.id) } } });
 

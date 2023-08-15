@@ -2,7 +2,6 @@
 import { type LinkProps } from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import React from "react";
-import { UrlObject } from "url";
 
 import classNames from "classnames";
 import uniq from "lodash.uniq";
@@ -48,3 +47,5 @@ export const Tabs = ({ tabs, queryParams = [], ...props }: TabsProps) => {
     </div>
   );
 };
+
+export default Tabs;

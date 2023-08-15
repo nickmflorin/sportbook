@@ -1,6 +1,6 @@
 import { type z } from "zod";
 
-import { LeagueSchema, LeagueCompetitionLevel, LeagueType } from "~/prisma/model";
+import { LeagueSchema, LeagueCompetitionLevel, LeagueType, InvitePlayersSchema } from "~/prisma/model";
 
 import { useForm } from "./useForm";
 
@@ -17,5 +17,16 @@ export const useLeagueForm = () =>
       locations: [],
       leagueStart: null,
       leagueEnd: null,
+    },
+  });
+
+export type InvitePlayersFormValues = z.infer<typeof InvitePlayersSchema>;
+
+export const useInvitePlayersForm = () =>
+  useForm<InvitePlayersFormValues>({
+    schema: InvitePlayersSchema,
+    defaultValues: {
+      userIds: [],
+      teamId: "",
     },
   });

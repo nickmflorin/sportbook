@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { prisma } from "~/prisma/client";
 import { type League, type Team } from "~/prisma/model";
 import { TeamFilterMenu } from "~/components/filters/TeamFilterMenu";
-import { Loading } from "~/components/loading";
+import { Loading } from "~/components/loading/Loading";
 import { DropdownMenu } from "~/components/menus/DropdownMenu";
 
 export type TeamWithPlayers = Team & { readonly players: { userId: string }[] };

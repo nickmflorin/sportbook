@@ -44,6 +44,48 @@ const config = {
       permanent: false,
     },
   ],
+  modularizeImports: {
+    "@mantine/core/lib/Checkbox": {
+      transform: "@mantine/core/esm/Checkbox/Checkbox.js",
+      skipDefaultConversion: true,
+      preventFullImport: true,
+    },
+    "@mantine/core/lib/Switch": {
+      transform: "@mantine/core/esm/Switch/Switch.js",
+      skipDefaultConversion: true,
+      preventFullImport: true,
+    },
+    "@mantine/core/lib/TextInput": {
+      transform: "@mantine/core/esm/TextInput/TextInput.js",
+      skipDefaultConversion: true,
+      preventFullImport: true,
+    },
+    "@mantine/core/lib/Textarea": {
+      transform: "@mantine/core/esm/Textarea/Textarea.js",
+      skipDefaultConversion: true,
+      preventFullImport: true,
+    },
+    "@mantine/core/lib/Select": {
+      transform: "@mantine/core/esm/Select/Select.js",
+      skipDefaultConversion: true,
+      preventFullImport: true,
+    },
+    "@mantine/core/lib/MultiSelect": {
+      transform: "@mantine/core/esm/MultiSelect/MultiSelect.js",
+      skipDefaultConversion: true,
+      preventFullImport: true,
+    },
+    "@mantine/core/lib/Popover": {
+      transform: "@mantine/core/esm/Popover/Popover.js",
+      skipDefaultConversion: true,
+      preventFullImport: true,
+    },
+    "@mantine/dates/lib/components/DateInput": {
+      transform: "@mantine/dates/esm/components/DateInput/DateInput.js",
+      skipDefaultConversion: true,
+      preventFullImport: true,
+    },
+  },
 };
 
 export default config;

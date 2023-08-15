@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect, useMemo, useTransition } from "react";
 
 import { type Required } from "utility-types";
@@ -281,3 +282,5 @@ export const SingleMenu = <V extends string | null, M>(props: SingleMenuProps<V,
     return <></>;
   }
 };
+
+export default SingleMenu;

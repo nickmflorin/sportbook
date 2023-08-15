@@ -1,16 +1,19 @@
 import dynamic from "next/dynamic";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import uniq from "lodash.uniq";
 
-import { prisma, isPrismaInvalidIdError, isPrismaDoesNotExistError } from "~/prisma/client";
-import { type Team, type League, FileUploadEntity, type WithFileUrl, type TeamWithStats } from "~/prisma/model";
-import { Loading } from "~/components/loading";
+import { prisma } from "~/prisma/client";
+import { type Team, FileUploadEntity, type WithFileUrl, type TeamWithStats } from "~/prisma/model";
+import { Loading } from "~/components/loading/Loading";
 import { getAuthUser } from "~/server/auth";
 import { getLeagueStandings } from "~/server/leagues";
 
+import { getLeague } from "../../getLeague";
+
 const TeamStandingsTable = dynamic(() => import("~/components/tables/TeamStandingsTable"), {
   loading: () => <Loading loading={true} />,
+  ssr: false,
 });
 
 interface LeagueStandingsProps {
@@ -19,21 +22,8 @@ interface LeagueStandingsProps {
 
 export default async function LeagueStandings({ params: { id } }: LeagueStandingsProps) {
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
-  let league: League;
-  try {
-    league = await prisma.league.findFirstOrThrow({
-      where: {
-        id,
-        OR: [{ staff: { some: { userId: user.id } } }, { teams: { some: { players: { some: { userId: user.id } } } } }],
-      },
-    });
-  } catch (e) {
-    if (isPrismaInvalidIdError(e) || isPrismaDoesNotExistError(e)) {
-      notFound();
-    } else {
-      throw e;
-    }
-  }
+  const league = await getLeague(id, user);
+
   const standings = await getLeagueStandings(league);
 
   const games = await prisma.game.findMany({

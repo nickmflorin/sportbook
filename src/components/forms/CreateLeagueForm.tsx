@@ -1,8 +1,8 @@
 import { useRouter } from "next/navigation";
 import React, { useState, useTransition } from "react";
 
-import { Switch } from "@mantine/core";
-import { DateInput } from "@mantine/dates";
+import { Switch } from "@mantine/core/lib/Switch";
+import { DateInput } from "@mantine/dates/lib/components/DateInput";
 
 import type * as z from "zod";
 
