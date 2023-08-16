@@ -10,7 +10,6 @@ import {
   type BasicIconComponentProps,
   isBasicIconComponentProps,
 } from "./IconComponent";
-// import { Spinner } from "./Spinner";
 
 const Spinner = dynamic(() => import("./Spinner"), { ssr: false });
 

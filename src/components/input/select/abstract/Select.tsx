@@ -9,7 +9,8 @@ import classNames from "classnames";
 
 import { type Color, type ClassName, type Style } from "~/lib/ui";
 import { type IconProp } from "~/components/icons";
-import { Spinner, Icon } from "~/components/icons/Icon";
+import { Icon } from "~/components/icons/Icon";
+import { Spinner } from "~/components/icons/Spinner";
 import { Label } from "~/components/typography/Label";
 import { Text } from "~/components/typography/Text";
 
