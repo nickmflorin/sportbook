@@ -26,6 +26,7 @@ export const CreateLeagueButton = ({ drawer }: CreateLeagueButtonProps): JSX.Ele
           description="Configure your league however you would like."
           open={open}
           onClose={() => setOpen(false)}
+          instanceId="create-league-drawer"
         >
           {drawer}
         </Drawer>

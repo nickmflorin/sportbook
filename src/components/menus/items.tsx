@@ -4,8 +4,8 @@ import classNames from "classnames";
 
 import type * as types from "./types";
 
-import { isIconProp } from "~/components/icons";
 import { Icon } from "~/components/icons/Icon";
+import { isIconProp } from "~/components/icons/util";
 import { isImageProp } from "~/components/images";
 import { Avatar } from "~/components/images/Avatar";
 import { Checkbox } from "~/components/input/Checkbox";

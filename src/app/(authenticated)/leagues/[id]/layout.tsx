@@ -4,6 +4,7 @@ import { type ReactNode } from "react";
 
 import { prisma } from "~/prisma/client";
 import { LeagueStaffRole } from "~/prisma/model";
+import { Badge } from "~/components/badges/Badge";
 import { DetailPage } from "~/components/layout/DetailPage";
 import { getAuthUser } from "~/server/auth";
 
@@ -11,7 +12,6 @@ import { getLeague } from "./getLeague";
 import { useUserLeagueStaffRoles } from "./hooks";
 
 const LeagueDrawers = dynamic(() => import("./LeagueDrawers"), { ssr: false });
-const Badge = dynamic(() => import("~/components/badges/Badge"), { ssr: false });
 
 interface LeagueLayoutProps {
   readonly params: { id: string };

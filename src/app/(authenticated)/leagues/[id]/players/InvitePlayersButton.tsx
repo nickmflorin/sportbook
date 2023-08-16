@@ -16,7 +16,6 @@ export interface InvitePlayersButtonProps {
 
 export const InvitePlayersButton = ({ drawer }: InvitePlayersButtonProps): JSX.Element => {
   const [open, setOpen] = useState(false);
-  console.log({ open });
   return (
     <>
       <SolidButton.Primary onClick={() => setOpen(true)}>Invite Players</SolidButton.Primary>
@@ -25,6 +24,7 @@ export const InvitePlayersButton = ({ drawer }: InvitePlayersButtonProps): JSX.E
         description="Configure your league however you would like."
         open={open}
         onClose={() => setOpen(false)}
+        instanceId="invite-players-drawer"
       >
         {drawer}
       </Drawer>

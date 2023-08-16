@@ -22,13 +22,19 @@ const QueryParamDrawer = dynamic(() => import("~/components/drawers/QueryParamDr
 
 export const Drawers = () => (
   <>
-    <QueryParamDrawer<"teamId"> drawerProps={{ slot: 1, insideView: false }} params={["teamId"]}>
+    <QueryParamDrawer<"teamId">
+      drawerProps={{ slot: 1, insideView: false, instanceId: "team-drawer" }}
+      params={["teamId"]}
+    >
       {async params => {
         "use server";
         return <TeamDrawer {...params} />;
       }}
     </QueryParamDrawer>
-    <QueryParamDrawer<"playerId"> drawerProps={{ slot: 2, insideView: false }} params={["playerId"]}>
+    <QueryParamDrawer<"playerId">
+      drawerProps={{ slot: 2, insideView: false, instanceId: "player-drawer" }}
+      params={["playerId"]}
+    >
       {async params => {
         "use server";
         return <PlayerDrawer {...params} />;

@@ -1,11 +1,14 @@
+import dynamic from "next/dynamic";
 import React, { type ReactNode } from "react";
 
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
 import { type IconSizes } from "~/components/icons";
-import { Spinner, type SpinnerProps } from "~/components/icons/Icon";
+import { type SpinnerProps } from "~/components/icons/Spinner";
 import { ShowHide } from "~/components/util";
+
+const Spinner = dynamic(() => import("~/components/icons/Spinner"));
 
 type BaseLoadingProps = ComponentProps &
   Pick<SpinnerProps, "color" | "size" | "loading"> & {

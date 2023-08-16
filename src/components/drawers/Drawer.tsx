@@ -12,9 +12,10 @@ export const Drawer = ({
   onClose,
   insideView,
   loading,
+  instanceId,
   ...props
 }: DrawerProps): JSX.Element => (
-  <DrawerPortal open={open} slot={slot} loading={loading} onClose={onClose}>
+  <DrawerPortal instanceId={instanceId} open={open} slot={slot} loading={loading} onClose={onClose}>
     {insideView !== false ? <DrawerView {...props}>{children}</DrawerView> : <>{children}</>}
   </DrawerPortal>
 );

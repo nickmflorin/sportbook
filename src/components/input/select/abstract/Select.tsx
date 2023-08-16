@@ -8,7 +8,7 @@ import { Select as RootSingleSelect, type SelectProps as _RootSingleSelectProps 
 import classNames from "classnames";
 
 import { type Color, type ClassName, type Style } from "~/lib/ui";
-import { type BasicIconProp } from "~/components/icons";
+import { type IconProp } from "~/components/icons";
 import { Spinner, Icon } from "~/components/icons/Icon";
 import { Label } from "~/components/typography/Label";
 import { Text } from "~/components/typography/Text";
@@ -21,7 +21,7 @@ export type BaseSelectOption<T, V> = T & {
   readonly value?: V;
   readonly label?: string;
   readonly iconColor?: Color | undefined;
-  readonly icon?: BasicIconProp | undefined;
+  readonly icon?: IconProp | undefined;
 };
 
 type _SelectChangeHandlerValue<V extends string | null, M extends SelectMode> = M extends "multiple"

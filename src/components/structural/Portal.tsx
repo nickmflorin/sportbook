@@ -23,8 +23,24 @@ export const usePortal = (id: string | number | undefined): Element | null => {
   return parent;
 };
 
+const usePortalTarget = (initialId?: string | number): [Element | null, (id: string | number) => void] => {
+  const [id, setId] = useState<string | number | undefined>(initialId);
+  const [parent, setParent] = useState<Element | null>(null);
+
+  useEffect(() => {
+    if (id !== undefined) {
+      const existingParent = document.querySelector(`#${id}`);
+      const parentElem = existingParent || createRootElement(id);
+      setParent(parentElem);
+    }
+  }, [id]);
+
+  return [parent, setId];
+};
+
 export interface PortalProps {
   readonly targetId: string | number | undefined;
+  readonly fallbackTargetId?: string | number | undefined;
   readonly children: ReactNode;
   readonly open: boolean;
   /**
@@ -36,12 +52,25 @@ export interface PortalProps {
   readonly isExistingChild?: (element: Element) => boolean;
 }
 
-export const Portal = ({ targetId, children, isExistingChild, open }: PortalProps): JSX.Element => {
-  const target = usePortal(targetId);
+export const Portal = ({ targetId, children, fallbackTargetId, isExistingChild, open }: PortalProps): JSX.Element => {
+  const [target, setId] = usePortalTarget();
   const [element, setElement] = useState<JSX.Element | null>(null);
 
   useEffect(() => {
+    if (open && targetId) {
+      setId(targetId);
+    }
+  }, [targetId, open, setId]);
+
+  useEffect(() => {
+    if (open && fallbackTargetId && target && target.children.length !== 0) {
+      setId(fallbackTargetId);
+    }
+  }, [open, target, fallbackTargetId, setId]);
+
+  useEffect(() => {
     if (target !== null) {
+      console.log({ open, isExistingChild, numChildren: target.children.length });
       if (open) {
         /* If a child identifier is provided, and the target has more than one child where any of them meet that
            criteria, it means that the portal's content has changed and the new content is added as a sibling of the
@@ -85,6 +114,8 @@ export const Portal = ({ targetId, children, isExistingChild, open }: PortalProp
               <DrawerContent id={props.id} />
            </Drawer>
            */
+        if (target.children.length !== 0) {
+        }
         if (isExistingChild && target.children.length > 1) {
           let toRemove: Element[] = [];
           for (let i = 0; i < target.children.length - 1; i++) {
@@ -95,6 +126,7 @@ export const Portal = ({ targetId, children, isExistingChild, open }: PortalProp
           }
           setTimeout(() =>
             toRemove.forEach(c => {
+              console.log({ removing: c });
               try {
                 target.removeChild(c);
               } catch (e) {

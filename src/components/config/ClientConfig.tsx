@@ -1,5 +1,6 @@
 "use client";
 import React, { type ReactNode } from "react";
+
 /* FontAwesome's stylesheet must be imported, before any internal components or stylesheets are imported. */
 // import "@fortawesome/fontawesome-svg-core/styles.css";
 

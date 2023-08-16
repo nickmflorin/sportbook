@@ -1,4 +1,3 @@
-import { Icon } from "~/components/icons/Icon";
 import { AppLayout } from "~/components/layout/AppLayout";
 
 export interface AuthenticatedLayoutParams {
@@ -10,10 +9,10 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPar
     <AppLayout
       authenticated={true}
       sidebar={[
-        { href: "/dashboard", icon: <Icon name="house-chimney" />, active: { leadingPath: "/dashboard" } },
+        { href: "/dashboard", icon: { name: "house-chimney" }, active: { leadingPath: "/dashboard" } },
         {
           href: "/leagues",
-          icon: <Icon name="sitemap" />,
+          icon: { name: "sitemap" },
           active: [
             { leadingPath: "/leagues" },
             { leadingPath: "/leagues/:id" },
@@ -22,8 +21,8 @@ export default function AuthenticatedLayout({ children }: AuthenticatedLayoutPar
             { leadingPath: "/leagues/:id/schedule" },
           ],
         },
-        { href: "/teams", icon: <Icon name="people-group" />, active: { leadingPath: "/teams" } },
-        { href: "/games", icon: <Icon name="table-tennis-paddle-ball" />, active: { leadingPath: "/games" } },
+        { href: "/teams", icon: { name: "people-group" }, active: { leadingPath: "/teams" } },
+        { href: "/games", icon: { name: "table-tennis-paddle-ball" }, active: { leadingPath: "/games" } },
       ]}
     >
       {children}

@@ -1,14 +1,19 @@
 "use client";
+import dynamic from "next/dynamic";
 import { useMemo } from "react";
 
 import classNames from "classnames";
-import { DataTable as MantineDataTable, type DataTableProps as MantineDataTableProps } from "mantine-datatable";
+import { type DataTableProps as MantineDataTableProps } from "mantine-datatable";
 
 import { type ClassName } from "~/lib/ui";
 import { Loading } from "~/components/loading/Loading";
 
 import { ActionMenuColumn, EditRowColumn } from "./columns";
 import { type DataTableSize, DataTableSizes, type ActionMenu } from "./types";
+
+const MantineDataTable = dynamic(() => import("mantine-datatable").then(i => i.DataTable)) as {
+  <T>(props: MantineDataTableProps<T>): JSX.Element;
+};
 
 export type DataTableProps<T> = Pick<MantineDataTableProps<T>, "columns" | "sx"> & {
   readonly size?: DataTableSize;
@@ -70,3 +75,5 @@ export const DataTable = <T extends Record<string, unknown>>({
 
   return <MantineDataTable<T> {...rootProps} />;
 };
+
+export default DataTable;

@@ -1,7 +1,7 @@
 import type * as types from "./types";
 
 import { type Color } from "~/lib/ui";
-import { type BasicIconProp } from "~/components/icons";
+import { type IconProp } from "~/components/icons";
 
 export type PrismaEnumAssertion<E extends types.PrismaEnum> = (
   this: EnumModel<E>,
@@ -67,7 +67,7 @@ export class EnumModel<E extends types.PrismaEnum> {
 
   getLabel = (v: types.PrismaEnumValue<E>): string => this.config[v].label;
 
-  getIcon = (v: types.PrismaEnumValue<E>): BasicIconProp | undefined => this.config[v].icon;
+  getIcon = (v: types.PrismaEnumValue<E>): IconProp | undefined => this.config[v].icon;
 
   getIconColor = (v: types.PrismaEnumValue<E>): Color | undefined => this.config[v].iconColor;
 
