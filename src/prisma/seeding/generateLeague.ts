@@ -7,7 +7,7 @@ import {
   LeagueStaffRole,
   LeagueType,
   LeagueCompetitionLevel,
-  LeaguePermissionCode,
+  LeagueStaffPermissionCode,
 } from "@prisma/client";
 
 import {
@@ -104,22 +104,22 @@ export default async function generateLeague(sport: Sport, ctx: SeedContext) {
     },
   });
   /* For now, we will default the permissions for leagues until we have a better way to configure them from the UI. */
-  await prisma.leaguePermissionSet.createMany({
+  await prisma.leagueStaffPermissionSet.createMany({
     data: [
       {
-        ...getModelMeta("LeaguePermissionSet", { getUser: ctx.getUser }),
+        ...getModelMeta("LeagueStaffPermissionSet", { getUser: ctx.getUser }),
         leagueConfigId: league.configId,
         leagueStaffRole: LeagueStaffRole.ADMIN,
-        permissionCodes: [LeaguePermissionCode.CANCEL_GAME, LeaguePermissionCode.POSTPONE_GAME],
+        permissionCodes: [LeagueStaffPermissionCode.CANCEL_GAME, LeagueStaffPermissionCode.POSTPONE_GAME],
       },
       {
-        ...getModelMeta("LeaguePermissionSet", { getUser: ctx.getUser }),
+        ...getModelMeta("LeagueStaffPermissionSet", { getUser: ctx.getUser }),
         leagueConfigId: league.configId,
         leagueStaffRole: LeagueStaffRole.COMISSIONER,
-        permissionCodes: [LeaguePermissionCode.CANCEL_GAME, LeaguePermissionCode.POSTPONE_GAME],
+        permissionCodes: [LeagueStaffPermissionCode.CANCEL_GAME, LeagueStaffPermissionCode.POSTPONE_GAME],
       },
       {
-        ...getModelMeta("LeaguePermissionSet", { getUser: ctx.getUser }),
+        ...getModelMeta("LeagueStaffPermissionSet", { getUser: ctx.getUser }),
         leagueConfigId: league.configId,
         leagueStaffRole: LeagueStaffRole.REFEREE,
         permissionCodes: [],

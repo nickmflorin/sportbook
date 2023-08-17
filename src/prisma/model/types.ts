@@ -6,10 +6,11 @@ import {
   type Team,
   type GameResult,
   type Game,
-  type Player,
+  type LeaguePlayer,
+  type LeaguePlayerPermissionSet,
   type User,
   type LeagueConfig,
-  type LeaguePermissionSet,
+  type LeagueStaffPermissionSet,
 } from "@prisma/client";
 
 import { type Equals } from "~/lib/util/types";
@@ -79,7 +80,10 @@ export type ModelWithFileUrl<N extends FileUploadModelName | PrismaModelType<Fil
 
 export type LeagueWithConfig = League & { readonly config: LeagueConfig };
 
-export type LeagueConfigWithPermissionSets = LeagueConfig & { readonly permissionSets: LeaguePermissionSet[] };
+export type LeagueConfigWithPermissionSets = LeagueConfig & {
+  readonly staffPermissionSets: LeagueStaffPermissionSet[];
+  readonly playerPermissionSets: LeaguePlayerPermissionSet[];
+};
 
 export type LeagueWithConfigAndPermissionSets = League & { readonly config: LeagueConfigWithPermissionSets };
 
@@ -123,13 +127,13 @@ export type TeamWithStats<T extends Team = Team, S extends keyof TeamStats = key
   readonly stats: Pick<TeamStats, S>;
 };
 
-export type PlayerWithUser = Player & {
+export type LeaguePlayerWithUser = LeaguePlayer & {
   readonly user: User;
 };
 
 export type GameWithTeams = GameWithResult & { readonly awayTeam: Team; readonly homeTeam: Team };
 
-export type TeamWithPlayers = Team & { readonly players: PlayerWithUser[] };
+export type TeamWithPlayers = Team & { readonly players: LeaguePlayerWithUser[] };
 
 export type TeamGame<G extends GameWithResult = GameWithResult> = G & {
   readonly resultType: GameResultType;

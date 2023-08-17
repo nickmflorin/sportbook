@@ -5,19 +5,19 @@ import { ServerError, isServerErrorResponse } from "~/application/errors";
 import { prisma, isPrismaInvalidIdError, isPrismaDoesNotExistError } from "~/prisma/client";
 import {
   GameStatus,
-  LeaguePermissionCode,
+  LeagueStaffPermissionCode,
   type Game,
   type LeagueWithConfigAndPermissionSets,
   CancelGameSchema as _CancelGameSchema,
 } from "~/prisma/model";
 import { getAuthUser } from "~/server/auth";
-import { getUserLeaguePermissionCodes } from "~/server/leagues";
+import { getUserLeagueStaffPermissionCodes } from "~/server/leagues";
 
 type ModifyGameStatus = typeof GameStatus.CANCELLED | typeof GameStatus.POSTPONED;
 
-const StatusToPermission: { [key in ModifyGameStatus]: LeaguePermissionCode } = {
-  [GameStatus.CANCELLED]: LeaguePermissionCode.CANCEL_GAME,
-  [GameStatus.POSTPONED]: LeaguePermissionCode.POSTPONE_GAME,
+const StatusToPermission: { [key in ModifyGameStatus]: LeagueStaffPermissionCode } = {
+  [GameStatus.CANCELLED]: LeagueStaffPermissionCode.CANCEL_GAME,
+  [GameStatus.POSTPONED]: LeagueStaffPermissionCode.POSTPONE_GAME,
 };
 
 export const validateGameStatusChange = async (id: string, status: ModifyGameStatus) => {
@@ -40,7 +40,7 @@ export const validateGameStatusChange = async (id: string, status: ModifyGameSta
     }
   }
   // The permission code set will be empty if the user is not a staff member for the league.
-  const permissionCodes = await getUserLeaguePermissionCodes({ user, league: game.league });
+  const permissionCodes = await getUserLeagueStaffPermissionCodes({ user, league: game.league });
   if (!permissionCodes.includes(StatusToPermission[status])) {
     return ServerError.Forbidden().toResponse();
   } else if (game.status === status) {

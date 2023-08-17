@@ -1,6 +1,6 @@
 /* eslint-disable no-console -- This script runs outside of the logger context. */
 import chunk from "lodash.chunk";
-import { type User, type League, Color, LeaguePlayerType, type Team } from "@prisma/client";
+import { type User, type League, TeamColor, LeaguePlayerRole, type Team } from "@prisma/client";
 
 import { ensuresDefinedValue } from "~/lib/util";
 import {
@@ -83,18 +83,18 @@ async function generateLeagueTeam(name: string, players: User[], league: League)
       ...getModelMeta("Team", { getUser: getPlayer }),
       name,
       leagueId: league.id,
-      color: selectAtRandom(Object.values(Color)),
+      color: selectAtRandom(Object.values(TeamColor)),
       players: {
         create: [
           ...players.map(user => ({
-            ...getModelMeta("Player", { getUser: getPlayer }),
+            ...getModelMeta("LeaguePlayer", { getUser: getPlayer }),
             user: { connect: { id: user.id } },
             /* We may need to introduce restrictions on the number of captains and/or co-captains per team down the
                line. */
-            playerType: selectAtRandomFrequency([
-              { value: LeaguePlayerType.CAPTAIN, frequency: 0.05 },
-              { value: LeaguePlayerType.CO_CAPTAIN, frequency: 0.05 },
-              { value: LeaguePlayerType.PLAYER, frequency: 1.0 },
+            role: selectAtRandomFrequency([
+              { value: LeaguePlayerRole.CAPTAIN, frequency: 0.05 },
+              { value: LeaguePlayerRole.CO_CAPTAIN, frequency: 0.05 },
+              { value: LeaguePlayerRole.PLAYER, frequency: 1.0 },
             ]),
           })),
         ],

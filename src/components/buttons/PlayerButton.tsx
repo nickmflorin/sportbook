@@ -1,11 +1,11 @@
 "use client";
 import { parseUserDisplayName } from "~/lib/user";
-import { type PlayerWithUser } from "~/prisma/model";
+import { type LeaguePlayerWithUser } from "~/prisma/model";
 import { useQueryParams } from "~/hooks/useQueryParams";
 
 import { AlternateButton, type AlternateButtonProps } from "./AlternateButton";
 
-type BasePlayer = Pick<PlayerWithUser, "user" | "id">;
+type BasePlayer = Pick<LeaguePlayerWithUser, "user" | "id">;
 
 export interface PlayerButtonProps<T extends BasePlayer>
   extends Omit<AlternateButtonProps<"secondary">, "variant" | "href" | "onClick"> {

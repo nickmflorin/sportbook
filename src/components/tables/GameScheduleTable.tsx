@@ -8,7 +8,7 @@ import {
   type Game,
   type Team,
   type Location,
-  LeaguePermissionCode,
+  LeagueStaffPermissionCode,
   GameStatus,
 } from "~/prisma/model";
 import { GameStatusBadge } from "~/components/badges";
@@ -77,17 +77,17 @@ const GameScheduleColumns: {
 
 export interface GameScheduleTableProps extends Omit<DataTableProps<GameDatum>, "onRowEdit" | "columns"> {
   readonly columns?: GameScheduleTableColumn[];
-  readonly permissionCodes?: LeaguePermissionCode[];
+  readonly permissionCodes?: LeagueStaffPermissionCode[];
 }
 
-const hasActionMenu = (permissionCodes?: LeaguePermissionCode[]) =>
+const hasActionMenu = (permissionCodes?: LeagueStaffPermissionCode[]) =>
   permissionCodes &&
-  (permissionCodes.includes(LeaguePermissionCode.CANCEL_GAME) ||
-    permissionCodes.includes(LeaguePermissionCode.POSTPONE_GAME));
+  (permissionCodes.includes(LeagueStaffPermissionCode.CANCEL_GAME) ||
+    permissionCodes.includes(LeagueStaffPermissionCode.POSTPONE_GAME));
 
 const actionMenuItems = (
   datum: GameDatum,
-  permissionCodes: LeaguePermissionCode[],
+  permissionCodes: LeagueStaffPermissionCode[],
   router: ReturnType<typeof useRouter>,
 ): TableAction<GameDatum>[] => [
   {
@@ -105,7 +105,7 @@ const actionMenuItems = (
       }
     },
     visible:
-      permissionCodes.includes(LeaguePermissionCode.POSTPONE_GAME) &&
+      permissionCodes.includes(LeagueStaffPermissionCode.POSTPONE_GAME) &&
       !([GameStatus.POSTPONED, GameStatus.CANCELLED, GameStatus.PROPOSED] as string[]).includes(datum.status),
   },
   {
@@ -126,7 +126,7 @@ const actionMenuItems = (
         />,
       ),
     visible:
-      permissionCodes.includes(LeaguePermissionCode.CANCEL_GAME) &&
+      permissionCodes.includes(LeagueStaffPermissionCode.CANCEL_GAME) &&
       !([GameStatus.CANCELLED, GameStatus.PROPOSED] as string[]).includes(datum.status),
   },
 ];
@@ -134,7 +134,7 @@ const actionMenuItems = (
 const actionMenu = (
   datum: GameDatum,
   router: ReturnType<typeof useRouter>,
-  permissionCodes?: LeaguePermissionCode[],
+  permissionCodes?: LeagueStaffPermissionCode[],
 ) => {
   if (permissionCodes !== undefined) {
     const items = actionMenuItems(datum, permissionCodes, router);

@@ -24,7 +24,7 @@ export default async function LeagueLayout({ children, params: { id } }: LeagueL
   const { getImage, ...league } = await getLeague(id, user);
   const fileUpload = await getImage();
 
-  const numPlayers = await prisma.player.count({ where: { teamId: { in: league.teams.map(l => l.id) } } });
+  const numPlayers = await prisma.leaguePlayer.count({ where: { teamId: { in: league.teams.map(l => l.id) } } });
 
   const { hasLeagueRole } = await useUserLeagueStaffRoles(user, league);
 

@@ -6,7 +6,7 @@ import {
   type League,
   type User,
   type LeagueWithConfig,
-  type LeaguePermissionCode,
+  type LeagueStaffPermissionCode,
   type LeagueWithConfigAndPermissionSets,
 } from "~/prisma/model";
 
@@ -18,23 +18,27 @@ const isLeagueWithConfig = (league: L): league is LeagueWithConfig =>
 const isLeagueWithConfigAndPermissionSets = (league: L): league is LeagueWithConfigAndPermissionSets =>
   typeof league !== "string" &&
   (league as LeagueWithConfig).config !== undefined &&
-  (league as LeagueWithConfigAndPermissionSets).config.permissionSets !== undefined;
+  (league as LeagueWithConfigAndPermissionSets).config.staffPermissionSets !== undefined &&
+  (league as LeagueWithConfigAndPermissionSets).config.playerPermissionSets !== undefined;
 
-export const getLeagueStaffPermissionCodes = async (league: L, staff: LeagueStaff): Promise<LeaguePermissionCode[]> => {
+export const getLeagueStaffPermissionCodes = async (
+  league: L,
+  staff: LeagueStaff,
+): Promise<LeagueStaffPermissionCode[]> => {
   const leagueId = typeof league === "string" ? league : league.id;
   if (staff.leagueId !== leagueId) {
     throw new Error(`The staff member '${staff.id}' does not belong to the league '${leagueId}'!`);
   }
   if (isLeagueWithConfigAndPermissionSets(league)) {
     return uniq(
-      league.config.permissionSets
+      league.config.staffPermissionSets
         .filter(pm => staff.roles.includes(pm.leagueStaffRole))
         .flatMap(pm => pm.permissionCodes),
     );
   } else if (isLeagueWithConfig(league)) {
     return uniq(
       (
-        await prisma.leaguePermissionSet.findMany({
+        await prisma.leagueStaffPermissionSet.findMany({
           where: { leagueConfigId: league.config.id, leagueStaffRole: { in: staff.roles } },
         })
       ).flatMap(pm => pm.permissionCodes),
@@ -44,18 +48,20 @@ export const getLeagueStaffPermissionCodes = async (league: L, staff: LeagueStaf
       (
         await prisma.leagueConfig.findUniqueOrThrow({
           where: { id: league.configId },
-          include: { permissionSets: { where: { leagueStaffRole: { in: staff.roles } } } },
+          include: { staffPermissionSets: { where: { leagueStaffRole: { in: staff.roles } } } },
         })
-      ).permissionSets.flatMap(pm => pm.permissionCodes),
+      ).staffPermissionSets.flatMap(pm => pm.permissionCodes),
     );
   } else {
     return uniq(
       (
         await prisma.league.findUniqueOrThrow({
           where: { id: league },
-          include: { config: { include: { permissionSets: { where: { leagueStaffRole: { in: staff.roles } } } } } },
+          include: {
+            config: { include: { staffPermissionSets: { where: { leagueStaffRole: { in: staff.roles } } } } },
+          },
         })
-      ).config.permissionSets.flatMap(pm => pm.permissionCodes),
+      ).config.staffPermissionSets.flatMap(pm => pm.permissionCodes),
     );
   }
 };
@@ -68,7 +74,7 @@ type GetUserLeaguePermissionSetsOptions = UserOption | StaffOption;
 const isStaffOption = (options: GetUserLeaguePermissionSetsOptions): options is StaffOption =>
   (options as StaffOption).staff !== undefined;
 
-export const getUserLeaguePermissionCodes = async (options: GetUserLeaguePermissionSetsOptions) => {
+export const getUserLeagueStaffPermissionCodes = async (options: GetUserLeaguePermissionSetsOptions) => {
   if (isStaffOption(options)) {
     return await getLeagueStaffPermissionCodes(options.staff.leagueId, options.staff);
   }

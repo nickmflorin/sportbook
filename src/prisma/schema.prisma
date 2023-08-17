@@ -19,24 +19,24 @@ enum UserRole {
 }
 
 model User {
-  id                   String        @id @default(uuid()) @db.Uuid
-  clerkId              String        @unique
+  id                   String         @id @default(uuid()) @db.Uuid
+  clerkId              String         @unique
   firstName            String
   lastName             String
   profileImageUrl      String?
-  gender               Gender        @default(value: NON_BINARY)
+  gender               Gender         @default(value: NON_BINARY)
   emailAddress         String
-  createdAt            DateTime      @default(now())
-  updatedAt            DateTime      @updatedAt
-  org                  Org?          @relation("orgUsers", fields: [orgId], references: [id])
-  orgId                String?       @db.Uuid
-  roles                UserRole[]    @default(value: [])
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  org                  Org?           @relation("orgUsers", fields: [orgId], references: [id])
+  orgId                String?        @db.Uuid
+  roles                UserRole[]     @default(value: [])
   // Users are only created when Clerk data for the user exists - so a default value of "now" makes sense here.
-  lastUpdatedFromClerk DateTime      @default(now())
-  players              Player[]      @relation("players")
-  createdLocations     Location[]    @relation("createdLocations")
-  uploadedFiles        FileUpload[]  @relation("uploadedFiles")
-  staffPositions       LeagueStaff[] @relation("staff")
+  lastUpdatedFromClerk DateTime       @default(now())
+  players              LeaguePlayer[] @relation("players")
+  createdLocations     Location[]     @relation("createdLocations")
+  uploadedFiles        FileUpload[]   @relation("uploadedFiles")
+  staffPositions       LeagueStaff[]  @relation("staff")
 }
 
 model Org {
@@ -114,12 +114,6 @@ enum LeagueType {
   ORGANIZED
 }
 
-enum LeaguePlayerType {
-  CAPTAIN
-  CO_CAPTAIN
-  PLAYER
-}
-
 model LeagueRequirements {
   minimumAge     Int?
   leagueConfig   LeagueConfig @relation(fields: [leagueConfigId], references: [id])
@@ -135,21 +129,6 @@ model LeagueOnLocations {
   assignedById String
 
   @@id([leagueId, locationId])
-}
-
-model Player {
-  id         String            @id @default(uuid()) @db.Uuid
-  user       User              @relation("players", fields: [userId], references: [id])
-  userId     String            @db.Uuid
-  createdAt  DateTime          @default(now())
-  updatedAt  DateTime          @updatedAt
-  playerType LeaguePlayerType? @default(value: PLAYER)
-  // Note: We will have to figure out a way to ensure that participants of type PLAYER always belong to a team.  The
-  // team needs to be optional for cases where the participant is of type ADMIN or REFEREE.
-  team       Team              @relation("players", fields: [teamId], references: [id])
-  teamId     String            @db.Uuid
-
-  @@unique([userId, teamId])
 }
 
 enum HockeyLeagueStandingsMethod {
@@ -203,40 +182,90 @@ model LeagueStaff {
   @@unique([leagueId, userId])
 }
 
-enum LeaguePermissionCode {
+// Codes that refer to the actions/behaviors that a given league staff member may be allowed to perform.
+enum LeagueStaffPermissionCode {
   POSTPONE_GAME
   CANCEL_GAME
+  // Note: This pertains to the ability of a staff member to invite players to any given team in the league.
+  INVITE_PLAYERS
 }
 
-model LeaguePermissionSet {
-  id              String                 @id @default(uuid()) @db.Uuid
-  createdById     String                 @db.Uuid
-  createdAt       DateTime               @default(now())
-  updatedAt       DateTime               @updatedAt
-  updatedById     String                 @db.Uuid
-  leagueConfig    LeagueConfig           @relation("permissionSets", fields: [leagueConfigId], references: [id])
-  leagueConfigId  String                 @db.Uuid
+// Represents the permissions that a given league staff member may have based on their role, configurable at the league
+// level.
+model LeagueStaffPermissionSet {
+  id              String                      @id @default(uuid()) @db.Uuid
+  createdById     String                      @db.Uuid
+  createdAt       DateTime                    @default(now())
+  updatedAt       DateTime                    @updatedAt
+  updatedById     String                      @db.Uuid
+  leagueConfig    LeagueConfig                @relation("staffPermissionSets", fields: [leagueConfigId], references: [id])
+  leagueConfigId  String                      @db.Uuid
   leagueStaffRole LeagueStaffRole
-  permissionCodes LeaguePermissionCode[]
+  permissionCodes LeagueStaffPermissionCode[]
 
   @@unique([leagueConfigId, leagueStaffRole])
 }
 
+enum LeaguePlayerRole {
+  CAPTAIN
+  CO_CAPTAIN
+  PLAYER
+}
+
+// Codes that refer to the actions/behaviors that a given team member (player) may be allowed to perform in relation to
+// the team they belong to.
+enum LeaguePlayerPermissionCode {
+  // Note: This pertains to the ability of a team member (player) to invite other players to the team they belong to.
+  INVITE_PLAYERS
+}
+
+model LeaguePlayer {
+  id        String            @id @default(uuid()) @db.Uuid
+  user      User              @relation("players", fields: [userId], references: [id])
+  userId    String            @db.Uuid
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  role      LeaguePlayerRole? @default(value: PLAYER)
+  // Note: We will have to figure out a way to ensure that participants of type PLAYER always belong to a team.  The
+  // team needs to be optional for cases where the participant is of type ADMIN or REFEREE.
+  team      Team              @relation("players", fields: [teamId], references: [id])
+  teamId    String            @db.Uuid
+
+  @@unique([userId, teamId])
+}
+
+// Represents the permissions that a given team member (player) may have in regard to their team, based on their role,
+// configurable at the league level.
+model LeaguePlayerPermissionSet {
+  id               String                       @id @default(uuid()) @db.Uuid
+  createdById      String                       @db.Uuid
+  createdAt        DateTime                     @default(now())
+  updatedAt        DateTime                     @updatedAt
+  updatedById      String                       @db.Uuid
+  leagueConfig     LeagueConfig                 @relation("playerPermissionSets", fields: [leagueConfigId], references: [id])
+  leagueConfigId   String                       @db.Uuid
+  leaguePlayerRole LeaguePlayerRole
+  permissionCodes  LeaguePlayerPermissionCode[]
+
+  @@unique([leagueConfigId, leaguePlayerRole])
+}
+
 model LeagueConfig {
-  id               String                 @id @default(uuid()) @db.Uuid
-  createdById      String                 @db.Uuid
-  createdAt        DateTime               @default(now())
-  updatedAt        DateTime               @updatedAt
-  updatedById      String                 @db.Uuid
-  league           League?
-  isPublic         Boolean                @default(true)
-  registration     LeagueRegistration?
-  requirements     LeagueRequirements?
-  leagueStart      DateTime?
-  leagueEnd        DateTime?
-  leagueType       LeagueType             @default(value: PICKUP)
-  competitionLevel LeagueCompetitionLevel @default(value: SOCIAL)
-  permissionSets   LeaguePermissionSet[]  @relation("permissionSets")
+  id                   String                      @id @default(uuid()) @db.Uuid
+  createdById          String                      @db.Uuid
+  createdAt            DateTime                    @default(now())
+  updatedAt            DateTime                    @updatedAt
+  updatedById          String                      @db.Uuid
+  league               League?
+  isPublic             Boolean                     @default(true)
+  registration         LeagueRegistration?
+  requirements         LeagueRequirements?
+  leagueStart          DateTime?
+  leagueEnd            DateTime?
+  leagueType           LeagueType                  @default(value: PICKUP)
+  competitionLevel     LeagueCompetitionLevel      @default(value: SOCIAL)
+  staffPermissionSets  LeagueStaffPermissionSet[]  @relation("staffPermissionSets")
+  playerPermissionSets LeaguePlayerPermissionSet[] @relation("playerPermissionSets")
 }
 
 model League {
@@ -260,7 +289,7 @@ model League {
   staff        LeagueStaff[]       @relation("staff")
 }
 
-enum Color {
+enum TeamColor {
   BLUE
   GREEN
   YELLOW
@@ -270,18 +299,18 @@ enum Color {
 }
 
 model Team {
-  id          String   @id @default(uuid()) @db.Uuid
-  createdById String   @db.Uuid
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  updatedById String   @db.Uuid
+  id          String         @id @default(uuid()) @db.Uuid
+  createdById String         @db.Uuid
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  updatedById String         @db.Uuid
   name        String
-  color       Color    @default(value: GRAY)
-  league      League   @relation("teams", fields: [leagueId], references: [id])
-  leagueId    String   @db.Uuid
-  players     Player[] @relation("players")
-  homeGames   Game[]   @relation("homeGames")
-  awayGames   Game[]   @relation("awayGames")
+  color       TeamColor      @default(value: GRAY)
+  league      League         @relation("teams", fields: [leagueId], references: [id])
+  leagueId    String         @db.Uuid
+  players     LeaguePlayer[] @relation("players")
+  homeGames   Game[]         @relation("homeGames")
+  awayGames   Game[]         @relation("awayGames")
 
   @@unique([name, leagueId])
 }

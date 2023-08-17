@@ -13,12 +13,13 @@ const InvitePlayersForm = dynamic(() => import("~/components/forms/InvitePlayers
 export type LeagueFormValues = z.output<typeof LeagueSchema>;
 
 export type InvitePlayersFormProps = {
+  readonly leagueId: string;
   readonly teams: Team[];
   readonly users: User[];
 };
 
-export const InvitePlayersDrawer = ({ teams, users }: InvitePlayersFormProps): JSX.Element => (
-  <InvitePlayersForm teams={teams} users={users} />
+export const InvitePlayersDrawer = ({ leagueId, teams, users }: InvitePlayersFormProps): JSX.Element => (
+  <InvitePlayersForm leagueId={leagueId} teams={teams} users={users} />
 );
 
 export default InvitePlayersDrawer;

@@ -1,4 +1,4 @@
-import { Sport, LeagueType, LeagueCompetitionLevel, GameStatus, LeaguePlayerType } from "@prisma/client";
+import { Sport, LeagueType, LeagueCompetitionLevel, GameStatus, LeaguePlayerRole } from "@prisma/client";
 
 import { GameResultType } from "../types";
 
@@ -68,18 +68,18 @@ export const GameStatuses = new EnumModel("gameStatus", GameStatus, {
   },
 });
 
-export const LeaguePlayerTypes = new EnumModel("playerType", LeaguePlayerType, {
-  [LeaguePlayerType.CAPTAIN]: {
+export const LeaguePlayerRoles = new EnumModel("playerRole", LeaguePlayerRole, {
+  [LeaguePlayerRole.CAPTAIN]: {
     label: "Captain",
     icon: { name: "circle-1" },
     badgeIconColor: "green",
   },
-  [LeaguePlayerType.CO_CAPTAIN]: {
+  [LeaguePlayerRole.CO_CAPTAIN]: {
     label: "Co-Captain",
     icon: { name: "circle-2" },
     badgeIconColor: "blue",
   },
-  [LeaguePlayerType.PLAYER]: {
+  [LeaguePlayerRole.PLAYER]: {
     label: "Player",
     icon: { name: "football-helmet" },
     badgeIconColor: "gray.7",

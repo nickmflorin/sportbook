@@ -8,7 +8,7 @@ import { FileUploadEntity } from "~/prisma/model";
 import { parseQueryTeamIds } from "~/prisma/urls";
 import { Loading } from "~/components/loading/Loading";
 import { getAuthUser } from "~/server/auth";
-import { getUserLeaguePermissionCodes } from "~/server/leagues";
+import { getUserLeagueStaffPermissionCodes } from "~/server/leagues";
 
 import { getLeague } from "../getLeague";
 
@@ -80,7 +80,7 @@ export default async function LeagueSchedule({
     awayTeam: { ...g.awayTeam, fileUrl: imageUploads.find(i => i.entityId === g.awayTeamId)?.fileUrl || null },
   }));
 
-  const permissionCodes = await getUserLeaguePermissionCodes({ league, user });
+  const permissionCodes = await getUserLeagueStaffPermissionCodes({ league, user });
 
   return <GameScheduleTable data={gamesWithTeamImages} permissionCodes={permissionCodes} />;
 }

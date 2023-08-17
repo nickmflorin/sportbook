@@ -5,7 +5,7 @@ import { logger } from "~/application/logger";
 import { isUuid } from "~/lib/schemas";
 import { parseUserDisplayName } from "~/lib/user";
 import { prisma } from "~/prisma/client";
-import { LeaguePlayerTypeBadge } from "~/components/badges/LeaguePlayerTypeBadge";
+import { LeaguePlayerRoleBadge } from "~/components/badges/LeaguePlayerRoleBadge";
 import { PlayerAvatar } from "~/components/images/PlayerAvatar";
 import { Loading } from "~/components/loading/Loading";
 import { getAuthUser } from "~/server/auth";
@@ -29,7 +29,7 @@ export const PlayerDrawer = async ({ playerId }: PlayerDrawerProps): Promise<JSX
     return null;
   }
 
-  const player = await prisma.player.findFirstOrThrow({
+  const player = await prisma.leaguePlayer.findFirstOrThrow({
     where: {
       id: playerId,
       /* Instead of using the 'findUniqueOrThrow' method, we should use the 'findFirstOrThrow' method so we can ensure
@@ -52,7 +52,7 @@ export const PlayerDrawer = async ({ playerId }: PlayerDrawerProps): Promise<JSX
       title={parseUserDisplayName(player.user) || ""}
       headerProps={{
         image: <PlayerAvatar player={player} fontSize="sm" size={50} />,
-        tags: [<LeaguePlayerTypeBadge key="0" size="xxs" value={player.playerType} />],
+        tags: [<LeaguePlayerRoleBadge key="0" size="xxs" value={player.role} />],
       }}
     >
       <></>

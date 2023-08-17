@@ -31,7 +31,7 @@ export default async function LeaguePlayers({
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
   const league = await getLeague(id, user);
 
-  const players = await prisma.player.findMany({
+  const players = await prisma.leaguePlayer.findMany({
     include: { user: true, team: true },
     where: {
       ...(teamIds.length > 0 && search.length !== 0

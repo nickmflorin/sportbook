@@ -1,6 +1,6 @@
 "use client";
-import { type PlayerWithUser, type Team, type ModelWithFileUrl } from "~/prisma/model";
-import { LeaguePlayerTypeBadge } from "~/components/badges/LeaguePlayerTypeBadge";
+import { type LeaguePlayerWithUser, type Team, type ModelWithFileUrl } from "~/prisma/model";
+import { LeaguePlayerRoleBadge } from "~/components/badges/LeaguePlayerRoleBadge";
 import { PlayerAvatar } from "~/components/images/PlayerAvatar";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
 
@@ -9,19 +9,21 @@ import { DataTable, type DataTableProps } from "./DataTable";
 
 export enum PlayersTableColumn {
   USER,
-  PLAYER_TYPE,
+  PLAYER_ROLE,
   TEAM,
 }
 
 export type BasePlayer =
-  | PlayerWithUser
-  | (PlayerWithUser & { readonly team: Team })
-  | (PlayerWithUser & { readonly team: ModelWithFileUrl<Team> });
+  | LeaguePlayerWithUser
+  | (LeaguePlayerWithUser & { readonly team: Team })
+  | (LeaguePlayerWithUser & { readonly team: ModelWithFileUrl<Team> });
 
 export const hasTeam = (
   p: BasePlayer,
-): p is (PlayerWithUser & { readonly team: Team }) | (PlayerWithUser & { readonly team: ModelWithFileUrl<Team> }) =>
-  (p as PlayerWithUser & { readonly team: Team }).team !== undefined;
+): p is
+  | (LeaguePlayerWithUser & { readonly team: Team })
+  | (LeaguePlayerWithUser & { readonly team: ModelWithFileUrl<Team> }) =>
+  (p as LeaguePlayerWithUser & { readonly team: Team }).team !== undefined;
 
 const PlayersTableColumns = <P extends BasePlayer>(): { [key in PlayersTableColumn]: Column<P> } => ({
   [PlayersTableColumn.USER]: {
@@ -30,11 +32,11 @@ const PlayersTableColumns = <P extends BasePlayer>(): { [key in PlayersTableColu
     textAlignment: "left",
     render: (player: P) => <PlayerAvatar player={player} withButton size={30} />,
   },
-  [PlayersTableColumn.PLAYER_TYPE]: {
+  [PlayersTableColumn.PLAYER_ROLE]: {
     title: "",
-    accessor: "playerType",
+    accessor: "role",
     textAlignment: "left",
-    render: (player: P) => <LeaguePlayerTypeBadge value={player.playerType} withIcon size="xs" />,
+    render: (player: P) => <LeaguePlayerRoleBadge value={player.role} withIcon size="xs" />,
   },
   [PlayersTableColumn.TEAM]: {
     title: "Team",
@@ -49,7 +51,7 @@ export interface PlayersTableProps<P extends BasePlayer> extends Omit<DataTableP
 }
 
 export const PlayersTable = <P extends BasePlayer>({
-  columns = [PlayersTableColumn.USER, PlayersTableColumn.PLAYER_TYPE, PlayersTableColumn.TEAM],
+  columns = [PlayersTableColumn.USER, PlayersTableColumn.PLAYER_ROLE, PlayersTableColumn.TEAM],
   ...props
 }: PlayersTableProps<P>): JSX.Element => (
   <DataTable<P> {...props} columns={columns.map(name => PlayersTableColumns()[name])} />
