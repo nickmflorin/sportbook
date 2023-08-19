@@ -27,7 +27,7 @@ export default async function Leagues({ searchParams: { search } }: LeaguesProps
       AND: constructOrSearch(search, ["name", "description"]),
     },
   });
-  const numPlayersPerLeague = await prisma.player.groupBy({
+  const numPlayersPerLeague = await prisma.leaguePlayer.groupBy({
     by: ["teamId"],
     _count: {
       userId: true,

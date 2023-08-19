@@ -1,4 +1,3 @@
-import dynamic from "next/dynamic";
 import React from "react";
 
 import { type Optional } from "utility-types";
@@ -10,8 +9,7 @@ import {
   type BasicIconComponentProps,
   isBasicIconComponentProps,
 } from "./IconComponent";
-
-const Spinner = dynamic(() => import("./Spinner"), { ssr: false });
+import { Spinner } from "./Spinner";
 
 const _Icon = (props: IconComponentProps): JSX.Element => {
   if (isBasicIconComponentProps<IconComponentProps>(props)) {

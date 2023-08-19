@@ -15,7 +15,7 @@ export interface PlayerButtonProps<T extends BasePlayer>
 export const PlayerButton = <T extends BasePlayer>({ player, ...props }: PlayerButtonProps<T>): JSX.Element => {
   const { updateParams } = useQueryParams();
   return (
-    <AlternateButton.Secondary href={updateParams({ playerId: player.id }).href} {...props}>
+    <AlternateButton.Secondary href={updateParams({ playerid: player.id }).href} {...props}>
       {parseUserDisplayName(player.user) || ""}
     </AlternateButton.Secondary>
   );

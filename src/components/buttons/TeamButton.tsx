@@ -14,7 +14,7 @@ export interface TeamButtonProps<T extends BaseTeam>
 export const TeamButton = <T extends BaseTeam>({ team, ...props }: TeamButtonProps<T>): JSX.Element => {
   const { updateParams } = useQueryParams();
   return (
-    <AlternateButton.Secondary href={updateParams({ teamId: team.id }).href} {...props}>
+    <AlternateButton.Secondary href={updateParams({ teamid: team.id }).href} {...props}>
       {team.name}
     </AlternateButton.Secondary>
   );

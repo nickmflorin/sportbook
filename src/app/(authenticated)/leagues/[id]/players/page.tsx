@@ -14,6 +14,7 @@ import { getLeague } from "../getLeague";
 
 const PlayersTable = dynamic(() => import("~/components/tables/PlayersTable"), {
   loading: () => <Loading loading={true} />,
+  ssr: false, // Avoids hydration mismatch with the icons... might need to be revisited in the future.
 });
 
 interface LeaguePlayersProps {

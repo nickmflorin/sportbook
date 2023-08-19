@@ -2,7 +2,10 @@
 import { ReadonlyURLSearchParams, useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useMemo, useTransition } from "react";
 
+import { parseQueryParams } from "~/lib/util/urls";
+
 import { useDeepEqualMemo } from "./useDeep";
+import { useReferentialCallback } from "./useReferentialCallback";
 
 type Params<K extends string = string, V extends string | null | undefined = string | null> = Record<K, V>;
 
@@ -40,77 +43,59 @@ export const useQueryParams = (): IQueryParams => {
   /* Use a deep equality check for the memoization to prevent the function from changing its reference whenever the
      URL or pathname changes.  If the URL or pathname changes, the searchParams object will have a different reference,
      even if the actual query parameters and their values remains the same. */
-  const updateParams = useDeepEqualMemo(
-    () =>
-      (
-        params: Params<string, string | null | undefined>,
-        options?: MutableOptions & { readonly clearOthers?: true },
-      ): MutableReturnType => {
-        const newParams = options?.clearOthers ? new URLSearchParams() : new URLSearchParams(searchParams.toString());
+  const updateParams = useReferentialCallback(
+    (
+      params: Params<string, string | null | undefined>,
+      options?: MutableOptions & { readonly clearOthers?: true },
+    ): MutableReturnType => {
+      const newParams = options?.clearOthers ? new URLSearchParams() : new URLSearchParams(searchParams.toString());
 
-        /* First, add all of the existing query parameters to the set as long as they are not in the set of new
+      /* First, add all of the existing query parameters to the set as long as they are not in the set of new
          parameters. */
-        for (const param in searchParams) {
-          // If the existing parameter is not in the new set of provided parameters, leave it in the set of parameters.
-          if (params[param] === undefined) {
-            const currentValue = searchParams.get(param);
-            if (currentValue !== null) {
-              newParams.set(param, currentValue);
-            }
+      for (const param in searchParams) {
+        // If the existing parameter is not in the new set of provided parameters, leave it in the set of parameters.
+        if (params[param] === undefined) {
+          const currentValue = searchParams.get(param);
+          if (currentValue !== null) {
+            newParams.set(param, currentValue);
           }
         }
-        const isClearableValue = (v: string | null | undefined): v is string | null =>
-          v === null || (typeof v === "string" && v.length === 0);
+      }
+      const isClearableValue = (v: string | null | undefined): v is string | null =>
+        v === null || (typeof v === "string" && v.length === 0);
 
-        /* Loop over the keys of the params so that we can tell the difference between a parameter that is included with
+      /* Loop over the keys of the params so that we can tell the difference between a parameter that is included with
            an explicitly undefined value and a parameter that is not included at all. */
-        for (const param in params) {
-          const value = params[param];
-          // The new set of parameters will only have the parameter if the clearOthers flag is not true.
-          if (isClearableValue(value) && newParams.has(param)) {
-            newParams.delete(param);
-          } else if (!isClearableValue(value) && value !== undefined) {
-            newParams.set(param, value);
-          }
+      for (const param in params) {
+        const value = params[param];
+        // The new set of parameters will only have the parameter if the clearOthers flag is not true.
+        if (isClearableValue(value) && newParams.has(param)) {
+          newParams.delete(param);
+        } else if (!isClearableValue(value) && value !== undefined) {
+          newParams.set(param, value);
         }
-        let href = pathname;
-        const queryString = newParams.toString();
-        if (newParams.size !== 0 && queryString.length !== 0) {
-          href = `${pathname}?${queryString}`;
-        }
+      }
+      let href = pathname;
+      const queryString = newParams.toString();
+      if (newParams.size !== 0 && queryString.length !== 0) {
+        href = `${pathname}?${queryString}`;
+      }
 
-        if (options?.push === true) {
-          if (options?.useTransition !== false) {
-            startTransition(() => push(href));
-          } else {
-            push(href);
-          }
+      if (options?.push === true) {
+        if (options?.useTransition !== false) {
+          startTransition(() => push(href));
+        } else {
+          push(href);
         }
-        return { params: new ReadonlyURLSearchParams(newParams), queryString, href };
-      },
-    [searchParams, pathname, push],
+      }
+      return { params: new ReadonlyURLSearchParams(newParams), queryString, href };
+    },
   );
 
-  const parseParams = useDeepEqualMemo(
+  const parseParams = useMemo(
     () =>
-      <K extends string>(names?: K[]): Params<K, string> | null => {
-        let parsed: Record<K, string> = {} as Record<K, string>;
-        if (names === undefined) {
-          for (const [key, value] of searchParams) {
-            if (value !== null && value.length !== 0) {
-              parsed = { ...parsed, [key as K]: value };
-            }
-          }
-        } else {
-          for (const p of names) {
-            const value = searchParams.get(p);
-            if (value !== null && value.length !== 0) {
-              parsed = { ...parsed, [p]: value };
-            }
-          }
-        }
-        return Object.keys(parsed).length !== 0 ? parsed : null;
-      },
+      <K extends string>(names?: K[]): Params<K, string> | null =>
+        parseQueryParams(searchParams, { params: names }),
     [searchParams],
   );
 

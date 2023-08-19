@@ -1,4 +1,3 @@
-import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import { type ReactNode } from "react";
 
@@ -10,8 +9,7 @@ import { getAuthUser } from "~/server/auth";
 
 import { getLeague } from "./getLeague";
 import { useUserLeagueStaffRoles } from "./hooks";
-
-const LeagueDrawers = dynamic(() => import("./LeagueDrawers"), { ssr: false });
+import { LeagueDrawers } from "./LeagueDrawers";
 
 interface LeagueLayoutProps {
   readonly params: { id: string };
@@ -20,7 +18,6 @@ interface LeagueLayoutProps {
 
 export default async function LeagueLayout({ children, params: { id } }: LeagueLayoutProps) {
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
-
   const { getImage, ...league } = await getLeague(id, user);
   const fileUpload = await getImage();
 
@@ -42,7 +39,7 @@ export default async function LeagueLayout({ children, params: { id } }: LeagueL
         }}
         backHref="/leagues"
         backText="All Leagues"
-        tabQueryParams={["teamId"]}
+        tabQueryParams={["teamid", "playerid"]}
         tabs={[
           {
             label: "Standings",

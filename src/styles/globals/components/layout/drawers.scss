@@ -13,7 +13,34 @@ $drawer-width: 400px;
 // drawer portal is injected into.  It will always be in the DOM - but will only have children when the drawer is open.
 .drawer-target {
   @include drawer-container();
-  max-width: $drawer-width;
+  display: flex;
+  flex-direction: row;
+
+  /*
+  In the application layout component, there are 2 drawer targets.  The first drawer target is to hold one or
+  multiple (maximum 2) drawers that are rendered based on query parameters.  That first drawer target must show each
+  drawer side by side - hence the flex display and direction.  The second target is for drawers that are rendered
+  based on client side state (e.g. an 'open' variable in state).  That second drawer target can only ever render 1
+  client-side-controlled drawer at a given time.
+
+  The reasoning behind this is that when the drawers are rendered based on query parameters, opening a third query
+  parameter drawer can cause the portal component to close one of the other two drawers that are open (so there are
+  only ever 2 drawers open at a time).  This is possible because the other drawers can be closed by manipulating the
+  query parameters in the URL.
+
+  However, when the drawers are rendered based on client side state, when an additional client-side-controlled drawer is
+  opened, the portal cannot close other client-side-controlled modals, because the open/close behavior is controlled in
+  state local to the location in which the drawer is being rendered - but not in the portal component itself.  This
+  means that the client drawer target may show 2 drawers open, but one will be on top of the other (due to the flex
+  direction).
+
+  Note: In general, because of the complications around portals as it relates to managing multiple children drawers in
+  the target, a given page should only leverage one client side drawer at a time.  If multiple client side drawers are
+  being managed by the page, the page logic should manually close the other drawer when a second one is opened.
+  */
+  &.client-drawer-target {
+    flex-direction: column;
+  }
 
   // The 'drawer-wrapper' is responsible for wrapping the actual content of the drawer (the 'drawer') and setting a
   // constant width for the drawer.  Since the 'drawer-wrapper' will only be present in the DOM when the drawer is open,

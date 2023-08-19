@@ -35,7 +35,7 @@ export const CreateLeagueDrawer = ({ locations }: CreateLeagueDrawerProps): JSX.
   return (
     <>
       <CreateLeagueForm locations={locations} onNewLocation={() => setLocationsDrawerOpen(true)} form={form} />
-      <Drawer onClose={() => setLocationsDrawerOpen(false)} open={locationsDrawerOpen} slot={2} style={{ width: 300 }}>
+      <Drawer onClose={() => setLocationsDrawerOpen(false)} open={locationsDrawerOpen}>
         <CreateLocationForm
           style={{ marginTop: 12 }}
           onCancel={() => setLocationsDrawerOpen(false)}
