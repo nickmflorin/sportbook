@@ -18,9 +18,9 @@ This section of the documentation outlines - at a high level - how to setup your
 first time. For more detailed explanations related to local development or production deployments, see the Section 2:
 Development.
 
-**Note**: _This documentation describes how to setup and configure the application for local development on \_MacOSX_.
-Many of the steps outlined in this section may also be applicable for a Windows/Ubuntu machine as well, but the steps
-will not be exactly as they are described here.\_
+**Note**: _This documentation describes how to setup and configure the application for local development on MacOSX. Many
+of the steps outlined in this section may also be applicable for a Windows/Ubuntu machine as well, but the steps will
+not be exactly as they are described here._
 
 ### Step 1.1: Repository
 
@@ -130,7 +130,7 @@ This command will use [nvm] to install the correct version of [node] that is req
 specification in the project's `.nvmrc` file.
 
 Finally, all that is left to do is to instruct [nvm] to use this version of [node] by executing the following command -
-again, from the root of the project repository;
+again, from the root of the project repository:
 
 ```bash
 $ nvm use
