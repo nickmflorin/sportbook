@@ -10,18 +10,18 @@ export interface DropdownButtonProps {
   readonly onClick: () => void;
 }
 
-export const DropdownButton = ({ children, open, style, width, ...props }: DropdownButtonProps) => {
-  console.log({ open });
-  return (
-    <SolidButton.Outline
-      {...props}
-      style={{ textAlign: "left", ...style, width }}
-      icon={open ? { name: "chevron-up" } : { name: "chevron-down" }}
-      iconSize="xs"
-      iconLocation="right"
-      condensed
-    >
-      {children}
-    </SolidButton.Outline>
-  );
-};
+export const DropdownButton = ({ children, open, style, width, ...props }: DropdownButtonProps) => (
+  <SolidButton.Outline
+    {...props}
+    style={{ textAlign: "left", ...style, width }}
+    iconSize="xs"
+    iconLocation="right"
+    condensed
+    icon={[
+      { icon: { name: "chevron-down" }, visible: !open },
+      { icon: { name: "chevron-up" }, visible: open },
+    ]}
+  >
+    {children}
+  </SolidButton.Outline>
+);

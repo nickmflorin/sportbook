@@ -20,7 +20,7 @@ import {
   ButtonCornerStyles,
   ButtonSizes,
 } from "~/components/buttons";
-import { type IconProp, type IconSize, IconSizes } from "~/components/icons";
+import { type IconProp, type IconSize, IconSizes, type DynamicIconProp } from "~/components/icons";
 import { Icon } from "~/components/icons/Icon";
 import { type FontWeight, type TypographySize } from "~/components/typography";
 
@@ -204,7 +204,7 @@ type ButtonContentProps = {
   readonly component: "button";
   readonly children?: string | JSX.Element;
   readonly loading?: boolean;
-  readonly icon?: IconProp | JSX.Element;
+  readonly icon?: IconProp | DynamicIconProp;
   readonly iconLocation?: Loc;
   readonly iconSize?: IconSize;
 };
@@ -213,7 +213,7 @@ export type LinkContentProps = {
   readonly component: "link";
   readonly loading?: never;
   readonly children?: string | JSX.Element;
-  readonly icon?: IconProp | JSX.Element;
+  readonly icon?: IconProp | DynamicIconProp;
   readonly iconLocation?: Loc;
   readonly iconSize?: IconSize;
 };
@@ -227,24 +227,21 @@ export const ButtonLinkContent = ({
   iconSize = IconSizes.FILL,
   icon,
   children,
-}: ButtonLinkContentProps): JSX.Element => {
-  console.log({ icon });
-  return (
-    <div className={`${component}__content`}>
-      {iconLocation === CSSDirections.LEFT && (icon !== undefined || loading === true) && (
-        <div className={`${component}__icon-wrapper`}>
-          <Icon size={iconSize} icon={icon} loading={loading} axis="vertical" />
-        </div>
-      )}
-      <div className={`${component}__sub-content`}>{children}</div>
-      {iconLocation === CSSDirections.RIGHT && (icon !== undefined || loading === true) && (
-        <div className={`${component}__icon-wrapper`}>
-          <Icon size={iconSize} icon={icon} loading={loading} axis="vertical" />
-        </div>
-      )}
-    </div>
-  );
-};
+}: ButtonLinkContentProps): JSX.Element => (
+  <div className={`${component}__content`}>
+    {iconLocation === CSSDirections.LEFT && (icon !== undefined || loading === true) && (
+      <div className={`${component}__icon-wrapper`}>
+        <Icon size={iconSize} icon={icon} loading={loading} axis="vertical" />
+      </div>
+    )}
+    <div className={`${component}__sub-content`}>{children}</div>
+    {iconLocation === CSSDirections.RIGHT && (icon !== undefined || loading === true) && (
+      <div className={`${component}__icon-wrapper`}>
+        <Icon size={iconSize} icon={icon} loading={loading} axis="vertical" />
+      </div>
+    )}
+  </div>
+);
 
 export type ButtonProps<T extends ButtonType, V extends ButtonVariant> = Optional<BaseButtonProps<T, V>, "children"> &
   Omit<ButtonContentProps, "component" | "children"> & {

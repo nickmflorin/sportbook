@@ -27,7 +27,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => (
         type="text/javascript"
         src={`https://kit.fontawesome.com/${env.FONT_AWESOME_KIT_TOKEN}.js`}
         crossOrigin="anonymous"
-        data-auto-replace-svg
+        data-auto-replace-svg="nest"
         data-mutate-approach="sync"
         data-observe-mutations
       />

@@ -10,6 +10,7 @@ import {
   isBasicIconComponentProps,
 } from "./IconComponent";
 import { Spinner } from "./Spinner";
+import { type DynamicIconProp } from "./types";
 
 const _Icon = (props: IconComponentProps): JSX.Element => {
   if (isBasicIconComponentProps<IconComponentProps>(props)) {
@@ -21,7 +22,8 @@ const _Icon = (props: IconComponentProps): JSX.Element => {
 
 export type IconProps =
   | (Optional<EmbeddedIconComponentProps, "name"> & { readonly loading?: boolean })
-  | (Optional<BasicIconComponentProps, "icon"> & { readonly loading?: boolean });
+  | (Optional<BasicIconComponentProps, "icon"> & { readonly loading?: boolean })
+  | (Optional<BasicIconComponentProps<DynamicIconProp>, "icon"> & { readonly loading?: boolean });
 
 /**
  * Renders a FontAwesome icon based on the provided `icon` prop.
