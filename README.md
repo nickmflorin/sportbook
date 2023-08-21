@@ -15,8 +15,8 @@ between).
 ## 1. Getting Started
 
 This section of the documentation outlines - at a high level - how to setup your machine for local development for the
-first time. For more detailed explanations related to local development or production deployments, see the next section;
-"Development".
+first time. For more detailed explanations related to local development or production deployments, see the Section 2:
+Development.
 
 **Note**: _This documentation describes how to setup and configure the application for local development on \_MacOSX_.
 Many of the steps outlined in this section may also be applicable for a Windows/Ubuntu machine as well, but the steps
@@ -493,10 +493,8 @@ For further documentation regarding the environment configuration, please see th
 This documentation is intended to outline configurations, patterns and methodologies that are used to test the Console
 application.
 
-## [Jest](https://jestjs.io/docs/getting-started) Testing Suite
-
-We use [Jest](https://jestjs.io/docs/getting-started) to handle integration and unit testing in the Console. The entire
-test suite can be run with the following command:
+We use [Jest][jest] to handle integration and unit testing in the Console. The entire test suite can be run with the
+following command:
 
 ```bash
 $ npm run test
@@ -509,8 +507,8 @@ complexities of some of the tests that have to be run, the configuration had to 
 [projects](https://jestjs.io/docs/configuration#projects-arraystring--projectconfig), such that certain tests can use
 different sets of configuration parameters that would not otherwise be possible with a single configuration.
 
-The [Jest](https://jestjs.io/docs/getting-started) testing suite is broken down into 6
-[projects](https://jestjs.io/docs/configuration#projects-arraystring--projectconfig):
+The [Jest][jest] testing suite is broken down into 5
+"[projects](https://jestjs.io/docs/configuration#projects-arraystring--projectconfig)":
 
 1. **Functional Unit Tests**: Unit tests that are run against functional utilities or logic in `src/lib`.
 2. **Component Tests**: Both unit tests & snapshot tests that are run against components in `src/components`.
