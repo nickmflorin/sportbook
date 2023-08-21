@@ -254,6 +254,7 @@ export const SingleNonNullableMenu = <V extends string | null, M>(
 
   return (
     <BaseMenu
+      id={props.id}
       footerActions={props.footerActions}
       className={props.className}
       style={props.style}

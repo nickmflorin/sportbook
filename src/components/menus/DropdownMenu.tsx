@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo, useImperativeHandle, useEffect } from "react";
+import React, { useState, useMemo, useImperativeHandle, useEffect, useId } from "react";
 
 import { Popover, type PopoverProps } from "@mantine/core/lib/Popover";
 
@@ -32,6 +32,17 @@ export interface DropdownMenuChildlessProps extends BaseDropdownMenuProps {
 
 export type DropdownMenuProps = DropdownMenuChildrenProps | DropdownMenuChildlessProps;
 
+const isNodeDescendantOf = (parent: HTMLElement | Element, child: HTMLElement | Element) => {
+  let node = child.parentNode;
+  while (node != null) {
+    if (node === parent) {
+      return true;
+    }
+    node = node.parentNode;
+  }
+  return false;
+};
+
 export const DropdownMenu = ({
   children,
   open,
@@ -44,6 +55,8 @@ export const DropdownMenu = ({
   onClose,
   ...props
 }: DropdownMenuProps): JSX.Element => {
+  const id = useId();
+  const menuId = useId();
   const [_open, setOpen] = useState(open === undefined ? false : open);
   const [_buttonContent, setButtonContent] = useState<string | JSX.Element | undefined>(buttonContent);
 
@@ -64,7 +77,9 @@ export const DropdownMenu = ({
           open={isOpen}
           style={buttonStyle}
           width={buttonWidth}
-          onClick={() => setOpen((o: boolean) => !o)}
+          onClick={() => {
+            setOpen((o: boolean) => !o);
+          }}
         >
           {_buttonContent}
         </DropdownButton>
@@ -85,7 +100,19 @@ export const DropdownMenu = ({
       <Popover.Target>
         <div style={buttonWidth ? { width: buttonWidth } : { maxWidth: "fit-content" }}>{target}</div>
       </Popover.Target>
-      <Popover.Dropdown onBlur={() => setOpen(false)}>{menu}</Popover.Dropdown>
+      <Popover.Dropdown
+        id={id}
+        onBlurCapture={e => {
+          const menuElement = document.getElementById(menuId);
+          if (menuElement && isNodeDescendantOf(menuElement, e.target)) {
+            return;
+          }
+          e.preventDefault();
+          setOpen(false);
+        }}
+      >
+        {React.cloneElement(menu, { id: menuId })}
+      </Popover.Dropdown>
     </Popover>
   );
 };

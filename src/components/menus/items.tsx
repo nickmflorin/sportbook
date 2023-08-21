@@ -47,7 +47,7 @@ export const BaseMenuItem = <
     <div
       style={item.style}
       className={classNames("menu-item", { selected, disabled: item.disabled }, item.className)}
-      onClick={e => {
+      onClickCapture={e => {
         e.stopPropagation();
         e.preventDefault();
         if (!item.disabled && menuItem.current) {
@@ -56,9 +56,24 @@ export const BaseMenuItem = <
         }
       }}
     >
-      <div className="menu-item__content">
+      <div
+        className="menu-item__content"
+        onClick={e => {
+          e.stopPropagation();
+        }}
+      >
         {/* TODO: We need to come up with a loading state for the Avatar case. */}
-        {withCheckbox && <Checkbox readOnly checked={selected} mr="md" size={14} />}
+        {withCheckbox && (
+          <Checkbox
+            readOnly
+            checked={selected}
+            mr="md"
+            size={14}
+            onClick={e => {
+              e.stopPropagation();
+            }}
+          />
+        )}
         {item.icon ? (
           isIconProp(item.icon) ? (
             <Icon size="xs" icon={item.icon} loading={item.loading || loading} />

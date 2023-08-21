@@ -224,6 +224,7 @@ const MultiDatumCallbackValuedMenu = <V extends string | null, M>({
 };
 
 export const MultiMenu = <V extends string | null, M>({
+  id,
   defaultValue,
   value,
   footerActions,
@@ -263,6 +264,7 @@ export const MultiMenu = <V extends string | null, M>({
 
   return (
     <BaseMenu
+      id={id}
       footerActions={footerActions}
       className={className}
       style={style}

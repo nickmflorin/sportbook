@@ -114,7 +114,7 @@ export const getNativeIconName = (params: IconComponentProps<IconProp>): string 
  * getNativeIconClassName({ family: "sharp", name: "house", style: "regular" })
  *
  */
-export const getNativeIconClassName = <T,>(params: IconComponentProps<IconProp>): string => {
+export const getNativeIconClassName = (params: IconComponentProps<IconProp>): string => {
   if (isBasicIconComponentProps(params)) {
     if (isIconDefinitionParams(params.icon)) {
       return classNames(

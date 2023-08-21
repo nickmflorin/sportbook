@@ -13,6 +13,7 @@ type MenuShortcut = {
 };
 
 export type BaseMenuProps<P extends FooterActionsParams> = ComponentProps & {
+  readonly id?: string;
   readonly shortcuts?: MenuShortcut[];
   readonly footerActions?: FooterActions<P>;
   readonly footerActionParams: P;
@@ -38,6 +39,7 @@ const getFooterActions = <P extends FooterActionsParams>({
 };
 
 export const BaseMenu = <P extends FooterActionsParams>({
+  id,
   className,
   style,
   shortcuts,
@@ -48,6 +50,7 @@ export const BaseMenu = <P extends FooterActionsParams>({
   const footerActions = getFooterActions({ footerActions: _footerActions, footerActionParams });
   return (
     <div
+      id={id}
       style={style}
       className={classNames("menu", { "menu--with-shortcuts": shortcuts && shortcuts.length !== 0 }, className)}
     >
