@@ -350,8 +350,9 @@ $select-line-heights: (
 // ---------------------------------------------------- Select Input ------------------------------------------------ //
 
 $menu-item-padding: 4px 8px;
-$menu-item-height: 28px;
-$menu-item-line-height: $menu-item-height - 2 * list.nth($menu-item-padding, 1);
+$menu-item-min-height: 28px;
+$menu-item-max-height: 34px;
+$menu-item-line-height: $menu-item-min-height - 2 * list.nth($menu-item-padding, 1);
 $menu-item-font-weight: typography.get-font-weight(
   $weight: "regular",
 );
@@ -360,7 +361,8 @@ $menu-item-font-weight: typography.get-font-weight(
   padding: $menu-item-padding;
   line-height: $menu-item-line-height;
   font-weight: $menu-item-font-weight;
-  height: $menu-item-height;
+  min-height: $menu-item-min-height;
+  max-height: $menu-item-max-height;
 
   > .icon {
     color: $input-icon-color;

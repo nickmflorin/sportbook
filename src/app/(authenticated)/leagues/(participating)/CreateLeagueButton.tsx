@@ -1,14 +1,15 @@
 "use client";
-import dynamic from "next/dynamic";
+// import dynamic from "next/dynamic";
 import { useState } from "react";
 
 import { SolidButton } from "~/components/buttons/SolidButton";
-import { Loading } from "~/components/loading/Loading";
+import { Drawer } from "~/components/drawers/Drawer";
+// import { Loading } from "~/components/loading/Loading";
 
-const Drawer = dynamic(() => import("~/components/drawers/Drawer"), {
-  ssr: false,
-  loading: () => <Loading loading={true} />,
-});
+/* const Drawer = dynamic(() => import("~/components/drawers/Drawer"), {
+     ssr: false,
+     loading: () => <Loading loading={true} />,
+   }); */
 
 export interface CreateLeagueButtonProps {
   readonly drawer: JSX.Element;

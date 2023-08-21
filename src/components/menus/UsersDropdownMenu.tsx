@@ -20,7 +20,7 @@ export interface UsersDropdownMenuProps {
 
 export const UsersDropdownMenu = ({ users, value, onChange }: UsersDropdownMenuProps) => (
   <DropdownMenu
-    buttonText="Locations"
+    buttonContent="Users"
     buttonWidth="100%"
     menu={
       <MultiMenu

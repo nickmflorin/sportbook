@@ -1,18 +1,14 @@
 import dynamic from "next/dynamic";
 
 import { Page } from "~/components/layout/Page";
-import { Loading } from "~/components/loading/Loading";
 import { TableView } from "~/components/views/TableView";
 import { TableViewHeader } from "~/components/views/TableViewHeader";
 import { getAuthUser } from "~/server/auth";
 
 import { LeaguesFilterBar } from "./LeaguesFilterBar";
+import { ServerCreateLeagueDrawer } from "./ServerCreateLeagueDrawer";
 
 const CreateLeagueButton = dynamic(() => import("./CreateLeagueButton"));
-
-const ServerCreateLeagueDrawer = dynamic(() => import("./ServerCreateLeagueDrawer"), {
-  loading: () => <Loading loading={true} />,
-});
 
 interface LeaguesProps {
   readonly children: React.ReactNode;

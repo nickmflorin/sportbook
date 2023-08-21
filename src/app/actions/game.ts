@@ -30,7 +30,9 @@ export const validateGameStatusChange = async (id: string, status: ModifyGameSta
   try {
     game = await prisma.game.findUniqueOrThrow({
       where: { id },
-      include: { league: { include: { config: { include: { permissionSets: true } } } } },
+      include: {
+        league: { include: { config: { include: { staffPermissionSets: true, playerPermissionSets: true } } } },
+      },
     });
   } catch (e) {
     if (isPrismaInvalidIdError(e) || isPrismaDoesNotExistError(e)) {

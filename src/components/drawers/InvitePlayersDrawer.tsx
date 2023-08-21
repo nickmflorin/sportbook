@@ -1,14 +1,9 @@
-import dynamic from "next/dynamic";
-
+"use client";
 import type * as z from "zod";
 
 import { type LeagueSchema, type Team, type User } from "~/prisma/model";
-import { Loading } from "~/components/loading/Loading";
-
-const InvitePlayersForm = dynamic(() => import("~/components/forms/InvitePlayersForm"), {
-  ssr: false,
-  loading: () => <Loading loading={true} />,
-});
+import * as hooks from "~/components/forms/hooks";
+import { InvitePlayersForm } from "~/components/forms/InvitePlayersForm";
 
 export type LeagueFormValues = z.output<typeof LeagueSchema>;
 
@@ -18,8 +13,9 @@ export type InvitePlayersFormProps = {
   readonly users: User[];
 };
 
-export const InvitePlayersDrawer = ({ leagueId, teams, users }: InvitePlayersFormProps): JSX.Element => (
-  <InvitePlayersForm leagueId={leagueId} teams={teams} users={users} />
-);
+export const InvitePlayersDrawer = ({ leagueId, teams, users }: InvitePlayersFormProps): JSX.Element => {
+  const form = hooks.useInvitePlayersForm();
+  return <InvitePlayersForm leagueId={leagueId} teams={teams} users={users} form={form} />;
+};
 
 export default InvitePlayersDrawer;

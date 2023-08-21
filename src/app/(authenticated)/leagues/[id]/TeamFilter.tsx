@@ -35,7 +35,7 @@ export const TeamFilter = async <L extends League | LeagueWithTeams | LeagueWith
 
   return (
     <DropdownMenu
-      buttonText="Teams"
+      buttonContent="Teams"
       buttonWidth={200}
       /* TODO: We may not need a Suspense here - the thinking was that it would reduce the client side bundle because
          with NextJS, when useSearchParams is invoked, it will cause the tree up to the closest Suspense boundary to

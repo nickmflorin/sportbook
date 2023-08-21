@@ -6,6 +6,7 @@ import { DateInput } from "@mantine/dates/lib/components/DateInput";
 
 import type * as z from "zod";
 
+import { isServerErrorResponse } from "~/application/errors";
 import { type LeagueSchema, type Location } from "~/prisma/model";
 import { TextInputField } from "~/components/fields/TextInputField";
 import { Form, type FormProps } from "~/components/forms/Form";
@@ -31,12 +32,16 @@ export const CreateLeagueForm = ({ form, locations, onNewLocation }: CreateLeagu
 
   return (
     <Form
-      action={async leagueData => {
-        await createLeague(leagueData);
-        form.reset();
-        startTransition(() => {
-          router.refresh();
-        });
+      action={async (leagueData, handler) => {
+        const response = await createLeague(leagueData);
+        if (isServerErrorResponse(response)) {
+          handler.addServerError(response);
+        } else {
+          form.reset();
+          startTransition(() => {
+            router.refresh();
+          });
+        }
       }}
       form={form}
     >

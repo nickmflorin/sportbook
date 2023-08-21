@@ -7,11 +7,17 @@ import { LeaguePlayerRole } from "@prisma/client";
 export const PlayerSchema = z.object({
   userId: z.string({ required_error: "The user is required." }).uuid(),
   role: z.nativeEnum(LeaguePlayerRole),
-  teamId: z.string({ required_error: "The team that the player belongs to is required." }).uuid(),
+  teamId: z
+    .string({ required_error: "The team that the user(s) should be invited to is required." })
+    .nonempty({ message: "The team that the user(s) should be invited to is required." })
+    .uuid(),
 });
 
 // See comment above regarding PlayerSchema.
 export const InvitePlayersSchema = z.object({
   userIds: z.array(z.string().uuid()).min(1, "At least one user must be selected."),
-  teamId: z.string({ required_error: "The team that the player belongs to is required." }).uuid(),
+  teamId: z
+    .string({ required_error: "The team that the user(s) should be invited to is required." })
+    .nonempty({ message: "The team that the user(s) should be invited to is required." })
+    .uuid(),
 });

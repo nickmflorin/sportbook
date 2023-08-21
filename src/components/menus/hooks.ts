@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 
 import {
   type DatumValuelessMenuItem,
@@ -103,3 +103,12 @@ export const useValueDatumMap = <
 
   return [valueDatumMap, itemsWithValues];
 };
+
+export type IDropdownMenu = {
+  readonly close: () => void;
+  readonly setButtonContent: (content: string | JSX.Element) => void;
+};
+
+export const useDropdownMenu = (): React.MutableRefObject<IDropdownMenu> =>
+  /* eslint-disable-next-line @typescript-eslint/no-empty-function */
+  useRef<IDropdownMenu>({ setButtonContent: () => {}, close: () => {} });

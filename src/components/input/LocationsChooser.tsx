@@ -65,7 +65,7 @@ export const LocationsChooser = ({ locations, value, onAdd, onDelete, onChange }
       })}
     </div>
     <DropdownMenu
-      buttonText="Locations"
+      buttonContent="Locations"
       buttonWidth="100%"
       menu={
         <MultiMenu

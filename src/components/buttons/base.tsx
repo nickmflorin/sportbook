@@ -20,7 +20,7 @@ import {
   ButtonCornerStyles,
   ButtonSizes,
 } from "~/components/buttons";
-import { type IconProp } from "~/components/icons";
+import { type IconProp, type IconSize, IconSizes } from "~/components/icons";
 import { Icon } from "~/components/icons/Icon";
 import { type FontWeight, type TypographySize } from "~/components/typography";
 
@@ -206,6 +206,7 @@ type ButtonContentProps = {
   readonly loading?: boolean;
   readonly icon?: IconProp;
   readonly iconLocation?: Loc;
+  readonly iconSize?: IconSize;
 };
 
 export type LinkContentProps = {
@@ -214,6 +215,7 @@ export type LinkContentProps = {
   readonly children?: string | JSX.Element;
   readonly icon?: IconProp;
   readonly iconLocation?: Loc;
+  readonly iconSize?: IconSize;
 };
 
 type ButtonLinkContentProps = ButtonContentProps | LinkContentProps;
@@ -222,19 +224,20 @@ export const ButtonLinkContent = ({
   iconLocation = CSSDirections.LEFT,
   loading,
   component,
+  iconSize = IconSizes.FILL,
   icon,
   children,
 }: ButtonLinkContentProps): JSX.Element => (
   <div className={`${component}__content`}>
     {iconLocation === CSSDirections.LEFT && (icon !== undefined || loading === true) && (
       <div className={`${component}__icon-wrapper`}>
-        <Icon icon={icon} loading={loading} />
+        <Icon size={iconSize} icon={icon} loading={loading} axis="vertical" />
       </div>
     )}
     <div className={`${component}__sub-content`}>{children}</div>
     {iconLocation === CSSDirections.RIGHT && (icon !== undefined || loading === true) && (
       <div className={`${component}__icon-wrapper`}>
-        <Icon icon={icon} loading={loading} />
+        <Icon size={iconSize} icon={icon} loading={loading} axis="vertical" />
       </div>
     )}
   </div>
@@ -252,13 +255,20 @@ export const Button = <T extends ButtonType, V extends ButtonVariant>({
   loading,
   children,
   content,
+  iconSize,
   ...props
 }: ButtonProps<T, V>) => (
   <BaseButton {...props}>
     {content !== undefined ? (
       content
     ) : (
-      <ButtonLinkContent component="button" loading={loading} iconLocation={iconLocation} icon={icon}>
+      <ButtonLinkContent
+        component="button"
+        iconSize={iconSize}
+        loading={loading}
+        iconLocation={iconLocation}
+        icon={icon}
+      >
         {children}
       </ButtonLinkContent>
     )}

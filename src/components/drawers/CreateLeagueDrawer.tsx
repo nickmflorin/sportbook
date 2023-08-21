@@ -1,5 +1,4 @@
 "use client";
-import dynamic from "next/dynamic";
 import { useState } from "react";
 
 import { v4 as uuid } from "uuid";
@@ -7,20 +6,11 @@ import { v4 as uuid } from "uuid";
 import type * as z from "zod";
 
 import { type LeagueSchema, type Location } from "~/prisma/model";
-import { hooks } from "~/components/forms";
-import { Loading } from "~/components/loading/Loading";
+import { CreateLeagueForm } from "~/components/forms/CreateLeagueForm";
+import { CreateLocationForm } from "~/components/forms/CreateLocationForm";
+import * as hooks from "~/components/forms/hooks";
 
 import { Drawer } from "./Drawer";
-
-const CreateLocationForm = dynamic(() => import("~/components/forms/CreateLocationForm"), {
-  ssr: false,
-  loading: () => <Loading loading={true} />,
-});
-
-const CreateLeagueForm = dynamic(() => import("~/components/forms/CreateLeagueForm"), {
-  ssr: false,
-  loading: () => <Loading loading={true} />,
-});
 
 export type LeagueFormValues = z.output<typeof LeagueSchema>;
 

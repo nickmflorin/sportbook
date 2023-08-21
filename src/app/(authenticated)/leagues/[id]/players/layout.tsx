@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 
-import { Loading } from "~/components/loading/Loading";
 import { TableView } from "~/components/views/TableView";
 import { TableViewHeader } from "~/components/views/TableViewHeader";
 import { getAuthUser } from "~/server/auth";
@@ -9,15 +8,9 @@ import { getAuthUser } from "~/server/auth";
 import { getLeague } from "../getLeague";
 import { LeagueFilterBar } from "../LeagueFilterBar";
 
-const CreatePlayerButton = dynamic(() => import("./InvitePlayersButton"), {
-  ssr: false,
-  // TODO: Do we need the loading indicator here?
-  loading: () => <Loading loading={true} />,
-});
+import { ServerInvitePlayersDrawer } from "./ServerInvitePlayersDrawer";
 
-const ServerInvitePlayersDrawer = dynamic(() => import("./ServerInvitePlayersDrawer"), {
-  loading: () => <Loading loading={true} />,
-});
+const CreatePlayerButton = dynamic(() => import("./InvitePlayersButton"));
 
 interface LeaguePlayersLayoutProps {
   readonly params: { id: string };

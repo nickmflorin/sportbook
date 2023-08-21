@@ -8,12 +8,12 @@ export type LinkProps = Optional<BaseLinkProps, "children"> &
     readonly children?: string | JSX.Element;
   };
 
-export const Link = ({ icon, iconLocation, children, content, ...props }: LinkProps) => (
+export const Link = ({ icon, iconSize, iconLocation, children, content, ...props }: LinkProps) => (
   <BaseLink {...props}>
     {content !== undefined ? (
       content
     ) : (
-      <ButtonLinkContent component="link" iconLocation={iconLocation} icon={icon}>
+      <ButtonLinkContent component="link" iconSize={iconSize} iconLocation={iconLocation} icon={icon}>
         {children}
       </ButtonLinkContent>
     )}

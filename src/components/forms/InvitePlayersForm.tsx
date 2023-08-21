@@ -1,4 +1,3 @@
-"use client";
 import { useRouter } from "next/navigation";
 import React, { useTransition } from "react";
 
@@ -11,18 +10,15 @@ import { TeamDropdownMenu } from "~/components/menus/TeamDropdownMenu";
 import { UsersDropdownMenu } from "~/components/menus/UsersDropdownMenu";
 import { invitePlayersToTeam } from "~/app/actions/team";
 
-import { useInvitePlayersForm } from "./hooks";
-
 export type PlayerFormValues = z.output<typeof InvitePlayersSchema>;
 
-export type InvitePlayersFormProps = Omit<FormProps<PlayerFormValues>, "children" | "form"> & {
+export type InvitePlayersFormProps = Omit<FormProps<PlayerFormValues>, "children"> & {
   readonly leagueId: string;
   readonly teams: Team[];
   readonly users: User[];
 };
 
-export const InvitePlayersForm = ({ leagueId, teams, users }: InvitePlayersFormProps): JSX.Element => {
-  const form = useInvitePlayersForm();
+export const InvitePlayersForm = ({ form, leagueId, teams, users }: InvitePlayersFormProps): JSX.Element => {
   const [_, startTransition] = useTransition();
   const router = useRouter();
   return (

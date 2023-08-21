@@ -1,14 +1,8 @@
 "use client";
-import dynamic from "next/dynamic";
 import { useState } from "react";
 
 import { SolidButton } from "~/components/buttons/SolidButton";
-import { Loading } from "~/components/loading/Loading";
-
-const Drawer = dynamic(() => import("~/components/drawers/Drawer"), {
-  // ssr: false,
-  loading: () => <Loading loading={true} />,
-});
+import { Drawer } from "~/components/drawers/Drawer";
 
 export interface InvitePlayersButtonProps {
   readonly drawer: JSX.Element;

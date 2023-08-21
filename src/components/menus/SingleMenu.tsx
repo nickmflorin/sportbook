@@ -283,4 +283,8 @@ export const SingleMenu = <V extends string | null, M>(props: SingleMenuProps<V,
   }
 };
 
+export type SingleMenuType = {
+  <V extends string | null, M>(props: SingleMenuProps<V, M>): JSX.Element;
+};
+
 export default SingleMenu;

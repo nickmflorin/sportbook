@@ -1,26 +1,29 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useImperativeHandle, useEffect } from "react";
 
 import { Popover, type PopoverProps } from "@mantine/core/lib/Popover";
 
 import { type Style } from "~/lib/ui";
-import { SolidButton } from "~/components/buttons/SolidButton";
+import { DropdownButton } from "~/components/buttons/DropdownButton";
+
+import { type IDropdownMenu } from "./hooks";
 
 interface BaseDropdownMenuProps extends Pick<PopoverProps, "position" | "trapFocus" | "width"> {
   readonly open?: boolean;
   readonly menu: JSX.Element;
+  readonly dropdownMenu?: React.MutableRefObject<IDropdownMenu>;
   readonly onClose?: () => void;
 }
 
 export interface DropdownMenuChildrenProps extends BaseDropdownMenuProps {
   readonly children: JSX.Element;
-  readonly buttonText?: never;
+  readonly buttonContent?: never;
   readonly buttonStyle?: never;
   readonly buttonWidth?: never;
 }
 
 export interface DropdownMenuChildlessProps extends BaseDropdownMenuProps {
-  readonly buttonText: string;
+  readonly buttonContent: string | JSX.Element;
   readonly buttonStyle?: Omit<Style, "width">;
   readonly buttonWidth?: number | string;
   readonly children?: never;
@@ -32,51 +35,55 @@ export const DropdownMenu = ({
   children,
   open,
   buttonStyle,
-  buttonText,
+  buttonContent,
   menu,
   buttonWidth,
+  dropdownMenu,
   onClose,
   ...props
 }: DropdownMenuProps): JSX.Element => {
-  const [_open, setOpen] = useState(false);
+  const [_open, setOpen] = useState(open === undefined ? false : open);
+  const [_buttonContent, setButtonContent] = useState<string | JSX.Element | undefined>(buttonContent);
 
   const isOpen = open === undefined ? _open : open;
+
+  useEffect(() => {
+    if (isOpen === false) {
+      onClose?.();
+    }
+  }, [isOpen]);
+
+  useImperativeHandle(dropdownMenu, () => ({ setButtonContent, close: () => setOpen(false) }));
 
   const target = useMemo(() => {
     if (children === undefined) {
       return (
-        <SolidButton.Outline
-          style={{ textAlign: "left", ...buttonStyle, width: buttonWidth }}
-          icon={isOpen ? { name: "chevron-up" } : { name: "chevron-down" }}
-          iconLocation="right"
-          onFocusCapture={() => setOpen(true)}
-          onBlurCapture={() => {
-            setOpen(false);
-            onClose?.();
-          }}
+        <DropdownButton
+          open={isOpen}
+          style={buttonStyle}
+          width={buttonWidth}
+          onClick={() => setOpen((o: boolean) => !o)}
         >
-          {buttonText}
-        </SolidButton.Outline>
+          {_buttonContent}
+        </DropdownButton>
       );
     }
     return children;
-  }, [children, buttonText, buttonStyle, buttonWidth, isOpen, onClose]);
+  }, [children, _buttonContent, buttonStyle, buttonWidth, isOpen, setOpen]);
 
   return (
-    <Popover position="bottom" width="target" transitionProps={{ transition: "pop" }} trapFocus {...props}>
+    <Popover
+      opened={isOpen}
+      position="bottom"
+      width="target"
+      transitionProps={{ transition: "pop" }}
+      trapFocus
+      {...props}
+    >
       <Popover.Target>
-        <div
-          style={buttonWidth ? { width: buttonWidth } : { maxWidth: "fit-content" }}
-          onFocusCapture={() => setOpen(true)}
-          onBlurCapture={() => {
-            setOpen(false);
-            onClose?.();
-          }}
-        >
-          {target}
-        </div>
+        <div style={buttonWidth ? { width: buttonWidth } : { maxWidth: "fit-content" }}>{target}</div>
       </Popover.Target>
-      <Popover.Dropdown>{menu}</Popover.Dropdown>
+      <Popover.Dropdown onBlur={() => setOpen(false)}>{menu}</Popover.Dropdown>
     </Popover>
   );
 };

@@ -6,7 +6,6 @@ import { Loading } from "~/components/loading/Loading";
 
 const CreateLeagueDrawer = dynamic(() => import("~/components/drawers/CreateLeagueDrawer"), {
   loading: () => <Loading loading={true} />,
-  ssr: false,
 });
 
 export interface ServerCreateLeagueDrawerProps {

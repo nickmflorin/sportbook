@@ -84,6 +84,12 @@ async function generateLeagueStaff(league: League, ctx: SeedContext) {
   }
 }
 
+const ALL_LEAGUE_STAFF_PERMISSION_CODES = [
+  LeagueStaffPermissionCode.CANCEL_GAME,
+  LeagueStaffPermissionCode.POSTPONE_GAME,
+  LeagueStaffPermissionCode.INVITE_PLAYERS,
+];
+
 export default async function generateLeague(sport: Sport, ctx: SeedContext) {
   const league = await prisma.league.create({
     data: {
@@ -110,13 +116,13 @@ export default async function generateLeague(sport: Sport, ctx: SeedContext) {
         ...getModelMeta("LeagueStaffPermissionSet", { getUser: ctx.getUser }),
         leagueConfigId: league.configId,
         leagueStaffRole: LeagueStaffRole.ADMIN,
-        permissionCodes: [LeagueStaffPermissionCode.CANCEL_GAME, LeagueStaffPermissionCode.POSTPONE_GAME],
+        permissionCodes: ALL_LEAGUE_STAFF_PERMISSION_CODES,
       },
       {
         ...getModelMeta("LeagueStaffPermissionSet", { getUser: ctx.getUser }),
         leagueConfigId: league.configId,
         leagueStaffRole: LeagueStaffRole.COMISSIONER,
-        permissionCodes: [LeagueStaffPermissionCode.CANCEL_GAME, LeagueStaffPermissionCode.POSTPONE_GAME],
+        permissionCodes: ALL_LEAGUE_STAFF_PERMISSION_CODES,
       },
       {
         ...getModelMeta("LeagueStaffPermissionSet", { getUser: ctx.getUser }),
