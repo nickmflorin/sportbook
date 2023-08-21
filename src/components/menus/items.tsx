@@ -44,16 +44,19 @@ export const BaseMenuItem = <
     return <></>;
   }
   return (
-    <div style={item.style} className={classNames("menu-item", { selected, disabled: item.disabled }, item.className)}>
-      <div
-        className="menu-item__content"
-        onClick={e => {
-          if (!item.disabled && menuItem.current) {
-            onClick?.(e);
-            item.onClick?.(menuItem.current, e);
-          }
-        }}
-      >
+    <div
+      style={item.style}
+      className={classNames("menu-item", { selected, disabled: item.disabled }, item.className)}
+      onClick={e => {
+        e.stopPropagation();
+        e.preventDefault();
+        if (!item.disabled && menuItem.current) {
+          onClick?.(e);
+          item.onClick?.(menuItem.current, e);
+        }
+      }}
+    >
+      <div className="menu-item__content">
         {/* TODO: We need to come up with a loading state for the Avatar case. */}
         {withCheckbox && <Checkbox readOnly checked={selected} mr="md" size={14} />}
         {item.icon ? (

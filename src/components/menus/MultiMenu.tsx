@@ -284,4 +284,8 @@ export const MultiMenu = <V extends string | null, M>({
   );
 };
 
+export type MultiMenuType = {
+  <V extends string | null, M>(props: MultiMenuProps<V, M>): JSX.Element;
+};
+
 export default MultiMenu;

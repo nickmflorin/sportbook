@@ -12,6 +12,7 @@ interface BaseDropdownMenuProps extends Pick<PopoverProps, "position" | "trapFoc
   readonly open?: boolean;
   readonly menu: JSX.Element;
   readonly dropdownMenu?: React.MutableRefObject<IDropdownMenu>;
+  readonly keepOpen?: boolean; // For debugging purposes.
   readonly onClose?: () => void;
 }
 
@@ -37,6 +38,7 @@ export const DropdownMenu = ({
   buttonStyle,
   buttonContent,
   menu,
+  keepOpen,
   buttonWidth,
   dropdownMenu,
   onClose,
@@ -45,13 +47,13 @@ export const DropdownMenu = ({
   const [_open, setOpen] = useState(open === undefined ? false : open);
   const [_buttonContent, setButtonContent] = useState<string | JSX.Element | undefined>(buttonContent);
 
-  const isOpen = open === undefined ? _open : open;
+  const isOpen = keepOpen === true || (open === undefined ? _open : open);
 
   useEffect(() => {
     if (isOpen === false) {
       onClose?.();
     }
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   useImperativeHandle(dropdownMenu, () => ({ setButtonContent, close: () => setOpen(false) }));
 

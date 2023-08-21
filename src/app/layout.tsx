@@ -27,8 +27,9 @@ const RootLayout = ({ children }: { children: ReactNode }) => (
         type="text/javascript"
         src={`https://kit.fontawesome.com/${env.FONT_AWESOME_KIT_TOKEN}.js`}
         crossOrigin="anonymous"
-        data-auto-replace-svg="nest"
-        async
+        data-auto-replace-svg
+        data-mutate-approach="sync"
+        data-observe-mutations
       />
     </head>
     <body className={InterFont.className}>

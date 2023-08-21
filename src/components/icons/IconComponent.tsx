@@ -72,6 +72,16 @@ export const isBasicIconComponentProps = <T,>(
 ): params is T & Pick<BasicIconComponentProps, "icon"> =>
   (params as T & Pick<BasicIconComponentProps, "icon">).icon !== undefined;
 
+export const getNativeIconName = <T,>(params: _GetNativeIconClassNameParams<T>): string => {
+  if (isBasicIconComponentProps(params)) {
+    if (isIconDefinitionParams(params.icon)) {
+      return params.icon.name;
+    }
+    return params.icon.iconName;
+  }
+  return params.name;
+};
+
 /**
  * Returns the appropriate Font Awesome native class names for the <i> element that is rendered by the <Icon />
  * component, based on the provided icon information.
@@ -183,7 +193,13 @@ export const IconComponent = ({
        the <FontAwesomeIcon /> component simply renders an SVG element, we can mimic its behavior by rendering an SVG
        inside of an <i> element, where the <i> element is given the Font Awesome class names that are defined in the
        content loaded from the CDN (these class names are generated via 'getNativeIconClassName' below). */
-    return <i style={style} className={getIconClassName({ ...props, size, axis, contain })} />;
+    return (
+      <i
+        style={style}
+        className={getIconClassName({ ...props, size, axis, contain })}
+        data-icon={getNativeIconName(props)}
+      />
+    );
   } else {
     return <></>;
   }
