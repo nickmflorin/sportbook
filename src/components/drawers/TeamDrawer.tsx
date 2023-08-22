@@ -12,22 +12,24 @@ import {
   type GameWithTeams,
   type TeamGameWithOpponent,
 } from "~/prisma/model";
-import { Badge } from "~/components/badges/Badge";
-import { TeamButton } from "~/components/buttons/TeamButton";
+import { getAuthUser } from "~/server/auth";
+import { getTeamStats } from "~/server/leagues";
+import { putGameInTeamPerspective } from "~/server/leagues/games";
+import { TeamDetailLink } from "~/components/buttons/TeamDetailLink";
 import { PlayerAvatar } from "~/components/images/PlayerAvatar";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
 import { Loading } from "~/components/loading/Loading";
 import { Separator } from "~/components/structural/Separator";
 import { DateTimeText } from "~/components/typography/DateTimeText";
-import { TeamStatsText } from "~/components/typography/TeamStatsText";
 import { Text } from "~/components/typography/Text";
 import { InfoView } from "~/components/views/InfoView";
 import { View } from "~/components/views/View";
-import { getAuthUser } from "~/server/auth";
-import { getTeamStats } from "~/server/leagues";
-import { putGameInTeamPerspective } from "~/server/leagues/games";
 
 const DrawerView = dynamic(() => import("~/components/drawers/DrawerView"), {
+  loading: () => <Loading loading={true} />,
+});
+
+const TeamInfoView = dynamic(() => import("~/components/views/TeamInfoView"), {
   loading: () => <Loading loading={true} />,
 });
 
@@ -142,19 +144,11 @@ export const TeamDrawer = async ({ teamId }: TeamDrawerProps): Promise<JSX.Eleme
   const gamesFromPerspective = games.map(g => putGameInTeamPerspective(team.id, g));
 
   return (
-    <DrawerView
-      title={team.name}
-      description={[<TeamStatsText key="0" stats={stats} size="xs" />]}
-      headerProps={{
-        image: <TeamAvatar team={team} fontSize="sm" size={50} />,
-        tags: [<Badge key="0" size="xxs">{`${team.players.length} Players`}</Badge>],
-      }}
-    >
+    <DrawerView header={<TeamInfoView team={{ ...team, stats, numPlayers: team.players.length }} />}>
       <Separator mb="sm" />
       <View
-        title="Recent Scores"
         gap="sm"
-        headerProps={{ titleProps: { order: 6, fontWeight: "medium" } }}
+        header={<InfoView title="Recent Scores" titleProps={{ order: 6, fontWeight: "medium" }} />}
         contentProps={{ gap: "sm" }}
       >
         {gamesFromPerspective.map((game, i) => (
@@ -163,7 +157,9 @@ export const TeamDrawer = async ({ teamId }: TeamDrawerProps): Promise<JSX.Eleme
             image={
               <TeamAvatar team={game.awayTeamId === team.id ? game.homeTeam : game.awayTeam} fontSize="sm" size={30} />
             }
-            title={<TeamButton team={team} textAlign="left" />}
+            title={
+              <TeamDetailLink team={game.awayTeamId === team.id ? game.homeTeam : game.awayTeam} textAlign="left" />
+            }
             description={<GameResultScoreText {...game} />}
             rightContent={<DateTimeText value={game.dateTime} textAlign="right" size="xs" justify="flex-end" />}
           />
@@ -171,9 +167,8 @@ export const TeamDrawer = async ({ teamId }: TeamDrawerProps): Promise<JSX.Eleme
       </View>
       <Separator mb="sm" mt="sm" />
       <View
-        title="Players"
+        header={<InfoView title="Players" titleProps={{ order: 6, fontWeight: "medium" }} />}
         gap="sm"
-        headerProps={{ titleProps: { order: 6, fontWeight: "medium" } }}
         contentProps={{ gap: "sm" }}
       >
         {team.players.map((player, i) => (

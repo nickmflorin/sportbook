@@ -7,8 +7,8 @@ import { prisma } from "~/prisma/client";
 import { FileUploadEntity } from "~/prisma/model";
 import { parseQueryTeamIds } from "~/prisma/urls";
 import { constructOrSearch } from "~/prisma/util";
-import { Loading } from "~/components/loading/Loading";
 import { getAuthUser } from "~/server/auth";
+import { Loading } from "~/components/loading/Loading";
 
 import { getLeague } from "../getLeague";
 

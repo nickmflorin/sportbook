@@ -1,7 +1,7 @@
 import { parseUserDisplayName } from "~/lib/user";
 import { type LeaguePlayerWithUser } from "~/prisma/model";
 import { LeaguePlayerRoleBadge } from "~/components/badges/LeaguePlayerRoleBadge";
-import { PlayerButton } from "~/components/buttons/PlayerButton";
+import { PlayerDetailLink } from "~/components/buttons/PlayerDetailLink";
 
 import { Avatar, type AvatarProps } from "./Avatar";
 
@@ -19,7 +19,7 @@ export const PlayerAvatar = ({ player, withName, withButton, withTags, ...props 
     initials={parseUserDisplayName(player.user, { fallback: "" })}
     name={withName ? parseUserDisplayName(player.user) : undefined}
     {...props}
-    button={withButton ? <PlayerButton player={player} /> : undefined}
+    button={withButton ? <PlayerDetailLink player={player} /> : undefined}
   />
 );
 

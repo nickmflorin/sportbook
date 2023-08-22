@@ -8,6 +8,10 @@
   }
 
   > .avatar-with-name__content {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
     @layer {
       gap: partials.get-spacing("xs");
     }

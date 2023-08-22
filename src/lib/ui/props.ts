@@ -7,7 +7,15 @@ import { type HTMLElementName, type HTMLElementTag } from "~/lib/core";
 import { enumeratedLiterals, type EnumeratedLiteralType } from "~/lib/util/literals";
 
 import { type ColorPropName, type ColorProp, getColorClassName, ColorPropNames } from "./colors";
-import { MarginPropNames, type MarginPropName, type Spacing, getMarginClassName } from "./spacing";
+import {
+  MarginPropNames,
+  type MarginPropName,
+  PaddingPropNames,
+  type PaddingPropName,
+  type Spacing,
+  getMarginClassName,
+  getPaddingClassName,
+} from "./spacing";
 
 export const BorderRadiusSizes = enumeratedLiterals(["xs", "sm", "md", "lg", "xl"] as const);
 export type BorderRadiusSize = EnumeratedLiteralType<typeof BorderRadiusSizes>;
@@ -64,7 +72,9 @@ export type ColorProps<N extends ColorPropName = ColorPropName> = { [k in N]?: C
 
 export type MarginProps = { [key in MarginPropName]?: Spacing };
 
-export type AllComponentProps = ComponentProps & ColorProps & MarginProps;
+export type PaddingProps = { [key in PaddingPropName]?: Spacing };
+
+export type AllComponentProps = ComponentProps & ColorProps & MarginProps & PaddingProps;
 
 export const getComponentNativeProps = <Pargs extends P[], P extends AllComponentProps>(
   ...props: Pargs
@@ -82,6 +92,10 @@ export const getComponentNativeProps = <Pargs extends P[], P extends AllComponen
         ),
         MarginPropNames.reduce(
           (prev: string, propName: MarginPropName) => classNames(prev, getMarginClassName(propName, p[propName])),
+          "",
+        ),
+        PaddingPropNames.reduce(
+          (prev: string, propName: PaddingPropName) => classNames(prev, getPaddingClassName(propName, p[propName])),
           "",
         ),
       ),

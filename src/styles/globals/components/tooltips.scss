@@ -1,0 +1,7 @@
+@use "partials";
+
+.popover {
+  padding: 0px;
+  border-radius: partials.get-radius("sm");
+  border: 1px solid partials.get-color("border", $shade: 3);
+}

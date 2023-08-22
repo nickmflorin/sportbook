@@ -2,16 +2,14 @@ import { type ReactNode } from "react";
 
 import classNames from "classnames";
 
-import { TableViewHeader, type TableViewHeaderProps } from "./TableViewHeader";
-import { View } from "./View";
+import { View, type ViewProps } from "./View";
 
-export interface TableViewProps extends TableViewHeaderProps {
+export interface TableViewProps extends Omit<ViewProps, "children"> {
   readonly children: ReactNode;
-  readonly header?: JSX.Element;
 }
 
-export const TableView = ({ children, header, className, style, ...props }: TableViewProps): JSX.Element => (
-  <View style={style} className={classNames("table-view", className)} header={header || <TableViewHeader {...props} />}>
+export const TableView = ({ children, ...props }: TableViewProps): JSX.Element => (
+  <View {...props} className={classNames("table-view", props.className)}>
     {children}
   </View>
 );

@@ -1,9 +1,9 @@
 import dynamic from "next/dynamic";
 
-import { Page } from "~/components/layout/Page";
-import { TableView } from "~/components/views/TableView";
-import { TableViewHeader } from "~/components/views/TableViewHeader";
 import { getAuthUser } from "~/server/auth";
+import { Page } from "~/components/layout/Page";
+import { InfoView } from "~/components/views/InfoView";
+import { TableView } from "~/components/views/TableView";
 
 import { LeaguesFilterBar } from "./LeaguesFilterBar";
 import { ServerCreateLeagueDrawer } from "./ServerCreateLeagueDrawer";
@@ -28,13 +28,10 @@ export default async function Leagues({ children }: LeaguesProps) {
       }}
     >
       <TableView
-        header={
-          <TableViewHeader
-            title="Your Leagues"
-            description="Leagues you are participating in."
-            filterBar={<LeaguesFilterBar />}
-          />
-        }
+        header={[
+          <InfoView key="0" title="Your Leagues" description="Leagues you are participating in." />,
+          <LeaguesFilterBar key="1" />,
+        ]}
       >
         {children}
       </TableView>

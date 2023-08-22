@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import { SolidButton } from "~/components/buttons/SolidButton";
 import { Drawer } from "~/components/drawers/Drawer";
+import { InfoView } from "~/components/views/InfoView";
 
 export interface InvitePlayersButtonProps {
   readonly drawer: JSX.Element;
@@ -16,7 +17,7 @@ export const InvitePlayersButton = ({ drawer }: InvitePlayersButtonProps): JSX.E
       <Drawer
         open={open}
         onClose={() => setOpen(false)}
-        viewProps={{ title: "Invite Players", description: "Invite players to your league." }}
+        viewProps={{ header: <InfoView title="Invite Players" description="Invite players to your league." /> }}
       >
         {drawer}
       </Drawer>

@@ -1,9 +1,9 @@
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 
-import { TableView } from "~/components/views/TableView";
-import { TableViewHeader } from "~/components/views/TableViewHeader";
 import { getAuthUser } from "~/server/auth";
+import { InfoView } from "~/components/views/InfoView";
+import { TableView } from "~/components/views/TableView";
 
 import { getLeague } from "../getLeague";
 import { LeagueFilterBar } from "../LeagueFilterBar";
@@ -23,11 +23,11 @@ export default async function LeaguePlayersLayout({ children, params: { id } }: 
 
   return (
     <TableView
-      header={
-        <TableViewHeader
+      header={[
+        <InfoView
+          key="0"
           title="Players"
           description="The players who are currently registered in this league."
-          filterBar={<LeagueFilterBar league={id} user={user} />}
           actions={[
             <CreatePlayerButton
               key="0"
@@ -38,8 +38,9 @@ export default async function LeaguePlayersLayout({ children, params: { id } }: 
               drawer={<ServerInvitePlayersDrawer league={league} />}
             />,
           ]}
-        />
-      }
+        />,
+        <LeagueFilterBar key="1" league={id} user={user} />,
+      ]}
     >
       {children}
     </TableView>

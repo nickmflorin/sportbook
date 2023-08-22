@@ -1,74 +1,64 @@
-const FIRST_INTERNAL_MODULE_GROUP = ["prisma", "application", "lib", "tests"];
+const FIRST_INTERNAL_MODULE_GROUP = ["prisma", "application", "lib", "tests", "server", "hooks", "app"];
 
 // Components and styles should always be the last absolute imports.
 const SECOND_INTERNAL_MODULE_GROUP = ["components", "styles"];
 
-const INTERNAL_MODULES = [...FIRST_INTERNAL_MODULE_GROUP, ...SECOND_INTERNAL_MODULE_GROUP];
-
 const toAbsoluteImports = v => [`~/${v}`, `~/${v}/**`];
-
-const IMPORT_ORDER_CONFIG = {
-  groups: ["builtin", "external", "type", "internal", "parent", "sibling", "index", "object"],
-  "newlines-between": "always",
-  warnOnUnassignedImports: true,
-  distinctGroup: false,
-  pathGroupsExcludedImportTypes: ["react", "next"],
-  pathGroups: [
-    {
-      pattern: "{react,react/**,next,next/**}",
-      group: "builtin",
-      position: "before",
-    },
-    {
-      pattern: "{@prisma,@prisma/**}",
-      group: "external",
-      position: "after",
-    },
-    {
-      pattern: "{../*}",
-      group: "sibling",
-      position: "before",
-    },
-    {
-      pattern: "{./*}",
-      group: "sibling",
-      position: "after",
-    },
-    {
-      pattern: `{${FIRST_INTERNAL_MODULE_GROUP.reduce((prev, v) => [...prev, ...toAbsoluteImports(v)], []).join(",")}}`,
-      group: "internal",
-      position: "before",
-    },
-    {
-      pattern: `{${SECOND_INTERNAL_MODULE_GROUP.reduce((prev, v) => [...prev, ...toAbsoluteImports(v)], []).join(
-        ",",
-      )}}`,
-      group: "internal",
-      position: "before",
-    },
-  ],
-  alphabetize: {
-    order: "asc",
-    caseInsensitive: true,
-    orderImportKind: "asc",
-  },
-};
 
 /* Rules that apply to all files in the project, regardless of file type. */
 /** @type {import("eslint").Linter.Config["rules"]} */
 const BASE_RULES = {
   "prettier/prettier": "error",
   curly: "error",
-  "import/order": ["error", IMPORT_ORDER_CONFIG],
-  "no-restricted-imports": [
+  "import/order": [
     "error",
     {
-      patterns: [
+      groups: ["builtin", "external", "type", "internal", "parent", "sibling", "index", "object"],
+      "newlines-between": "always",
+      warnOnUnassignedImports: true,
+      distinctGroup: false,
+      pathGroupsExcludedImportTypes: ["react", "next"],
+      pathGroups: [
         {
-          group: INTERNAL_MODULES.reduce((prev, v) => [...prev, `../${v}`, `../*/${v}`], []),
-          message: "When outside of the module, absolute imports must be used for the directory.",
+          pattern: "{react,react/**,next,next/**}",
+          group: "builtin",
+          position: "before",
+        },
+        {
+          pattern: "{@prisma,@prisma/**}",
+          group: "external",
+          position: "after",
+        },
+        {
+          pattern: "{../*}",
+          group: "sibling",
+          position: "before",
+        },
+        {
+          pattern: "{./*}",
+          group: "sibling",
+          position: "after",
+        },
+        {
+          pattern: `{${FIRST_INTERNAL_MODULE_GROUP.reduce((prev, v) => [...prev, ...toAbsoluteImports(v)], []).join(
+            ",",
+          )}}`,
+          group: "internal",
+          position: "before",
+        },
+        {
+          pattern: `{${SECOND_INTERNAL_MODULE_GROUP.reduce((prev, v) => [...prev, ...toAbsoluteImports(v)], []).join(
+            ",",
+          )}}`,
+          group: "internal",
+          position: "before",
         },
       ],
+      alphabetize: {
+        order: "asc",
+        caseInsensitive: true,
+        orderImportKind: "asc",
+      },
     },
   ],
   "import/newline-after-import": ["error"],

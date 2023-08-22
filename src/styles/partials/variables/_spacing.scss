@@ -39,8 +39,8 @@ $spacing: (
   }
 }
 
-$margin-sides: ("top", "right", "bottom", "left");
-$margin-side-abbreviations: (
+$spacing-sides: ("top", "right", "bottom", "left");
+$spacing-side-abbreviations: (
   "top": "t",
   "right": "r",
   "bottom": "b",
@@ -52,10 +52,24 @@ $margin-side-abbreviations: (
     .m-#{$size} {
       margin: $value;
     }
-    @each $side in $margin-sides {
-      $side-abbr: fn.mapget($margin-side-abbreviations, $side);
+    @each $side in $spacing-sides {
+      $side-abbr: fn.mapget($spacing-side-abbreviations, $side);
       .m#{$side-abbr}-#{$size} {
         margin-#{$side}: $value;
+      }
+    }
+  }
+}
+
+@mixin with-paddings() {
+  @include with-spacing using ($size, $value) {
+    .p-#{$size} {
+      padding: $value;
+    }
+    @each $side in $spacing-sides {
+      $side-abbr: fn.mapget($spacing-side-abbreviations, $side);
+      .p#{$side-abbr}-#{$size} {
+        padding-#{$side}: $value;
       }
     }
   }

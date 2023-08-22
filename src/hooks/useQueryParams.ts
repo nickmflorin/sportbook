@@ -2,7 +2,7 @@
 import { ReadonlyURLSearchParams, useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useMemo, useTransition } from "react";
 
-import { parseQueryParams } from "~/lib/util/urls";
+import { parseQueryParams, updateQueryParams } from "~/lib/util/urls";
 
 import { useDeepEqualMemo } from "./useDeep";
 import { useReferentialCallback } from "./useReferentialCallback";
@@ -48,33 +48,9 @@ export const useQueryParams = (): IQueryParams => {
       params: Params<string, string | null | undefined>,
       options?: MutableOptions & { readonly clearOthers?: true },
     ): MutableReturnType => {
-      const newParams = options?.clearOthers ? new URLSearchParams() : new URLSearchParams(searchParams.toString());
+      const toUpdate = options?.clearOthers ? new URLSearchParams() : new URLSearchParams(searchParams.toString());
+      const newParams = updateQueryParams(toUpdate, params);
 
-      /* First, add all of the existing query parameters to the set as long as they are not in the set of new
-         parameters. */
-      for (const param in searchParams) {
-        // If the existing parameter is not in the new set of provided parameters, leave it in the set of parameters.
-        if (params[param] === undefined) {
-          const currentValue = searchParams.get(param);
-          if (currentValue !== null) {
-            newParams.set(param, currentValue);
-          }
-        }
-      }
-      const isClearableValue = (v: string | null | undefined): v is string | null =>
-        v === null || (typeof v === "string" && v.length === 0);
-
-      /* Loop over the keys of the params so that we can tell the difference between a parameter that is included with
-           an explicitly undefined value and a parameter that is not included at all. */
-      for (const param in params) {
-        const value = params[param];
-        // The new set of parameters will only have the parameter if the clearOthers flag is not true.
-        if (isClearableValue(value) && newParams.has(param)) {
-          newParams.delete(param);
-        } else if (!isClearableValue(value) && value !== undefined) {
-          newParams.set(param, value);
-        }
-      }
       let href = pathname;
       const queryString = newParams.toString();
       if (newParams.size !== 0 && queryString.length !== 0) {

@@ -28,7 +28,6 @@ export const Spinner = ({ color = "blue.6", loading, ...props }: SpinnerProps): 
       color={color}
       className={classNames("spinner", props.className)}
       spin={true}
-      // loading={false}
       name="circle-notch"
       contain={SizeContains.SQUARE}
     />

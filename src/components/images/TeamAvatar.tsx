@@ -1,18 +1,16 @@
-import { type Team, type ModelWithFileUrl } from "~/prisma/model";
-import { TeamButton } from "~/components/buttons/TeamButton";
+import { type TeamUiForm, teamUiFormHasFileUrl } from "~/prisma/model";
+import { TeamDetailLink } from "~/components/buttons/TeamDetailLink";
 
 import { Avatar, type AvatarProps } from "./Avatar";
 
-type BaseTeam = Pick<Team, "name" | "id"> | Pick<ModelWithFileUrl<Team>, "id" | "name" | "fileUrl">;
-
-export interface TeamAvatarProps<T extends BaseTeam>
+export interface TeamAvatarProps<T extends TeamUiForm>
   extends Omit<AvatarProps, "initials" | "name" | "onClick" | "href" | "button"> {
   readonly team: T;
   readonly withName?: true;
   readonly withButton?: true;
 }
 
-export const TeamAvatar = <T extends BaseTeam>({
+export const TeamAvatar = <T extends TeamUiForm>({
   team,
   url,
   withButton,
@@ -20,11 +18,11 @@ export const TeamAvatar = <T extends BaseTeam>({
   ...props
 }: TeamAvatarProps<T>): JSX.Element => (
   <Avatar
-    url={url || (team as Pick<ModelWithFileUrl<Team>, "name" | "fileUrl">).fileUrl}
+    url={url || (teamUiFormHasFileUrl(team) ? team.fileUrl : undefined)}
     initials={team.name}
     name={withName === true ? team.name : undefined}
     {...props}
-    button={withButton ? <TeamButton team={team} /> : undefined}
+    button={withButton ? <TeamDetailLink team={team} /> : undefined}
   />
 );
 

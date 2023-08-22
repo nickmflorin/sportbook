@@ -3,3 +3,5 @@
 @use "./colors";
 
 @include partials.with-margins();
+
+@include partials.with-paddings();

@@ -2,6 +2,7 @@
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 
+import { postponeGame, cancelGame } from "~/app/actions/game";
 import { isServerErrorResponse } from "~/application/errors";
 import {
   type ModelWithFileUrl,
@@ -16,7 +17,6 @@ import { TeamAvatar } from "~/components/images/TeamAvatar";
 import { Loading } from "~/components/loading/Loading";
 import { type TableAction } from "~/components/menus/TableActionDropdownMenu";
 import { DateTimeText } from "~/components/typography/DateTimeText";
-import { postponeGame, cancelGame } from "~/app/actions/game";
 
 import { type Column } from "./columns";
 import { DataTable, type DataTableProps } from "./DataTable";

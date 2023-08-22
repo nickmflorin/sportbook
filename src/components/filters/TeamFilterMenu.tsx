@@ -2,12 +2,12 @@
 import { useRouter, usePathname } from "next/navigation";
 import { useTransition, useMemo } from "react";
 
+import { useQueryParams } from "~/hooks/useQueryParams";
 import { type Team } from "~/prisma/model";
 import { parseQueryParamIds } from "~/prisma/urls";
 import { SolidButton } from "~/components/buttons/SolidButton";
 import { Menu } from "~/components/menus/Menu";
 import { useMultiMenu } from "~/components/menus/MultiMenu";
-import { useQueryParams } from "~/hooks/useQueryParams";
 
 export type TeamFilterMenuProps = {
   readonly teams: Team[];

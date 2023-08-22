@@ -6,8 +6,6 @@ import { type ComponentProps } from "~/lib/ui";
 import { CloseButton } from "~/components/buttons/CloseButton";
 import { Flex, type FlexProps } from "~/components/structural/Flex";
 
-import { ViewHeader, type ViewHeaderProps } from "./ViewHeader";
-
 export interface ViewContainerProps extends Omit<FlexProps, "direction"> {
   readonly bordered?: boolean | "top" | "left" | "right" | "bottom";
   readonly contentScrollable?: boolean;
@@ -48,14 +46,21 @@ export const ViewFooter = ({ children, ...props }: ComponentProps & { readonly c
   </div>
 );
 
-export interface ViewProps
-  extends Omit<ViewContainerProps, "children">,
-    Pick<ViewHeaderProps, "title" | "description" | "actions"> {
+export interface ViewHeaderProps extends ComponentProps {
+  readonly children: JSX.Element | JSX.Element[];
+}
+
+export const ViewHeader = ({ children, ...props }: ViewHeaderProps) => (
+  <div {...props} className={classNames("view__header", props.className)}>
+    {children}
+  </div>
+);
+
+export interface ViewProps extends Omit<ViewContainerProps, "children"> {
   readonly footer?: JSX.Element;
-  readonly header?: JSX.Element;
+  readonly header?: JSX.Element | JSX.Element[];
   readonly onClose?: () => void;
   readonly children: ReactNode;
-  readonly headerProps?: Omit<ViewHeaderProps, "title" | "description" | "actions">;
   readonly contentProps?: Omit<ViewContentProps, "children">;
 }
 
@@ -63,24 +68,16 @@ export const View = ({
   children,
   footer,
   header,
-  title,
-  description,
-  actions,
-  headerProps,
   contentProps,
   onClose,
   ...props
 }: ViewProps & { readonly children: ReactNode }): JSX.Element => (
   <ViewContainer {...props}>
     {onClose && <CloseButton className="view__close-button" onClick={onClose} />}
-    {header ? header : <ViewHeader {...headerProps} title={title} description={description} actions={actions} />}
+    {header && <ViewHeader className="view__header">{header}</ViewHeader>}
     <ViewContent {...contentProps}>{children}</ViewContent>
     {footer && <ViewFooter>{footer}</ViewFooter>}
   </ViewContainer>
 );
-
-View.Container = ViewContainer;
-View.Content = ViewContent;
-View.Header = ViewHeader;
 
 export default View;

@@ -22,12 +22,15 @@ import {
 } from "~/components/buttons";
 import { type IconProp, type IconSize, IconSizes, type DynamicIconProp } from "~/components/icons";
 import { Icon } from "~/components/icons/Icon";
+import { HoverPopover, type HoverPopoverProps } from "~/components/tooltips/HoverPopover";
 import { type FontWeight, type TypographySize } from "~/components/typography";
 
 type BaseProps = ComponentProps & {
   readonly children: string | JSX.Element;
   readonly disabled?: boolean;
   readonly href?: NextLinkProps["href"];
+  readonly popover?: JSX.Element;
+  readonly popoverProps?: HoverPopoverProps;
 };
 
 export type BaseLinkProps = Required<BaseProps, "href"> & {
@@ -77,7 +80,10 @@ export type BaseButtonProps<T extends ButtonType, V extends ButtonVariant> = Opt
   readonly locked?: boolean;
   readonly loading?: boolean;
   readonly cornerStyle?: ButtonCornerStyle;
-} & Pick<HTMLElementProps<"button">, "onClick" | "onFocus" | "onBlur" | "type" | "onFocusCapture" | "onBlurCapture">;
+} & Pick<
+    HTMLElementProps<"button">,
+    "onClick" | "onFocus" | "onBlur" | "type" | "onFocusCapture" | "onBlurCapture" | "onMouseEnter" | "onMouseLeave"
+  >;
 
 export const getBaseButtonClassName = <T extends ButtonType, V extends ButtonVariant>(
   props: Required<Omit<BaseButtonProps<T, V>, "children">, "size" | "buttonType" | "cornerStyle" | "variant">,
@@ -103,6 +109,8 @@ export const BaseButtonLink = ({
   fontWeight,
   children,
   color,
+  popover,
+  popoverProps,
   ...props
 }: BaseButtonLinkProps): JSX.Element => {
   /* The onClick should be overridden to prevent click behavior when the element is disabled just in case the "disabled"
@@ -131,17 +139,19 @@ export const BaseButtonLink = ({
     return btn;
   }
   return (
-    <NextLink href={href} className="button-link-wrapper">
-      <button
-        type="button"
-        {...props}
-        className={getBaseLinkClassName({ ...props, disabled, fontWeight, color })}
-        onClick={onClick !== undefined ? _onClick : undefined}
-        disabled={disabled}
-      >
-        {children}
-      </button>
-    </NextLink>
+    <HoverPopover popover={popover} {...popoverProps}>
+      <NextLink href={href} className="button-link-wrapper">
+        <button
+          type="button"
+          {...props}
+          className={getBaseLinkClassName({ ...props, disabled, fontWeight, color })}
+          onClick={onClick !== undefined ? _onClick : undefined}
+          disabled={disabled}
+        >
+          {children}
+        </button>
+      </NextLink>
+    </HoverPopover>
   );
 };
 
@@ -154,8 +164,9 @@ const _BaseButton = <T extends ButtonType, V extends ButtonVariant>({
   size = ButtonSizes.SM,
   buttonType,
   children,
+  variant,
   ...props
-}: Omit<BaseButtonProps<T, V>, "href">): JSX.Element => {
+}: Omit<BaseButtonProps<T, V>, "href" | "popover" | "popoverProps">): JSX.Element => {
   /* The onClick should be overridden to prevent click behavior when the element is disabled just in case the "disabled"
      class is being used and the SASS style does not remove pointer event from the element. */
   const _onClick = useMemo(
@@ -171,7 +182,16 @@ const _BaseButton = <T extends ButtonType, V extends ButtonVariant>({
     <button
       type="button"
       {...props}
-      className={getBaseButtonClassName({ ...props, disabled, locked, loading, cornerStyle, buttonType, size })}
+      className={getBaseButtonClassName({
+        ...props,
+        variant,
+        disabled,
+        locked,
+        loading,
+        cornerStyle,
+        buttonType,
+        size,
+      })}
       onClick={onClick !== undefined ? _onClick : undefined}
       disabled={disabled}
     >
@@ -182,20 +202,36 @@ const _BaseButton = <T extends ButtonType, V extends ButtonVariant>({
 
 export const BaseButton = <T extends ButtonType, V extends ButtonVariant>({
   href,
+  popover,
+  popoverProps,
   ...props
 }: BaseButtonProps<T, V>): JSX.Element =>
   href !== undefined && props.disabled !== true ? (
-    <NextLink href={href} className="button-link-wrapper">
-      <_BaseButton {...props} />
-    </NextLink>
+    <HoverPopover popover={popover} {...popoverProps}>
+      <NextLink href={href} className="button-link-wrapper">
+        <_BaseButton {...props} />
+      </NextLink>
+    </HoverPopover>
   ) : (
-    <_BaseButton {...props} />
+    <HoverPopover disabled={props.disabled} popover={popover} {...popoverProps}>
+      <_BaseButton {...props} />
+    </HoverPopover>
   );
 
-export const BaseLink = ({ disabled, children, color, fontWeight, ...props }: BaseLinkProps): JSX.Element => (
-  <NextLink {...props} className={getBaseLinkClassName({ ...props, disabled, color, fontWeight })}>
-    {children}
-  </NextLink>
+export const BaseLink = ({
+  disabled,
+  children,
+  color,
+  fontWeight,
+  popover,
+  popoverProps,
+  ...props
+}: BaseLinkProps): JSX.Element => (
+  <HoverPopover disabled={disabled} popover={popover} {...popoverProps}>
+    <NextLink {...props} className={getBaseLinkClassName({ ...props, disabled, color, fontWeight })}>
+      {children}
+    </NextLink>
+  </HoverPopover>
 );
 
 type Loc = Exclude<CSSDirection, typeof CSSDirections.UP | typeof CSSDirections.DOWN>;

@@ -1,7 +1,7 @@
 import { type NextRequest } from "next/server";
 
-import { prisma } from "~/prisma/client";
 import { AppResponse } from "~/app/api/response";
+import { prisma } from "~/prisma/client";
 import { getAuthUserFromRequest } from "~/server/auth";
 
 // TODO: This is not currently used - might want to remove it.

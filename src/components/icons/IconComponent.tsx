@@ -135,45 +135,23 @@ type DynamicIconClassNamePropName = (typeof DynamicIconClassNamePropNames)[numbe
 
 type DynamicIconClassNameProps = Pick<IconComponentProps, DynamicIconClassNamePropName>;
 
-type DynamicIconClassNameConfig<N extends DynamicIconClassNamePropName> = {
-  readonly create: (dynamic: DynamicIconClassNameProps[N]) => string | null;
-  readonly predicate: (className: string) => boolean;
-};
+type DynamicIconClassNameConfig<N extends DynamicIconClassNamePropName> = (
+  dynamic: DynamicIconClassNameProps[N],
+) => string | null;
 
 const DynamicClassNameConfig: { [key in DynamicIconClassNamePropName]: DynamicIconClassNameConfig<key> } = {
-  contain: {
-    create: v => (v !== undefined ? `icon--contain-${v}` : null),
-    predicate: className => className.startsWith("icon--contain-"),
-  },
-  size: {
-    create: v => (v !== undefined ? `icon--size-${v}` : null),
-    predicate: className => className.startsWith("icon--size-"),
-  },
-  axis: {
-    create: v => (v !== undefined ? `icon--axis-${v}` : null),
-    predicate: className => className.startsWith("icon--axis-"),
-  },
-  color: {
-    create: v => (v !== undefined ? getColorClassName("color", v) : null),
-    predicate: className => className.startsWith("color-"),
-  },
-  hoveredColor: {
-    create: v => (v !== undefined ? getColorClassName("color", v, "hovered") : null),
-    predicate: className => className.startsWith("color-") && className.endsWith("-hovered"),
-  },
-  focusedColor: {
-    create: v => (v !== undefined ? getColorClassName("color", v, "focused") : null),
-    predicate: className => className.startsWith("color-") && className.endsWith("-focused"),
-  },
+  contain: v => (v !== undefined ? `icon--contain-${v}` : null),
+  size: v => (v !== undefined ? `icon--size-${v}` : null),
+  axis: v => (v !== undefined ? `icon--axis-${v}` : null),
+  color: v => (v !== undefined ? getColorClassName("color", v) : null),
+  hoveredColor: v => (v !== undefined ? getColorClassName("color", v, "hovered") : null),
+  focusedColor: v => (v !== undefined ? getColorClassName("color", v, "focused") : null),
 };
 
 const getDynamicIconClassName = (props: Pick<IconComponentProps, DynamicIconClassNamePropName>): string =>
   [...DynamicIconClassNamePropNames].reduce(<N extends DynamicIconClassNamePropName>(prev: string, curr: N) => {
     const propName = curr as N;
-    const config = DynamicClassNameConfig[propName];
-    const v = props[propName];
-    const className = config.create(v);
-    return className !== null ? `${prev} ${className}` : prev;
+    return classNames(prev, DynamicClassNameConfig[propName](props[propName]));
   }, "");
 
 const getIconClassName = ({ icon, name, iconStyle, family, ...props }: IconComponentProps): string =>
@@ -188,8 +166,6 @@ const getIconClassName = ({ icon, name, iconStyle, family, ...props }: IconCompo
 const iconIsDynamic = (icon: IconProp | DynamicIconProp): icon is DynamicIconProp => Array.isArray(icon);
 
 export const IconComponent = ({
-  /* loading = false,
-     spinnerColor = "blue", */
   size = IconSizes.MD,
   axis,
   contain,
@@ -234,13 +210,7 @@ export const IconComponent = ({
        inside of an <i> element, where the <i> element is given the Font Awesome class names that are defined in the
        content loaded from the CDN (these class names are generated via 'getNativeIconClassName' below). */
     const ps = { ...props, icon, size, axis, contain } as IconComponentProps<IconProp>;
-    return (
-      <i
-        style={visible === false ? { ...style, display: "none" } : style}
-        className={getIconClassName(ps)}
-        data-icon={getNativeIconName(ps)}
-      />
-    );
+    return <i style={visible === false ? { ...style, display: "none" } : style} className={getIconClassName(ps)} />;
   } else {
     return <></>;
   }

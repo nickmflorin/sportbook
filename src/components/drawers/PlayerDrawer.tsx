@@ -5,10 +5,11 @@ import { logger } from "~/application/logger";
 import { isUuid } from "~/lib/schemas";
 import { parseUserDisplayName } from "~/lib/user";
 import { prisma } from "~/prisma/client";
+import { getAuthUser } from "~/server/auth";
 import { LeaguePlayerRoleBadge } from "~/components/badges/LeaguePlayerRoleBadge";
 import { PlayerAvatar } from "~/components/images/PlayerAvatar";
 import { Loading } from "~/components/loading/Loading";
-import { getAuthUser } from "~/server/auth";
+import { InfoView } from "~/components/views/InfoView";
 
 const DrawerView = dynamic(() => import("~/components/drawers/DrawerView"), {
   loading: () => <Loading loading={true} />,
@@ -49,11 +50,13 @@ export const PlayerDrawer = async ({ playerId }: PlayerDrawerProps): Promise<JSX
 
   return (
     <DrawerView
-      title={parseUserDisplayName(player.user) || ""}
-      headerProps={{
-        image: <PlayerAvatar player={player} fontSize="sm" size={50} />,
-        tags: [<LeaguePlayerRoleBadge key="0" size="xxs" value={player.role} />],
-      }}
+      header={
+        <InfoView
+          title={parseUserDisplayName(player.user) || ""}
+          image={<PlayerAvatar player={player} fontSize="sm" size={50} />}
+          tags={[<LeaguePlayerRoleBadge key="0" size="xxs" value={player.role} />]}
+        />
+      }
     >
       <></>
     </DrawerView>

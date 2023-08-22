@@ -2,8 +2,8 @@
 import { useRouter, usePathname } from "next/navigation";
 import { useTransition } from "react";
 
-import { TextInput } from "~/components/input/TextInput";
 import { useQueryParams } from "~/hooks/useQueryParams";
+import { TextInput } from "~/components/input/TextInput";
 
 export interface SearchBarProps {
   readonly queryParamName?: string;

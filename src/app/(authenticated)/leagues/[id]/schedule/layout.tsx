@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 
-import { TableView } from "~/components/views/TableView";
-import { TableViewHeader } from "~/components/views/TableViewHeader";
 import { getAuthUser } from "~/server/auth";
+import { InfoView } from "~/components/views/InfoView";
+import { TableView } from "~/components/views/TableView";
 
 import { LeagueFilterBar } from "../LeagueFilterBar";
 
@@ -15,13 +15,10 @@ export default async function LeagueScheduleLayout({ children, params: { id } }:
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
   return (
     <TableView
-      header={
-        <TableViewHeader
-          title="Schedule"
-          description="Upcoming games for this league."
-          filterBar={<LeagueFilterBar league={id} user={user} />}
-        />
-      }
+      header={[
+        <InfoView key="0" title="Schedule" description="Upcoming games for this league." />,
+        <LeagueFilterBar key="1" league={id} user={user} />,
+      ]}
     >
       {children}
     </TableView>

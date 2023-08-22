@@ -1,8 +1,8 @@
 import { type Optional } from "utility-types";
 
+import { useLocations } from "~/app/api/hooks";
 import { logger } from "~/application/logger";
 import { type Location } from "~/prisma/model";
-import { useLocations } from "~/app/api/hooks";
 
 import { AsyncModelSelect, type AsyncModelSelectProps, type SelectMode } from "./abstract";
 

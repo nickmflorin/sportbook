@@ -1,15 +1,9 @@
 "use client";
-// import dynamic from "next/dynamic";
 import { useState } from "react";
 
 import { SolidButton } from "~/components/buttons/SolidButton";
 import { Drawer } from "~/components/drawers/Drawer";
-// import { Loading } from "~/components/loading/Loading";
-
-/* const Drawer = dynamic(() => import("~/components/drawers/Drawer"), {
-     ssr: false,
-     loading: () => <Loading loading={true} />,
-   }); */
+import { InfoView } from "~/components/views/InfoView";
 
 export interface CreateLeagueButtonProps {
   readonly drawer: JSX.Element;
@@ -25,7 +19,11 @@ export const CreateLeagueButton = ({ drawer }: CreateLeagueButtonProps): JSX.Ele
         <Drawer
           open={open}
           onClose={() => setOpen(false)}
-          viewProps={{ title: "Create a New League", description: "Configure your league however you would like." }}
+          viewProps={{
+            header: (
+              <InfoView title="Create a New League" description="Configure your league however you would like." />
+            ),
+          }}
         >
           {drawer}
         </Drawer>

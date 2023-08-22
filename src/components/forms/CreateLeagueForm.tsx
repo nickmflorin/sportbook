@@ -6,6 +6,7 @@ import { DateInput } from "@mantine/dates/lib/components/DateInput";
 
 import type * as z from "zod";
 
+import { createLeague } from "~/app/actions/league";
 import { isServerErrorResponse } from "~/application/errors";
 import { type LeagueSchema, type Location } from "~/prisma/model";
 import { TextInputField } from "~/components/fields/TextInputField";
@@ -15,7 +16,6 @@ import { LeagueCompetitionLevelSelect } from "~/components/input/select/LeagueCo
 import { LeagueTypeSelect } from "~/components/input/select/LeagueTypeSelect";
 import { SportSelect } from "~/components/input/select/SportSelect";
 import { ShowHide } from "~/components/util";
-import { createLeague } from "~/app/actions/league";
 
 export type LeagueFormValues = z.output<typeof LeagueSchema>;
 

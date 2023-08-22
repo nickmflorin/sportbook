@@ -6,9 +6,9 @@ import uniq from "lodash.uniq";
 import { prisma } from "~/prisma/client";
 import { FileUploadEntity } from "~/prisma/model";
 import { parseQueryTeamIds } from "~/prisma/urls";
-import { Loading } from "~/components/loading/Loading";
 import { getAuthUser } from "~/server/auth";
 import { getUserLeagueStaffPermissionCodes } from "~/server/leagues";
+import { Loading } from "~/components/loading/Loading";
 
 import { getLeague } from "../getLeague";
 
