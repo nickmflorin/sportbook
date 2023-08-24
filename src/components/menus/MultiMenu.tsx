@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState, useTransition, useRef, useImperativeHandle, useEffect } from "react";
+import React, { useMemo, useState, useTransition, useImperativeHandle, useEffect } from "react";
 
 import { BaseMenu, type BaseMenuProps, type WithBaseMenuProps } from "./BaseMenu";
 import { useValueDatumMap, useItemValues } from "./hooks";
@@ -12,20 +12,10 @@ import {
   type ValuelessValueGetter,
   type DatumValuelessValueGetter,
   type FooterActions,
+  type IMultiMenu,
   menuItemsAreAllDatumValued,
   menuItemsAreAllDatumValueless,
 } from "./types";
-
-export type IMultiMenu<V extends string | null> = {
-  readonly setValue: (value: Exclude<V, null>[]) => void;
-  readonly clear: () => void;
-};
-
-export const useMultiMenu = <V extends string | null>() => {
-  /* eslint-disable-next-line @typescript-eslint/no-empty-function */
-  const ref = useRef<IMultiMenu<V>>({ setValue: () => {}, clear: () => {} });
-  return ref;
-};
 
 type MultiValuedMixin<V extends string | null> = {
   readonly menu?: React.RefObject<IMultiMenu<V>>;

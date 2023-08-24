@@ -3,9 +3,17 @@ import React from "react";
 import classNames from "classnames";
 
 import { logger } from "~/application/logger";
-import { getColorClassName, type ComponentProps, type Color, type SizeContain, type SizeAxis } from "~/lib/ui";
+import { getColorClassName } from "~/lib/ui";
 
-import { IconSizes, type IconSize, type IconProp, type IconDefinitionParams, type DynamicIconProp } from "./types";
+import {
+  IconSizes,
+  type IconProp,
+  type IconDefinitionParams,
+  type DynamicIconProp,
+  type BasicIconComponentProps,
+  type EmbeddedIconComponentProps,
+  type IconComponentProps,
+} from "./types";
 import {
   isIconDefinitionParams,
   getIconFamilyClassName,
@@ -13,63 +21,6 @@ import {
   getIconPrefixClassName,
   getIconStyleClassName,
 } from "./util";
-
-type _BaseIconProps = ComponentProps &
-  /* eslint-disable-next-line @typescript-eslint/consistent-type-imports */
-  Pick<import("@fortawesome/react-fontawesome").FontAwesomeIconProps, "spin"> & {
-    /**
-     * Whether or not the Icon should be rendered as a "loading" spinner.  Useful in cases where a component contains
-     * an Icon but needs to replace it with a loading indicator when in a loading state.
-     */
-    readonly loading?: boolean;
-    readonly color?: Color;
-    readonly hoveredColor?: Color;
-    readonly focusedColor?: Color;
-    readonly spinnerColor?: Color;
-    /**
-     * A string, "fit" or "square", that defines whether or not the `svg` element should fit snuggly around the inner
-     * `path` element of the Icon or SVG ("fit") or the `svg` element should have a 1-1 aspect ratio, with its inner
-     * `path` element being centered in the containing `svg` ("square").
-     *
-     * Default: "square"
-     */
-    readonly contain?: SizeContain;
-    readonly size?: IconSize;
-    /**
-     * The axis {@link Exclude<SizeAxis, "both">} that the Icon should be sized in based on the provided `size` prop.
-     * An Icon must maintain its aspect-ratio, so it cannot size in both directions.
-     *
-     * Default: "vertical";
-     */
-    readonly axis?: SizeAxis;
-    /**
-     * Used to control dynamically rendered icons.
-     *
-     * @see DynamicIconProp;
-     */
-    readonly visible?: boolean;
-  };
-
-/**
- * The props that the component responsible for rendering the Icon component.
- */
-export type BasicIconComponentProps<I extends IconProp | DynamicIconProp = IconProp> = Omit<
-  _BaseIconProps,
-  "loading"
-> & {
-  [key in keyof IconDefinitionParams]?: never;
-} & {
-  readonly icon: I;
-};
-
-export type EmbeddedIconComponentProps = Omit<_BaseIconProps, "loading"> &
-  IconDefinitionParams & {
-    readonly icon?: never;
-  };
-
-export type IconComponentProps<I extends IconProp | DynamicIconProp = IconProp> =
-  | BasicIconComponentProps<I>
-  | EmbeddedIconComponentProps;
 
 export type GetNativeIconClassNameParams =
   | Pick<BasicIconComponentProps, "icon">

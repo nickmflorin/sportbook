@@ -1,5 +1,4 @@
 import { type EmailAddress, type User as ClerkUser } from "@clerk/clerk-sdk-node";
-import { DateTime } from "luxon";
 import { type User, type PrismaClient } from "@prisma/client";
 
 import { logger } from "~/application/logger";
@@ -86,6 +85,10 @@ export const userModelExtension = (prisma: PrismaClient) => ({
     });
   },
   async syncWithClerk(u: ClerkUser) {
+    /* Currently, this method is not used - and if/when it is used, it is likely only going to be used in 1 or 2 places
+       on the server.  The "luxon" package is actually relatively large, so we dynamically import it in this method to
+       shrink the bundle size. */
+    const { DateTime } = await import("luxon");
     let user: User | null = null;
     try {
       user = await prisma.user.findUniqueOrThrow({ where: { clerkId: u.id } });

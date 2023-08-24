@@ -158,7 +158,11 @@ export const TeamDrawer = async ({ teamId }: TeamDrawerProps): Promise<JSX.Eleme
               <TeamAvatar team={game.awayTeamId === team.id ? game.homeTeam : game.awayTeam} fontSize="sm" size={30} />
             }
             title={
-              <TeamDetailLink team={game.awayTeamId === team.id ? game.homeTeam : game.awayTeam} textAlign="left" />
+              <TeamDetailLink
+                team={game.awayTeamId === team.id ? game.homeTeam : game.awayTeam}
+                textAlign="left"
+                popoverProps={{ withinPortal: true }}
+              />
             }
             description={<GameResultScoreText {...game} />}
             rightContent={<DateTimeText value={game.dateTime} textAlign="right" size="xs" justify="flex-end" />}

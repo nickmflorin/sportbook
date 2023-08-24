@@ -11,6 +11,7 @@ import {
   menuItemIsValueless,
   type MenuItems,
   type DatumValuelessValueGetter,
+  type IMultiMenu,
   type ValuelessValueGetter,
 } from "./types";
 
@@ -112,3 +113,9 @@ export type IDropdownMenu = {
 export const useDropdownMenu = (): React.MutableRefObject<IDropdownMenu> =>
   /* eslint-disable-next-line @typescript-eslint/no-empty-function */
   useRef<IDropdownMenu>({ setButtonContent: () => {}, close: () => {} });
+
+export const useMultiMenu = <V extends string | null>() => {
+  /* eslint-disable-next-line @typescript-eslint/no-empty-function */
+  const ref = useRef<IMultiMenu<V>>({ setValue: () => {}, clear: () => {} });
+  return ref;
+};

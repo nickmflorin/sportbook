@@ -1,7 +1,10 @@
+import dynamic from "next/dynamic";
+
 import { Flex } from "~/components/structural/Flex";
-import { InfoView } from "~/components/views/InfoView";
-import { TableView } from "~/components/views/TableView";
-import { View } from "~/components/views/View";
+
+const TableView = dynamic(() => import("~/components/views/TableView"), { ssr: false });
+const View = dynamic(() => import("~/components/views/View"), { ssr: false });
+const InfoView = dynamic(() => import("~/components/views/InfoView"), { ssr: false });
 
 interface LeagueStandingsLayoutProps {
   readonly standings: React.ReactNode;

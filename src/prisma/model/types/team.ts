@@ -32,8 +32,9 @@ type Stats = { readonly stats: TeamStats };
 type _WithStats<T> = T extends BasicUiTeam ? T & Stats : never;
 type _WithPlayers<T> = T extends BasicUiTeam ? T & Players : never;
 
-export type BasicUiTeam = Pick<Team, "name" | "id">;
-export type BasicUiTeamWithFileUrl = Pick<ModelWithFileUrl<Team>, "id" | "name" | "fileUrl">;
+type _BasicUiTeamProps = "id" | "name" | "leagueId";
+export type BasicUiTeam = Pick<Team, _BasicUiTeamProps>;
+export type BasicUiTeamWithFileUrl = Pick<ModelWithFileUrl<Team>, _BasicUiTeamProps | "fileUrl">;
 
 type WithStats<T> = T extends BasicUiTeam ? _WithStats<T> | _WithPlayers<_WithStats<T>> : never;
 type WithPlayers<T> = T extends BasicUiTeam ? _WithPlayers<T> | _WithPlayers<_WithStats<T>> : never;

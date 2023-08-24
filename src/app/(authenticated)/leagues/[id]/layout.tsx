@@ -7,9 +7,10 @@ import { getAuthUser } from "~/server/auth";
 import { Badge } from "~/components/badges/Badge";
 import { DetailPage } from "~/components/layout/DetailPage";
 
-import { getLeague } from "./getLeague";
+import { getLeague, preloadLeague } from "./getLeague";
 import { useUserLeagueStaffRoles } from "./hooks";
 import { LeagueDrawers } from "./LeagueDrawers";
+import { preloadPlayers } from "./players/getPlayers";
 
 interface LeagueLayoutProps {
   readonly params: { id: string };
@@ -18,6 +19,10 @@ interface LeagueLayoutProps {
 
 export default async function LeagueLayout({ children, params: { id } }: LeagueLayoutProps) {
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
+
+  preloadPlayers({ leagueId: id, user });
+  preloadLeague(id, user);
+
   const { getImage, ...league } = await getLeague(id, user);
   const fileUpload = await getImage();
 

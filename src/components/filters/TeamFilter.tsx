@@ -1,10 +1,13 @@
+import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
 import { prisma } from "~/prisma/client";
 import { type League, type Team } from "~/prisma/model";
-import { TeamFilterMenu } from "~/components/filters/TeamFilterMenu";
 import { Loading } from "~/components/loading/Loading";
 import { DropdownMenu } from "~/components/menus/DropdownMenu";
+
+// TODO: Make sure ssr: false does not cause issues with initial query parameters accessible on server.
+const TeamFilterMenu = dynamic(() => import("./TeamFilterMenu"), { ssr: false });
 
 export type TeamWithPlayers = Team & { readonly players: { userId: string }[] };
 
@@ -50,3 +53,5 @@ export const TeamFilter = async <L extends League | LeagueWithTeams | LeagueWith
     />
   );
 };
+
+export default TeamFilter;

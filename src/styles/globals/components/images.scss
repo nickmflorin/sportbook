@@ -23,7 +23,6 @@
     }
 
     .button {
-      font-size: partials.get-font-size($type: "body", $size: "sm");
       @include partials.truncate();
     }
   }

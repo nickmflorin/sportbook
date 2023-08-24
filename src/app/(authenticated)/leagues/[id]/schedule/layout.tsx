@@ -1,10 +1,19 @@
+import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 
 import { getAuthUser } from "~/server/auth";
-import { InfoView } from "~/components/views/InfoView";
-import { TableView } from "~/components/views/TableView";
+import { LeagueFilterBar } from "~/components/filters/LeagueFilterBar";
+import { Loading } from "~/components/loading/Loading";
 
-import { LeagueFilterBar } from "../LeagueFilterBar";
+const TableView = dynamic(() => import("~/components/views/TableView"), {
+  loading: () => <Loading loading={true} />,
+  ssr: false,
+});
+
+const InfoView = dynamic(() => import("~/components/views/InfoView"), {
+  loading: () => <Loading loading={true} />,
+  ssr: false,
+});
 
 interface LeagueScheduleLayoutProps {
   readonly params: { id: string };

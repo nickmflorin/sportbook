@@ -81,13 +81,10 @@ export function updateQueryParams(
   const newSearchParams = new URLSearchParams();
 
   /* First, add all of the existing query parameters to the set as long as they are not in the set of new parameters. */
-  for (const param in params) {
+  for (const [k, v] of params.entries()) {
     // If the existing parameter is not in the new set of provided parameters, leave it in the set of parameters.
-    if (updates[param] === undefined) {
-      const currentValue = params.get(param);
-      if (currentValue !== null) {
-        newSearchParams.set(param, currentValue);
-      }
+    if (updates[k] === undefined) {
+      newSearchParams.set(k, v);
     }
   }
   /* Loop over the keys of the params so that we can tell the difference between a parameter that is included with an

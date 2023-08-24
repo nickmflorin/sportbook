@@ -1,5 +1,5 @@
 "use client";
-import { type LeaguePlayerWithUser, type Team, type ModelWithFileUrl } from "~/prisma/model";
+import { type LeaguePlayerWithUser, type Team, type ModelWithFileUrl, type TeamUiForm } from "~/prisma/model";
 import { LeaguePlayerRoleBadge } from "~/components/badges/LeaguePlayerRoleBadge";
 import { PlayerAvatar } from "~/components/images/PlayerAvatar";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
@@ -13,10 +13,7 @@ export enum PlayersTableColumn {
   TEAM,
 }
 
-export type BasePlayer =
-  | LeaguePlayerWithUser
-  | (LeaguePlayerWithUser & { readonly team: Team })
-  | (LeaguePlayerWithUser & { readonly team: ModelWithFileUrl<Team> });
+export type BasePlayer = LeaguePlayerWithUser | (LeaguePlayerWithUser & { readonly team: TeamUiForm });
 
 export const hasTeam = (
   p: BasePlayer,
@@ -42,7 +39,12 @@ const PlayersTableColumns = <P extends BasePlayer>(): { [key in PlayersTableColu
     title: "Team",
     accessor: "team",
     textAlignment: "left",
-    render: (player: P) => (hasTeam(player) ? <TeamAvatar team={player.team} size={30} withButton={true} /> : <></>),
+    render: (player: P) =>
+      hasTeam(player) ? (
+        <TeamAvatar team={player.team} size={30} withButton={true} buttonProps={{ showTeamStats: true }} />
+      ) : (
+        <></>
+      ),
   },
 });
 

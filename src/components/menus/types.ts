@@ -164,3 +164,8 @@ export const menuItemsAreAllValueless = <V extends string | null, M>(
 type _FooterAction = JSX.Element | JSX.Element[];
 export type FooterActionsParams = Record<string, unknown>;
 export type FooterActions<P extends FooterActionsParams> = _FooterAction | ((params: P) => _FooterAction);
+
+export type IMultiMenu<V extends string | null> = {
+  readonly setValue: (value: Exclude<V, null>[]) => void;
+  readonly clear: () => void;
+};

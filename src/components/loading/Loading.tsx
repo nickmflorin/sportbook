@@ -4,11 +4,10 @@ import React, { type ReactNode } from "react";
 import classNames from "classnames";
 
 import { type ComponentProps } from "~/lib/ui";
-import { type IconSizes } from "~/components/icons";
-import { type SpinnerProps } from "~/components/icons/Spinner";
+import { type IconSizes, type SpinnerProps } from "~/components/icons";
 import { ShowHide } from "~/components/util";
 
-const Spinner = dynamic(() => import("~/components/icons/Spinner"));
+const Spinner = dynamic(() => import("~/components/icons/Spinner"), { ssr: false });
 
 type BaseLoadingProps = ComponentProps &
   Pick<SpinnerProps, "color" | "size" | "loading"> & {

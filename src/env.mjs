@@ -80,6 +80,15 @@ const DEFAULT_PRETTY_LOGGING = {
   test: true,
 };
 
+/**
+ * @type {Record<"test" | "development" | "production", boolean>}
+ */
+const DEFAULT_BUNDLE_ANALYZE = {
+  development: false,
+  production: true,
+  test: false,
+};
+
 const STRICT_OMISSION = z.literal("").optional();
 
 const testRestricted = schema => {
@@ -94,7 +103,8 @@ export const env = createEnv({
   server: {
     APP_NAME_FORMAL: z.string(),
     NODE_ENV: z.enum(["development", "test", "production"]),
-    PRETTY_LOGGING: StringBooleanFlagSchema.default(DEFAULT_PRETTY_LOGGING[process.env.NODE_ENV === "development"]),
+    PRETTY_LOGGING: StringBooleanFlagSchema.default(DEFAULT_PRETTY_LOGGING[process.env.NODE_ENV]),
+    ANALYZE_BUNDLE: StringBooleanFlagSchema.default(DEFAULT_BUNDLE_ANALYZE[process.env.NODE_ENV]),
     CLERK_SECRET_KEY: {
       test: STRICT_OMISSION,
       development: z.string().startsWith("sk_test"),
@@ -137,6 +147,7 @@ export const env = createEnv({
   runtimeEnv: {
     /* ----------------------------------- Server Environment Variables ------------------------------------ */
     DATABASE_URL: process.env.DATABASE_URL,
+    ANALYZE_BUNDLE: process.env.ANALYZE_BUNDLE,
     MIGRATE_DATABASE_URL: process.env.MIGRATE_DATABASE_URL,
     DATABASE_HOST: process.env.DATABASE_HOST,
     DATABASE_USER: process.env.DATABASE_USER,

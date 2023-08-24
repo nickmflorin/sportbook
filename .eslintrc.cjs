@@ -78,7 +78,8 @@ const BASE_RULES = {
     },
   ],
   "arrow-body-style": ["error", "as-needed"],
-  "no-console": "error",
+  // This should eventually be an error...
+  "no-console": "warn",
   "no-unused-vars": "warn",
   "no-multiple-empty-lines": "error",
   "multiline-comment-style": ["warn", "bare-block"],

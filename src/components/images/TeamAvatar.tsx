@@ -1,5 +1,5 @@
 import { type TeamUiForm, teamUiFormHasFileUrl } from "~/prisma/model";
-import { TeamDetailLink } from "~/components/buttons/TeamDetailLink";
+import { TeamDetailLink, type TeamDetailLinkProps } from "~/components/buttons/TeamDetailLink";
 
 import { Avatar, type AvatarProps } from "./Avatar";
 
@@ -8,6 +8,7 @@ export interface TeamAvatarProps<T extends TeamUiForm>
   readonly team: T;
   readonly withName?: true;
   readonly withButton?: true;
+  readonly buttonProps?: Omit<TeamDetailLinkProps, "team">;
 }
 
 export const TeamAvatar = <T extends TeamUiForm>({
@@ -15,6 +16,7 @@ export const TeamAvatar = <T extends TeamUiForm>({
   url,
   withButton,
   withName,
+  buttonProps,
   ...props
 }: TeamAvatarProps<T>): JSX.Element => (
   <Avatar
@@ -22,7 +24,7 @@ export const TeamAvatar = <T extends TeamUiForm>({
     initials={team.name}
     name={withName === true ? team.name : undefined}
     {...props}
-    button={withButton ? <TeamDetailLink team={team} /> : undefined}
+    button={withButton ? <TeamDetailLink {...buttonProps} team={team} /> : undefined}
   />
 );
 

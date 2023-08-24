@@ -28,8 +28,6 @@
         display: flex;
         flex-direction: row;
         gap: partials.get-spacing("md");
-        margin-top: 2px;
-        margin-bottom: 4px;
       }
     }
 
@@ -37,10 +35,6 @@
       justify-content: flex-end;
       margin-left: partials.get-spacing("md");
     }
-  }
-
-  > .model-image {
-    margin-right: partials.get-spacing("lg");
   }
 
   > .actions {
@@ -52,10 +46,6 @@
 
     > .info-view__content {
       align-items: flex-start;
-
-      > .info-view__content-left {
-        padding-top: partials.get-spacing("xs");
-      }
     }
   }
 }

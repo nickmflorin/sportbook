@@ -1,11 +1,14 @@
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 
 import { prisma, isPrismaInvalidIdError, isPrismaDoesNotExistError } from "~/prisma/client";
 import { type League, type Team, type User } from "~/prisma/model";
-import { SearchBar } from "~/components/filters/SearchBar";
-import { FilterBar } from "~/components/structural/FilterBar";
 
-import { TeamFilter, type LeagueWithTeams, type LeagueWithTeamAndPlayers } from "./TeamFilter";
+import { FilterBar } from "./FilterBar";
+import { type LeagueWithTeams, type LeagueWithTeamAndPlayers } from "./TeamFilter";
+
+const TeamFilter = dynamic(() => import("~/components/filters/TeamFilter"), { ssr: false });
+const SearchBar = dynamic(() => import("~/components/filters/SearchBar"));
 
 type LeagueProp = League | string | LeagueWithTeams | LeagueWithTeamAndPlayers;
 
@@ -92,11 +95,9 @@ export const LeagueFilterBar = async ({ league: _league, user }: LeagueFilterBar
     league = _league;
   }
   return (
-    <FilterBar
-      filters={[
-        <SearchBar key="0" />,
-        <TeamFilter key="1" league={league} playersTeam={playersTeam || null} teams={getLeagueTeams(league)} />,
-      ]}
-    />
+    <FilterBar>
+      <SearchBar key="0" />
+      <TeamFilter key="1" league={league} playersTeam={playersTeam || null} teams={getLeagueTeams(league)} />
+    </FilterBar>
   );
 };

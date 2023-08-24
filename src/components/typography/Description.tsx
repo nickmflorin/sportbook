@@ -5,8 +5,7 @@ import classNames from "classnames";
 import { type ComponentProps } from "~/lib/ui";
 import { Text, type TextProps } from "~/components/typography/Text";
 
-type SingleDescription = string | JSX.Element | null | undefined;
-export type Description = SingleDescription | SingleDescription[];
+import { type SingleDescription, type Description as Descr } from "./types";
 
 type BaseDescriptionProps = ComponentProps & Omit<TextProps, "children">;
 
@@ -16,7 +15,7 @@ export type DescriptionChildProps = BaseDescriptionProps & {
 };
 
 export type DescriptionExplicitProps = BaseDescriptionProps & {
-  readonly description: Description;
+  readonly description: Descr;
   readonly children?: never;
 };
 

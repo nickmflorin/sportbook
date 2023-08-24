@@ -13,3 +13,5 @@ export const TableView = ({ children, ...props }: TableViewProps): JSX.Element =
     {children}
   </View>
 );
+
+export default TableView;

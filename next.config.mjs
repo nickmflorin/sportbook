@@ -1,7 +1,8 @@
 import path from "path";
 import { fileURLToPath } from "url";
 
-// import withBundleAnalyzer from "@next/bundle-analyzer";
+import withBundleAnalyzer from "@next/bundle-analyzer";
+import withBundleStats from "next-plugin-bundle-stats";
 import StylelintPlugin from "stylelint-webpack-plugin";
 
 /* Avoids the error: "ReferenceError: __dirname is not defined in ES module scope", which occurs if you refer to the
@@ -12,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Import the environment file to perform validation before build.
-await import("./src/env.mjs");
+const { env } = await import("./src/env.mjs");
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -80,6 +81,11 @@ const config = {
       skipDefaultConversion: true,
       preventFullImport: true,
     },
+    "@mantine/core/lib/HoverCard": {
+      transform: "@mantine/core/esm/HoverCard/HoverCard.js",
+      skipDefaultConversion: true,
+      preventFullImport: true,
+    },
     "@mantine/dates/lib/components/DateInput": {
       transform: "@mantine/dates/esm/components/DateInput/DateInput.js",
       skipDefaultConversion: true,
@@ -88,7 +94,23 @@ const config = {
   },
 };
 
-export default config;
+/* const bundled = withBundleStats({
+     outDir: "./stats",
+   })(config); */
+
+const bundled = (phase, { defaultConfig }) =>
+  withBundleAnalyzer({ enabled: env.ANALYZE_BUNDLE && phase === "phase-production-build" })({
+    ...defaultConfig,
+    ...config,
+  });
+
+export default bundled;
+
+/* export default function configuration(phase, defaultConfig) {
+     if (phase === BuildPh) {
+       return withBundleAnalyzer(defaultConfig);
+     }
+   } */
 
 /* export default withBundleAnalyzer(config, {
      enabled: process.env.NODE_ENV === "production" && process.env.ANALYZE_BUNDLE === "true",

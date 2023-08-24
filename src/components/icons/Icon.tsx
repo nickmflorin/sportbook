@@ -2,15 +2,14 @@ import React from "react";
 
 import { type Optional } from "utility-types";
 
+import { IconComponent, isBasicIconComponentProps } from "./IconComponent";
+import { Spinner } from "./Spinner";
 import {
-  IconComponent,
+  type DynamicIconProp,
   type IconComponentProps,
   type EmbeddedIconComponentProps,
   type BasicIconComponentProps,
-  isBasicIconComponentProps,
-} from "./IconComponent";
-import { Spinner } from "./Spinner";
-import { type DynamicIconProp } from "./types";
+} from "./types";
 
 const _Icon = (props: IconComponentProps): JSX.Element => {
   if (isBasicIconComponentProps<IconComponentProps>(props)) {

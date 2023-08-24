@@ -6,8 +6,8 @@ import { useQueryParams } from "~/hooks/useQueryParams";
 import { type Team } from "~/prisma/model";
 import { parseQueryParamIds } from "~/prisma/urls";
 import { SolidButton } from "~/components/buttons/SolidButton";
+import { useMultiMenu } from "~/components/menus/hooks";
 import { Menu } from "~/components/menus/Menu";
-import { useMultiMenu } from "~/components/menus/MultiMenu";
 
 export type TeamFilterMenuProps = {
   readonly teams: Team[];
@@ -69,3 +69,5 @@ export const TeamFilterMenu = ({ teams, playersTeam }: TeamFilterMenuProps) => {
     />
   );
 };
+
+export default TeamFilterMenu;

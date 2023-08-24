@@ -12,25 +12,27 @@ import {
   type Color,
   getColorClassName,
 } from "~/lib/ui";
+import { type IconProp, type IconSize, IconSizes, type DynamicIconProp } from "~/components/icons";
+import { Icon } from "~/components/icons/Icon";
+import { FocusedHoverPopover } from "~/components/tooltips/FocusedHoverPopover";
+import { type FontWeight, type TypographySize } from "~/components/typography";
+
 import {
+  type ButtonPopoverProps,
   type ButtonType,
   type ButtonVariant,
   type ButtonSize,
   type ButtonCornerStyle,
   ButtonCornerStyles,
   ButtonSizes,
-} from "~/components/buttons";
-import { type IconProp, type IconSize, IconSizes, type DynamicIconProp } from "~/components/icons";
-import { Icon } from "~/components/icons/Icon";
-import { HoverPopover, type HoverPopoverProps } from "~/components/tooltips/HoverPopover";
-import { type FontWeight, type TypographySize } from "~/components/typography";
+} from "./types";
 
 type BaseProps = ComponentProps & {
   readonly children: string | JSX.Element;
   readonly disabled?: boolean;
   readonly href?: NextLinkProps["href"];
   readonly popover?: JSX.Element;
-  readonly popoverProps?: HoverPopoverProps;
+  readonly popoverProps?: ButtonPopoverProps;
 };
 
 export type BaseLinkProps = Required<BaseProps, "href"> & {
@@ -139,7 +141,7 @@ export const BaseButtonLink = ({
     return btn;
   }
   return (
-    <HoverPopover popover={popover} {...popoverProps}>
+    <FocusedHoverPopover popover={popover} {...popoverProps}>
       <NextLink href={href} className="button-link-wrapper">
         <button
           type="button"
@@ -151,7 +153,7 @@ export const BaseButtonLink = ({
           {children}
         </button>
       </NextLink>
-    </HoverPopover>
+    </FocusedHoverPopover>
   );
 };
 
@@ -207,15 +209,15 @@ export const BaseButton = <T extends ButtonType, V extends ButtonVariant>({
   ...props
 }: BaseButtonProps<T, V>): JSX.Element =>
   href !== undefined && props.disabled !== true ? (
-    <HoverPopover popover={popover} {...popoverProps}>
+    <FocusedHoverPopover popover={popover} {...popoverProps}>
       <NextLink href={href} className="button-link-wrapper">
         <_BaseButton {...props} />
       </NextLink>
-    </HoverPopover>
+    </FocusedHoverPopover>
   ) : (
-    <HoverPopover disabled={props.disabled} popover={popover} {...popoverProps}>
+    <FocusedHoverPopover disabled={props.disabled} popover={popover} {...popoverProps}>
       <_BaseButton {...props} />
-    </HoverPopover>
+    </FocusedHoverPopover>
   );
 
 export const BaseLink = ({
@@ -227,11 +229,11 @@ export const BaseLink = ({
   popoverProps,
   ...props
 }: BaseLinkProps): JSX.Element => (
-  <HoverPopover disabled={disabled} popover={popover} {...popoverProps}>
+  <FocusedHoverPopover disabled={disabled} popover={popover} {...popoverProps}>
     <NextLink {...props} className={getBaseLinkClassName({ ...props, disabled, color, fontWeight })}>
       {children}
     </NextLink>
-  </HoverPopover>
+  </FocusedHoverPopover>
 );
 
 type Loc = Exclude<CSSDirection, typeof CSSDirections.UP | typeof CSSDirections.DOWN>;

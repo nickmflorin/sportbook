@@ -1,4 +1,7 @@
 import { enumeratedLiterals, type EnumeratedLiteralType } from "~/lib/util/literals";
+import { type FocusedHoverPopoverProps } from "~/components/tooltips/FocusedHoverPopover";
+
+export type ButtonPopoverProps = FocusedHoverPopoverProps;
 
 export const ButtonTypes = enumeratedLiterals(["solid", "alternate", "action"] as const);
 export type ButtonType = EnumeratedLiteralType<typeof ButtonTypes>;

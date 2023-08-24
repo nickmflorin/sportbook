@@ -1,8 +1,8 @@
 "use client";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 
-import { useQueryParams } from "~/hooks/useQueryParams";
+import { addQueryParamsToUrl } from "~/lib/util/urls";
 import { TextInput } from "~/components/input/TextInput";
 
 export interface SearchBarProps {
@@ -10,7 +10,7 @@ export interface SearchBarProps {
 }
 
 export const SearchBar = ({ queryParamName = "search" }: SearchBarProps) => {
-  const { params, updateParams } = useQueryParams();
+  const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -23,13 +23,9 @@ export const SearchBar = ({ queryParamName = "search" }: SearchBarProps) => {
       placeholder="Search"
       defaultValue={search}
       onChange={e => {
+        const path = addQueryParamsToUrl(pathname, params, { search: e.target.value });
         startTransition(() => {
-          const { queryString } = updateParams({ search: e.target.value });
-          if (queryString !== "" && queryString !== null) {
-            router.push(`${pathname}/?${queryString}`);
-          } else {
-            router.push(`${pathname}`);
-          }
+          router.push(path);
         });
       }}
       style={{ flexGrow: 100 }}

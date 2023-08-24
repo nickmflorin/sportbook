@@ -8,6 +8,7 @@ import { type ComponentProps } from "~/lib/ui";
 import { type BadgeProps } from "~/components/badges/Badge";
 import { type ImageProp } from "~/components/images";
 import { ModelImage } from "~/components/images/ModelImage";
+import { type Description as Desc } from "~/components/typography";
 import { Description, descriptionIsVisible } from "~/components/typography/Description";
 import { type TextProps } from "~/components/typography/Text";
 import { Title, type TitleProps } from "~/components/typography/Title";
@@ -18,9 +19,11 @@ export interface InfoViewProps extends ComponentProps {
   readonly title?: string | JSX.Element;
   readonly subTitle?: ReactNode;
   readonly image?: Optional<ImageProp, "size"> | JSX.Element;
-  readonly description?: Description;
+  readonly description?: Desc;
   readonly rightContent?: ReactNode;
   readonly actions?: Action[];
+  readonly horizontalSpacing?: number;
+  readonly contentVerticalOffset?: number;
   readonly titleProps?: Omit<TitleProps, "children">;
   readonly tags?: React.ReactElement<BadgeProps>[];
   readonly descriptionProps?: Omit<TextProps, "children">;
@@ -53,10 +56,12 @@ export const InfoView = ({
   titleProps,
   descriptionProps,
   image,
+  horizontalSpacing = 12,
   subTitle,
   tags = [],
   rightContent,
   children,
+  contentVerticalOffset,
   ...props
 }: _InfoViewProps): JSX.Element =>
   infoViewIsVisible({ title, description, actions, image, children }) ? (
@@ -66,15 +71,22 @@ export const InfoView = ({
     >
       {image !== undefined && infoViewHasImage({ image }) ? (
         isJSXElement(image) ? (
-          image
+          <div style={{ marginRight: horizontalSpacing }}>{image}</div>
         ) : (
-          <ModelImage image={{ size: 80, ...image }} />
+          <ModelImage image={{ size: 80, ...image }} style={{ marginRight: horizontalSpacing }} />
         )
       ) : (
         <></>
       )}
       <div className="info-view__content">
-        <div className="info-view__content-left">
+        <div
+          className="info-view__content-left"
+          style={
+            infoViewHasImage({ image }) || contentVerticalOffset !== undefined
+              ? { paddingTop: contentVerticalOffset === undefined ? 4 : contentVerticalOffset }
+              : {}
+          }
+        >
           {typeof title === "string" ? (
             <Title order={5} {...titleProps} className={classNames("info-view__title", titleProps?.className)}>
               {title}
@@ -93,3 +105,5 @@ export const InfoView = ({
   ) : (
     <></>
   );
+
+export default InfoView;

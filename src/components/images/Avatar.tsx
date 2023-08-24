@@ -49,9 +49,13 @@ export const Avatar = ({
           button
         ) : name ? (
           href !== undefined ? (
-            <AlternateButton.Secondary href={href}>{name}</AlternateButton.Secondary>
+            <AlternateButton.Secondary fontSize="md" href={href}>
+              {name}
+            </AlternateButton.Secondary>
           ) : onClick !== undefined ? (
-            <AlternateButton.Secondary onClick={onClick}>{name}</AlternateButton.Secondary>
+            <AlternateButton.Secondary fontSize="md" onClick={onClick}>
+              {name}
+            </AlternateButton.Secondary>
           ) : (
             <Text>{name}</Text>
           )
