@@ -4,12 +4,12 @@ import React from "react";
 import { logger } from "~/application/logger";
 import { isUuid } from "~/lib/schemas";
 import { parseUserDisplayName } from "~/lib/user";
-import { prisma } from "~/prisma/client";
 import { getAuthUser } from "~/server/auth";
 import { LeaguePlayerRoleBadge } from "~/components/badges/LeaguePlayerRoleBadge";
 import { PlayerAvatar } from "~/components/images/PlayerAvatar";
 import { Loading } from "~/components/loading/Loading";
 import { InfoView } from "~/components/views/InfoView";
+import { prisma } from "~/prisma/client";
 
 const DrawerView = dynamic(() => import("~/components/drawers/DrawerView"), {
   loading: () => <Loading loading={true} />,

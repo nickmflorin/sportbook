@@ -1,8 +1,8 @@
 import { type NextRequest } from "next/server";
 
 import { AppResponse } from "~/app/api/response";
-import { prisma } from "~/prisma/client";
 import { getAuthUserFromRequest } from "~/server/auth";
+import { prisma } from "~/prisma/client";
 
 // TODO: This is not currently used - might want to remove it.
 export async function GET(request: NextRequest) {

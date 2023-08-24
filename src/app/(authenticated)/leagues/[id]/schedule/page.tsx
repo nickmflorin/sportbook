@@ -3,12 +3,12 @@ import { redirect } from "next/navigation";
 
 import uniq from "lodash.uniq";
 
-import { prisma } from "~/prisma/client";
-import { FileUploadEntity } from "~/prisma/model";
-import { parseQueryTeamIds } from "~/prisma/urls";
 import { getAuthUser } from "~/server/auth";
 import { getUserLeagueStaffPermissionCodes } from "~/server/leagues";
+import { parseQueryTeamIds } from "~/server/urls";
 import { Loading } from "~/components/loading/Loading";
+import { prisma } from "~/prisma/client";
+import { FileUploadEntity } from "~/prisma/model";
 
 import { getLeague } from "../getLeague";
 

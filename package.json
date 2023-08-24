@@ -17,7 +17,7 @@
     "prebuild-local": "npm run setup-env",
     "build-local": "rm -rf ./.next && next build",
     "predev": "npm run setup-env",
-    "dev": "NODE_OPTIONS='--inspect' next dev",
+    "dev": "next dev",
     "prestart": "npm run setup-env",
     "start": "next start",
     "prelint": "npm run setup-env",

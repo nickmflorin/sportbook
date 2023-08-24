@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 
-import { type TeamWithStatsUiForm } from "~/prisma/model";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
+import { type TeamWithStatsUiForm } from "~/prisma/model";
 
 import { type Column } from "./columns";
 import { DataTable, type DataTableProps } from "./DataTable";

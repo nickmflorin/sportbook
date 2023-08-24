@@ -2,8 +2,8 @@ import React from "react";
 
 import { type z } from "zod";
 
-import { CancelGameSchema } from "~/prisma/model";
 import { TextAreaField } from "~/components/fields/TextAreaField";
+import { CancelGameSchema } from "~/prisma/model";
 
 import { Form, type FormProps } from "./Form";
 

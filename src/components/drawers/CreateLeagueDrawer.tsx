@@ -5,10 +5,10 @@ import { v4 as uuid } from "uuid";
 
 import type * as z from "zod";
 
-import { type LeagueSchema, type Location } from "~/prisma/model";
 import { CreateLeagueForm } from "~/components/forms/CreateLeagueForm";
 import { CreateLocationForm } from "~/components/forms/CreateLocationForm";
 import * as hooks from "~/components/forms/hooks";
+import { type LeagueSchema, type Location } from "~/prisma/model";
 
 import { Drawer } from "./Drawer";
 

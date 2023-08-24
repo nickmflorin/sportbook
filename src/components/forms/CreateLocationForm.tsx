@@ -2,8 +2,8 @@ import React from "react";
 
 import { type z } from "zod";
 
-import { LocationSchema } from "~/prisma/model";
 import { TextInputField } from "~/components/fields/TextInputField";
+import { LocationSchema } from "~/prisma/model";
 
 import { Form, type FormProps } from "./Form";
 

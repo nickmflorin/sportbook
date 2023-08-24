@@ -1,7 +1,7 @@
 import { parseUserDisplayName } from "~/lib/user";
-import { type LeaguePlayerWithUser } from "~/prisma/model";
 import { LeaguePlayerRoleBadge } from "~/components/badges/LeaguePlayerRoleBadge";
 import { PlayerDetailLink } from "~/components/buttons/PlayerDetailLink";
+import { type LeaguePlayerWithUser } from "~/prisma/model";
 
 import { Avatar, type AvatarProps } from "./Avatar";
 

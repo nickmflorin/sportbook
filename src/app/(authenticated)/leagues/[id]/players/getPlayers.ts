@@ -1,12 +1,12 @@
+import "server-only";
 import { cache } from "react";
 
 import uniq from "lodash.uniq";
-import "server-only";
 
-import { prisma } from "~/prisma/client";
+import { getTeamStats } from "~/server/leagues";
+import { prisma, xprisma } from "~/prisma/client";
 import { type User, FileUploadEntity } from "~/prisma/model";
 import { constructOrSearch } from "~/prisma/util";
-import { getTeamStats } from "~/server/leagues";
 
 import { getLeague } from "../getLeague";
 
@@ -66,19 +66,13 @@ export const getPlayers = cache(async ({ leagueId, user, teamIds = [], search = 
   /* Since we are providing the team and the league, no database query will be made - so the looped await is not a
      performance issue. */
   const players = await Promise.all(promises);
-
-  const imageUploads = await prisma.fileUpload.groupBy({
-    by: ["entityId", "fileUrl", "createdAt"],
-    where: { entityType: FileUploadEntity.TEAM, id: { in: uniq(players.map(t => t.teamId)) } },
-    orderBy: { createdAt: "desc" },
-    take: 1,
-  });
+  const imageUrls = await xprisma.$getImageUrls({ ids: players.map(t => t.teamId), entity: FileUploadEntity.TEAM });
 
   return players.map(p => ({
     ...p,
     team: {
       ...p.team,
-      fileUrl: imageUploads.find(i => i.entityId === p.team.id)?.fileUrl || null,
+      fileUrl: imageUrls[p.team.id] || null,
     },
   }));
 });

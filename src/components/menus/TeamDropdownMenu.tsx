@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 
-import { type Team } from "~/prisma/model";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
+import { type Team } from "~/prisma/model";
 
 import { useDropdownMenu } from "./hooks";
 import { type SingleMenuType } from "./SingleMenu";

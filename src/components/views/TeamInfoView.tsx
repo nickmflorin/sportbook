@@ -1,11 +1,11 @@
 import React from "react";
 
-import { teamUiFormHasStats, teamUiFormHasPlayers, type TeamUiForm } from "~/prisma/model";
 import { Badge, type BadgeProps } from "~/components/badges/Badge";
 import { TeamAvatar, type TeamAvatarProps } from "~/components/images/TeamAvatar";
 import { type SingleDescription } from "~/components/typography";
 import { TeamStatsText, type TeamStatsTextProps } from "~/components/typography/TeamStatsText";
 import { InfoView, type InfoViewProps } from "~/components/views/InfoView";
+import { teamUiFormHasStats, teamUiFormHasPlayers, type TeamUiForm } from "~/prisma/model";
 
 export type TeamInfoViewAvatarProps<T extends TeamUiForm = TeamUiForm> = Pick<TeamAvatarProps<T>, "fontSize" | "size">;
 

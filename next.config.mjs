@@ -2,7 +2,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import withBundleAnalyzer from "@next/bundle-analyzer";
-import withBundleStats from "next-plugin-bundle-stats";
 import StylelintPlugin from "stylelint-webpack-plugin";
 
 /* Avoids the error: "ReferenceError: __dirname is not defined in ES module scope", which occurs if you refer to the
@@ -94,10 +93,6 @@ const config = {
   },
 };
 
-/* const bundled = withBundleStats({
-     outDir: "./stats",
-   })(config); */
-
 const bundled = (phase, { defaultConfig }) =>
   withBundleAnalyzer({ enabled: env.ANALYZE_BUNDLE && phase === "phase-production-build" })({
     ...defaultConfig,
@@ -105,13 +100,3 @@ const bundled = (phase, { defaultConfig }) =>
   });
 
 export default bundled;
-
-/* export default function configuration(phase, defaultConfig) {
-     if (phase === BuildPh) {
-       return withBundleAnalyzer(defaultConfig);
-     }
-   } */
-
-/* export default withBundleAnalyzer(config, {
-     enabled: process.env.NODE_ENV === "production" && process.env.ANALYZE_BUNDLE === "true",
-   }); */

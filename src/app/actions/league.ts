@@ -2,9 +2,9 @@
 import { type z } from "zod";
 
 import { ServerError } from "~/application/errors";
+import { getAuthUser } from "~/server/auth";
 import { prisma } from "~/prisma/client";
 import { Prisma, type LeagueSchema, LeagueStaffRole } from "~/prisma/model";
-import { getAuthUser } from "~/server/auth";
 
 export const createLeague = async ({
   locations,

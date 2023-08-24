@@ -1,12 +1,12 @@
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 
-import { prisma } from "~/prisma/client";
-import { type LeagueWithParticipation } from "~/prisma/model";
-import { constructOrSearch } from "~/prisma/util";
 import { getAuthUser } from "~/server/auth";
 import { Loading } from "~/components/loading/Loading";
 import { DataTableSizes } from "~/components/tables/types";
+import { prisma } from "~/prisma/client";
+import { type LeagueWithParticipation } from "~/prisma/model";
+import { constructOrSearch } from "~/prisma/util";
 
 const LeaguesTable = dynamic(() => import("~/components/tables/LeaguesTable"), {
   loading: () => <Loading loading={true} />,

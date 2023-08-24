@@ -1,5 +1,5 @@
-import { type TeamUiForm, teamUiFormHasFileUrl } from "~/prisma/model";
 import { TeamDetailLink, type TeamDetailLinkProps } from "~/components/buttons/TeamDetailLink";
+import { type TeamUiForm, teamUiFormHasFileUrl } from "~/prisma/model";
 
 import { Avatar, type AvatarProps } from "./Avatar";
 

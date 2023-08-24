@@ -3,11 +3,11 @@ import dynamic from "next/dynamic";
 import { type z } from "zod";
 
 import { logger } from "~/application/logger";
-import { type LocationSchema, type Location } from "~/prisma/model";
 import { DeleteButton } from "~/components/buttons/DeleteButton";
 import { SolidButton } from "~/components/buttons/SolidButton";
 import { Text } from "~/components/typography/Text";
 import { TileContainer } from "~/components/views/tiles/TileContainer";
+import { type LocationSchema, type Location } from "~/prisma/model";
 
 const DropdownMenu = dynamic(() => import("~/components/menus/DropdownMenu"), {
   ssr: false,

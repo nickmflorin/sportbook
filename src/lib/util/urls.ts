@@ -1,6 +1,6 @@
+import urlModule, { type UrlObject } from "url";
 import { type ReadonlyHeaders } from "next/dist/server/web/spec-extension/adapters/headers";
 import { ReadonlyURLSearchParams } from "next/navigation";
-import urlModule, { type UrlObject } from "url";
 
 import { logger } from "~/application/logger";
 

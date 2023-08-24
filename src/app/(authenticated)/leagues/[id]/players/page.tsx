@@ -1,8 +1,8 @@
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 
-import { parseQueryTeamIds } from "~/prisma/urls";
 import { getAuthUser } from "~/server/auth";
+import { parseQueryTeamIds } from "~/server/urls";
 import { Loading } from "~/components/loading/Loading";
 
 import { getPlayers } from "./getPlayers";

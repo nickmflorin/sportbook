@@ -1,5 +1,5 @@
-import { type TeamStats } from "~/prisma/model";
 import { Flex, type FlexProps } from "~/components/structural/Flex";
+import { type TeamStats } from "~/prisma/model";
 
 import { Text, type TextProps } from "./Text";
 

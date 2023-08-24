@@ -18,8 +18,11 @@ are not reloaded:
 See: https://www.prisma.io/docs/guides/performance-and-optimization/connection-management
      #prevent-hot-reloading-from-creating-new-instances-of-prismaclient
 */
-import { PrismaClient as RootPrismaClient, FileUploadEntity, FileType } from "@prisma/client";
+import "server-only";
 
+import { PrismaClient as RootPrismaClient, type FileUploadEntity, FileType } from "@prisma/client";
+
+import { logger } from "~/application/logger";
 import { env } from "~/env.mjs";
 
 import { userModelExtension } from "./extensions";
@@ -35,6 +38,7 @@ export * from "./errors";
  * @returns {{ xprisma: PrismaClientWithExtensions, prisma: PrismaClient }}
  */
 export const initializePrismaClient = (params?: DatabaseParams) => {
+  logger.info("Initializing Prisma Client");
   const url = getDatabaseUrl(params);
   const prisma = new RootPrismaClient({
     log: env.DATABASE_LOG_LEVEL,
@@ -47,57 +51,36 @@ export const initializePrismaClient = (params?: DatabaseParams) => {
       model: {
         user: userModelExtension(prisma),
       },
-      result: {
-        team: {
-          getImage: {
-            needs: { id: true },
-            compute(team) {
-              return async () => {
-                const image = (
-                  await prisma.fileUpload.findMany({
-                    where: { entityId: team.id, entityType: FileUploadEntity.TEAM, fileType: FileType.IMAGE },
-                    orderBy: { createdAt: "desc" },
-                    take: 1,
-                  })
-                )[0];
-                return image === undefined ? null : image;
-              };
-            },
-          },
+      client: {
+        async $getImageUrl({ id, entity }: { id: string; entity: FileUploadEntity }) {
+          const image = (
+            await prisma.fileUpload.findMany({
+              where: { entityId: id, entityType: entity, fileType: FileType.IMAGE },
+              orderBy: { createdAt: "desc" },
+              take: 1,
+              select: { fileUrl: true },
+            })
+          )[0];
+          return image === undefined ? null : image.fileUrl;
         },
-        league: {
-          getImage: {
-            needs: { id: true },
-            compute(league) {
-              return async () => {
-                const image = (
-                  await prisma.fileUpload.findMany({
-                    where: { entityId: league.id, entityType: FileUploadEntity.LEAGUE, fileType: FileType.IMAGE },
-                    orderBy: { createdAt: "desc" },
-                    take: 1,
-                  })
-                )[0];
-                return image === undefined ? null : image;
-              };
+        async $getImageUrls({ ids, entity }: { ids: string[]; entity: FileUploadEntity }) {
+          const images = await prisma.fileUpload.groupBy({
+            by: ["entityId", "fileUrl", "createdAt"],
+            where: { entityId: { in: ids }, entityType: entity, fileType: FileType.IMAGE },
+            orderBy: { createdAt: "desc" },
+            take: 1,
+          });
+          return images.reduce(
+            (prev, curr) => {
+              if (prev[curr.entityId] !== undefined) {
+                throw new Error(
+                  "Prisma group by query unexpectedly returned multiple file uploads for the same entity ID!",
+                );
+              }
+              return { ...prev, [curr.entityId]: curr.fileUrl };
             },
-          },
-        },
-        location: {
-          getImage: {
-            needs: { id: true },
-            compute(location) {
-              return async () => {
-                const image = (
-                  await prisma.fileUpload.findMany({
-                    where: { entityId: location.id, entityType: FileUploadEntity.LOCATION, fileType: FileType.IMAGE },
-                    orderBy: { createdAt: "desc" },
-                    take: 1,
-                  })
-                )[0];
-                return image === undefined ? null : image;
-              };
-            },
-          },
+            {} as Record<string, string | null>,
+          );
         },
       },
     }),
@@ -110,18 +93,21 @@ export type PrismaClient = ReturnType<typeof initializePrismaClient>["prisma"];
 export let prisma: PrismaClient;
 export let xprisma: PrismaClientWithExtensions;
 
-const globalPrisma = global as unknown as { prisma: PrismaClient; xprisma: PrismaClientWithExtensions };
+const globalPrisma = globalThis as unknown as { prisma: PrismaClient };
+const globalXPrisma = globalThis as unknown as { prisma: PrismaClientWithExtensions };
 
 if (typeof window === "undefined") {
   if (process.env.NODE_ENV === "production") {
     ({ prisma, xprisma } = initializePrismaClient());
   } else {
-    if (!globalPrisma.prisma || !globalPrisma.xprisma) {
-      const { prisma: _prisma, xprisma: _xprisma } = initializePrismaClient();
-      globalPrisma.prisma = _prisma;
-      globalPrisma.xprisma = _xprisma;
+    if (!globalPrisma.prisma || !globalXPrisma.prisma) {
+      ({ prisma, xprisma } = initializePrismaClient());
+      logger.info("Storing Globally Instantiated Prisma Client");
+      globalPrisma.prisma = prisma;
+      globalXPrisma.prisma = xprisma;
+    } else {
+      prisma = globalPrisma.prisma;
+      xprisma = globalXPrisma.prisma;
     }
-    prisma = globalPrisma.prisma;
-    xprisma = globalPrisma.xprisma;
   }
 }

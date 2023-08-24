@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 import { type ReactNode } from "react";
 
-import { prisma } from "~/prisma/client";
-import { LeagueStaffRole } from "~/prisma/model";
 import { getAuthUser } from "~/server/auth";
 import { Badge } from "~/components/badges/Badge";
 import { DetailPage } from "~/components/layout/DetailPage";
+import { prisma } from "~/prisma/client";
+import { LeagueStaffRole } from "~/prisma/model";
 
 import { getLeague, preloadLeague } from "./getLeague";
 import { useUserLeagueStaffRoles } from "./hooks";
@@ -23,8 +23,7 @@ export default async function LeagueLayout({ children, params: { id } }: LeagueL
   preloadPlayers({ leagueId: id, user });
   preloadLeague(id, user);
 
-  const { getImage, ...league } = await getLeague(id, user);
-  const fileUpload = await getImage();
+  const league = await getLeague(id, user);
 
   const numPlayers = await prisma.leaguePlayer.count({ where: { teamId: { in: league.teams.map(l => l.id) } } });
 
@@ -36,7 +35,7 @@ export default async function LeagueLayout({ children, params: { id } }: LeagueL
         title={league.name}
         description={[league.description]}
         headerProps={{
-          image: { url: fileUpload === null ? null : fileUpload.fileUrl, initials: league.name },
+          image: { url: league.fileUrl, initials: league.name },
           tags: [
             <Badge key="0" size="xxs">{`${league.teams.length} Teams`}</Badge>,
             <Badge key="`" size="xxs">{`${numPlayers} Players`}</Badge>,

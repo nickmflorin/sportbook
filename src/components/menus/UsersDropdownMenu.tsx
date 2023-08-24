@@ -1,9 +1,9 @@
 import dynamic from "next/dynamic";
 
 import { parseUserDisplayName } from "~/lib/user";
-import { type User } from "~/prisma/model";
 import { UserAvatar } from "~/components/images/UserAvatar";
 import { Flex } from "~/components/structural/Flex";
+import { type User } from "~/prisma/model";
 
 import { useDropdownMenu } from "./hooks";
 import { type MultiMenuType } from "./MultiMenu";

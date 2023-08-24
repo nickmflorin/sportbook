@@ -1,7 +1,7 @@
-import { type TeamUiForm } from "~/prisma/model";
 import { AlternateButton } from "~/components/buttons/AlternateButton";
 import { PopoverContent } from "~/components/tooltips/PopoverContent";
 import { TeamInfoView, type TeamInfoViewAvatarProps } from "~/components/views/TeamInfoView";
+import { type TeamUiForm } from "~/prisma/model";
 
 import { DetailLink, type DetailLinkProps } from "./DetailLink";
 

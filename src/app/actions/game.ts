@@ -2,6 +2,8 @@
 import { z } from "zod";
 
 import { ServerError, isServerErrorResponse } from "~/application/errors";
+import { getAuthUser } from "~/server/auth";
+import { getUserLeagueStaffPermissionCodes } from "~/server/leagues";
 import { prisma, isPrismaInvalidIdError, isPrismaDoesNotExistError } from "~/prisma/client";
 import {
   GameStatus,
@@ -10,8 +12,6 @@ import {
   type LeagueWithConfigAndPermissionSets,
   CancelGameSchema as _CancelGameSchema,
 } from "~/prisma/model";
-import { getAuthUser } from "~/server/auth";
-import { getUserLeagueStaffPermissionCodes } from "~/server/leagues";
 
 type ModifyGameStatus = typeof GameStatus.CANCELLED | typeof GameStatus.POSTPONED;
 

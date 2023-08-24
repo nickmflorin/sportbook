@@ -1,3 +1,5 @@
+import "server-only";
+
 import { type EmailAddress, type User as ClerkUser } from "@clerk/clerk-sdk-node";
 import { type User, type PrismaClient } from "@prisma/client";
 

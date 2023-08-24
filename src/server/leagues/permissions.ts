@@ -1,3 +1,5 @@
+import "server-only";
+
 import uniq from "lodash.uniq";
 
 import { prisma } from "~/prisma/client";

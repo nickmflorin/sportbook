@@ -1,3 +1,5 @@
+import "server-only";
+
 import { type Team, type Game } from "@prisma/client";
 
 import {

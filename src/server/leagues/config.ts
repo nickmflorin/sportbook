@@ -1,3 +1,5 @@
+import "server-only";
+
 import { Sport, type League } from "@prisma/client";
 
 import { prisma } from "~/prisma/client";

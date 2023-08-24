@@ -1,8 +1,8 @@
 "use client";
-import { type LeaguePlayerWithUser, type Team, type ModelWithFileUrl, type TeamUiForm } from "~/prisma/model";
 import { LeaguePlayerRoleBadge } from "~/components/badges/LeaguePlayerRoleBadge";
 import { PlayerAvatar } from "~/components/images/PlayerAvatar";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
+import { type LeaguePlayerWithUser, type Team, type ModelWithFileUrl, type TeamUiForm } from "~/prisma/model";
 
 import { type Column } from "./columns";
 import { DataTable, type DataTableProps } from "./DataTable";

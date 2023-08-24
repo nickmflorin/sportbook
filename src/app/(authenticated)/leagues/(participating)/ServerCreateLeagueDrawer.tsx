@@ -1,8 +1,8 @@
 import dynamic from "next/dynamic";
 
+import { Loading } from "~/components/loading/Loading";
 import { prisma } from "~/prisma/client";
 import { type User } from "~/prisma/model";
-import { Loading } from "~/components/loading/Loading";
 
 const CreateLeagueDrawer = dynamic(() => import("~/components/drawers/CreateLeagueDrawer"), {
   loading: () => <Loading loading={true} />,

@@ -1,6 +1,9 @@
 import pino from "pino";
+import { v4 as uuid } from "uuid";
 
 import { env } from "~/env.mjs";
+
+import { isolateVariableFromHotReload } from "./util";
 
 const initializeLogger = () => {
   /* eslint-disable-next-line @typescript-eslint/consistent-type-imports */
@@ -10,6 +13,7 @@ const initializeLogger = () => {
     base: {
       env: process.env.NODE_ENV,
       revision: env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
+      instance: uuid(),
     },
   };
   if (typeof window === "undefined" && env.PRETTY_LOGGING === true) {
@@ -20,4 +24,4 @@ const initializeLogger = () => {
   return pino(loggerOptions);
 };
 
-export const logger = initializeLogger();
+export const logger = isolateVariableFromHotReload("logger", initializeLogger);

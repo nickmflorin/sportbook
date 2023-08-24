@@ -3,15 +3,6 @@ import React from "react";
 
 import { logger } from "~/application/logger";
 import { isUuid } from "~/lib/schemas";
-import { prisma } from "~/prisma/client";
-import {
-  type TeamStats,
-  type TeamWithPlayers,
-  GameResultType,
-  GameResultTypes,
-  type GameWithTeams,
-  type TeamGameWithOpponent,
-} from "~/prisma/model";
 import { getAuthUser } from "~/server/auth";
 import { getTeamStats } from "~/server/leagues";
 import { putGameInTeamPerspective } from "~/server/leagues/games";
@@ -24,6 +15,15 @@ import { DateTimeText } from "~/components/typography/DateTimeText";
 import { Text } from "~/components/typography/Text";
 import { InfoView } from "~/components/views/InfoView";
 import { View } from "~/components/views/View";
+import { prisma } from "~/prisma/client";
+import {
+  type TeamStats,
+  type TeamWithPlayers,
+  GameResultType,
+  GameResultTypes,
+  type GameWithTeams,
+  type TeamGameWithOpponent,
+} from "~/prisma/model";
 
 const DrawerView = dynamic(() => import("~/components/drawers/DrawerView"), {
   loading: () => <Loading loading={true} />,

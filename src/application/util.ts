@@ -1,7 +1,6 @@
-/* eslint-disable-next-line prefer-const, no-var */
-var isolatedGlobals: Record<string, unknown> = {};
-
 type GlobalVariableInitializer<T> = () => T;
+
+const globalData = globalThis as unknown as Record<string, unknown>;
 
 /**
  * Isolates the initialization of a variable from NextJS's hot reloading cycle, preventing the variable from being
@@ -31,39 +30,13 @@ type GlobalVariableInitializer<T> = () => T;
  *   The initialized or globally stored instance.
  */
 export function isolateVariableFromHotReload<T>(varName: string, initializer: GlobalVariableInitializer<T>): T {
-  if (isolatedGlobals[varName] !== undefined) {
-    throw new Error(`The global variable name ${varName} is already isolated from hot reload.`);
+  let cachedInitialized = globalData[varName];
+  if (process.env.NODE_ENV === "development") {
+    if (cachedInitialized === undefined) {
+      cachedInitialized = initializer();
+    }
+    globalData[varName] = cachedInitialized;
+    return cachedInitialized as T;
   }
-  const globallyInitialized = isolatedGlobals[varName] as T;
-  if (globallyInitialized === undefined) {
-    const initialized = initializer();
-    if (initialized === undefined) {
-      throw new Error("The value 'undefined' cannot be isolated from a hot reload.");
-    }
-    if (process.env.NODE_ENV === "development") {
-      isolatedGlobals[varName] = initialized;
-    }
-    return initialized;
-  }
-  return globallyInitialized;
-}
-
-type GlobalFunctionInitializer<ARGS extends unknown[]> = (...args: ARGS) => void;
-
-export function createHotReloadIsolatedFn<ARGS extends unknown[]>(
-  varName: string,
-  initializer: GlobalFunctionInitializer<ARGS>,
-) {
-  return (...args: ARGS): void => {
-    if (isolatedGlobals[varName] !== undefined) {
-      throw new Error(`The global function name ${varName} is already isolated from hot reload.`);
-    }
-    const globallyInitialized = isolatedGlobals[varName] as true | undefined;
-    if (globallyInitialized === undefined) {
-      initializer(...args);
-      if (process.env.NODE_ENV === "development") {
-        isolatedGlobals[varName] = true;
-      }
-    }
-  };
+  return initializer();
 }

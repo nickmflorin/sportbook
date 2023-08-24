@@ -1,10 +1,10 @@
 "use client";
-import { type League, type LeagueWithParticipation } from "~/prisma/model";
 import { LeagueCompetitionLevelBadge, LeagueTypeBadge } from "~/components/badges";
 import { AlternateButton } from "~/components/buttons/AlternateButton";
 import { Flex } from "~/components/structural";
 import { DateTimeText } from "~/components/typography/DateTimeText";
 import { Text } from "~/components/typography/Text";
+import { type League, type LeagueWithParticipation } from "~/prisma/model";
 
 import { type Column } from "./columns";
 import { DataTable, type DataTableProps } from "./DataTable";

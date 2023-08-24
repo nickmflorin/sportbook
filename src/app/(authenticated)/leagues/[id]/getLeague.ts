@@ -1,16 +1,16 @@
+import "server-only";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 
 import uniq from "lodash.uniq";
-import "server-only";
 
 import { logger } from "~/application/logger";
+import { getLeagueStandings as _getLeagueStandings } from "~/server/leagues";
 import { xprisma, prisma, isPrismaInvalidIdError, isPrismaDoesNotExistError } from "~/prisma/client";
 import {
   type LeagueWithConfig,
   type LeagueStaff,
   type User,
-  type FileUpload,
   type Team,
   FileUploadEntity,
   type GameWithResult,
@@ -18,13 +18,10 @@ import {
   type TeamWithNumPlayers,
   type TeamWithStats,
 } from "~/prisma/model";
-import { getLeagueStandings as _getLeagueStandings } from "~/server/leagues";
 
 export const revalidate = 3600; // Revalidate the data at most every hour
 
-type RT = LeagueWithConfig & { readonly staff: LeagueStaff[]; readonly teams: { readonly id: string }[] } & {
-  readonly getImage: () => Promise<FileUpload | null>;
-};
+type L = LeagueWithConfig & { readonly staff: LeagueStaff[]; readonly teams: { readonly id: string }[] };
 
 export const preloadLeague = (id: string, user: User) => {
   void getLeague(id, user);
@@ -32,10 +29,10 @@ export const preloadLeague = (id: string, user: User) => {
   void getLeagueStandings(id, user);
 };
 
-export const getLeague = cache(async (id: string, user: User): Promise<RT> => {
-  let league: RT;
+export const getLeague = cache(async (id: string, user: User): Promise<WithFileUrl<L>> => {
+  let league: L;
   try {
-    league = await xprisma.league.findFirstOrThrow({
+    league = await prisma.league.findFirstOrThrow({
       include: { staff: true, config: true, teams: { select: { id: true } } },
       where: {
         id,
@@ -49,7 +46,7 @@ export const getLeague = cache(async (id: string, user: User): Promise<RT> => {
       throw e;
     }
   }
-  return league;
+  return { ...league, fileUrl: await xprisma.$getImageUrl({ id: league.id, entity: FileUploadEntity.LEAGUE }) };
 });
 
 export const getLeagueScores = cache(async (id: string) => {
@@ -98,17 +95,12 @@ export const getLeagueStandings = cache(async (id: string, user: User) => {
 
   const standings = await _getLeagueStandings(league, teams);
 
-  const imageUploads = await prisma.fileUpload.groupBy({
-    by: ["entityId", "fileUrl", "createdAt"],
-    where: { entityType: FileUploadEntity.TEAM, id: { in: teams.map(t => t.id) } },
-    orderBy: { createdAt: "desc" },
-    take: 1,
-  });
+  const imageUrls = await xprisma.$getImageUrls({ ids: teams.map(t => t.id), entity: FileUploadEntity.TEAM });
 
   const standingsWithImages: WithFileUrl<TeamWithStats<TeamWithNumPlayers<Team>>>[] = standings.map(
     (standing): WithFileUrl<TeamWithStats<TeamWithNumPlayers<Team>>> => ({
       ...standing,
-      fileUrl: imageUploads.find(i => i.entityId === standing.id)?.fileUrl || null,
+      fileUrl: imageUrls[standing.id] || null,
     }),
   );
   return standingsWithImages;

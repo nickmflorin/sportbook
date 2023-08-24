@@ -3,10 +3,10 @@ import intersection from "lodash.intersection";
 import { type z } from "zod";
 
 import { ServerError } from "~/application/errors";
-import { prisma } from "~/prisma/client";
-import { LeagueStaffPermissionCode, type InvitePlayersSchema } from "~/prisma/model";
 import { getAuthUser } from "~/server/auth";
 import { getUserLeagueStaffPermissionCodes } from "~/server/leagues/permissions";
+import { prisma } from "~/prisma/client";
+import { LeagueStaffPermissionCode, type InvitePlayersSchema } from "~/prisma/model";
 
 /* Note: This is a temporary method of "inviting" players that does not include email invites or invites for individuals
    that do not yet have an account.  For now, we simply create the players for the given league using the existing user
