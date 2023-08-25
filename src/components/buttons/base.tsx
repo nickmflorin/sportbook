@@ -296,7 +296,7 @@ export const Button = <T extends ButtonType, V extends ButtonVariant>({
   iconSize,
   ...props
 }: ButtonProps<T, V>) => (
-  <BaseButton {...props}>
+  <BaseButton {...props} loading={loading}>
     {content !== undefined ? (
       content
     ) : (

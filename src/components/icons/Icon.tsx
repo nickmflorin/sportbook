@@ -57,12 +57,13 @@ export type IconProps =
  * ReactDOM.render(finalIcon, document.getElementById("#root"));
  * "<svg class="icon--previous icon--button">...</svg>"
  */
-export const Icon = ({ loading, spinnerColor, ...props }: IconProps): JSX.Element => {
-  if (props.icon !== undefined || props.name !== undefined) {
+export const Icon = ({ loading, spinnerColor, name, icon, ...props }: IconProps): JSX.Element => {
+  if (icon !== undefined || name !== undefined) {
     if (loading === true) {
       return <Spinner loading={loading} {...props} color={spinnerColor || props.color} />;
     }
-    return <_Icon {...(props as IconComponentProps)} />;
+    const iconComponentProps: IconComponentProps = { ...props, name, icon } as IconComponentProps;
+    return <_Icon {...iconComponentProps} />;
   } else if (loading !== undefined) {
     return <Spinner loading={loading} {...props} />;
   }

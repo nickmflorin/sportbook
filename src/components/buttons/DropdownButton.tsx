@@ -1,13 +1,12 @@
 import { type Style } from "~/lib/ui";
 
-import { SolidButton } from "./SolidButton";
+import { SolidButton, type SolidButtonPolymorphicProps } from "./SolidButton";
 
-export interface DropdownButtonProps {
+export interface DropdownButtonProps extends Omit<SolidButtonPolymorphicProps<"outline">, "children" | "style"> {
   readonly children?: string | JSX.Element;
   readonly open: boolean;
   readonly style?: Omit<Style, "width">;
   readonly width?: number | string;
-  readonly onClick: () => void;
 }
 
 export const DropdownButton = ({ children, open, style, width, ...props }: DropdownButtonProps) => (

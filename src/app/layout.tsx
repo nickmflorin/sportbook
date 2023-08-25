@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import Script from "next/script";
 import { type ReactNode } from "react";
 
+/* eslint-disable-next-line import/order */
 import { env } from "~/env.mjs";
 /* eslint-disable-next-line import/order */
 import "~/styles/globals/index.scss";
@@ -26,10 +27,11 @@ const RootLayout = ({ children }: { children: ReactNode }) => (
       <Script
         type="text/javascript"
         src={`https://kit.fontawesome.com/${env.FONT_AWESOME_KIT_TOKEN}.js`}
-        crossOrigin="anonymous"
+        crossOrigin=""
         data-auto-replace-svg="nest"
         data-mutate-approach="sync"
         data-observe-mutations
+        placeholder=""
       />
     </head>
     <body className={InterFont.className}>

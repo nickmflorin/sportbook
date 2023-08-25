@@ -80,6 +80,7 @@ export const DropdownMenu = ({
           onClick={() => {
             setOpen((o: boolean) => !o);
           }}
+          loading={true}
         >
           {_buttonContent}
         </DropdownButton>
