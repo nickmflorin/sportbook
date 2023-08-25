@@ -7,6 +7,7 @@ import { type User } from "~/prisma/model";
 
 import { useDropdownMenu } from "./hooks";
 import { type MultiMenuType } from "./MultiMenu";
+import { DropdownMenuProps } from "./DropdownMenu";
 
 const DropdownMenu = dynamic(() => import("~/components/menus/DropdownMenu"));
 
@@ -32,19 +33,20 @@ const UserDropdownValueRenderer = ({ users }: UserDropdownValueRendererProps): J
   </Flex>
 );
 
-export interface UsersDropdownMenuProps {
+export interface UsersDropdownMenuProps extends Omit<DropdownMenuProps, "menu"> {
   readonly value: string[];
   readonly users: User[];
   readonly onChange: (value: string[]) => void;
 }
 
-export const UsersDropdownMenu = ({ users, value, onChange }: UsersDropdownMenuProps) => {
+export const UsersDropdownMenu = ({ users, value, onChange, ...props }: UsersDropdownMenuProps) => {
   const menu = useDropdownMenu();
   return (
     <DropdownMenu
       buttonContent="Users"
       buttonWidth="100%"
       dropdownMenu={menu}
+      {...props}
       menu={
         <MultiMenu<string, User>
           items={users.map(user => ({

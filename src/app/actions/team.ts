@@ -2,7 +2,7 @@
 import intersection from "lodash.intersection";
 import { type z } from "zod";
 
-import { ServerError } from "~/application/errors";
+import { ServerResponse } from "~/application/response";
 import { getAuthUser } from "~/server/auth";
 import { getUserLeagueStaffPermissionCodes } from "~/server/leagues/permissions";
 import { prisma } from "~/prisma/client";
@@ -14,7 +14,7 @@ import { LeagueStaffPermissionCode, type InvitePlayersSchema } from "~/prisma/mo
 export const invitePlayersToTeam = async (leagueId: string, data: z.output<typeof InvitePlayersSchema>) => {
   const user = await getAuthUser();
   if (!user) {
-    return ServerError.NotAuthenticated("You must be authenticated to invite players to a league.").toResponse();
+    return ServerResponse.NotAuthenticated("You must be authenticated to invite players to a league.").toJson();
   }
   const league = await prisma.league.findUnique({
     where: { id: leagueId },
@@ -24,24 +24,24 @@ export const invitePlayersToTeam = async (leagueId: string, data: z.output<typeo
     },
   });
   if (!league) {
-    return ServerError.BadRequest("The league does not exist.").toResponse();
+    return ServerResponse.BadRequest("The league does not exist.").toJson();
   }
   /* TODO: Eventually, we will also have to account for cases where a non-staff team member wants to invite other
      players to the team that he belongs to. */
   const permissions = await getUserLeagueStaffPermissionCodes({ league, user });
 
   if (!permissions.includes(LeagueStaffPermissionCode.INVITE_PLAYERS)) {
-    return ServerError.Forbidden("You do not have permission to invite players to this league.").toResponse();
+    return ServerResponse.Forbidden("You do not have permission to invite players to this league.").toJson();
   }
   const team = await prisma.team.findUnique({ where: { id: data.teamId } });
   if (!team) {
-    return ServerError.BadRequest("The team does not exist.").toResponse();
+    return ServerResponse.BadRequest("The team does not exist.").toJson();
   } else if (team.leagueId !== league.id) {
-    return ServerError.BadRequest("The team does not belong to the league.").toResponse();
+    return ServerResponse.BadRequest("The team does not belong to the league.").toJson();
   }
   const usersToInvite = await prisma.user.findMany({ where: { id: { in: data.userIds } } });
   if (usersToInvite.length !== data.userIds.length) {
-    return ServerError.BadRequest("Not all of the users to invite exist.").toResponse();
+    return ServerResponse.BadRequest("Not all of the users to invite exist.").toJson();
   }
   const existingPlayers = league.teams.flatMap(tm => tm.players.map(p => p.userId));
   if (
@@ -50,7 +50,7 @@ export const invitePlayersToTeam = async (leagueId: string, data: z.output<typeo
       usersToInvite.map(u => u.id),
     ).length !== 0
   ) {
-    return ServerError.BadRequest("At least 1 of the users belongs to a tem in the league already.").toResponse();
+    return ServerResponse.BadRequest("At least 1 of the users belongs to a tem in the league already.").toJson();
   }
 
   return await prisma.leaguePlayer.createMany({

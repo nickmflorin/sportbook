@@ -4,28 +4,28 @@ import React, { useTransition } from "react";
 import type * as z from "zod";
 
 import { invitePlayersToTeam } from "~/app/actions/team";
-import { isServerErrorResponse } from "~/application/errors";
+import { isServerErrorResponseBody } from "~/application/response";
 import { Form, type FormProps } from "~/components/forms/Form";
 import { TeamDropdownMenu } from "~/components/menus/TeamDropdownMenu";
-import { UsersDropdownMenu } from "~/components/menus/UsersDropdownMenu";
+import { InviteUsersDropdownMenu } from "~/components/menus/InviteUsersDropdownMenu";
 import { type InvitePlayersSchema, type Team, type User } from "~/prisma/model";
 
 export type PlayerFormValues = z.output<typeof InvitePlayersSchema>;
 
 export type InvitePlayersFormProps = Omit<FormProps<PlayerFormValues>, "children"> & {
   readonly leagueId: string;
+  readonly requestsDisabled?: boolean;
   readonly teams: Team[];
-  readonly users: User[];
 };
 
-export const InvitePlayersForm = ({ form, leagueId, teams, users }: InvitePlayersFormProps): JSX.Element => {
+export const InvitePlayersForm = ({ form, leagueId, teams, requestsDisabled }: InvitePlayersFormProps): JSX.Element => {
   const [_, startTransition] = useTransition();
   const router = useRouter();
   return (
     <Form
       action={async (data, handler) => {
         const response = await invitePlayersToTeam(leagueId, data);
-        if (isServerErrorResponse(response)) {
+        if (isServerErrorResponseBody(response)) {
           handler.addServerError(response);
         } else {
           form.reset();
@@ -43,7 +43,15 @@ export const InvitePlayersForm = ({ form, leagueId, teams, users }: InvitePlayer
         description="Select the user that should be invited to the league."
         condition={Form.FieldCondition.REQUIRED}
       >
-        {({ field: { onChange, value } }) => <UsersDropdownMenu value={value} users={users} onChange={onChange} />}
+        {({ field: { onChange, value } }) => (
+          <InviteUsersDropdownMenu
+            requestDisabled={requestsDisabled}
+            leagueId={leagueId}
+            value={value}
+            onChange={onChange}
+            onError={e => form.setError("userIds", { message: e })}
+          />
+        )}
       </Form.ControlledField>
       <Form.ControlledField
         form={form}

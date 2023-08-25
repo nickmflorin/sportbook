@@ -1,7 +1,7 @@
 "use server";
 import { z } from "zod";
 
-import { ServerError, isServerErrorResponse } from "~/application/errors";
+import { ServerResponse, isServerErrorResponseBody } from "~/application/response";
 import { getAuthUser } from "~/server/auth";
 import { getUserLeagueStaffPermissionCodes } from "~/server/leagues";
 import { prisma, isPrismaInvalidIdError, isPrismaDoesNotExistError } from "~/prisma/client";
@@ -23,7 +23,7 @@ const StatusToPermission: { [key in ModifyGameStatus]: LeagueStaffPermissionCode
 export const validateGameStatusChange = async (id: string, status: ModifyGameStatus) => {
   const user = await getAuthUser();
   if (!user) {
-    return ServerError.NotAuthenticated("You must be authenticated to create a League.").toResponse();
+    return ServerResponse.NotAuthenticated("You must be authenticated to create a League.").toJson();
   }
 
   let game: Game & { readonly league: LeagueWithConfigAndPermissionSets };
@@ -36,7 +36,7 @@ export const validateGameStatusChange = async (id: string, status: ModifyGameSta
     });
   } catch (e) {
     if (isPrismaInvalidIdError(e) || isPrismaDoesNotExistError(e)) {
-      return ServerError.BadRequest("The game with the provided ID does not exist.").toResponse();
+      return ServerResponse.BadRequest("The game with the provided ID does not exist.").toJson();
     } else {
       throw e;
     }
@@ -44,9 +44,9 @@ export const validateGameStatusChange = async (id: string, status: ModifyGameSta
   // The permission code set will be empty if the user is not a staff member for the league.
   const permissionCodes = await getUserLeagueStaffPermissionCodes({ user, league: game.league });
   if (!permissionCodes.includes(StatusToPermission[status])) {
-    return ServerError.Forbidden().toResponse();
+    return ServerResponse.Forbidden().toJson();
   } else if (game.status === status) {
-    return ServerError.BadRequest(`The game is already in status ${game.status}.`).toResponse();
+    return ServerResponse.BadRequest(`The game is already in status ${game.status}.`).toJson();
   }
   return { game, user };
 };
@@ -59,10 +59,10 @@ export const postponeGame = async (params: z.input<typeof PostponeGameSchema>) =
     /* TODO: We are going to have to develop a more systematic way for server actions to communicate errors based off
        of failed zod validations to the client. */
     const err = result.error.errors[0]?.message || "Bad request.";
-    return ServerError.BadRequest(err).toResponse();
+    return ServerResponse.BadRequest(err).toJson();
   }
   const validatedResult = await validateGameStatusChange(result.data.id, GameStatus.POSTPONED);
-  if (isServerErrorResponse(validatedResult)) {
+  if (isServerErrorResponseBody(validatedResult)) {
     return validatedResult;
   }
   const { game, user } = validatedResult;
@@ -80,11 +80,11 @@ export const cancelGame = async (params: z.input<typeof CancelGameSchema>) => {
     /* TODO: We are going to have to develop a more systematic way for server actions to communicate errors based off
        of failed zod validations to the client. */
     const err = result.error.errors[0]?.message || "Bad request.";
-    return ServerError.BadRequest(err).toResponse();
+    return ServerResponse.BadRequest(err).toJson();
   }
   const { id, cancellationReason } = result.data;
   const validatedResult = await validateGameStatusChange(id, GameStatus.CANCELLED);
-  if (isServerErrorResponse(validatedResult)) {
+  if (isServerErrorResponseBody(validatedResult)) {
     return validatedResult;
   }
   const { game, user } = validatedResult;

@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 
 import { postponeGame, cancelGame } from "~/app/actions/game";
-import { isServerErrorResponse } from "~/application/errors";
+import { isServerErrorResponseBody } from "~/application/response";
 import { GameStatusBadge } from "~/components/badges";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
 import { Loading } from "~/components/loading/Loading";
@@ -96,7 +96,7 @@ const actionMenuItems = (
       item.setLoading(true);
       const response = await postponeGame({ id: datum.id });
       item.setLoading(false);
-      if (isServerErrorResponse(response)) {
+      if (isServerErrorResponseBody(response)) {
         // TODO: How do we show errors when the error is the result of a menu item click?
         console.error(response);
       } else {
@@ -115,7 +115,7 @@ const actionMenuItems = (
         <CancelGameForm
           action={async (data, handler) => {
             const response = await cancelGame({ id: datum.id, cancellationReason: data.cancellationReason });
-            if (isServerErrorResponse(response)) {
+            if (isServerErrorResponseBody(response)) {
               handler.addServerError(response);
             } else {
               item.hideSubContent();

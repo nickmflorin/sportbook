@@ -1,0 +1,41 @@
+import { type NextRequest } from "next/server";
+
+import { ServerResponse } from "~/application/response";
+import { getAuthUserFromRequest } from "~/server/auth";
+import { prisma } from "~/prisma/client";
+import { LeagueStaffPermissionCode } from "~/prisma/model";
+import { getUserLeagueStaffPermissionCodes } from "~/server/leagues";
+
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  const user = await getAuthUserFromRequest(request);
+  if (!user) {
+    return ServerResponse.NotAuthenticated().toResponse();
+  }
+  const { id } = params;
+  const league = await prisma.league.findUnique({
+    where: { id },
+    include: {
+      config: { include: { staffPermissionSets: true } },
+      teams: { include: { players: { include: { user: { select: { id: true } } } } } },
+    },
+  });
+  if (!league) {
+    return ServerResponse.BadRequest("The league does not exist.").toResponse();
+  }
+  /* TODO: Eventually, we will also have to account for cases where a non-staff team member wants to invite other
+     players to the team that he belongs to. */
+  const permissions = await getUserLeagueStaffPermissionCodes({ league, user });
+
+  if (!permissions.includes(LeagueStaffPermissionCode.INVITE_PLAYERS)) {
+    return ServerResponse.Forbidden("You do not have permission to invite players to this league.").toJson();
+  }
+
+  /* Eventually, we will have to slim the users list down a fair amount and come up with a better way for inviting the
+     users. */
+  const usersInLeague = await prisma.leaguePlayer.findMany({
+    select: { userId: true },
+    where: { team: { leagueId: league.id } },
+  });
+  const users = await prisma.user.findMany({ where: { id: { notIn: usersInLeague.map(v => v.userId) } } });
+  return ServerResponse.OK(users).toResponse();
+}

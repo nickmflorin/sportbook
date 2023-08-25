@@ -1,7 +1,7 @@
 "use server";
 import { type z } from "zod";
 
-import { ServerError } from "~/application/errors";
+import { ServerResponse } from "~/application/response";
 import { getAuthUser } from "~/server/auth";
 import { prisma } from "~/prisma/client";
 import { Prisma, type LeagueSchema, LeagueStaffRole } from "~/prisma/model";
@@ -69,7 +69,7 @@ export const createLeague = async ({
         return league;
       }
       // TODO: What does this cause to happen on the client?
-      return ServerError.NotAuthenticated("You must be authenticated to create a League.").toResponse();
+      return ServerResponse.NotAuthenticated("You must be authenticated to create a League.").toJson();
     },
     { isolationLevel: Prisma.TransactionIsolationLevel.ReadUncommitted },
   );

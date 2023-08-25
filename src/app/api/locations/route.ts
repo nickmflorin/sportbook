@@ -1,15 +1,15 @@
 import { type NextRequest } from "next/server";
 
-import { AppResponse } from "~/app/api/response";
 import { getAuthUserFromRequest } from "~/server/auth";
 import { prisma } from "~/prisma/client";
+import { ServerResponse } from "~/application/response";
 
 // TODO: This is not currently used - might want to remove it.
 export async function GET(request: NextRequest) {
   const user = await getAuthUserFromRequest(request);
   if (!user) {
-    return AppResponse.NOT_AUTHORIZED();
+    return ServerResponse.NotAuthenticated().toResponse();
   }
   const locations = await prisma.location.findMany({ where: { createdById: user.id } });
-  return AppResponse.OK(locations);
+  return ServerResponse.OK(locations).toResponse();
 }

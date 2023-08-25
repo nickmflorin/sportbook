@@ -8,29 +8,30 @@ import { DropdownButton } from "~/components/buttons/DropdownButton";
 
 import { type IDropdownMenu } from "./hooks";
 
-interface BaseDropdownMenuProps extends Pick<PopoverProps, "position" | "trapFocus" | "width"> {
+export interface DropdownMenuProps extends Pick<PopoverProps, "position" | "trapFocus" | "width" | "disabled"> {
   readonly open?: boolean;
   readonly menu: JSX.Element;
   readonly dropdownMenu?: React.MutableRefObject<IDropdownMenu>;
   readonly keepOpen?: boolean; // For debugging purposes.
+  readonly loading?: boolean;
   readonly onClose?: () => void;
 }
 
-export interface DropdownMenuChildrenProps extends BaseDropdownMenuProps {
+export interface DropdownMenuChildrenProps extends DropdownMenuProps {
   readonly children: JSX.Element;
   readonly buttonContent?: never;
   readonly buttonStyle?: never;
   readonly buttonWidth?: never;
 }
 
-export interface DropdownMenuChildlessProps extends BaseDropdownMenuProps {
+export interface DropdownMenuChildlessProps extends DropdownMenuProps {
   readonly buttonContent: string | JSX.Element;
   readonly buttonStyle?: Omit<Style, "width">;
   readonly buttonWidth?: number | string;
   readonly children?: never;
 }
 
-export type DropdownMenuProps = DropdownMenuChildrenProps | DropdownMenuChildlessProps;
+type _DropdownMenuProps = DropdownMenuChildrenProps | DropdownMenuChildlessProps;
 
 const isNodeDescendantOf = (parent: HTMLElement | Element, child: HTMLElement | Element) => {
   let node = child.parentNode;
@@ -52,9 +53,11 @@ export const DropdownMenu = ({
   keepOpen,
   buttonWidth,
   dropdownMenu,
+  loading,
+  disabled,
   onClose,
   ...props
-}: DropdownMenuProps): JSX.Element => {
+}: _DropdownMenuProps): JSX.Element => {
   const id = useId();
   const menuId = useId();
   const [_open, setOpen] = useState(open === undefined ? false : open);
@@ -75,12 +78,13 @@ export const DropdownMenu = ({
       return (
         <DropdownButton
           open={isOpen}
+          disabled={disabled}
           style={buttonStyle}
           width={buttonWidth}
           onClick={() => {
             setOpen((o: boolean) => !o);
           }}
-          loading={true}
+          loading={loading}
         >
           {_buttonContent}
         </DropdownButton>
@@ -97,6 +101,7 @@ export const DropdownMenu = ({
       transitionProps={{ transition: "pop" }}
       trapFocus
       {...props}
+      disabled={disabled}
     >
       <Popover.Target>
         <div style={buttonWidth ? { width: buttonWidth } : { maxWidth: "fit-content" }}>{target}</div>

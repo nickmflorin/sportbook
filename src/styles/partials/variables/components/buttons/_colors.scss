@@ -37,19 +37,19 @@ $themes: (
     base: colors.get-color("blue", $shade: 9),
     hovered: colors.get-color("blue", $shade: 11),
     focused: colors.get-color("blue", $shade: 11),
-    disabled: colors.$disabled-color,
+    disabled: #f5f5f5,
   ),
   "secondary": (
     base: colors.get-color("gray", $shade: 2),
     hovered: colors.get-color("gray", $shade: 3),
     focused: colors.get-color("gray", $shade: 3),
-    disabled: colors.$disabled-color,
+    disabled: #f5f5f5,
   ),
   "outline": (
     base: colors.get-color("gray", $shade: 4),
     hovered: colors.get-color("gray", $shade: 5),
     focused: colors.get-color("gray", $shade: 5),
-    disabled: colors.$disabled-color,
+    disabled: #f5f5f5,
   ),
   "bare": (),
 );

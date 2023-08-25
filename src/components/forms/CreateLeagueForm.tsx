@@ -7,7 +7,7 @@ import { DateInput } from "@mantine/dates/lib/components/DateInput";
 import type * as z from "zod";
 
 import { createLeague } from "~/app/actions/league";
-import { isServerErrorResponse } from "~/application/errors";
+import { isServerErrorResponseBody } from "~/application/response";
 import { TextInputField } from "~/components/fields/TextInputField";
 import { Form, type FormProps } from "~/components/forms/Form";
 import { LocationsChooser } from "~/components/input/LocationsChooser";
@@ -34,7 +34,7 @@ export const CreateLeagueForm = ({ form, locations, onNewLocation }: CreateLeagu
     <Form
       action={async (leagueData, handler) => {
         const response = await createLeague(leagueData);
-        if (isServerErrorResponse(response)) {
+        if (isServerErrorResponseBody(response)) {
           handler.addServerError(response);
         } else {
           form.reset();
