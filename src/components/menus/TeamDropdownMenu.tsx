@@ -3,14 +3,14 @@ import dynamic from "next/dynamic";
 import { TeamAvatar } from "~/components/images/TeamAvatar";
 import { type Team } from "~/prisma/model";
 
-import { useDropdownMenu } from "./hooks";
-import { type SingleMenuType } from "./SingleMenu";
+import { useDropdownSelectControl } from "./dropdowns/hooks";
+import { type SingleMenuType } from "./menus/SingleMenu";
 
-const DropdownMenu = dynamic(() => import("~/components/menus/DropdownMenu"), {
+const DropdownSelect = dynamic(() => import("~/components/menus/dropdowns/DropdownSelect"), {
   ssr: false,
 });
 
-const SingleMenu = dynamic(() => import("~/components/menus/SingleMenu"), {
+const SingleMenu = dynamic(() => import("~/components/menus/menus/SingleMenu"), {
   ssr: false,
 }) as SingleMenuType;
 
@@ -21,14 +21,14 @@ export interface TeamDropdownMenuProps {
 }
 
 export const TeamDropdownMenu = ({ teams, value, onChange }: TeamDropdownMenuProps) => {
-  const menu = useDropdownMenu();
+  const control = useDropdownSelectControl();
 
   return (
-    <DropdownMenu
-      buttonContent="Teams"
-      buttonWidth="100%"
-      dropdownMenu={menu}
-      menu={
+    <DropdownSelect
+      inputPlaceholder="Teams"
+      inputWidth="100%"
+      control={control}
+      content={
         <SingleMenu<string | null, Team>
           items={teams.map(team => ({
             value: team.id,
@@ -38,8 +38,8 @@ export const TeamDropdownMenu = ({ teams, value, onChange }: TeamDropdownMenuPro
           }))}
           value={value}
           onChange={(value: string, datum: Team) => {
-            menu.current.setButtonContent(<TeamAvatar team={datum} size={20} fontSize="xxxs" withName />);
-            menu.current.close();
+            control.current.setValueDisplay(<TeamAvatar team={datum} size={20} fontSize="xxxs" withName />);
+            control.current.close();
             onChange(value);
           }}
         />

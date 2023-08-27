@@ -4,7 +4,7 @@ import { type Alignment } from "~/lib/ui";
 import { ButtonTypes, type ButtonVariant } from "~/components/buttons";
 import { type FontWeight, type TypographySize } from "~/components/typography";
 
-import { Button, type ButtonProps } from "../base";
+import { Button, type ButtonProps } from "../Button";
 
 export type BaseAlternateButtonProps<V extends ButtonVariant> = Omit<
   ButtonProps<typeof ButtonTypes.ALTERNATE, V>,

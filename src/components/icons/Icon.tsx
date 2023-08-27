@@ -69,3 +69,5 @@ export const Icon = ({ loading, spinnerColor, name, icon, ...props }: IconProps)
   }
   return <></>;
 };
+
+export default Icon;

@@ -105,15 +105,6 @@ export const useValueDatumMap = <
   return [valueDatumMap, itemsWithValues];
 };
 
-export type IDropdownMenu = {
-  readonly close: () => void;
-  readonly setButtonContent: (content: string | JSX.Element) => void;
-};
-
-export const useDropdownMenu = (): React.MutableRefObject<IDropdownMenu> =>
-  /* eslint-disable-next-line @typescript-eslint/no-empty-function */
-  useRef<IDropdownMenu>({ setButtonContent: () => {}, close: () => {} });
-
 export const useMultiMenu = <V extends string | null>() => {
   /* eslint-disable-next-line @typescript-eslint/no-empty-function */
   const ref = useRef<IMultiMenu<V>>({ setValue: () => {}, clear: () => {} });

@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
 import { Loading } from "~/components/loading/Loading";
-import { DropdownMenu } from "~/components/menus/DropdownMenu";
+import { DropdownSelect } from "~/components/menus/dropdowns/DropdownSelect";
 import { prisma } from "~/prisma/client";
 import { type League, type Team } from "~/prisma/model";
 
@@ -37,15 +37,15 @@ export const TeamFilter = async <L extends League | LeagueWithTeams | LeagueWith
   }
 
   return (
-    <DropdownMenu
-      buttonContent="Teams"
-      buttonWidth={200}
+    <DropdownSelect
+      inputPlaceholder="Teams"
+      inputWidth={200}
       /* TODO: We may not need a Suspense here - the thinking was that it would reduce the client side bundle because
          with NextJS, when useSearchParams is invoked, it will cause the tree up to the closest Suspense boundary to
          be client-side rendered.  Wrapping the component in a Suspense will prevent the client side rendering from
          moving further up this tree.  However, that only applies to static rendering - and the routes that use this
          component are dynamically rendered (due to the ID path parameter). */
-      menu={
+      content={
         <Suspense fallback={<Loading loading={true} />}>
           <TeamFilterMenu teams={teams} playersTeam={playersTeam} />
         </Suspense>

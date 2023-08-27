@@ -1,6 +1,11 @@
+import dynamic from "next/dynamic";
+
 import { type Optional } from "utility-types";
 
-import { ButtonLinkContent, BaseButtonLink, type BaseButtonLinkProps, type LinkContentProps } from "./base";
+import { BaseButtonLink, type BaseButtonLinkProps } from "./base";
+import { type LinkContentProps } from "./base/ButtonLinkContent";
+
+const ButtonLinkContent = dynamic(() => import("./base/ButtonLinkContent"));
 
 export type ButtonLinkProps = Optional<BaseButtonLinkProps, "children"> &
   Omit<LinkContentProps, "component"> & {

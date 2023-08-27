@@ -42,6 +42,10 @@
   //   color: partials.get-color("gray", $shade: 7);
   // }
 
+  @include partials.disabled {
+    color: partials.$disabled-color;
+  }
+
   > svg {
     @extend %icon-svg-base;
     @extend %svg-base;

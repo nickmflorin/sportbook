@@ -66,6 +66,20 @@ $link-font-weight: typography.get-font-weight(
       // When an icon or loading indicator is in the button, we want the height to slightly smaller than the line height
       // of the accompanying text - so we subtract a little height from the wrapper.
       padding-top: sizing.$button-icon-padding;
+
+      &:not(:last-of-type) {
+        margin-right: 2px;
+      }
+    }
+
+    > .button__action-icon-wrapper {
+      > .icon {
+        color: colors.get-color("gray", $shade: 4);
+
+        @include mixins.with-state(("hovered", "focused")) {
+          color: colors.get-color("gray", $shade: 5);
+        }
+      }
     }
   }
 

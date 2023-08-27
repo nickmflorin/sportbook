@@ -1,8 +1,11 @@
+import dynamic from "next/dynamic";
+
 import { ButtonTypes, type ButtonVariant } from "~/components/buttons";
 import { IconSizes, type IconProp } from "~/components/icons";
-import { Icon } from "~/components/icons/Icon";
 
-import { Button, type ButtonProps } from "../base";
+const Icon = dynamic(() => import("~/components/icons/Icon"));
+
+import { Button, type ButtonProps } from "../Button";
 
 export type BaseActionButtonProps<V extends ButtonVariant = ButtonVariant> = Omit<
   ButtonProps<"action", V>,

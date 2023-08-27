@@ -1,6 +1,6 @@
 import { type ButtonVariant, ButtonTypes } from "~/components/buttons";
 
-import { Button, type ButtonProps } from "../base";
+import { Button, type ButtonProps } from "../Button";
 
 export type BaseSolidButtonProps<V extends ButtonVariant> = Omit<
   ButtonProps<typeof ButtonTypes.SOLID, V>,

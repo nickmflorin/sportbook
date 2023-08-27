@@ -1,8 +1,8 @@
 import { EllipsisButton } from "~/components/buttons/EllipsisButton";
 
-import { DropdownMenu } from "./DropdownMenu";
-import { Menu } from "./Menu";
-import { type ValuelessMenuItem, type IMenuItem } from "./types";
+import { Dropdown } from "./dropdowns/Dropdown";
+import { type ValuelessMenuItem, type IMenuItem } from "./menus";
+import { Menu } from "./menus/Menu";
 
 export type TableAction<T> = Omit<ValuelessMenuItem, "onClick"> & {
   readonly onClick: (datum: T, item: IMenuItem, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
@@ -14,9 +14,9 @@ export type TableActionDropdownMenuProps<T> = {
 };
 
 export const TableActionDropdownMenu = <T,>({ actions, datum }: TableActionDropdownMenuProps<T>) => (
-  <DropdownMenu
+  <Dropdown
     width={200}
-    menu={
+    content={
       <Menu
         mode="single"
         items={actions.map(a => ({ ...a, onClick: (item, e) => a.onClick(datum, item, e) }))}
@@ -25,5 +25,5 @@ export const TableActionDropdownMenu = <T,>({ actions, datum }: TableActionDropd
     }
   >
     <EllipsisButton />
-  </DropdownMenu>
+  </Dropdown>
 );

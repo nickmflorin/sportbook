@@ -19,3 +19,9 @@ $button-loading-class: ".button--loading";
     }
   }
 }
+
+@mixin button-placeholder {
+  &.button--placeholder {
+    @content;
+  }
+}

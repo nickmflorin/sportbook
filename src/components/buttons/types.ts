@@ -1,4 +1,5 @@
 import { enumeratedLiterals, type EnumeratedLiteralType } from "~/lib/util/literals";
+import { type IconProp, type IconSize, type DynamicIconProp } from "~/components/icons";
 import { type FocusedHoverPopoverProps } from "~/components/tooltips/FocusedHoverPopover";
 
 export type ButtonPopoverProps = FocusedHoverPopoverProps;
@@ -14,3 +15,11 @@ export type ButtonVariant = EnumeratedLiteralType<typeof ButtonVariants>;
 
 export const ButtonCornerStyles = enumeratedLiterals(["rounded", "square", "normal"] as const);
 export type ButtonCornerStyle = EnumeratedLiteralType<typeof ButtonCornerStyles>;
+
+export type ButtonAction = {
+  readonly icon: IconProp | DynamicIconProp;
+  readonly disabled?: boolean;
+  readonly iconSize?: IconSize;
+  readonly loading?: boolean;
+  readonly onClick: (e: React.MouseEvent<HTMLElement>) => void;
+};

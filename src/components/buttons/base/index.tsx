@@ -4,16 +4,7 @@ import React, { type ForwardedRef, useMemo } from "react";
 import classNames from "classnames";
 import { type Required, type Optional } from "utility-types";
 
-import {
-  type CSSDirection,
-  CSSDirections,
-  type ComponentProps,
-  type HTMLElementProps,
-  type Color,
-  getColorClassName,
-} from "~/lib/ui";
-import { type IconProp, type IconSize, IconSizes, type DynamicIconProp } from "~/components/icons";
-import { Icon } from "~/components/icons/Icon";
+import { type ComponentProps, type HTMLElementProps, type Color, getColorClassName } from "~/lib/ui";
 import { FocusedHoverPopover } from "~/components/tooltips/FocusedHoverPopover";
 import { type FontWeight, type TypographySize } from "~/components/typography";
 
@@ -25,7 +16,7 @@ import {
   type ButtonCornerStyle,
   ButtonCornerStyles,
   ButtonSizes,
-} from "./types";
+} from "../types";
 
 type BaseProps = ComponentProps & {
   readonly children: string | JSX.Element;
@@ -71,6 +62,7 @@ export type BaseButtonProps<T extends ButtonType, V extends ButtonVariant> = Opt
   readonly buttonType: T;
   readonly variant: V;
   readonly size?: ButtonSize;
+  readonly placeholder?: boolean;
   /**
    * Sets the element in a "locked" state, which is a state in which the non-visual characteristics of the "disabled"
    * state should be used, but the element should not be styled as if it is disabled.
@@ -97,6 +89,7 @@ export const getBaseButtonClassName = <T extends ButtonType, V extends ButtonVar
        disabled behavior can be "mocked". */
     { disabled: props.disabled },
     { "button--locked": props.locked === true || props.loading === true },
+    { "button--placeholder": props.placeholder === true },
     { "button--loading": props.loading === true },
     `button--corner-style-${props.cornerStyle}`,
     `button--${props.buttonType}`,
@@ -166,6 +159,7 @@ const _BaseButton = <T extends ButtonType, V extends ButtonVariant>({
   size = ButtonSizes.SM,
   buttonType,
   children,
+  placeholder,
   variant,
   ...props
 }: Omit<BaseButtonProps<T, V>, "href" | "popover" | "popoverProps">): JSX.Element => {
@@ -193,6 +187,7 @@ const _BaseButton = <T extends ButtonType, V extends ButtonVariant>({
         cornerStyle,
         buttonType,
         size,
+        placeholder,
       })}
       onClick={onClick !== undefined ? _onClick : undefined}
       disabled={disabled}
@@ -234,81 +229,4 @@ export const BaseLink = ({
       {children}
     </NextLink>
   </FocusedHoverPopover>
-);
-
-type Loc = Exclude<CSSDirection, typeof CSSDirections.UP | typeof CSSDirections.DOWN>;
-
-type ButtonContentProps = {
-  readonly component: "button";
-  readonly children?: string | JSX.Element;
-  readonly loading?: boolean;
-  readonly icon?: IconProp | DynamicIconProp;
-  readonly iconLocation?: Loc;
-  readonly iconSize?: IconSize;
-};
-
-export type LinkContentProps = {
-  readonly component: "link";
-  readonly loading?: never;
-  readonly children?: string | JSX.Element;
-  readonly icon?: IconProp | DynamicIconProp;
-  readonly iconLocation?: Loc;
-  readonly iconSize?: IconSize;
-};
-
-type ButtonLinkContentProps = ButtonContentProps | LinkContentProps;
-
-export const ButtonLinkContent = ({
-  iconLocation = CSSDirections.LEFT,
-  loading,
-  component,
-  iconSize = IconSizes.FILL,
-  icon,
-  children,
-}: ButtonLinkContentProps): JSX.Element => (
-  <div className={`${component}__content`}>
-    {iconLocation === CSSDirections.LEFT && (icon !== undefined || loading === true) && (
-      <div className={`${component}__icon-wrapper`}>
-        <Icon size={iconSize} icon={icon} loading={loading} axis="vertical" />
-      </div>
-    )}
-    <div className={`${component}__sub-content`}>{children}</div>
-    {iconLocation === CSSDirections.RIGHT && (icon !== undefined || loading === true) && (
-      <div className={`${component}__icon-wrapper`}>
-        <Icon size={iconSize} icon={icon} loading={loading} axis="vertical" />
-      </div>
-    )}
-  </div>
-);
-
-export type ButtonProps<T extends ButtonType, V extends ButtonVariant> = Optional<BaseButtonProps<T, V>, "children"> &
-  Omit<ButtonContentProps, "component" | "children"> & {
-    readonly content?: JSX.Element;
-    readonly children?: string | JSX.Element;
-  };
-
-export const Button = <T extends ButtonType, V extends ButtonVariant>({
-  icon,
-  iconLocation,
-  loading,
-  children,
-  content,
-  iconSize,
-  ...props
-}: ButtonProps<T, V>) => (
-  <BaseButton {...props} loading={loading}>
-    {content !== undefined ? (
-      content
-    ) : (
-      <ButtonLinkContent
-        component="button"
-        iconSize={iconSize}
-        loading={loading}
-        iconLocation={iconLocation}
-        icon={icon}
-      >
-        {children}
-      </ButtonLinkContent>
-    )}
-  </BaseButton>
 );

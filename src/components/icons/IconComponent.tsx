@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 
 import classNames from "classnames";
@@ -80,7 +81,15 @@ export const getNativeIconClassName = (params: IconComponentProps<IconProp>): st
   return classNames(getIconFamilyClassName(family), getIconStyleClassName(iconStyle), getIconNameClassName(name));
 };
 
-const DynamicIconClassNamePropNames = ["contain", "size", "axis", "color", "focusedColor", "hoveredColor"] as const;
+const DynamicIconClassNamePropNames = [
+  "contain",
+  "size",
+  "axis",
+  "color",
+  "focusedColor",
+  "hoveredColor",
+  "disabled",
+] as const;
 
 type DynamicIconClassNamePropName = (typeof DynamicIconClassNamePropNames)[number];
 
@@ -91,6 +100,7 @@ type DynamicIconClassNameConfig<N extends DynamicIconClassNamePropName> = (
 ) => string | null;
 
 const DynamicClassNameConfig: { [key in DynamicIconClassNamePropName]: DynamicIconClassNameConfig<key> } = {
+  disabled: v => (v !== undefined ? "disabled" : null),
   contain: v => (v !== undefined ? `icon--contain-${v}` : null),
   size: v => (v !== undefined ? `icon--size-${v}` : null),
   axis: v => (v !== undefined ? `icon--axis-${v}` : null),
@@ -123,6 +133,7 @@ export const IconComponent = ({
   style,
   icon,
   visible,
+  onClick,
   ...props
 }: IconComponentProps<IconProp | DynamicIconProp>) => {
   if (icon !== undefined || props.name !== undefined) {
@@ -147,7 +158,7 @@ export const IconComponent = ({
             const ps = { ...props, icon: i.icon, size, axis, contain } as IconComponentProps<IconProp>;
             if (i.visible && !visibleIconEncountered) {
               visibleIconEncountered = true;
-              return <IconComponent {...ps} visible={true} key={index} />;
+              return <IconComponent {...ps} visible={true} onClick={onClick} key={index} />;
             }
             return <IconComponent {...ps} visible={false} key={index} />;
           })}
@@ -161,7 +172,17 @@ export const IconComponent = ({
        inside of an <i> element, where the <i> element is given the Font Awesome class names that are defined in the
        content loaded from the CDN (these class names are generated via 'getNativeIconClassName' below). */
     const ps = { ...props, icon, size, axis, contain } as IconComponentProps<IconProp>;
-    return <i style={visible === false ? { ...style, display: "none" } : style} className={getIconClassName(ps)} />;
+    return (
+      <i
+        onClick={e => {
+          if (props.disabled !== true) {
+            onClick?.(e);
+          }
+        }}
+        style={visible === false ? { ...style, display: "none" } : style}
+        className={getIconClassName(ps)}
+      />
+    );
   } else {
     return <></>;
   }

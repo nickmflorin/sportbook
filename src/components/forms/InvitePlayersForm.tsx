@@ -7,7 +7,7 @@ import { invitePlayersToTeam } from "~/app/actions/team";
 import { isServerErrorResponseBody } from "~/application/response";
 import { Form, type FormProps } from "~/components/forms/Form";
 import { TeamDropdownMenu } from "~/components/menus/TeamDropdownMenu";
-import { InviteUsersDropdownMenu } from "~/components/menus/InviteUsersDropdownMenu";
+import { InviteUsersDropdownSelect } from "~/components/menus/InviteUsersDropdownSelect";
 import { type InvitePlayersSchema, type Team, type User } from "~/prisma/model";
 
 export type PlayerFormValues = z.output<typeof InvitePlayersSchema>;
@@ -44,7 +44,7 @@ export const InvitePlayersForm = ({ form, leagueId, teams, requestsDisabled }: I
         condition={Form.FieldCondition.REQUIRED}
       >
         {({ field: { onChange, value } }) => (
-          <InviteUsersDropdownMenu
+          <InviteUsersDropdownSelect
             requestDisabled={requestsDisabled}
             leagueId={leagueId}
             value={value}

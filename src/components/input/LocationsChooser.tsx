@@ -9,11 +9,11 @@ import { Text } from "~/components/typography/Text";
 import { TileContainer } from "~/components/views/tiles/TileContainer";
 import { type LocationSchema, type Location } from "~/prisma/model";
 
-const DropdownMenu = dynamic(() => import("~/components/menus/DropdownMenu"), {
+const DropdownMenu = dynamic(() => import("~/components/menus/dropdowns/Dropdown"), {
   ssr: false,
 });
 
-const MultiMenu = dynamic(() => import("~/components/menus/MultiMenu"), {
+const MultiMenu = dynamic(() => import("~/components/menus/menus/MultiMenu"), {
   ssr: false,
 });
 

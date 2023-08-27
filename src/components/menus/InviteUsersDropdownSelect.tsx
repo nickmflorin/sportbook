@@ -1,17 +1,17 @@
 "use client";
 import { useLeagueAvailableUsers } from "~/app/api/hooks";
 import { logger } from "~/application/logger";
-
-import { UsersDropdownMenu, UsersDropdownMenuProps } from "./UsersDropdownMenu";
 import { isServerErrorResponseBody } from "~/application/response";
 
-export interface InviteUsersDropdownMenuProps extends Omit<UsersDropdownMenuProps, "users"> {
+import { UsersDropdownMultiSelect, type UsersDropdownMultiSelectProps } from "./UsersDropdownMultiSelect";
+
+export interface InviteUsersDropdownMenuProps extends Omit<UsersDropdownMultiSelectProps, "data"> {
   readonly leagueId: string;
   readonly requestDisabled?: boolean;
   readonly onError?: (e: string) => void;
 }
 
-export const InviteUsersDropdownMenu = ({
+export const InviteUsersDropdownSelect = ({
   leagueId,
   requestDisabled,
   onError,
@@ -36,5 +36,12 @@ export const InviteUsersDropdownMenu = ({
     },
     fallbackData: [],
   });
-  return <UsersDropdownMenu {...props} disabled={error !== undefined} loading={isLoading} users={users} />;
+  return (
+    <UsersDropdownMultiSelect
+      {...props}
+      disabled={error !== undefined}
+      loading={isLoading ? "input" : null}
+      data={users}
+    />
+  );
 };

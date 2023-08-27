@@ -219,6 +219,8 @@ type _BaseIconProps = ComponentProps &
      * @see DynamicIconProp;
      */
     readonly visible?: boolean;
+    readonly disabled?: boolean;
+    readonly onClick?: (e: React.MouseEvent<HTMLElement>) => void;
   };
 
 /**

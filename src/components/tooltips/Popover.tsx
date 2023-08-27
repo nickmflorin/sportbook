@@ -6,20 +6,12 @@ import { Popover as RootPopover, type PopoverProps as RootPopoverProps } from "@
 export interface PopoverProps extends Omit<RootPopoverProps, "opened" | "children"> {
   readonly open: boolean;
   readonly popover?: JSX.Element | null | undefined;
-  readonly disabled?: boolean;
   readonly keepOpen?: boolean;
   readonly children: JSX.Element;
 }
 
-export const Popover = ({
-  children,
-  popover,
-  open,
-  disabled = false,
-  keepOpen = false,
-  ...props
-}: PopoverProps): JSX.Element => {
-  if (popover === undefined || popover === null || disabled) {
+export const Popover = ({ children, popover, open, keepOpen = false, ...props }: PopoverProps): JSX.Element => {
+  if (popover === undefined || popover === null) {
     return <>{children}</>;
   }
   return (

@@ -4,8 +4,8 @@ import { useTransition, useMemo } from "react";
 
 import { useQueryParams } from "~/hooks/useQueryParams";
 import { SolidButton } from "~/components/buttons/SolidButton";
-import { useMultiMenu } from "~/components/menus/hooks";
-import { Menu } from "~/components/menus/Menu";
+import { useMultiMenu } from "~/components/menus/menus/hooks";
+import { Menu } from "~/components/menus/menus/Menu";
 import { type Team } from "~/prisma/model";
 import { parseQueryParamIds } from "~/prisma/urls";
 

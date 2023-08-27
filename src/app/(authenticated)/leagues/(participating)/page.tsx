@@ -10,6 +10,7 @@ import { constructOrSearch } from "~/prisma/util";
 
 const LeaguesTable = dynamic(() => import("~/components/tables/LeaguesTable"), {
   loading: () => <Loading loading={true} />,
+  ssr: false,
 });
 
 interface LeaguesProps {

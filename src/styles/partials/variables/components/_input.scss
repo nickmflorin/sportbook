@@ -29,7 +29,7 @@ $input-disabled-bg-color: #efefef;
 $input-icon-color: icons.$default-icon-color;
 $input-border-width: 1px;
 $input-border: $input-border-width solid $input-border-color;
-$input-placeholder-color: color.change(#606873, $alpha: 0.6);
+$input-placeholder-color: colors.$placeholder-color;
 $input-caret-color: colors.get-color("gray", $shade: 8);
 
 @mixin input-placeholder-properties {

@@ -3,8 +3,8 @@ import { type SuperJSONResult } from "superjson/dist/types";
 import useRootSWR, { type SWRResponse as RootSWRResponse } from "swr";
 import { type SWRConfiguration } from "swr/_internal";
 
+import { type ServerErrorResponseBody, isServerErrorResponseBody } from "~/application/response";
 import { type Sport, type Location, type User } from "~/prisma/model";
-import { ServerError, ServerErrorResponseBody, isServerErrorResponseBody } from "~/application/response";
 
 type FetchResponseBody = { data: SuperJSONResult } | SuperJSONResult;
 
@@ -14,7 +14,7 @@ const isSuccessResponseBody = (b: FetchResponseBody): b is { data: SuperJSONResu
 export const swrFetcher = async <T>(url: string) => {
   const response = await fetch(url);
 
-  let json: FetchResponseBody = await response.json();
+  const json: FetchResponseBody = await response.json();
   if (isSuccessResponseBody(json)) {
     const deserialized = superjson.deserialize(json.data);
     if (deserialized === undefined) {
