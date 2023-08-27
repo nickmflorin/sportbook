@@ -57,7 +57,8 @@ export const ButtonLinkContent = ({
           size={action.iconSize || iconSize}
           icon={action.icon}
           loading={action.loading}
-          disabled={action.disabled}
+          hidden={action.hidden}
+          visible={action.visible}
           axis="vertical"
           onClick={e => {
             e.preventDefault();

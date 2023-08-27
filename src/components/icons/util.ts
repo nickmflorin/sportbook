@@ -11,6 +11,8 @@ import {
   type IconPrefix,
   type IconDefinition,
   type IconDefinitionParams,
+  type IconComponentProps,
+  type BasicIconComponentProps,
   IconPrefixClassNameMap,
   IconStyleClassNameMap,
   IconFamilyClassNameMap,
@@ -46,3 +48,8 @@ export const getIconPrefixClassName = (prefix: IconPrefix) => IconPrefixClassNam
 export const getIconFamilyClassName = (family: IconFamily = DEFAULT_ICON_FAMILY) => IconFamilyClassNameMap[family];
 
 export const getIconStyleClassName = (iconStyle: IconStyle = DEFAULT_ICON_STYLE) => IconStyleClassNameMap[iconStyle];
+
+export const isBasicIconComponentProps = <T>(
+  params: IconComponentProps<IconProp>,
+): params is T & Pick<BasicIconComponentProps, "icon"> =>
+  (params as T & Pick<BasicIconComponentProps, "icon">).icon !== undefined;

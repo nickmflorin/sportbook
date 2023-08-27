@@ -28,7 +28,7 @@ export const DropdownButton = ({
     condensed
     action={
       onClear
-        ? { icon: { name: "xmark-circle", iconStyle: "solid" }, disabled: clearDisabled, onClick: onClear }
+        ? { icon: { name: "xmark-circle", iconStyle: "solid" }, hidden: clearDisabled, onClick: onClear }
         : undefined
     }
     icon={[

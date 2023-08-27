@@ -21,16 +21,12 @@ import {
   getIconNameClassName,
   getIconPrefixClassName,
   getIconStyleClassName,
+  isBasicIconComponentProps,
 } from "./util";
 
 export type GetNativeIconClassNameParams =
   | Pick<BasicIconComponentProps, "icon">
   | Pick<EmbeddedIconComponentProps, keyof IconDefinitionParams>;
-
-export const isBasicIconComponentProps = <T,>(
-  params: IconComponentProps<IconProp>,
-): params is T & Pick<BasicIconComponentProps, "icon"> =>
-  (params as T & Pick<BasicIconComponentProps, "icon">).icon !== undefined;
 
 export const getNativeIconName = (params: IconComponentProps<IconProp>): string => {
   if (isBasicIconComponentProps(params)) {
@@ -133,19 +129,21 @@ export const IconComponent = ({
   style,
   icon,
   visible,
+  hidden,
   onClick,
   ...props
 }: IconComponentProps<IconProp | DynamicIconProp>) => {
+  const isVisible = hidden !== true && visible !== false;
   if (icon !== undefined || props.name !== undefined) {
     if (icon !== undefined && iconIsDynamic(icon)) {
-      const visible = icon.filter(i => i.visible === true);
-      if (visible.length === 0) {
+      const visibleIcons = icon.filter(i => i.visible === true);
+      if (visibleIcons.length === 0) {
         logger.error(
           { icon: icon },
           "The dynamically provided set of icons does not include a visible icon.  No icon will be rendered.",
         );
         return <></>;
-      } else if (visible.length > 1) {
+      } else if (visibleIcons.length > 1) {
         logger.error(
           { icon: icon },
           "The dynamically provided set of icons includes multiple visible icons.  Only the first will be rendered.",
@@ -155,10 +153,12 @@ export const IconComponent = ({
       return (
         <>
           {icon.map((i, index) => {
+            // Omit the hidden flag - it is encompassed in the isVisible flag.
             const ps = { ...props, icon: i.icon, size, axis, contain } as IconComponentProps<IconProp>;
             if (i.visible && !visibleIconEncountered) {
               visibleIconEncountered = true;
-              return <IconComponent {...ps} visible={true} onClick={onClick} key={index} />;
+              // The hidden prop will cause all dynamic icons to be hidden.
+              return <IconComponent {...ps} visible={isVisible && true} onClick={onClick} key={index} />;
             }
             return <IconComponent {...ps} visible={false} key={index} />;
           })}
@@ -179,7 +179,7 @@ export const IconComponent = ({
             onClick?.(e);
           }
         }}
-        style={visible === false ? { ...style, display: "none" } : style}
+        style={isVisible === false ? { ...style, display: "none" } : style}
         className={getIconClassName(ps)}
       />
     );
@@ -187,3 +187,5 @@ export const IconComponent = ({
     return <></>;
   }
 };
+
+export default IconComponent;

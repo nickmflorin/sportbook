@@ -18,7 +18,10 @@ export type ButtonCornerStyle = EnumeratedLiteralType<typeof ButtonCornerStyles>
 
 export type ButtonAction = {
   readonly icon: IconProp | DynamicIconProp;
-  readonly disabled?: boolean;
+  /* Note: We cannot disable an icon that is clickable, because the disabled class name will apply to the icon and not
+     change afterwards due to the SVG nesting that FontAwesome uses (see information related to DynamicIconProp). */
+  readonly hidden?: boolean;
+  readonly visible?: boolean;
   readonly iconSize?: IconSize;
   readonly loading?: boolean;
   readonly onClick: (e: React.MouseEvent<HTMLElement>) => void;
