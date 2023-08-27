@@ -6,23 +6,23 @@ import type * as z from "zod";
 import { invitePlayersToTeam } from "~/app/actions/team";
 import { isServerErrorResponseBody } from "~/application/response";
 import { Form, type FormProps } from "~/components/forms/Form";
-import { TeamDropdownMenu } from "~/components/menus/TeamDropdownMenu";
 import { InviteUsersDropdownSelect } from "~/components/menus/InviteUsersDropdownSelect";
-import { type InvitePlayersSchema, type Team, type User } from "~/prisma/model";
+import { InviteUsersTeamDropdownSelect } from "~/components/menus/InviteUsersTeamDropdownSelect";
+import { type InvitePlayersSchema } from "~/prisma/model";
 
 export type PlayerFormValues = z.output<typeof InvitePlayersSchema>;
 
 export type InvitePlayersFormProps = Omit<FormProps<PlayerFormValues>, "children"> & {
   readonly leagueId: string;
   readonly requestsDisabled?: boolean;
-  readonly teams: Team[];
 };
 
-export const InvitePlayersForm = ({ form, leagueId, teams, requestsDisabled }: InvitePlayersFormProps): JSX.Element => {
+export const InvitePlayersForm = ({ form, leagueId, requestsDisabled }: InvitePlayersFormProps): JSX.Element => {
   const [_, startTransition] = useTransition();
   const router = useRouter();
   return (
     <Form
+      submitText="Invite"
       action={async (data, handler) => {
         const response = await invitePlayersToTeam(leagueId, data);
         if (isServerErrorResponseBody(response)) {
@@ -40,7 +40,7 @@ export const InvitePlayersForm = ({ form, leagueId, teams, requestsDisabled }: I
         form={form}
         name="userIds"
         label="User"
-        description="Select the user that should be invited to the league."
+        description="Select the user or users that you want to invite to the league."
         condition={Form.FieldCondition.REQUIRED}
       >
         {({ field: { onChange, value } }) => (
@@ -49,6 +49,7 @@ export const InvitePlayersForm = ({ form, leagueId, teams, requestsDisabled }: I
             leagueId={leagueId}
             value={value}
             onChange={onChange}
+            placeholder="Johnny Appleseed"
             onError={e => form.setError("userIds", { message: e })}
           />
         )}
@@ -60,7 +61,16 @@ export const InvitePlayersForm = ({ form, leagueId, teams, requestsDisabled }: I
         description="Select the team that the users should be invited to."
         condition={Form.FieldCondition.REQUIRED}
       >
-        {({ field: { onChange, value } }) => <TeamDropdownMenu value={value} teams={teams} onChange={onChange} />}
+        {({ field: { onChange, value } }) => (
+          <InviteUsersTeamDropdownSelect
+            leagueId={leagueId}
+            requestDisabled={requestsDisabled}
+            value={value}
+            onChange={onChange}
+            placeholder="Team Winning"
+            onError={e => form.setError("teamId", { message: e })}
+          />
+        )}
       </Form.ControlledField>
     </Form>
   );

@@ -29,13 +29,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   if (!permissions.includes(LeagueStaffPermissionCode.INVITE_PLAYERS)) {
     return ServerResponse.Forbidden("You do not have permission to invite players to this league.").toJson();
   }
-
-  /* Eventually, we will have to slim the users list down a fair amount and come up with a better way for inviting the
-     users. */
-  const usersInLeague = await prisma.leaguePlayer.findMany({
-    select: { userId: true },
-    where: { team: { leagueId: league.id } },
-  });
-  const users = await prisma.user.findMany({ where: { id: { notIn: usersInLeague.map(v => v.userId) } } });
-  return ServerResponse.OK(users).toResponse();
+  const teams = await prisma.team.findMany({ where: { leagueId: league.id } });
+  return ServerResponse.OK(teams).toResponse();
 }

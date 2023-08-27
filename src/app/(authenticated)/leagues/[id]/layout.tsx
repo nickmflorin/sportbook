@@ -70,6 +70,13 @@ export default async function LeagueLayout({ children, params: { id } }: LeagueL
             active: { leadingPath: "/leagues/:id/scores" },
             visible: hasLeagueRole([LeagueStaffRole.ADMIN, LeagueStaffRole.COMISSIONER]),
           },
+          {
+            href: `/leagues/${id}/settings`,
+            icon: { name: "gear" },
+            label: "Settings",
+            active: { leadingPath: "/leagues/:id/settings" },
+            visible: hasLeagueRole([LeagueStaffRole.ADMIN]),
+          },
         ]}
       >
         {children}

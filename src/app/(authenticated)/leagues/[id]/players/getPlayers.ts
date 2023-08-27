@@ -1,8 +1,6 @@
 import "server-only";
 import { cache } from "react";
 
-import uniq from "lodash.uniq";
-
 import { getTeamStats } from "~/server/leagues";
 import { prisma, xprisma } from "~/prisma/client";
 import { type User, FileUploadEntity } from "~/prisma/model";

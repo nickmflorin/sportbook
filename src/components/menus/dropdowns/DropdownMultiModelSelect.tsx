@@ -22,6 +22,7 @@ export interface DropdownMultiModelSelectProps<M extends Model>
   readonly placeholder: string;
   readonly width?: number | string;
   readonly closeOnItemClick?: boolean;
+  readonly fetching?: boolean;
   readonly getItemLabel: (m: M) => string;
   readonly getItemIcon?: (m: M) => JSX.Element;
   readonly valueRenderer?: (m: M, count: number) => JSX.Element;
@@ -32,6 +33,7 @@ export const DropdownMultiModelSelect = <M extends Model>({
   data,
   placeholder,
   value,
+  fetching,
   width = "100%",
   closeOnItemClick = false,
   getItemLabel,
@@ -72,7 +74,7 @@ export const DropdownMultiModelSelect = <M extends Model>({
       inputWidth={width}
       control={control}
       onClear={() => onChange([], [])}
-      clearDisabled={value.length === 0}
+      clearDisabled={value.length === 0 || fetching === true}
       content={
         <MultiMenu<string, M>
           items={data.map(m => ({

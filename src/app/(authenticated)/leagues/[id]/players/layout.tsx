@@ -7,8 +7,6 @@ import { Loading } from "~/components/loading/Loading";
 
 import { getLeague } from "../getLeague";
 
-import { ServerInvitePlayersDrawer } from "./ServerInvitePlayersDrawer";
-
 const CreatePlayerButton = dynamic(() => import("./InvitePlayersButton"));
 
 const TableView = dynamic(() => import("~/components/views/TableView"), {
@@ -28,6 +26,7 @@ interface LeaguePlayersLayoutProps {
 
 export default async function LeaguePlayersLayout({ children, params: { id } }: LeaguePlayersLayoutProps) {
   const user = await getAuthUser({ whenNotAuthenticated: () => redirect("/sign-in") });
+  // We might want to reconsider making this query/fetch - the benefit is the 404 redirection...
   const league = await getLeague(id, user);
 
   return (
@@ -37,18 +36,9 @@ export default async function LeaguePlayersLayout({ children, params: { id } }: 
           key="0"
           title="Players"
           description="The players who are currently registered in this league."
-          actions={[
-            <CreatePlayerButton
-              key="0"
-              /* Note: This method causes the users and the teams to be fetched for the drawer immediately when the page
-                 is loaded, even if the drawer is not opened.  Unfortunately, since the drawer is opened client side,
-                 there isn't an easy way to fetch the data only when the drawer is opened unless we opened the drawer
-                 with query params.  For now, we will leave this as is - and revisit later. */
-              drawer={<ServerInvitePlayersDrawer league={league} />}
-            />,
-          ]}
+          actions={[<CreatePlayerButton key="0" leagueId={league.id} />]}
         />,
-        <LeagueFilterBar key="1" league={id} user={user} />,
+        <LeagueFilterBar key="1" league={league.id} user={user} />,
       ]}
     >
       {children}

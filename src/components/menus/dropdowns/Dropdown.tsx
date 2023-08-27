@@ -8,7 +8,6 @@ import { type IDropdownControl } from "./types";
 
 export interface MinimalContentProps {
   readonly id?: string;
-  readonly onFocus?: () => void;
 }
 
 export interface DropdownProps<P extends MinimalContentProps = MinimalContentProps>

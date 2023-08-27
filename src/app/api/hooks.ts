@@ -1,10 +1,12 @@
+import { useState } from "react";
+
 import superjson from "superjson";
 import { type SuperJSONResult } from "superjson/dist/types";
 import useRootSWR, { type SWRResponse as RootSWRResponse } from "swr";
 import { type SWRConfiguration } from "swr/_internal";
 
 import { type ServerErrorResponseBody, isServerErrorResponseBody } from "~/application/response";
-import { type Sport, type Location, type User } from "~/prisma/model";
+import { type Sport, type Location, type User, type Team } from "~/prisma/model";
 
 type FetchResponseBody = { data: SuperJSONResult } | SuperJSONResult;
 
@@ -68,3 +70,6 @@ export const useLocations = (config?: SWRConfig<Location[]>) => useSWR<Location[
 
 export const useLeagueAvailableUsers = (leagueId: string, config?: SWRConfig<User[]>) =>
   useSWR<User[]>(`/api/leagues/${leagueId}/users`, config);
+
+export const useLeagueAvailableTeams = (leagueId: string, config?: SWRConfig<Team[]>) =>
+  useSWR<Team[]>(`/api/leagues/${leagueId}/teams`, config);

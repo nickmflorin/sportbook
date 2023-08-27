@@ -3,13 +3,14 @@ import { useState } from "react";
 
 import { SolidButton } from "~/components/buttons/SolidButton";
 import { Drawer } from "~/components/drawers/Drawer";
+import { InvitePlayersDrawer } from "~/components/drawers/InvitePlayersDrawer";
 import { InfoView } from "~/components/views/InfoView";
 
 export interface InvitePlayersButtonProps {
-  readonly drawer: JSX.Element;
+  readonly leagueId: string;
 }
 
-export const InvitePlayersButton = ({ drawer }: InvitePlayersButtonProps): JSX.Element => {
+export const InvitePlayersButton = ({ leagueId }: InvitePlayersButtonProps): JSX.Element => {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -19,7 +20,7 @@ export const InvitePlayersButton = ({ drawer }: InvitePlayersButtonProps): JSX.E
         onClose={() => setOpen(false)}
         viewProps={{ header: <InfoView title="Invite Players" description="Invite players to your league." /> }}
       >
-        {drawer}
+        <InvitePlayersDrawer leagueId={leagueId} />
       </Drawer>
     </>
   );

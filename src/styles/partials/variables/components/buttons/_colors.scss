@@ -28,9 +28,9 @@ $button-state-names: ("hovered", "focused", "disabled");
 
 $themes: (
   "danger": (
-    base: colors.get-color("red", $shade: 11),
-    hovered: colors.get-color("red", $shade: 13),
-    focused: colors.get-color("red", $shade: 13),
+    base: colors.get-color("red", $shade: 7),
+    hovered: colors.get-color("red", $shade: 8),
+    focused: colors.get-color("red", $shade: 8),
   ),
   "primary": (
     base: colors.get-color("blue", $shade: 9),

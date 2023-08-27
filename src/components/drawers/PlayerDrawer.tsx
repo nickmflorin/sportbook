@@ -6,6 +6,7 @@ import { isUuid } from "~/lib/schemas";
 import { parseUserDisplayName } from "~/lib/user";
 import { getAuthUser } from "~/server/auth";
 import { LeaguePlayerRoleBadge } from "~/components/badges/LeaguePlayerRoleBadge";
+import { SolidButton } from "~/components/buttons/SolidButton";
 import { PlayerAvatar } from "~/components/images/PlayerAvatar";
 import { Loading } from "~/components/loading/Loading";
 import { InfoView } from "~/components/views/InfoView";
@@ -58,7 +59,8 @@ export const PlayerDrawer = async ({ playerId }: PlayerDrawerProps): Promise<JSX
         />
       }
     >
-      <></>
+      <SolidButton.Danger>Remove User from League</SolidButton.Danger>
+      <SolidButton.Danger>Ban User from League</SolidButton.Danger>
     </DrawerView>
   );
 };

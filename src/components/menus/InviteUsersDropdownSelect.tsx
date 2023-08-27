@@ -18,7 +18,7 @@ export const InviteUsersDropdownSelect = ({
   ...props
 }: InviteUsersDropdownMenuProps) => {
   const {
-    data: users = [],
+    data: users,
     error,
     isLoading,
   } = useLeagueAvailableUsers(leagueId, {
@@ -40,8 +40,9 @@ export const InviteUsersDropdownSelect = ({
     <UsersDropdownMultiSelect
       {...props}
       disabled={error !== undefined}
-      loading={isLoading ? "input" : null}
-      data={users}
+      fetching={isLoading && users === undefined}
+      refetching={users !== undefined && isLoading}
+      data={users || []}
     />
   );
 };
