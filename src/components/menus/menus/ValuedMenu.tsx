@@ -1,0 +1,33 @@
+import React from "react";
+
+import { MultiMenu, type MultiMenuProps } from "./MultiMenu";
+import { SingleMenu, type SingleMenuValuedProps } from "./SingleMenu";
+import { type MenuSelectionMode } from "./types";
+
+type _ValuedMenuProps<V extends string | null, M, MODE extends MenuSelectionMode = MenuSelectionMode> = {
+  single: SingleMenuValuedProps<V, M>;
+  multiple: MultiMenuProps<V, M>;
+}[MODE];
+
+export type ValuedMenuProps<
+  V extends string | null,
+  M,
+  MODE extends MenuSelectionMode = MenuSelectionMode,
+> = MODE extends MenuSelectionMode ? _ValuedMenuProps<V, M, MODE> & { readonly mode: MODE } : never;
+
+const isMultiMenuProps = <V extends string | null, M>(
+  props: ValuedMenuProps<V, M>,
+): props is ValuedMenuProps<V, M, "multiple"> => props.mode === "multiple";
+
+export const ValuedMenu = <V extends string | null, M>(props: ValuedMenuProps<V, M>): JSX.Element => {
+  if (isMultiMenuProps<V, M>(props)) {
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+    const { mode: _, ...rest } = props;
+    return <MultiMenu {...rest} />;
+  }
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  const { mode: _, ...rest } = props;
+  return <SingleMenu {...rest} />;
+};
+
+export default ValuedMenu;

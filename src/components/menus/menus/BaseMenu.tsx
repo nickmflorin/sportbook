@@ -2,27 +2,9 @@ import React from "react";
 
 import classNames from "classnames";
 
-import { type ComponentProps } from "~/lib/ui";
 import { AlternateButton } from "~/components/buttons/AlternateButton";
 
-import { type FooterActionsParams, type FooterActions } from "./types";
-
-type MenuShortcut = {
-  readonly label: string;
-  readonly onClick?: () => void;
-};
-
-export type BaseMenuProps<P extends FooterActionsParams> = ComponentProps & {
-  readonly id?: string;
-  readonly shortcuts?: MenuShortcut[];
-  readonly footerActions?: FooterActions<P>;
-  readonly footerActionParams: P;
-  readonly children: JSX.Element | JSX.Element[];
-};
-
-export type WithBaseMenuProps<T, P extends FooterActionsParams> = T extends never
-  ? never
-  : T & Omit<BaseMenuProps<P>, "children" | "footerActionParams">;
+import { type FooterActionsParams, type BaseMenuProps } from "./types";
 
 const getFooterActions = <P extends FooterActionsParams>({
   footerActions: actions,
