@@ -4,32 +4,60 @@ import classNames from "classnames";
 
 import { AlternateButton } from "~/components/buttons/AlternateButton";
 
-import { type FooterActionsParams, type BaseMenuProps } from "./types";
+import {
+  type SingleMenuValue,
+  type MultiMenuValue,
+  type BaseValuedMenuProps,
+  type BaseValuelessMenuProps,
+  type AnyValuedMenuItems,
+  type FooterActions,
+} from "./types";
 
-const getFooterActions = <P extends FooterActionsParams>({
+const getFooterActions = <
+  VS extends SingleMenuValue<V, N> | MultiMenuValue<V>,
+  V extends string | null,
+  N extends boolean,
+>({
   footerActions: actions,
-  footerActionParams,
-}: Pick<BaseMenuProps<P>, "footerActions" | "footerActionParams">): JSX.Element[] => {
+  value,
+}: {
+  footerActions: FooterActions<VS, V, N> | undefined;
+  value: VS | undefined;
+}): JSX.Element[] => {
   if (Array.isArray(actions)) {
     return actions;
-  } else if (typeof actions === "function") {
-    return getFooterActions({ footerActions: actions(footerActionParams), footerActionParams });
-  } else if (actions) {
+  } else if (typeof actions === "function" && typeof value !== "undefined") {
+    return getFooterActions({ footerActions: actions(value), value });
+  } else if (actions && typeof actions !== "function") {
     return [actions];
   }
   return [];
 };
 
-export const BaseMenu = <P extends FooterActionsParams>({
+type Props<
+  VS extends SingleMenuValue<V, N> | MultiMenuValue<V>,
+  V extends string | null,
+  M,
+  N extends boolean,
+  I extends AnyValuedMenuItems<V, M>,
+> = Omit<BaseValuedMenuProps<VS, V, M, I>, "items"> | Omit<BaseValuelessMenuProps, "items">;
+
+export const BaseMenu = <
+  VS extends SingleMenuValue<V, N> | MultiMenuValue<V>,
+  V extends string | null,
+  M,
+  N extends boolean,
+  I extends AnyValuedMenuItems<V, M>,
+>({
   id,
   className,
   style,
   shortcuts,
   children,
+  value,
   footerActions: _footerActions,
-  footerActionParams,
-}: BaseMenuProps<P>): JSX.Element => {
-  const footerActions = getFooterActions({ footerActions: _footerActions, footerActionParams });
+}: Props<VS, V, M, N, I> & { readonly children: JSX.Element | JSX.Element[] }): JSX.Element => {
+  const footerActions = getFooterActions({ footerActions: _footerActions, value });
   return (
     <div
       id={id}

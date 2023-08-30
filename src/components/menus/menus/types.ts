@@ -61,34 +61,18 @@ export type DatumValuedMenuItem<V extends string | null, M> = BaseMenuItem & {
 
 export type ValuelessMenuItem = BaseMenuItem;
 
-// export type DatumValuelessMenuItem<M> = BaseMenuItem & {
-//   readonly datum: M;
-// };
-
-// export type ValuelessValueGetter<V extends string | null> = (item: ValuelessMenuItem) => Exclude<V, null>;
-
-// export type DatumValuelessValueGetter<V extends string | null, M> = (item: M) => Exclude<V, null>;
-
 export type MenuItem<V extends string | null, M> = DatumValuedMenuItem<V, M> | ValuedMenuItem<V> | ValuelessMenuItem;
-// | DatumValuelessMenuItem<M>;
 
 export type ValuedMenuItems<V extends string | null> = ValuedMenuItem<V>[];
 export type DatumValuedMenuItems<V extends string | null, M> = DatumValuedMenuItem<V, M>[];
 
+export type AnyValuedMenuItem<V extends string | null, M> = DatumValuedMenuItem<V, M> | ValuedMenuItem<V>;
 export type AnyValuedMenuItems<V extends string | null, M> = DatumValuedMenuItems<V, M> | ValuedMenuItems<V>;
 
 export type MenuItems<V extends string | null, M> = AnyValuedMenuItems<V, M> | ValuelessMenuItem[];
-// | DatumValuelessMenuItem<M>[];
-
-// type OnChange<I extends MenuItems<V, M>, V extends string | null, M> = I extends DatumValuedMenuItem
 
 export const menuItemIsDatumValued = <V extends string | null, M>(m: MenuItem<V, M>): m is DatumValuedMenuItem<V, M> =>
   (m as DatumValuedMenuItem<V, M>).value !== undefined && (m as DatumValuedMenuItem<V, M>).datum !== undefined;
-
-// export const menuItemIsDatumValueless = <V extends string | null, M>(
-//   m: MenuItem<V, M>,
-// ): m is DatumValuedMenuItem<V, M> =>
-//   (m as DatumValuedMenuItem<V, M>).value === undefined && (m as DatumValuelessMenuItem<M>).datum !== undefined;
 
 export const menuItemIsValued = <V extends string | null, M>(m: MenuItem<V, M>): m is ValuedMenuItem<V> =>
   (m as ValuedMenuItem<V>).value !== undefined && (m as DatumValuedMenuItem<V, M>).datum === undefined;
@@ -111,22 +95,6 @@ export const menuItemsAreAllDatumValued = <V extends string | null, M>(
   }
   return false;
 };
-
-// export const menuItemsAreAllDatumValueless = <V extends string | null, M>(
-//   items: MenuItems<V, M>,
-// ): items is DatumValuelessMenuItem<M>[] => {
-//   const filteredItems = [...items].filter((item): item is DatumValuelessMenuItem<M> => menuItemIsDatumValueless(item));
-//   if (filteredItems.length !== 0) {
-//     if (filteredItems.length !== items.length) {
-//       throw new Error(
-//         "Detected a mix of menu items with and without a datum property.  If a datum or value is included on an " +
-//           "item, it must be included on all items.",
-//       );
-//     }
-//     return true;
-//   }
-//   return false;
-// };
 
 export const menuItemsAreAllValued = <V extends string | null, M>(
   items: MenuItems<V, M>,
@@ -161,154 +129,200 @@ export const menuItemsAreAllValueless = <V extends string | null, M>(
 };
 
 type _FooterAction = JSX.Element | JSX.Element[];
-export type FooterActionsParams = Record<string, unknown>;
-export type FooterActions<P extends FooterActionsParams> = _FooterAction | ((params: P) => _FooterAction);
+
+// /* export type FooterActionsParams<
+//      VS extends SingleMenuValue<V, N> | MultiMenuValue<V>,
+//      V extends string | null,
+//      M,
+//      N extends boolean,
+//      I extends AnyValuedMenuItems<V, M>,
+//    > = { readonly value: VS }; */
+
+export type FooterActions<
+  VS extends SingleMenuValue<V, N> | MultiMenuValue<V>,
+  V extends string | null,
+  N extends boolean,
+> = _FooterAction | ((value: VS) => _FooterAction);
 
 type MenuShortcut = {
   readonly label: string;
   readonly onClick?: () => void;
 };
 
-export type BaseMenuProps<P extends FooterActionsParams> = ComponentProps & {
+interface _BaseMenuProps {
   readonly id?: string;
+  readonly style?: ComponentProps["style"];
+  readonly className?: ComponentProps["className"];
   readonly shortcuts?: MenuShortcut[];
-  readonly footerActions?: FooterActions<P>;
-  readonly footerActionParams: P;
-  readonly children: JSX.Element | JSX.Element[];
-};
+}
 
-export type WithBaseMenuProps<T, P extends FooterActionsParams> = T extends never
-  ? never
-  : T & Omit<BaseMenuProps<P>, "children" | "footerActionParams">;
+export interface BaseValuelessMenuProps extends _BaseMenuProps {
+  readonly value?: never;
+  readonly footerActions?: never;
+  readonly items: ValuelessMenuItem[];
+}
+
+export interface BaseValuedMenuProps<
+  VS extends SingleMenuValue<V, boolean> | MultiMenuValue<V>,
+  V extends string | null,
+  M,
+  I extends AnyValuedMenuItems<V, M>,
+> extends _BaseMenuProps {
+  readonly items: I;
+  readonly value?: VS;
+  readonly footerActions?: FooterActions<VS, V, boolean>;
+}
 
 export type IMultiMenu<V extends string | null> = {
   readonly setValue: (value: Exclude<V, null>[]) => void;
   readonly clear: () => void;
 };
 
-type SingleValue<V extends string | null, N extends boolean> = N extends true ? V : Exclude<V, null>;
-type SingleDatum<M, N extends boolean> = N extends true ? M | null : M;
-
-export type OnSingleMenuChange<
-  I extends MenuItems<V, M>,
-  V extends string | null,
-  M,
-  N extends boolean,
-> = I extends ValuedMenuItem<V>[]
-  ? (value: SingleValue<V, N>) => void
-  : I extends DatumValuedMenuItem<V, M>[]
-  ? (value: SingleValue<V, N>, datum: SingleDatum<M, N>) => void
-  : never;
-
-export type OnMultiMenuChange<I extends MenuItems<V, M>, V extends string | null, M> = I extends DatumValuedMenuItem<
+export type OnMultiMenuChange<V extends string | null, M, I extends MenuItems<V, M>> = I extends DatumValuedMenuItems<
   V,
   M
->[]
+>
   ? (value: Exclude<V, null>[], datum: M[]) => void
-  : I extends ValuedMenuItem<V>[]
-  ? (value: Exclude<V, null>[]) => void
-  : never;
+  : (value: Exclude<V, null>[]) => void;
 
 export type OnMenuChange<
-  I extends ValuedMenuItem<V>[] | DatumValuedMenuItem<V, M>[] | ValuelessMenuItem[],
+  I extends AnyValuedMenuItems<V, M>,
   V extends string | null,
   M,
   N extends boolean,
   MODE extends MenuSelectionMode,
 > = {
-  single: OnSingleMenuChange<I, V, M, N>;
-  multiple: OnMultiMenuChange<I, V, M>;
+  single: OnSingleMenuChange<V, M, N, I>;
+  multiple: OnMultiMenuChange<V, M, I>;
 }[MODE];
 
-export type MultiMenuProps<
+export type MultiMenuValue<V extends string | null> = Exclude<V, null>[];
+
+export interface MultiMenuProps<
   V extends string | null,
   M,
   I extends AnyValuedMenuItems<V, M> = AnyValuedMenuItems<V, M>,
-> = I extends MenuItems<V, M>
-  ? WithBaseMenuProps<
-      {
-        readonly items: I;
-        readonly menu?: React.RefObject<IMultiMenu<V>>;
-        readonly defaultValue?: Exclude<V, null>[];
-        readonly value?: Exclude<V, null>[];
-        readonly withCheckbox?: boolean;
-        readonly footerActions?: FooterActions<{ value: Exclude<V, null>[] }>;
-        readonly onChange?: OnMultiMenuChange<I, V, M>;
-      },
-      { value: Exclude<V, null>[] }
-    >
-  : never;
+> extends BaseValuedMenuProps<MultiMenuValue<V>, V, M, I> {
+  readonly mode: "multiple";
+  readonly menu?: React.RefObject<IMultiMenu<V>>;
+  readonly defaultValue?: Exclude<V, null>[];
+  readonly withCheckbox?: boolean;
+  readonly onChange?: OnMultiMenuChange<V, M, I>;
+}
 
-export const isMultiDatumValuedMenuProps = <V extends string | null, M>(
-  props: MultiMenuProps<V, M>,
-): props is MultiMenuProps<V, M, DatumValuedMenuItem<V, M>[]> => menuItemsAreAllDatumValued(props.items);
+export type MultiMenuType = {
+  <V extends string | null, M, I extends AnyValuedMenuItems<V, M> = AnyValuedMenuItems<V, M>>(
+    props: MultiMenuProps<V, M, I>,
+  ): JSX.Element;
+};
 
-// export type SingleMenuValuelessProps = {
-//   readonly value?: never;
-//   readonly items: ValuelessMenuItem[];
-//   readonly defaultValue?: never;
-//   readonly onChange?: never;
-// };
+export const isMultiDatumValuedMenuProps = <
+  V extends string | null,
+  M,
+  I extends AnyValuedMenuItems<V, M> = AnyValuedMenuItems<V, M>,
+>(
+  props: MultiMenuProps<V, M, I>,
+): props is MultiMenuProps<V, M, I & DatumValuedMenuItems<V, M>> => menuItemsAreAllDatumValued(props.items);
 
-// type _SingleNullableMixin<V extends string | null> = {
-//   readonly value: V;
-//   readonly nullable: true;
-//   readonly defaultValue?: V;
-// };
+export const isMultiValuedMenuProps = <
+  V extends string | null,
+  M,
+  I extends AnyValuedMenuItems<V, M> = AnyValuedMenuItems<V, M>,
+>(
+  props: MultiMenuProps<V, M, I>,
+): props is MultiMenuProps<V, M, I & ValuedMenuItems<V>> => menuItemsAreAllValued(props.items);
 
-// type _SingleNonNullableMixin<V extends string | null> = {
-//   // The default value is required for non-nullable menus.
-//   readonly value: Exclude<V, null>;
-//   readonly nullable?: false;
-//   readonly defaultValue: Exclude<V, null>;
-// };
+/* type WithSingleMenuNullable<N extends boolean> = N extends true
+     ? { readonly nullable: true }
+     : { readonly nullable?: false }; */
 
-type Nullable<
-  I extends ValuedMenuItem<V>[] | DatumValuedMenuItem<V, M>[] | ValuelessMenuItem[],
+// /* type WithSingleMenuDefaultValue<V extends string | null, N extends boolean> = N extends true
+// //      ? { readonly defaultValue?: V }
+// //      : { readonly defaultValue: Exclude<V, null> }; */
+
+/* export type SingleMenuDefaultValue<V extends string | null, N extends boolean> = WithSingleMenuDefaultValue<
+     V,
+     N
+   >["defaultValue"]; */
+
+export type SingleMenuValue<V extends string | null, N extends boolean> = N extends true ? V : Exclude<V, null>;
+
+type SingleDatum<M, N extends boolean> = N extends true ? M | null : M;
+
+export type OnSingleMenuChange<
   V extends string | null,
   M,
   N extends boolean,
-> = I extends ValuedMenuItem<V>[] | DatumValuedMenuItem<V, M>[]
-  ? N extends true
-    ? { readonly nullable: true }
-    : { readonly nullable?: false }
-  : { readonly nullable?: never };
+  I extends AnyValuedMenuItems<V, M>,
+> = I extends DatumValuedMenuItems<V, M>
+  ? (value: SingleMenuValue<V, N>, datum: SingleDatum<M, N>) => void
+  : (value: SingleMenuValue<V, N>) => void;
 
-type DefaultValue<
-  I extends ValuedMenuItem<V>[] | DatumValuedMenuItem<V, M>[] | ValuelessMenuItem[],
+export interface SingleValuedMenuProps<
   V extends string | null,
   M,
   N extends boolean,
-> = I extends ValuedMenuItem<V>[] | DatumValuedMenuItem<V, M>[]
-  ? N extends true
-    ? { readonly defaultValue?: V }
-    : { readonly defaultValue: Exclude<V, null> }
-  : { readonly defaultValue?: never };
+  I extends AnyValuedMenuItems<V, M> = AnyValuedMenuItems<V, M>,
+> extends BaseValuedMenuProps<SingleMenuValue<V, N>, V, M, I> {
+  readonly mode: "single";
+  readonly nullable?: boolean;
+  readonly onChange?: OnSingleMenuChange<V, M, N, I>;
+  readonly defaultValue: Exclude<V, null>;
+}
 
-type Value<
-  I extends ValuedMenuItem<V>[] | DatumValuedMenuItem<V, M>[] | ValuelessMenuItem[],
-  V extends string | null,
-  M,
-  N extends boolean,
-> = I extends ValuedMenuItem<V>[] | DatumValuedMenuItem<V, M>[]
-  ? N extends true
-    ? { readonly value: V }
-    : { readonly value: Exclude<V, null> }
-  : { readonly value?: never };
+export type SingleValuelessMenuProps = BaseValuelessMenuProps & {
+  readonly mode: "single";
+  readonly onChange?: never;
+  readonly defaultValue?: never;
+  readonly nullable?: never;
+};
 
 export type SingleMenuProps<
-  I extends ValuedMenuItem<V>[] | DatumValuedMenuItem<V, M>[] | ValuelessMenuItem[],
   V extends string | null,
   M,
   N extends boolean,
-> = WithBaseMenuProps<
-  {
-    readonly items: I;
-    readonly menu?: React.RefObject<IMultiMenu<V>>;
-    readonly footerActions?: FooterActions<{ value: Exclude<V, null>[] }>;
-    readonly onChange?: OnSingleMenuChange<I, V, M, N>;
-  } & Nullable<I, V, M, N> &
-    Value<I, V, M, N> &
-    DefaultValue<I, V, M, N>,
-  { value: Exclude<V, null>[] }
->;
+  I extends AnyValuedMenuItems<V, M> = AnyValuedMenuItems<V, M>,
+> = SingleValuelessMenuProps | SingleValuedMenuProps<V, M, N, I>;
+
+export const isSingleMenuValuelessProps = <
+  V extends string | null,
+  M,
+  N extends boolean,
+  I extends AnyValuedMenuItems<V, M> = AnyValuedMenuItems<V, M>,
+>(
+  props: SingleValuedMenuProps<V, M, N, I> | SingleValuelessMenuProps,
+): props is SingleValuelessMenuProps => menuItemsAreAllValueless(props.items);
+
+export const isSingleMenuValuedProps = <
+  V extends string | null,
+  M,
+  N extends boolean,
+  I extends AnyValuedMenuItems<V, M> = AnyValuedMenuItems<V, M>,
+>(
+  props: SingleValuedMenuProps<V, M, N, I>,
+): props is SingleValuedMenuProps<V, M, N, I & ValuedMenuItems<V>> => menuItemsAreAllValued(props.items);
+
+export const isSingleMenuDatumValuedProps = <
+  V extends string | null,
+  M,
+  N extends boolean,
+  I extends AnyValuedMenuItems<V, M> = AnyValuedMenuItems<V, M>,
+>(
+  props: SingleValuedMenuProps<V, M, N, I>,
+): props is SingleValuedMenuProps<V, M, N, I & DatumValuedMenuItems<V, M>> => menuItemsAreAllDatumValued(props.items);
+
+export const isSingleMenuAnyValuedProps = <
+  V extends string | null,
+  M,
+  N extends boolean,
+  I extends AnyValuedMenuItems<V, M> = AnyValuedMenuItems<V, M>,
+>(
+  props: SingleValuedMenuProps<V, M, N, I> | SingleValuelessMenuProps,
+): props is SingleValuedMenuProps<V, M, N, I> =>
+  menuItemsAreAllValued(props.items) || menuItemsAreAllDatumValued(props.items);
+
+export type SingleMenuType = {
+  <V extends string | null, M, N extends boolean, I extends AnyValuedMenuItems<V, M>>(
+    props: SingleMenuProps<V, M, N, I>,
+  ): JSX.Element;
+};

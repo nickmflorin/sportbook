@@ -8,8 +8,10 @@ import {
   type ValuedMenuItem,
   type MultiMenuProps,
   isMultiDatumValuedMenuProps,
-  DatumValuedMenuItems,
-  AnyValuedMenuItems,
+  isMultiValuedMenuProps,
+  type DatumValuedMenuItems,
+  type AnyValuedMenuItems,
+  type MultiMenuValue,
 } from "./types";
 
 type ChildMenuProps<V extends string | null, M, I extends AnyValuedMenuItems<V, M>> = Omit<
@@ -106,8 +108,10 @@ const MultiDatumValuedMenu = <V extends string | null, M>({
   );
 };
 
-export const MultiMenu = <V extends string | null, M>(props: MultiMenuProps<V, M>): JSX.Element => {
-  const { id, defaultValue, value, footerActions, className, style, shortcuts, ...rest } = props;
+export const MultiMenu = <V extends string | null, M, I extends AnyValuedMenuItems<V, M>>(
+  props: MultiMenuProps<V, M, I>,
+): JSX.Element => {
+  const { id, defaultValue, value, footerActions, className, style, shortcuts } = props;
   const [_, startTransition] = useTransition();
   const [_value, _setValue] = useState<Exclude<V, null>[]>(
     defaultValue === undefined ? ([] as Exclude<V, null>[]) : defaultValue,
@@ -135,26 +139,36 @@ export const MultiMenu = <V extends string | null, M>(props: MultiMenuProps<V, M
     [_value],
   );
 
+  const v = value === undefined ? _value : value;
+
   return (
-    <BaseMenu
+    <BaseMenu<MultiMenuValue<V>, V, M, boolean, I>
       id={id}
       footerActions={footerActions}
       className={className}
       style={style}
       shortcuts={shortcuts}
-      footerActionParams={{ value: value === undefined ? _value : value }}
+      value={v}
     >
-      {isMultiDatumValuedMenuProps<V, M>(props) ? (
-        <MultiDatumValuedMenu<V, M> {...props} value={value === undefined ? _value : value} setValue={setValue} />
+      {isMultiDatumValuedMenuProps<V, M, I>(props) ? (
+        <MultiDatumValuedMenu<V, M> {...props} value={v} setValue={setValue} />
+      ) : isMultiValuedMenuProps<V, M, I>(props) ? (
+        <MultiValuedMenu<V>
+          {...props}
+          value={v}
+          setValue={setValue}
+          onChange={va => {
+            /* I cannot figure out why TS does not pick up on the fact that this onChange handler does not include the
+               datum even after the typeguard.  Will have to revisit down the line... */
+            const onChange = props.onChange as undefined | ((value: MultiMenuValue<V>) => void);
+            onChange?.(va);
+          }}
+        />
       ) : (
-        <MultiValuedMenu<V> {...props} value={value === undefined ? _value : value} setValue={setValue} />
+        <></>
       )}
     </BaseMenu>
   );
-};
-
-export type MultiMenuType = {
-  <V extends string | null, M>(props: MultiMenuProps<V, M>): JSX.Element;
 };
 
 export default MultiMenu;

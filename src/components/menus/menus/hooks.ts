@@ -1,21 +1,26 @@
 import { useMemo, useRef } from "react";
 
 import {
-  type ValuedMenuItem,
   type DatumValuedMenuItem,
-  type MenuItems,
   type IMultiMenu,
   menuItemsAreAllDatumValued,
   menuItemsAreAllValued,
+  type AnyValuedMenuItems,
+  type DatumValuedMenuItems,
+  type AnyValuedMenuItem,
 } from "./types";
 
-export const useItemValues = <I extends MenuItems<V, M>, V extends string | null, M>({ items }: { items: I }): I => {
+export const useItemValues = <I extends AnyValuedMenuItems<V, M>, V extends string | null, M>({
+  items,
+}: {
+  items: I;
+}): I => {
   const valuedItems = useMemo(() => {
     if (menuItemsAreAllDatumValued(items) || menuItemsAreAllValued(items)) {
-      type IS = I & ValuedMenuItem<string | null>[];
-      return items.reduce(
+      type IS = AnyValuedMenuItem<V, M>[];
+      return [...items].reduce(
         (prev: IS[number][], item: IS[number]) => {
-          let value = item.value;
+          const value = item.value;
           if (prev.map(i => i.value).includes(value)) {
             throw new Error(`Detected duplicate value '${value}' for menu items.  Values must be unique!`);
           }
@@ -31,13 +36,13 @@ export const useItemValues = <I extends MenuItems<V, M>, V extends string | null
 
 type ValueDatumMap<V extends string | null, M> = { [key in Exclude<V, null>]: M };
 
-type UseValueDatumMapProps<I extends DatumValuedMenuItem<V, M>[], V extends string | null, M> = {
+type UseValueDatumMapProps<I extends DatumValuedMenuItems<V, M>, V extends string | null, M> = {
   readonly items: I;
 };
 
 type UseValueDatumMapRT<I extends DatumValuedMenuItem<V, M>[], V extends string | null, M> = [ValueDatumMap<V, M>, I];
 
-export const useValueDatumMap = <I extends DatumValuedMenuItem<V, M>[], V extends string | null, M>({
+export const useValueDatumMap = <I extends DatumValuedMenuItems<V, M>, V extends string | null, M>({
   items,
 }: UseValueDatumMapProps<I, V, M>): UseValueDatumMapRT<I, V, M> => {
   const itemsWithValues = useItemValues({ items });

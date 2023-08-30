@@ -4,8 +4,8 @@ import React, { useState, useImperativeHandle, useCallback } from "react";
 import { type Style } from "~/lib/ui";
 import { DropdownButton } from "~/components/buttons/DropdownButton";
 
-import { ValuedMenu, type ValuedMenuProps } from "../menus/ValuedMenu";
 import { type MenuSelectionMode } from "../menus/types";
+import { ValuedMenu, type ValuedMenuProps } from "../menus/ValuedMenu";
 
 import { Dropdown, type DropdownProps, type MinimalContentProps } from "./Dropdown";
 import { useDropdownControl } from "./hooks";
@@ -75,7 +75,7 @@ export const DropdownSelect = <V extends string | null, M, MODE extends MenuSele
     [_onChange, getItemLabel, valueRenderer, closeOnItemClick, control],
   );
 
-  let menuProps = { items, shortcuts, footerActions, mode, value, onChange, defaultValue } as MenuProps;
+  const menuProps = { items, shortcuts, footerActions, mode, value, onChange, defaultValue } as MenuProps;
 
   const dropdownControl = useDropdownControl();
   const [opened, setOpen] = useState(false);
@@ -97,13 +97,13 @@ export const DropdownSelect = <V extends string | null, M, MODE extends MenuSele
       content={
         <ValuedMenu<V, M>
           {...menuProps}
-          // items={items}
-          // footerActions={footerActions}
-          // mode={mode}
-          // shortcuts={shortcuts}
-          // value={value}
-          // onChange={value => onChange(value, datum)}
-          // withCheckbox
+          /* items={items}
+             footerActions={footerActions}
+             mode={mode}
+             shortcuts={shortcuts}
+             value={value}
+             onChange={value => onChange(value, datum)}
+             withCheckbox */
         />
       }
     >

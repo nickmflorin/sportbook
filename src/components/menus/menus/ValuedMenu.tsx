@@ -1,33 +1,35 @@
 import React from "react";
 
-import { MultiMenu, type MultiMenuProps } from "./MultiMenu";
-import { SingleMenu, type SingleMenuValuedProps } from "./SingleMenu";
-import { type MenuSelectionMode } from "./types";
+import { MultiMenu } from "./MultiMenu";
+import { SingleValuedMenu } from "./SingleMenu";
+import {
+  type MultiMenuProps,
+  type SingleValuedMenuProps,
+  type AnyValuedMenuItems,
+  isSingleMenuAnyValuedProps,
+} from "./types";
 
-type _ValuedMenuProps<V extends string | null, M, MODE extends MenuSelectionMode = MenuSelectionMode> = {
-  single: SingleMenuValuedProps<V, M>;
-  multiple: MultiMenuProps<V, M>;
-}[MODE];
+export type ValuedMenuProps<V extends string | null, M, N extends boolean, I extends AnyValuedMenuItems<V, M>> =
+  | SingleValuedMenuProps<V, M, N, I>
+  | MultiMenuProps<V, M, I>;
 
-export type ValuedMenuProps<
-  V extends string | null,
-  M,
-  MODE extends MenuSelectionMode = MenuSelectionMode,
-> = MODE extends MenuSelectionMode ? _ValuedMenuProps<V, M, MODE> & { readonly mode: MODE } : never;
+const propsAreMultiple = <V extends string | null, M, N extends boolean, I extends AnyValuedMenuItems<V, M>>(
+  props: SingleValuedMenuProps<V, M, N, I> | MultiMenuProps<V, M, I>,
+): props is MultiMenuProps<V, M, I> => (props as MultiMenuProps<V, M, I>).mode === "multiple";
 
-const isMultiMenuProps = <V extends string | null, M>(
-  props: ValuedMenuProps<V, M>,
-): props is ValuedMenuProps<V, M, "multiple"> => props.mode === "multiple";
+const propsAreSingle = <V extends string | null, M, N extends boolean, I extends AnyValuedMenuItems<V, M>>(
+  props: SingleValuedMenuProps<V, M, N, I> | MultiMenuProps<V, M, I>,
+): props is SingleValuedMenuProps<V, M, N, I> => (props as SingleValuedMenuProps<V, M, N, I>).mode === "single";
 
-export const ValuedMenu = <V extends string | null, M>(props: ValuedMenuProps<V, M>): JSX.Element => {
-  if (isMultiMenuProps<V, M>(props)) {
-    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-    const { mode: _, ...rest } = props;
-    return <MultiMenu {...rest} />;
+export const ValuedMenu = <V extends string | null, M, N extends boolean, I extends AnyValuedMenuItems<V, M>>(
+  props: SingleValuedMenuProps<V, M, N, I> | MultiMenuProps<V, M, I>,
+): JSX.Element => {
+  if (propsAreMultiple<V, M, N, I>(props)) {
+    return <MultiMenu<V, M, I> {...props} />;
+  } else if (propsAreSingle<V, M, N, I>(props) && isSingleMenuAnyValuedProps<V, M, N>(props)) {
+    return <SingleValuedMenu<V, M, N, I> {...props} />;
   }
-  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-  const { mode: _, ...rest } = props;
-  return <SingleMenu {...rest} />;
+  throw new Error("Invalid or corrupted props!");
 };
 
 export default ValuedMenu;
