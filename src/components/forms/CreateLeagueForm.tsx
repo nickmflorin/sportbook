@@ -52,25 +52,25 @@ export const CreateLeagueForm = ({ form, locations, onNewLocation }: CreateLeagu
         condition={Form.FieldCondition.REQUIRED}
         placeholder="John Doe"
       />
-      <Form.ControlledField form={form} name="leagueType" label="Type" condition={Form.FieldCondition.REQUIRED}>
+      {/* <Form.ControlledField form={form} name="leagueType" label="Type" condition={Form.FieldCondition.REQUIRED}>
         {({ field: { onChange, value } }) => <LeagueTypeSelect onChange={onChange} value={value} />}
-      </Form.ControlledField>
-      <Form.ControlledField
+      </Form.ControlledField> */}
+      {/* <Form.ControlledField
         form={form}
         name="competitionLevel"
         label="Competition Level"
         condition={Form.FieldCondition.REQUIRED}
       >
         {({ field: { onChange, value } }) => <LeagueCompetitionLevelSelect onChange={onChange} value={value} />}
-      </Form.ControlledField>
-      <Form.ControlledField
+      </Form.ControlledField> */}
+      {/* <Form.ControlledField
         form={form}
         name="sport"
         label="Sport"
         description="The sport that will be played in your new league."
       >
         {({ field: { onChange, value } }) => <SportSelect onChange={onChange} value={value} />}
-      </Form.ControlledField>
+      </Form.ControlledField> */}
       <Form.FieldGroup form={form} name={["leagueStart", "leagueEnd"]} label="Duration">
         <Switch
           onChange={e => {
@@ -94,7 +94,7 @@ export const CreateLeagueForm = ({ form, locations, onNewLocation }: CreateLeagu
           </Form.ControlledField>
         </ShowHide>
       </Form.FieldGroup>
-      <Form.ControlledField
+      {/* <Form.ControlledField
         form={form}
         name="locations"
         label="Locations"
@@ -116,7 +116,7 @@ export const CreateLeagueForm = ({ form, locations, onNewLocation }: CreateLeagu
             }}
           />
         )}
-      </Form.ControlledField>
+      </Form.ControlledField> */}
     </Form>
   );
 };
